@@ -1,417 +1,335 @@
-**Rapid Reconciler PO Receipts**
+**RapidReconciler Inventory**
 
-**Training Manual: Key Concepts**
+**Key Concepts Training Manual**
 
-**Section 1: Definition**
+**Table of Contents**
 
-**PO Receipts, also known as "Received-Not-Vouchered" (RNV), is a balance sheet liability that accounts for goods and services received against a purchase order.**
+- [Preparing Item Data for Reconciliation](https://claude.ai/chat/80512a76-2d10-4755-b45a-26a02b3f24ba#1-preparing-item-data-for-reconciliation)
+- [Inventory Reconciliation and Sources of Variance](https://claude.ai/chat/80512a76-2d10-4755-b45a-26a02b3f24ba#2-inventory-reconciliation-and-sources-of-variance)
+- [Variance Source 1 - GL Batch Postings](https://claude.ai/chat/80512a76-2d10-4755-b45a-26a02b3f24ba#3-variance-source-1--gl-batch-postings)
+- [Variance Source 2 - End of Day Transactions](https://claude.ai/chat/80512a76-2d10-4755-b45a-26a02b3f24ba#4-variance-source-2--end-of-day-transactions)
+- [Variance Source 3 - Transactional Variances](https://claude.ai/chat/80512a76-2d10-4755-b45a-26a02b3f24ba#5-variance-source-3--transactional-variances)
+- [Variance Source 4 - Cardex Variance](https://claude.ai/chat/80512a76-2d10-4755-b45a-26a02b3f24ba#6-variance-source-4--cardex-variance)
+- [GL Class Codes](https://claude.ai/chat/80512a76-2d10-4755-b45a-26a02b3f24ba#7-gl-class-codes)
 
-**Important Distinction: PO Receipts should not be confused with an "Open PO," which refers to a purchase order or line where not all items have been received. These are two separate concepts.**
+**1\. Preparing Item Data for Reconciliation**
 
-**Section 2: Process Flow**
+**The Model DMAAI Table**
 
-**The PO Receipts process follows these steps:**
+The **Model DMAAI Table** is a foundational concept in RapidReconciler. DMAAI table **4152** with document type **PI** has been designated as the default model table. The document type may be changed by the RR administrator in Company settings.
 
-- **A receipt transaction is performed against an established purchase order. This transaction creates an "open receipt" pending a supplier invoice.**
-- **Once the supplier invoice is received, it is matched to the receipt document(s) in JD Edwards via the voucher match process. This can be either a 2-way or 3-way match.**
-- **The voucher transaction clears the open receipt and posts the applicable entries to the general ledger.**
+The Model DMAAI Table is used to:
 
-**Section 3: Table F43121**
-
-**Table F43121 is the table of record for purchase order receipts. It is important to understand that this table does not behave as a standard ledger, where each transaction associated with a receipt would have a unique record.**
-
-**During a receipt or voucher reversal, the original receipt record is overwritten with new information. This behavior makes it impossible to generate an "As-Of" report from this table.**
-
-**Section 4: Match Types**
-
-**Table F43121 contains a "Match Type" column. There are four match types, defined as follows:**
-
-| **Match Type** | **Description**                                                                                                                                                                                                                                                                   |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1**          | **A Match Type 1 record is created for each receipt document generated. This is the first step in the process. An "Open Receipts" report may be produced by selecting Match Type 1 records from the table.**                                                                      |
-| **2**          | **Match Type 2 records are vouchers generated for Match Type 1 receipts. In an ideal scenario, the voucher will be for the same quantity and amount as the original receipt, with exceptions for pricing variances. This is typically the end of the process.**                   |
-| **3**          | **Match Type 3 records are Match Type 1 receipts that have been reversed. The Match Type column changes from 1 to 3, and additional columns for quantities and amounts are updated accordingly. Reversals are the primary reason this table does not function as a true ledger.** |
-| **4**          | **Match Type 4 records are the same as Match Type 3, except they represent voucher reversals rather than receipt reversals.**                                                                                                                                                     |
-
-**Section 5: Accounting Flow**
-
-**The following illustrates the accounting flow for a standard 3-way match process:**
-
-- **Purchase Order Created - A purchase order is established in JD Edwards.**
-- **Receipt Entered - Goods or services are received against the PO. A Match Type 1 record is created in table F43121. The RNV (Received-Not-Vouchered) account is credited and the inventory or expense account is debited.**
-- **Supplier Invoice Received - The supplier invoice is matched to the receipt in JD Edwards via the voucher match process.**
-- **Voucher Created - A Match Type 2 record is created. The RNV account is debited and Accounts Payable is credited, clearing the open receipt.**
-- **Payment Processed - Accounts Payable is debited and cash or the bank account is credited, completing the process.**
-
-**Section 6: Challenges**
-
-**The following challenges are associated with the PO Receipts reconciliation process:**
-
-- **System - The receipts table (F43121) is not a true ledger. Receipt and voucher reversals overwrite key data elements, making As-Of reporting impossible. This places additional importance on current-balance reconciliation methods.**
-- **Process - Receipts routing, taxes, and landed cost configuration can add levels of complexity to the process. Reversals performed out of sequence may cause accounting discrepancies that are difficult to trace.**
-- **Reconciliation - Because As-Of reporting is not available, reconciliation must be performed as a balance-to-balance comparison between the current open receipts report and the general ledger balance. This requires that the open receipts listing be carefully validated before any journal entries are made.**
-
-**Training Manual: Preparing Item Data for Reconciliation**
-
-**Section 1: The Model DMAAI Table**
-
-**1.1 Overview**
-
-The Model DMAAI (Distribution/Manufacturing Automatic Accounting Instructions) Table is a foundational concept within RapidReconciler. DMAAI table 4152, paired with document type PI, has been designated as the default model table. The document type may be modified by the RapidReconciler Administrator within the Companies settings.
-
-**1.2 Purpose**
-
-The Model DMAAI Table serves the following functions:
-
-- Determine which GL accounts are perpetual inventory accounts, including business unit, object account, and subsidiary.
+- Determine which GL accounts are perpetual inventory accounts (business unit, object account, and subsidiary).
 - Assign GL accounts to item ledger and location records during import from JD Edwards.
 - Validate additional balance sheet DMAAI configurations.
 
-**1.3 Key Concepts**
+**Key Takeaways:**
 
-- DMAAI table 4152 is used as the model table. It is hard-coded in RapidReconciler and cannot be changed.
-- Document type "PI" is the default document type used for the model. This may be changed by the RapidReconciler Administrator to meet specific business requirements.
-- DMAAI tables 3110, 3130, 4122, 4126, 4134, 4172, 4240, and 4310 are designated for balance sheet perpetual accounts. Their configuration should closely resemble model table 4152.
+- DMAAI table 4152 is hard-coded in RapidReconciler and cannot be changed.
+- Document type PI is the default; this may be changed by the RR administrator to meet specific business requirements.
+- DMAAI tables 3110, 3130, 4122, 4126, 4134, 4172, 4240, and 4310 are for balance sheet perpetual accounts and should closely resemble the configuration of model table 4152.
 
-**Section 2: Vetting the Model DMAAI Table**
+**Vetting the Model DMAAI Table**
 
-**2.1 Overview**
+The Model DMAAI Table must be vetted for accuracy before RapidReconciler can produce reliable results. Using the results from **Inventory Integrity Report 1**, verify the following:
 
-The Model DMAAI Table must be vetted for accuracy in order to obtain correct results in RapidReconciler.
+- Each entry (by company number and GL class code) references the correct business unit, object account, and subsidiary.
+- All GL class codes used for **stock inventory** are included in the model.
+- All GL class codes used for **non-stock or expense items** are excluded from document type PI where possible.
 
-**2.2 Vetting Procedure**
+**Note:** If document type PI contains GL class codes that are not meant to be valued but cannot be removed, it is recommended to set up a dedicated document type (e.g., **I9**) for RapidReconciler use. The RR administrator must update the default company configuration(s) for this change to take effect.
 
-Using the results from Inventory Integrity Report 1, verify the following:
+**Key Takeaways:**
 
-- Ensure that individual entries for each company number and GL class code reference the correct business unit, object account, and subsidiary.
-- Ensure that all GL class codes used for stock inventory are included in the model.
-- Ensure that all GL class codes used for non-stock or expense items are excluded from document type PI where possible.
+- Vetting DMAAI 4152 PI is essential for accurate results in RapidReconciler.
+- If document type PI does not meet business needs, establish a dedicated document type and update the Companies configuration in RapidReconciler.
 
-**Important Note:** If the document type PI contains GL class codes that are not intended to be valued but cannot be removed from the PI configuration, it is recommended that a dedicated document type (e.g., document type "I9") be created for RapidReconciler use. The RapidReconciler Administrator must update the default company configuration(s) in RapidReconciler for this change to take effect.
+**Managing Inventory Accounts**
 
-**2.3 Configuration Examples**
+The Model DMAAI Table also controls which accounts appear in the RapidReconciler inventory filters. Company numbers, business units, object accounts, and subsidiaries are pulled directly from this table and populate the filter widget on the reconciliation page.
 
-The following examples illustrate correct and incorrect DMAAI configurations. The scenario contains three inventory categories: Raw Materials, Sub-Assemblies, and Finished Goods. Each category has its own object account, and multiple GL class codes reference each category.
+**Key Takeaways:**
 
-**2.3.1 Correct Configuration - DMAAI 4152 (Vetted)**
+- Inventory module filters in RapidReconciler are populated from the Model DMAAI Table.
+- Account management is performed by updating the Model DMAAI Table in JD Edwards - there is no direct account entry in RapidReconciler.
 
-| **Company** | **Doc Type** | **GL Class** | **Business Unit** | **Object Account** | **Subsidiary** |
-| ----------- | ------------ | ------------ | ----------------- | ------------------ | -------------- |
-| 00001       | PI           | RM01         | 1                 | 1411               | 01             |
-| 00001       | PI           | RM02         | 1                 | 1411               | 02             |
-| 00001       | PI           | RM03         | 1                 | 1411               | 03             |
-| 00001       | PI           | SA01         | 1                 | 1450               | 01             |
-| 00001       | PI           | SA02         | 1                 | 1450               | 02             |
-| 00001       | PI           | SA03         | 1                 | 1450               | 03             |
-| 00001       | PI           | FG01         | 1                 | 1480               | 01             |
-| 00001       | PI           | FG02         | 1                 | 1480               | 02             |
-| 00001       | PI           | FG03         | 1                 | 1480               | 03             |
+**Assigning GL Account Information to Item Data**
 
-**2.3.2 Incorrect Configuration - DMAAI XXXX**
+Item ledger (cardex) and item location records in JD Edwards do not contain GL account information. Each record does, however, contain the GL class code of the item being transacted. During the import process, RapidReconciler appends GL account information to each item ledger (F4111) and item location (F41021) record by using the Model DMAAI Table as a cross-reference.
 
-In the incorrect example, certain GL class codes are mapped to the wrong object account (e.g., RM03 mapped to object account 1480 instead of 1411, and SA02 mapped to 1411 instead of 1450). This mismatch demonstrates how errors in a non-model balance sheet DMAAI can occur.
+The company number and GL class code of each record are matched against the model table to retrieve the associated business unit, object account, and subsidiary.
 
-**2.4 Key Concepts**
+**Important:** These updates occur only within RapidReconciler. JD Edwards data is never modified.
 
-- It is imperative that DMAAI 4152 PI be vetted in order to produce correct results in RapidReconciler.
-- If document type PI does not meet the needs of your business, a dedicated document type (e.g., "I9") should be established for use in RapidReconciler.
-- If using a dedicated document type, the RapidReconciler Administrator must update the configuration in the RapidReconciler "Companies" settings accordingly.
+This approach enables RapidReconciler to display both general ledger and perpetual inventory balances filtered by business unit, object account, and subsidiary.
 
-**Section 3: Managing Inventory Accounts**
+**Key Takeaways:**
 
-**3.1 Overview**
+- Item ledger and location records in JDE contain GL class codes but not GL account information.
+- RapidReconciler appends GL account data using the Model DMAAI Table as a cross-reference.
+- GL account and perpetual inventory balances can be viewed together by business unit, object account, and subsidiary.
 
-The Model DMAAI Table is also used to manage which accounts appear in the RapidReconciler inventory filters. Company numbers, business units, object accounts, and subsidiaries are pulled directly from this table and displayed in the filter widget on the reconciliation page.
+**Assigning Fiscal Period Information - Initial Load**
 
-**3.2 Key Concepts**
+Each item ledger record must be allocated to a fiscal period in order to perform a proper reconciliation. This is done in accordance with the fiscal date patterns configured in JD Edwards.
 
-- The filters for the RapidReconciler inventory module are populated from data contained in the Model DMAAI Table.
-- Account management occurs when the Model DMAAI Table is updated in JD Edwards. There is no direct account entry in RapidReconciler.
+RapidReconciler employs internal date logic to determine the correct fiscal period, using the following hierarchy:
 
-**Section 4: Assigning GL Account Information to Item Data**
+- **GL Date** - If a GL date exists on the item ledger record and is on or after the first day of the fiscal year, the period is assigned using the GL date.
+- **Creation Date** - If no GL date is populated (possible for unprocessed End of Day transactions), the period is assigned using the creation date.
 
-**4.1 Overview**
+**Note:** These rules apply to the initial data load only and account for the possibility that creation dates may have been overwritten by the Global Item Update program in JD Edwards.
 
-Item ledger (cardex) and item location records in JD Edwards do not contain GL (General Ledger) account information. Each record does, however, contain the GL class code of the item being transacted. RapidReconciler uses this information to append GL account data to each item ledger (F4111) and item location (F41021) record during the import process.
+**Assigning Fiscal Period Information - Post Initial Load (Cardex Accounting Methods)**
 
-Updates are applied only within RapidReconciler - never in JD Edwards.
+Following the initial import, nightly imports use a different rule for period assignment. When a variance occurs in a prior period but is not resolved until a later period, RapidReconciler provides two options for how the variance is handled. These are called **Cardex Accounting Methods**.
 
-**4.2 Cross-Reference Process**
+**Option 1 - Inventory Basis** _(Default and Recommended)_ The prior-period variance remains in the period in which it occurred. The GL batch created in the resolution period offsets the original variance. The variance category in the prior period changes from "End of Day" to "Transactional Variance," and cross-period comments are added for reference. Prior period reconciliations are not altered.
 
-To assign the correct account, the Model DMAAI Table is used as a cross-reference table. The company number and GL class code from each record are matched to the model table to retrieve the associated business unit, object account, and subsidiary.
+**Option 2 - GL Basis** The variance is assigned to the period in which the GL batch is created. This method is only recommended for organizations that can routinely resolve all variances within the same period and will not encounter timing differences. This approach can cause confusion if manual entries were made to balance a prior period.
 
-**Example:** For an item ledger transaction for a purchase order receipt where the item belongs to company 00001 with a GL class code of IN30, RapidReconciler will append the following GL account data:
+To change the Cardex Accounting Method, submit a written request to **<rrsupport@getgsi.com>**.
 
-- Business Unit = 1
-- Object Account = 1411
-- Subsidiary = Blank
+**Perpetual Inventory Balance Forward**
 
-Using this approach, filtering by account in RapidReconciler will return both general ledger balances and the related perpetual inventory balances and details.
+Once item ledger records have been assigned to fiscal periods, RapidReconciler calculates a **Balance Forward** for use as a starting point in reconciliation. This is calculated internally because JD Edwards does not provide reliable "as of" inventory data, and loading decades of historical transactions would be impractical.
 
-**4.3 Key Concepts**
+The process works as follows:
 
-- Item ledger and location records in JD Edwards do not contain GL account information, but do carry the GL class codes of the items.
-- RapidReconciler appends these records with GL account data by using the Model DMAAI Table as a cross-reference.
-- GL account and perpetual inventory balances can then be viewed by business unit, object account, and subsidiary.
+- At the time of the initial production import, no inventory transactions should be in process. This ensures stable item balances can be obtained from the item location table (F41021).
+- Item ledger transactions, already assigned to fiscal periods, are used to back-calculate to the first period to be reconciled.
+- This balance forward serves as the starting point. Period-end perpetual balances are then calculated by summarizing item ledger transactions, reported in the RapidReconciler **Valuation** section.
+- Any difference between this summarization and the latest inventory snapshot is reported as **cardex variance** in the current period only.
 
-**Section 5: Assigning Period End Information to Item Ledger Records - Initial Load**
+**2\. Inventory Reconciliation and Sources of Variance**
 
-**5.1 Overview**
+**What Is Inventory Reconciliation?**
 
-In order to perform a proper reconciliation, each item ledger record must be allocated to a fiscal period. This allocation is performed in accordance with the fiscal date patterns established for your company in the JD Edwards system.
+There are two types of inventory reconciliation:
 
-**5.2 Date Options**
+- **Physical reconciliation** - Matching physical counts to perpetual system balances (cycle counts or physical inventories).
+- **Accounting reconciliation** - Matching calculated perpetual balances to general ledger account balances (monthly accounting process).
 
-There are three date fields in the item ledger table that may be used to determine the period in which a transaction occurred:
+RapidReconciler addresses the **monthly accounting reconciliation process only**.
 
-- **Transaction Date** - The date the transaction is recorded in the system. This date appears on many transaction screens and can be manipulated by system users. Due to the potential for human error, this is considered an undesirable option.
-- **General Ledger Date** - The date the transaction is booked to the general ledger. While this date can also be manually adjusted, it is typically handled with greater care as it directly impacts financial statements.
-- **Creation Date** - The system-generated date of when the transaction occurred. It cannot be altered by end users; however, it can be overwritten by the global item update program.
+While physical accuracy is important for identifying human error, fraud, and material shortages, accurate general ledger balances are critical for financial reporting, tax calculations, and borrowing capacity.
 
-**5.3 RapidReconciler Date Logic**
+**The Four Sources of Variance**
 
-Because no single date field is universally optimal, RapidReconciler employs its own internal date logic to determine the fiscal period of each transaction. During the initial load, the following logic is applied:
+RapidReconciler identifies and quantifies all sources of variance between the perpetual inventory system and the general ledger. If each variance source equals zero, perpetual and GL balances must be equal. Transactions must match in the same **company**, **GL account**, and **fiscal period** to be considered reconciled.
 
-- **GL Date** - If the GL date on the item ledger record exists and is greater than or equal to January 1st of the current fiscal year, the period is assigned using the GL date.
-- **Creation Date** - If the GL date has not been populated (which may occur due to unprocessed End of Day transactions), the period is assigned using the creation date.
+| **#** | **Variance Source**   | **Description**                                                              |
+| ----- | --------------------- | ---------------------------------------------------------------------------- |
+| 1     | **GL Batch Postings** | Difference between GL detail table (F0911) and account balance table (F0902) |
+| 2     | **End of Day**        | Item ledger transactions not yet reflected in the general ledger             |
+| 3     | **Transactional**     | Fully processed transactions with a mismatch between F4111 and F0911         |
+| 4     | **Cardex**            | Item ledger transaction summary does not match on-hand balance in F41021     |
 
-**Note:** This logic applies during the initial load only. These rules exist because the original creation date may have been updated by the Global Item Update program in JD Edwards. Refer to Oracle documentation for further detail. The "go forward" strategy for period assignment is covered in the following section.
+**3\. Variance Source 1 - GL Batch Postings**
 
-**Section 6: Assigning Period End Information to Item Data - Post Initial Load**
+**Overview**
 
-**6.1 Overview**
+GL batch postings are the least common source of reconciliation variance. The JD Edwards toolset and on-site expertise typically handle batch postings without issue. The information below is provided for reference.
 
-Following the initial load from JD Edwards into RapidReconciler, subsequent nightly imports use a different rule set for assigning fiscal periods to item ledger records.
+As inventory transactions are entered, GL batches are created either immediately (for receipts, issues, adjustments, and transfers) or via batch processing (for work orders and sales orders). In either case:
 
-**6.2 Cardex Accounting Method**
-
-The diagram below illustrates the Cardex Accounting Method, which governs how period assignments are handled going forward after installation or a partial reset.
-
-**Scenario Example:**
-
-- The system is currently in Period 5 of the fiscal year.
-- In Period 3, a sales order shipment occurred, but line items were failing unnoticed during the sales update.
-- This would appear as an End of Day variance in RapidReconciler.
-- The error was subsequently corrected in Period 5 or 6.
-- The sales update is configured to use the system date when booking the GL entry.
-
-The question of how to handle such a variance - and whether to reopen the Period 3 reconciliation - leads to the use of Cardex Accounting Methods, which will be addressed in the next section.
-
-**Section 7: Inventory Reconciliation - Overview and Sources of Variance**
-
-**7.1 What Is Inventory Reconciliation?**
-
-There are two types of inventory reconciliation processes:
-
-- **Physical Count Reconciliation** - Matching physical count items to perpetual balances in the system (e.g., cycle counts or physical inventories).
-- **Accounting Reconciliation** - Matching calculated perpetual balances to general ledger account balances (monthly accounting process).
-
-**Note:** RapidReconciler, like all computer-based software, can only address the monthly **accounting** reconciliation process.
-
-**7.2 Importance of Reconciliation**
-
-Accurate physical counts are essential for identifying human error, fraud, and material excesses or shortages. Accurate general ledger balances are equally critical for financial considerations such as tax calculations and borrowing power.
-
-**7.3 How RapidReconciler Identifies Variance**
-
-Inventory reconciliation in RapidReconciler is based on identifying and quantifying all sources of variance. The system represents two entities that must remain in equilibrium: the perpetual inventory system and the general ledger. Each entity has two components - balances and details.
-
-If the net amount of each variance source equals zero, then balances must be equal. Any transaction processed in JD Edwards that does not keep these two entities in balance indicates an issue with that transaction.
-
-**Important:** Transactions must match on the same company, GL account, and fiscal period in order to balance.
-
-**7.4 The Four Sources of Variance**
-
-- **GL Batches** - A difference between the sum in the F0911 GL details table and the F0902 account balance table.
-- **End of Day** - Transactions in the F4111 item ledger table that have not yet been created in the general ledger F0911.
-- **Transactional** - Transactions that have been fully processed, but where a mismatch exists between the item ledger F4111 and general ledger table F0911.
-- **Cardex** - The sum of the quantity and/or amount of a given item in the item ledger F4111 does not match the balance on hand in table F41021.
-
-**7.5 Perpetual Balance Forward Calculation**
-
-The perpetual balance forward is calculated as follows:
-
-- For the initial production import from JD Edwards, it is essential that no inventory transactions are being performed. This allows stable item balances to be retrieved from the item location table F41021 as a starting point.
-- All item ledger transactions already assigned to a fiscal period are used to back-calculate to the first period to be reconciled.
-- This balance forward serves as the starting point. Period end perpetual balances are then calculated by summarizing item ledger transactions. These calculated balances are reported in the RapidReconciler "Valuation" section.
-- Any difference between this summarization and the latest inventory snapshot is reported as a cardex variance in the current period only.
-
-**Section 8: Variance Source 1 - GL Batch Postings**
-
-**8.1 Overview**
-
-GL batch postings represent the smallest cause of reconciliation variances. Due to on-site expertise and the robust JD Edwards toolset, batch postings are normally completed without significant issues. The information in this section is provided for informational purposes.
-
-**8.2 What Are Batch Postings?**
-
-As inventory transactions are entered into the system, GL batches are created either immediately (for receipts, issues, adjustments, and transfers) or later (for work orders or sales orders). In either case:
-
-- Batches must be approved, either manually or through auto-approval.
+- Batches must be approved - either manually or through auto-approval configuration.
 - Batches must be posted to update account balances in table F0902.
 - Account balances must be current before reconciling.
-- This variance source checks F0911 to F0902 integrity for the applicable accounts.
 
-GL batch postings are part of routine JD Edwards daily processing managed by the financial department.
+This variance source checks the integrity between F0911 (GL detail) and F0902 (account balances) for applicable accounts.
 
-**8.3 Common Batch Posting Errors**
+**Common Batch Posting Errors**
 
-| **Error**              | **Description**                                                                    |
-| ---------------------- | ---------------------------------------------------------------------------------- |
-| Missing Batch Headers  | A batch header record in table F0011 is missing.                                   |
-| Invalid Object Account | The object account used for posting is either invalid or is not a posting account. |
-| Invalid Business Unit  | The business unit is not in the business unit master F0006 table.                  |
-| Amounts Out of Balance | Debits and credits in the batch do not balance.                                    |
-| GL Date Invalid        | The batch is attempting to post to a closed period.                                |
+| **Error**              | **Description**                                            |
+| ---------------------- | ---------------------------------------------------------- |
+| Missing Batch Headers  | A batch header record in table F0011 is absent             |
+| Invalid Object Account | The object account is invalid or is not a posting account  |
+| Invalid Business Unit  | The business unit does not exist in the F0006 master table |
+| Amounts Out of Balance | Debits and credits in the batch do not balance             |
+| Invalid GL Date        | The batch is attempting to post to a closed period         |
 
-Each of these errors can lead to an integrity issue between general ledger details F0911 and general ledger balances F0902. Contact your financial department to resolve any discrepancies.
+**Resolving Batch Issues**
 
-**8.4 Missing Batch Headers**
+**Missing Batch Headers:** A missing header in table F0011 must be recreated before the batch can post. This can be done manually via the Batch Header Revisions program or using program **R007021**. RapidReconciler identifies these transactions with an internal status code of **MH** (Missing Header), visible in the Approval_Status and Posting_Status columns on the GL Batches variance preview screen.
 
-Any batch lacking a header record in table F0011 must have one added before the batch can be posted. Missing headers can be recreated in the following ways:
+**Damaged Account Balances:** If an account balance in F0902 becomes corrupted, it can be reposted using program **R099102**. Refer to Oracle documentation for detailed instructions.
 
-- Manually, using the Batch Header Revisions program.
-- Using Program R007021.
+Contact your financial department to resolve any GL batch discrepancies.
 
-RapidReconciler will identify inventory transactions with missing batch headers using an internal status code of "MH" (missing header). This code appears in the Approval_Status and Posting_Status columns on the GL Batches variance preview screen.
+**4\. Variance Source 2 - End of Day Transactions**
 
-**8.5 Reposting an Account**
+**What Is an End of Day Transaction?**
 
-If an account balance in table F0902 becomes damaged, it can be reposted using program R099102. Refer to the relevant Oracle documentation for further information.
+An End of Day transaction is one where the general ledger is updated at a later time than the item ledger and location records. The GL update occurs during a batch process, typically scheduled to run nightly.
 
-**Section 9: Variance Source 2 - End of Day Transactions**
+Two transaction types fall into the End of Day category:
 
-**9.1 What Is an End of Day Transaction?**
+| **Transaction Type**                       | **Document Type** | **GL Update Method**                     |
+| ------------------------------------------ | ----------------- | ---------------------------------------- |
+| Work Order completions and material issues | IC, IM            | Manufacturing Accounting batch (R31802A) |
+| Sales Order shipment confirmations         | RI                | Sales Update batch (R42800)              |
 
-An "End of Day" transaction is defined as a transaction where the general ledger system is updated at a later time than the item ledger/location record. General ledger updates occur during a batch process, typically scheduled to run at the end of the day.
+All other transaction types (PO receipts, issues, adjustments, transfers) update the general ledger simultaneously with the item ledger.
 
-**9.2 End of Day Transaction Types**
+**Key Takeaways:**
 
-There are two transaction types that fall into the End of Day category (using standard JD Edwards document types):
-
-- **Work Orders** - Includes work order completions (IC's) and material issues (IM's).
-- **Sales Orders** - Shipment confirmations (RI's).
-
-**9.3 Additional Information**
-
-- Item Ledger and Location records are always updated at the time the transactions occur.
-- General Ledger update means records are created in the GL detail table but are not yet posted.
-- Other transaction types (e.g., PO receipts, issues, adjustments, and transfers) update the general ledger simultaneously with the item ledger/location.
-
-**9.4 Impact on Inventory Reconciliation**
-
-The timing differences between item ledger/location creation and general ledger creation for End of Day transactions directly impact the reconciliation process. Reconciliation begins by comparing the perpetual inventory calculated value to the amount balance in the corresponding general ledger account(s). If the balances do not match - which they rarely do - investigation is required.
-
-**9.5 Key Concepts**
-
+- Item ledger and location records are always updated at the time a transaction occurs.
+- For End of Day transactions, GL records are created - but not yet posted - during the nightly batch run.
 - End of Day transactions impact perpetual balance valuation reports immediately.
-- If the perpetual inventory valuation report is generated while End of Day transactions are still in process, reconciling items will appear.
-- Additional processing must occur to generate and post general ledger batches for End of Day transactions.
-- It is highly recommended that all End of Day transactions be identified and fully completed before reconciling.
+- It is strongly recommended to ensure all End of Day transactions are fully processed before beginning reconciliation.
 
-**9.6 Validating End of Day Items in the JDE Item Ledger**
+**Work Order Processing Reference**
 
-If the validity of items listed on the report is in question (e.g., a status code of 99 or 999), validate by locating the transaction on the JDE Item Ledger inquiry screen and drilling into the details to review the batch number.
+| **Step** | **Action**                                                   | **Table Updated**   |
+| -------- | ------------------------------------------------------------ | ------------------- |
+| 1        | Material issue of work order components (throughout the day) | F4111 (Item Ledger) |
+| 2        | Completion of parent item (throughout the day)               | F4111 (Item Ledger) |
+| 3        | Manufacturing Accounting batch (R31802A) runs nightly        | F0911 (GL Detail)   |
 
-If the batch number is present but an issue remains, locate the oldest transaction date and use the cardex deletion tool in the Administrator section. Administrator permissions in RapidReconciler are required to use this tool.
+**Validating End of Day Items in the JDE Item Ledger**
 
-**Section 10: Variance Source 3 - Transactional Variances**
+If the validity of an item on the End of Day report is in question (e.g., status code 99 or 999), validate by locating the transaction on the JDE Item Ledger inquiry screen and reviewing the batch number in the transaction detail.
 
-**10.1 What Are Transactional Variances?**
+If a batch number is present, there may be a data issue in RapidReconciler. Identify the oldest transaction date and use the **Cardex Deletion Tool** in the Administrator section to resolve. Administrator permissions in RapidReconciler are required to access this tool.
 
-Transactional variances represent differences between the item ledger table F4111 and the general ledger detail table F0911 for transactions that have been fully processed. RapidReconciler only displays transactions with discrepancies - it functions as an exception list.
+**5\. Variance Source 3 - Transactional Variances**
 
-**10.2 Transaction Matching Criteria**
+**What Are Transactional Variances?**
 
-For an item ledger F4111 transaction to be matched to its general ledger F0911 counterpart, the following seven fields must be identical in both tables:
+Transactional variances represent differences between the item ledger table (F4111) and the GL detail table (F0911) for transactions that have been fully completed. RapidReconciler displays only transactions with discrepancies - it functions as an exception list.
 
-- Company Number
-- Batch Number
-- Document Type
+**How Transactions Are Matched**
+
+For an item ledger record to be matched to its GL counterpart, the following seven fields must match in both tables:
+
 - Document Number
-- Order Type
+- Document Type
+- Document Company
+- Line Number
+- Fiscal Period
 - Account Number
-- Period Ends
+- Amount
 
-**Note:** The item ledger company number is fetched from the F0006 business unit master table based on the branch plant used. Work order document numbers in the general ledger differ by design from those in the item ledger and are cross-referenced from table F3106 and/or the GL subledger. Account number and period information are appended to item ledger data during the import process from JD Edwards.
+**Notes:**
 
-**10.3 Transactional Scenarios Identified by RapidReconciler**
+- The item ledger company number is derived from the F0006 business unit master based on the branch plant used.
+- Work order document numbers differ by design between the item ledger and general ledger; these are cross-referenced from table F3106 and/or the GL subledger.
+- Account number and period information is appended to item ledger data during the JDE import process.
 
-| **Scenario**            | **Description**                                                                                                                                                                                                               |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Company Number Mismatch | The branch company from the item ledger does not match the company number in the GL. The transaction is not considered the same, even if the document number and type match.                                                  |
-| Account Number Mismatch | The assigned account number in the item ledger does not match the account in the general ledger. RapidReconciler notes this as an "Account Mismatch" and displays two offsetting detail lines with different account numbers. |
-| Fiscal Period Mismatch  | The assigned fiscal period in the item ledger does not match the period in the general ledger. RapidReconciler notes this as a "Period Mismatch" and displays two offsetting detail lines with different periods.             |
-| Amount Discrepancy      | Matching criteria are met, but the amount in the item ledger differs from the amount in the general ledger. A single line is displayed quantifying the variance.                                                              |
+**Transactional Variance Scenarios**
 
-If matching criteria are met and there is no amount discrepancy, the transaction is considered reconciled and will not be displayed.
+| **Scenario**           | **Description**                                                   | **Display in RapidReconciler**                             |
+| ---------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------- |
+| **Company Mismatch**   | Branch company in item ledger does not match the GL company       | Treated as separate transactions; not matched              |
+| **Account Mismatch**   | Assigned account in item ledger differs from the GL account       | Two offsetting detail lines with different account numbers |
+| **Period Mismatch**    | Assigned fiscal period in item ledger differs from the GL period  | Two offsetting detail lines with different fiscal periods  |
+| **Amount Discrepancy** | Matching criteria met, but amounts differ between F4111 and F0911 | Single line quantifying the variance                       |
 
-**Section 11: Variance Source 4 - Cardex Variance**
+If matching criteria are fully met with no amount discrepancy, the transaction is considered reconciled and will not appear on the report.
 
-**11.1 What Is Cardex Variance?**
+**6\. Variance Source 4 - Cardex Variance**
 
-Cardex variance is the difference between an item's transaction amount summary and its on-hand value. This represents the F41021 to F4111 integrity check. For standard cost items, the item ledger transactional summary for each branch plant, item number, location, and lot must equal the on-hand balance in both units and amounts.
+**What Is Cardex Variance?**
 
-**11.2 Investigating Cardex Variance in JD Edwards**
+Cardex variance is the difference between an item's transaction amount summary (F4111) and its on-hand value (F41021). This represents a F41021-to-F4111 integrity check.
 
-To investigate a cardex variance from the item ledger screen in JD Edwards:
+- For **standard cost items**, the item ledger transactional summary for each branch plant, item number, location, and lot must equal the on-hand balance in both units and amounts.
+- For **average cost items**, the summarization level depends on the cost level assigned to the item. Cost level 2 (branch plant level) items are analyzed by branch and item, inclusive of all locations and lots.
+- All item ledger quantities must be stated in the **primary unit of measure**.
+- Item ledger records with a posting code (ILIPCD) of **X** are memo transactions and must be excluded from the calculation.
 
-- Inquire on the item to be analyzed. Be as specific as possible - input the item number and branch plant at a minimum. For standard cost items, add location and lot.
-- Note the balances at the top of the screen. The quantity on hand comes from item balance table F41021. The value equals quantity on hand multiplied by unit cost from F4105.
-- Detail transactions come from table F4111. Navigate to the bottom of the list and export all transactions to Excel.
-- Ensure all quantities are stated in primary unit of measure.
-- Delete any memo transactions (typically work order scrap "IS" and lot releases "IZ").
-- The sum of primary quantities from the detail must match the quantity on hand in the header. If not, an IT update to the quantity on hand may be required.
-- The sum of the extended amount column must equal the amount shown in the value field in the header. If not, a dollars-only inventory adjustment is needed.
+**How RapidReconciler Calculates Cardex Variance**
 
-**11.3 New Re-Roll Feature**
+- The internal balance forward for each item is used as a starting point.
+- All item ledger transactions are summarized by item to determine a current transaction-based balance.
+- The transaction-based balance is compared, item by item, to the current quantity on hand and value.
+- Items with a variance are placed into one of two categories:
 
-As of November 2023, the item re-roll feature was updated to address invalid cardex variances or problems with roll-forward totals. On the As-Of page, a button is available in the far-right column for each item. Clicking this button presents three options:
+| **Category**          | **Description**                                                     | **Suggested Resolution**                         |
+| --------------------- | ------------------------------------------------------------------- | ------------------------------------------------ |
+| **Quantity Variance** | Summarized quantity does not equal quantity on hand                 | A SQL adjustment to F41021 may be required       |
+| **Amount Variance**   | Quantities match, but summarized amount does not equal stated value | A dollars-only adjustment in JDE may be required |
 
-- **ReRoll Item** - Use this option when there are issues with the quantity on hand due to changes in the primary unit of measure. This option retains the current balance forward, adjusts transactions as needed, and recalculates each period ending total through the current period. This has no impact on amounts - only quantity.
-- **Zero Beg Balance** - Use this option only if the first available period should have a beginning balance of zero. The beginning balance will be forced to zero and each period total will be recalculated. Since perpetual amount totals for all periods may change, confirm this is correct before executing.
-- **Remove CX Var** - Use this option to remove any erroneous cardex variance for the item in RapidReconciler. Validate that the summarized cardex quantity total matches the total quantity on hand in JDE before proceeding. If JDE is correct and RapidReconciler is showing a cardex variance, selecting this option will remove it.
+**Notes:**
 
-**Important:** There is no undo process. Review each option carefully before executing. Once complete, the As-Of totals will be adjusted; however, reconciliation summary totals will not be updated until the next refresh cycle.
+- Cardex variance is stated as a total amount in the **current period only**.
+- Cardex variance is updated each refresh cycle, typically nightly.
+- If the refresh cycle occurs while transactions are in process, false positives may appear.
 
-**Section 12: GL Class Codes**
+**Validating Cardex Variance in JD Edwards**
 
-**12.1 Hierarchy Overview**
+All cardex variance must be validated in JDE before making corrections. Follow these steps from the JDE Item Ledger inquiry screen:
 
-GL class codes are assigned to items in JD Edwards and define how inventory transactions are recorded in the general ledger. Transaction mapping is defined in the Distribution/Manufacturing Automatic Accounting Instructions (DMAAs), which are covered separately.
+- Inquire on the item with as much specificity as possible (item number, branch plant, and for standard cost items, location and lot).
+- Note the header balances. Quantity on hand comes from F41021; value equals quantity on hand × unit cost from F4105.
+- Export all detail transactions from F4111 to Excel.
+- Ensure all quantities are stated in the primary unit of measure.
+- Remove memo transactions (typically work order scrap **IS** and lot releases **IZ**).
+- Verify that the sum of primary quantities matches the quantity on hand in the header. If not, an IT data correction to F41021 may be required.
+- Verify that the sum of the extended amount column matches the value field in the header. If not, a dollars-only inventory adjustment is required.
+
+**Item Re-Roll Feature**
+
+As of November 2023, the item re-roll feature has been updated to address invalid cardex variances and roll forward total issues. On the **As-Of** page, each item row includes a re-roll button in the far-right column.
+
+Clicking the button presents three options. Review each option carefully before proceeding, as there is no undo capability. Once an option is selected and the re-roll is executed, the process typically completes in under 30 seconds. As-Of totals will update immediately; reconciliation summary totals will reflect the change at the next refresh cycle.
+
+**7\. GL Class Codes**
+
+**Hierarchy**
+
+GL class codes are assigned to items in JDE and determine how inventory transactions are recorded in the general ledger. The mapping between GL class codes and journal entries is defined in the DMAIIs.
 
 The GL class code hierarchy consists of four levels:
 
-- **Item Master Level** - The GL class code is assigned during the new item creation process.
-- **Item Branch Level** - The code is copied from the item master. Each branch may have a different value, although this is uncommon.
-- **Item Location Level** - The code is copied from the item branch. Each location may have a different value, although this is also uncommon.
-- **Sales Order / Purchase Order Level** - The code is copied from the location record.
+| **Level**                | **Source**                | **Notes**                                                          |
+| ------------------------ | ------------------------- | ------------------------------------------------------------------ |
+| **Item Master**          | Assigned at item creation | Foundation of the hierarchy                                        |
+| **Item Branch**          | Copied from Item Master   | Each branch may carry a different value, though this is uncommon   |
+| **Item Location**        | Copied from Item Branch   | Each location may carry a different value, though this is uncommon |
+| **Sales/Purchase Order** | Copied from Item Location | Assigned to each order line via the Additional Info form           |
 
-**12.2 Changing a GL Class Code**
+**Important:** Changes to a GL class code at any level do **not** cascade automatically. Each level must be updated manually.
 
-When a GL class code needs to be changed, each tier in the hierarchy must be updated manually - changes to the item master do not automatically propagate to lower tiers.
+**Changing a GL Class Code**
 
-An additional consideration is inventory on hand. The old code must be closed out before changing to the new code. The correct process is as follows:
+**Manual Updates Required at All Levels**
 
-- Adjust inventory on hand to zero under the old GL class code.
-- Change the code on the branch, locations, and open orders.
-- Adjust inventory back in under the new GL class code.
+When a GL class code must be changed, each of the four levels must be updated individually. This process can be time-consuming depending on the number of branch plants and locations involved.
 
-**Why is this necessary?** If the old GL class code is not zeroed out first, the value of any existing inventory will remain in the original general ledger account. There will be no transaction to move the value to the new account. By adjusting the inventory out first and back in after the code change, the value correctly moves from one account to the other.
+**Handling On-Hand Inventory**
 
-**12.3 Transaction Usage**
+Any on-hand inventory must be addressed before the code is changed. Changing the code without first adjusting inventory out will leave the item's value in the original GL account, with no transaction to trigger reallocation.
 
-GL class codes are used when processing inventory transactions. Each transaction type is programmed to use specific entries from the DMAAI tables to create the applicable journal entries.
+**The correct procedure is:**
 
-Different transaction types source GL class codes from different hierarchy levels:
+- **Adjust out** all on-hand quantity under the current GL class code.
+- **Update** the GL class code at all applicable levels (Item Master, Item Branch, Item Location, and any open order lines).
+- **Adjust in** the quantity under the new GL class code.
 
-- **Work Orders** - Material issues and completions source the GL class code from the **item branch level**.
-- **Sales and Purchase Orders** - Shipments and receipts source the GL class code from the **order level**.
-- **Inventory Transactions** - Issues, adjustments, transfers, and cycle counts source the GL class code from the **location level**.
+This ensures the system generates the appropriate journal entries to move the item's value to the correct GL account.
 
-**Note:** It is uncommon for the GL class code value to vary for a given item across different levels. From a valuation perspective, the accounting rule for an item should not change with the transaction type.
+**Transaction Usage**
 
-**12.4 Integrity Report 5 - GL Class Code Consistency**
+Different transaction types retrieve the GL class code from different levels of the hierarchy:
 
+| **Transaction Type**                                                  | **GL Class Code Source** |
+| --------------------------------------------------------------------- | ------------------------ |
+| Work Orders (material issues & completions)                           | Item Branch level        |
+| Sales Orders & Purchase Orders (shipments & receipts)                 | Order line level         |
+| Inventory Transactions (issues, adjustments, transfers, cycle counts) | Item Location level      |
+
+Because different transaction types pull from different levels, it is critical that the GL class code is **consistent across all levels** for a given item. Inconsistencies can result in the same item posting to different GL accounts depending on the transaction type, leading to valuation and reporting errors.
+
+**Integrity Report 5**
+
+Inventory Integrity Report 5 identifies items where the GL class code at the Item Branch level does not match the GL class code on one or more corresponding Item Location records. These values are expected to be the same.
+
+Any item appearing on this report should be reviewed and corrected in JD Edwards as appropriate.
+
+_End of Training Manual_
 Inventory Integrity Report 5 identifies items where the GL class code on the item branch level does not match the GL class code on one or more corresponding item location records. It is generally desirable that these values be consistent.
 
 Any item appearing on this report should be reviewed for accuracy and adjusted in JD Edwards as applicable.
