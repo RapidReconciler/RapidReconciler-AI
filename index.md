@@ -9,7 +9,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 
 | Document | Description |
 |----------|-------------|
-| [Getting Started with the Application](getting-started.md) | Logging in, navigating the interface, and system requirements |
+| [Getting Started with the Application](getting-started-with-rapidreconciler.md) | Logging in, navigating the interface, and system requirements |
 | [Administrator Responsibilities](admin-responsibilities.md) | Company management, user setup, general settings, and offset accounts |
 | [Installing a Client in VALC](installing-valc.md) | Step-by-step VALC setup and RR Agent installation |
 | [Server Migration Guide](server-migration.md) | Moving RapidReconciler to a new dedicated or separate server |
