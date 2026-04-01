@@ -11,7 +11,6 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 |----------|-------------|
 | [Installing a Client in VALC](installing-valc) | Step-by-step VALC setup and RR Agent installation |
 | [Server Migration Guide](server-migration) | Moving RapidReconciler to a new dedicated or separate server |
-| [GSI Introduces Online Training Modules](online-training) | Trainual platform overview and available modules |
 
 ---
 
@@ -96,6 +95,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 | [Item Ledger: Top 5 Questions Answered](item-ledger-faq) | Balances, posting codes, dates, DMAAs, and integrity conditions |
 | [3 Reasons Stock Status May Not Match Trial Balance](stock-status-trial-balance) | Timing, backdating, report definition |
 | [Stock Status vs. Trial Balance — Part 2](stock-status-trial-balance-pt2) | DMAAI setup and GL class code change impacts |
+
 
 ---
 
