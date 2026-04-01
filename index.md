@@ -28,7 +28,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 
 | Document | Description |
 |----------|-------------|
-| [Inventory Key Concepts(inventory-key-concepts) | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes |
+| [Inventory Key Concepts](inventory-key-concepts) | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes |
 | [How to Add an Inventory Account in RR](add-account-rr) | DMAAI model table process and refresh requirements |
 | [Inventory: Using the Application](inventory-using-application) | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
 | [Inventory Reconciliation: Top 6 Issues — Part 2](top-6-issues-pt2) | GL class code changes and reconciliation impact |
