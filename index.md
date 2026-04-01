@@ -34,6 +34,8 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 | [Inventory Reconciliation: Top 6 Issues — Part 2](top-6-issues-pt2) | GL class code changes and reconciliation impact |
 | [Inventory Reconciliation: Top 6 Issues — Part 3](top-6-issues-pt3) | Product costing and R30543 cost component integrity |
 | [RapidReconciler: Transaction Detail Report Update](transaction-detail-report) | Enhanced drill-down for intercompany, transfer, and direct ship orders |
+| [3 Reasons Stock Status May Not Match Trial Balance](stock-status-trial-balance) | Timing, backdating, report definition |
+| [Stock Status vs. Trial Balance — Part 2](stock-status-trial-balance-pt2) | DMAAI setup and GL class code change impacts |
 
 ---
 
@@ -57,7 +59,6 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 |----------|-------------|
 | [PO Receipts Key Concepts](po-receipts-key-concepts) | RNV definition, process flow, Table F43121, match types, challenges |
 | [PO Receipts: Using the Application](po-receipts-using-application) | Orders page, reconciliation page, line analysis, how to reconcile |
-| [Direct Ship Orders](direct-ship-orders) | Setup, line type, AAIs, partial shipments, multi-currency, ECS |
 | [Reconciling RNV Accounts in RapidReconciler](reconciling-rnv) | Summary, drill-down, and suspension features in RR V7 |
 
 ---
@@ -93,8 +94,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 | [Cardex Analysis: 3 Common Analyst Errors](cardex-analyst-errors) | Memo transactions, alternate UOM, average cost item analysis levels |
 | [Performing a Dollars-Only Inventory Adjustment](dollars-only-adjustment) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
 | [Item Ledger: Top 5 Questions Answered](item-ledger-faq) | Balances, posting codes, dates, DMAAs, and integrity conditions |
-| [3 Reasons Stock Status May Not Match Trial Balance](stock-status-trial-balance) | Timing, backdating, report definition |
-| [Stock Status vs. Trial Balance — Part 2](stock-status-trial-balance-pt2) | DMAAI setup and GL class code change impacts |
+| [Direct Ship Orders](direct-ship-orders) | Setup, line type, AAIs, partial shipments, multi-currency, ECS |
 
 
 ---
