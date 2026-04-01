@@ -96,6 +96,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 | [Item Ledger: Top 5 Questions Answered](item-ledger-faq) | Balances, posting codes, dates, DMAAs, and integrity conditions |
 | [3 Reasons Stock Status May Not Match Trial Balance](stock-status-trial-balance) | Timing, backdating, report definition |
 | [Stock Status vs. Trial Balance — Part 2](stock-status-trial-balance-pt2) | DMAAI setup and GL class code change impacts |
+
 ---
 
 *For support, contact GSI at [rrsupport@getgsi.com](mailto:rrsupport@getgsi.com)*
