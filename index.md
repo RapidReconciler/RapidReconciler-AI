@@ -18,7 +18,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 
 | Document | Description |
 |----------|-------------|
-| [Adding a New Company](adding_company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
+| [Adding a New Company](adding-company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
 | [Getting Started with the Application](getting-started-with-rapidreconciler) | Logging in, navigating the interface, and system requirements |
 | [Administrator Responsibilities](admin-responsibilities) | Company management, user setup, general settings, and offset accounts |
 
