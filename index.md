@@ -31,8 +31,8 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 | [Inventory Key Concepts](inventory-key-concepts) | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes |
 | [How to Add an Inventory Account in RR](add-account-rr) | DMAAI model table process and refresh requirements |
 | [Inventory: Using the Application](inventory-using-application) | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
-| [Inventory Reconciliation: Top 6 Issues — Part 2](top-6-issues-pt2) | GL class code changes and reconciliation impact |
-| [Inventory Reconciliation: Top 6 Issues — Part 3](top-6-issues-pt3) | Product costing and R30543 cost component integrity |
+| [Reconciliation: Top 6 Issues — Part 2](top-6-issues-pt2) | GL class code changes and reconciliation impact |
+| [Reconciliation: Top 6 Issues — Part 3](top-6-issues-pt3) | Product costing and R30543 cost component integrity |
 | [RapidReconciler: Transaction Detail Report Update](transaction-detail-report) | Enhanced drill-down for intercompany, transfer, and direct ship orders |
 | [Stock Status vs. Trial Balance — Part 1](stock-status-trial-balance) | Timing, backdating, report definition |
 | [Stock Status vs. Trial Balance — Part 2](stock-status-trial-balance-pt2) | DMAAI setup and GL class code change impacts |
