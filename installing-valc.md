@@ -1,4 +1,4 @@
-**Installing a Client in VALC**
+**Installing a Client in VALC (Internal Use Only) **
 
 **Professional Training Guide**
 
