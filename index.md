@@ -11,6 +11,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 |----------|-------------|
 | [Installing a Client in VALC (GSI Use Only)](installing-valc) | Step-by-step VALC setup and RR Agent installation |
 | [Server Migration Guide](server-migration) | Moving RapidReconciler to a new dedicated or separate server |
+| [Technical Requirements](tech-requirements) | Installation and configuration requirements |
 
 ---
 
@@ -21,6 +22,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 | [Adding a New Company](adding-company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
 | [Getting Started with the Application](getting-started-with-rapidreconciler) | Logging in, navigating the interface, and system requirements |
 | [Administrator Responsibilities](admin-responsibilities) | Company management, user setup, general settings, and offset accounts |
+| [Complex Password](complex-password) | Password policy requirements and reset process |
 
 ---
 
