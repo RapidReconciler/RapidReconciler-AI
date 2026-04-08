@@ -9,7 +9,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 
 | Document | Description |
 |----------|-------------|
-| [Installing a Client in VALC](installing-valc) | Step-by-step VALC setup and RR Agent installation |
+| [Installing a Client in VALC (GSI Use Only)](installing-valc) | Step-by-step VALC setup and RR Agent installation |
 | [Server Migration Guide](server-migration) | Moving RapidReconciler to a new dedicated or separate server |
 
 ---
