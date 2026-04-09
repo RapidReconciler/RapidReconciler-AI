@@ -65,7 +65,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 
 ---
 
-## JD Edwards — Insights
+## Reference Library
 
 | Document | Description |
 |----------|-------------|
