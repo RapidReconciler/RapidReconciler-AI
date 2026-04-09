@@ -77,6 +77,10 @@ The reconciliation threshold amount. Variances at or below this value may be tre
 
 Click **Save Changes** when all modifications are complete.
 
+Here is a link to a short video tutorial on company management in RapidReconciler:
+
+https://vimeo.com/167889137
+
 **Section 3: User Management**
 
 **3.1 Navigation**
@@ -144,6 +148,10 @@ Click **Done** when all rights have been configured.
 
 To delete a user, click the **trash can icon** to the right of their name on the Users page and confirm the prompt when displayed.
 
+Here is a link to a short video tutorial on user management in RapidReconciler:
+
+https://vimeo.com/rapidreconciler/user-management
+
 **Section 4: General Settings**
 
 **4.1 Navigation**
@@ -165,6 +173,10 @@ Common units of measure allow quantities to be restated in a single unit of meas
 - Type the 2-character UOM code into the input field.
 - Click the **Add UOM** button.
 - The added UOM will be available for use after the next data refresh cycle.
+
+Here is a link to a short video tutorial on common units of measure in RapidReconciler:
+
+https://vimeo.com/167889079
 
 **4.3 Roll Forward Settings**
 
@@ -197,11 +209,19 @@ When editing a setting, key the desired values into the applicable fields. For f
 | Returns          | 6        | DCTO      | CO         | C2         | CW         |            |            |            |
 | WriteDowns       | 7        | DCT       | WD         |            |            |            |            |            |
 
+Here is a link to a short video tutorial on roll forward settings in RapidReconciler:
+
+https://vimeo.com/252701483
+
 **4.4 Delete RapidReconciler Cardex Records**
 
 This function allows administrators to delete cardex records from the RapidReconciler database. A training video is available within the application to guide administrators through this process.
 
 **Note:** This is an administrative function that should be used with caution. Refer to the in-application video for full guidance before proceeding.
+
+Here is a link to a short video tutorial on deleting cardex records in RapidReconciler:
+
+https://vimeo.com/250146759
 
 **Section 5: Offset Accounts (Inventory Offsets)**
 

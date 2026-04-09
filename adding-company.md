@@ -1,4 +1,4 @@
-Adding a company to RapidReconciler
+Adding a company license to RapidReconciler
 
 Customers can not add companies to the application as they company numbers are license controlled. If
 
