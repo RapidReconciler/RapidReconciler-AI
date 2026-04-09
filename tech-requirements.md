@@ -2,7 +2,7 @@
 
 ---
 
-[RR Diagram](Docs/RR%20Diagram.pdf)
+[RR Diagram](Images/RR%20Diagram.png)
 
 ## RR Database Server
 
