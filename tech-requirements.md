@@ -2,6 +2,8 @@
 
 ---
 
+[RR Diagram](Docs/RR%20Diagram.pdf)
+
 ## RR Database Server
 
 In most cases, existing servers running Microsoft SQL Server will meet the minimum requirements. If a new server needs to be built, use the guidelines below.
