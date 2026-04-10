@@ -20,6 +20,10 @@ An AAI must be established for any unique combination of the following three fie
 - **Document Type**
 - **GL Class Code**
 
+A reference only matrix of AAIs by company, document type, and GL class code is available here:
+
+[AAI Matrix](Docs/AAI%20Matrix.xls)
+
 **2.3 Default Search Sequence**
 
 If the system cannot find an AAI for a specific combination, it falls back through the following search sequence. The document type must match in all cases.

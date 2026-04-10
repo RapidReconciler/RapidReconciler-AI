@@ -240,6 +240,10 @@ Analyzing a failed transaction requires a thorough understanding of JD Edwards a
 
 **Reminder:** The corrective action for any item on the Transactions page is an offsetting journal entry in JD Edwards and a note entry in RapidReconciler, as the transaction has already been completed and documentation is required for audit purposes.
 
+Here is a sample transaction detail report for reference:
+
+[Transaction Details Sample](Docs/TransactionDetails_Sample.xlsx)
+
 **Section 6: Inventory As-Of Page**
 
 **6.1 Overview**

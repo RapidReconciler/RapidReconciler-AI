@@ -96,6 +96,10 @@ When goods are transferred with a markup, the DMAAI configuration differs as fol
 
 Variances generated at the time of receipt are handled depending on the cost method of the item (standard cost vs. weighted average).
 
+Here are some examples of how the T accounts would look for both scenarios:
+
+[Trans Cost Difference T Accounts](Docs/Trans%20Cost%20Difference%20T%20Accounts.xlsx)
+
 **Section 3: In Transit Glossary of Terms**
 
 **3.1 Orders Page**
