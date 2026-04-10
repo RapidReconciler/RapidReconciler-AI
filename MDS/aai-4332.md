@@ -1,0 +1,101 @@
+**Reference Guide: The 4332 AAI - Purpose and Impact**
+
+**Section 1: Overview**
+
+The 4332 AAI was introduced with JD Edwards World release A7.3. Its purpose is to produce the correct GL distribution (journal entries) when a cost variance occurs at the time of voucher match. Specifically, it was added to correct the accounting split between inventory and cost of goods sold (COGS) when a variance arises between the receipt cost and the actual invoiced amount.
+
+**Section 2: Background - Cost Variance at Voucher Match**
+
+When inventory is received against a purchase order, it is recorded at the best available cost estimate at that time. The true cost of the inventory is not confirmed until the supplier invoice is received and matched to the receipt. If the invoiced amount differs from the receipt amount, a cost variance exists that must be correctly allocated between inventory (for goods still on hand) and cost of goods sold (for goods already sold).
+
+The relevant AAI tables involved in this process are:
+
+| **AAI**  | **Account**                  | **Purpose**                                                                                                                                                                     |
+| -------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **4310** | Perpetual Inventory          | Records the value of units received into on-hand inventory.                                                                                                                     |
+| **4320** | Received Not Vouchered (RNV) | Accrues the liability to the vendor at the time of receipt.                                                                                                                     |
+| **4330** | Inventory Variance           | Records cost variances at voucher match. Can be set to the regular inventory account unless standard costing is used, in which case a separate variance account is appropriate. |
+| **4332** | Cost of Sales                | Directs the portion of the voucher match variance attributable to goods already sold to a cost of sales account.                                                                |
+
+**Section 3: The Problem - Prior to the 4332 AAI**
+
+**3.1 Receipt Entry**
+
+XYZ Company purchases 10 widgets at \$10 each. The purchase order is received at this cost, generating the following journal entry:
+
+| **Account**                  | **Debit** | **Credit** | **AAI** |
+| ---------------------------- | --------- | ---------- | ------- |
+| Inventory                    | \$100     |            | 4310    |
+| Received Not Vouchered (RNV) |           | \$100      | 4320    |
+
+**3.2 Sale Prior to Invoice Receipt**
+
+Before the supplier invoice arrives, customer ABC purchases 5 widgets. The Sales Update program (P42800) generates the following entry for the cost side of the sale:
+
+| **Account** | **Debit** | **Credit** | **AAI** |
+| ----------- | --------- | ---------- | ------- |
+| COGS        | \$50      |            | 4220    |
+| Inventory   |           | \$50       | 4210    |
+
+At this point, 5 widgets remain in inventory at a recorded value of \$50.
+
+**3.3 Voucher Match - The Variance Problem**
+
+The supplier invoice arrives for \$120 - \$20 more than the original receipt amount of \$100. The voucher is matched to the receipt record in table F43121. Without the 4332 AAI, the full variance is booked to the inventory variance account:
+
+| **Account**        | **Debit** | **Credit** | **AAI** |
+| ------------------ | --------- | ---------- | ------- |
+| RNV                | \$100     |            | 4320    |
+| Inventory Variance | \$20      |            | 4330    |
+| Trade A/P          |           | \$120      | PCxx    |
+
+**3.4 Why This Is Incorrect**
+
+If the true cost is \$12 per widget (\$120 ÷ 10), then:
+
+- The 5 widgets remaining in inventory should be valued at **\$60** (5 × \$12).
+- The 5 widgets already sold should have generated COGS of **\$60** (5 × \$12).
+
+However, under the above journal entries:
+
+- Inventory account: \$50 + Inventory Variance: \$20 = **\$70 total** - overstated by \$10.
+- COGS: **\$50** - understated by \$10.
+
+The full \$20 variance was booked to inventory, when only half of it (\$10) relates to goods still on hand. The other \$10 relates to goods already sold and should have been recorded as a cost of sales expense.
+
+**Section 4: The Solution - After the Introduction of the 4332 AAI**
+
+**4.1 How the 4332 AAI Works**
+
+When the 4332 AAI is configured, the system performs the following calculation at the time of voucher match:
+
+- Checks the current on-hand quantity for the item.
+- Compares the on-hand quantity to the total quantity involved in the voucher match.
+- If the on-hand quantity is **less than** the quantity being matched, the 4332 AAI is invoked.
+- Calculates the variance **per unit** - in this example, \$20 variance ÷ 10 units = **\$2 per unit**.
+- Multiplies the per-unit variance by the on-hand quantity - \$2 × 5 units = **\$10** - and books this amount to the Inventory Variance account (AAI 4330).
+- Books the remaining variance - \$20 − \$10 = **\$10** - to the cost of sales account specified in AAI 4332, representing the portion of the variance attributable to goods already sold or disposed of.
+
+**4.2 Corrected Journal Entry at Voucher Match**
+
+| **Account**          | **Debit** | **Credit** | **AAI** |
+| -------------------- | --------- | ---------- | ------- |
+| RNV                  | \$100     |            | 4320    |
+| Inventory Variance   | \$10      |            | 4330    |
+| COGS (Cost of Sales) | \$10      |            | 4332    |
+| Trade A/P            |           | \$120      | PCxx    |
+
+**4.3 Verified Result**
+
+With the 4332 AAI in place:
+
+- Inventory: \$50 (original) + \$10 (variance) = **\$60** - correct (5 units × \$12).
+- COGS: \$50 (original) + \$10 (variance) = **\$60** - correct (5 units × \$12).
+
+Both inventory and COGS now reflect the true acquisition cost of the widgets.
+
+**Section 5: Configuration Note**
+
+The cost of sales account specified in AAI 4332 may or may not be the same account as the COGS account in AAI 4220, depending on the organization's financial reporting requirements and information needs. The separation of the standard COGS account from the cost of sales variance account allows management to analyze the impact of purchase price variances on cost of goods sold independently.
+
+**Note on AAI 4330:** For organizations not using standard costing, AAI 4330 is typically configured to point to the regular inventory account rather than a separate variance account. The use of a separate inventory variance account in the examples above is intended to distinguish clearly between the inventory account in AAI 4310 and the variance settlement in AAI 4330.
