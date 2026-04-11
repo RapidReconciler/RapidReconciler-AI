@@ -28,7 +28,7 @@ To assign or reset your password:
 - Enter your email address on the Password Reset page.
 - Click **Reset** to receive instructions for setting your password.
 
-[Log In Screen](https://github.com/rapidreconciler/RapidReconciler-AI/blob/main/Images/rr_log_in_screen.png)
+[Log In Screen](Images/rr_log_in_screen.png)
 
 **1.3 Password Requirements**
 
@@ -36,7 +36,7 @@ To assign or reset your password:
 - GSI has the ability to enable complex passwords for RapidReconciler.
 - Contact GSI at **<rrsupport@getgsi.com>** to enable this feature for your company.
 
-[Complex Passwords](C:\Source\Repos\RapidReconciler-AI\MDS\complex-password.md)
+| [Complex Password](MDS/complex-password) | Password policy requirements and reset process |
 
 ---
 
