@@ -2,22 +2,15 @@
 
 **Training Manual: Getting Started with the Application**
 
-**Section 1: Welcome to RapidReconciler University**
-
-**1.1 Our Mission**
-
-RapidReconciler University exists to help you get the most out of the RapidReconciler product through an educational and engaging online training experience. This training will walk you through the end-user application, providing practical insights as well as tips and tricks learned through real-world use. Along the way, you may also find yourself learning useful information about JD Edwards.
-
-Welcome aboard - take a moment to settle in and enjoy the learning experience.
-
 **Section 2: Logging In to the Application**
 
 **2.1 Accessing RapidReconciler**
 
 RapidReconciler is accessible via Google Chrome, Microsoft Edge, or Safari.
 
-- **Internal GSI Employees:** Navigate to the RapidReconciler Demo Data link.
-- **RapidReconciler Customers:** Navigate to the RapidReconciler Customer Data link.
+Navigate to the RapidReconciler Customer Data link:
+
+[Rapid Reconciler](https://rapidreconciler.getgsi.com/)
 
 **Important:** The credentials you have been provided will only work on one of the two links. Choose the appropriate link based on your user type.
 
