@@ -1,7 +1,7 @@
 # RapidReconciler
 ## Document Library
 
-Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use the links below to navigate to individual training manuals by topic area.
+Welcome to the GSI RapidReconciler documentation library. Use the links below to navigate to individual documents by topic area.
 
 ---
 

@@ -58,26 +58,20 @@ The banner is the blue bar that runs across the top of the web page. The followi
 
 The main navigation bar runs along the left side of the browser window. The items visible to each user will depend on the permissions granted by the RapidReconciler Administrator.
 
-<table>
-  <tr>
-    <td><img src="../Images/rr_main_navigation.png" width="200px"/></td>
-    <td>
+![rr_main_navigation](../Images/rr_main_navigation.png)
 
 | **Item** | **Description** |
 |---|---|
 | **System Data** | Displays the server name and your full name. |
 | **Database Drop-Down** | Allows selection of databases you have permission to view (e.g., production, PY, QA). |
 | **Import JDE Data** | Launches the job to import JDE data to RapidReconciler. Typically assigned to Administrators only. |
-| **Restart Service** | Restarts RapidReconciler data services. Typically assigned to Administrators only. Used if having download issues. |
+| **Restart Service** | Restarts RapidReconciler data services. Typically assigned to Administrators only. Used if having download issues.|
 | **Inventory** | Perpetual Inventory to General Ledger Reconciliation Module. |
 | **In Transit** | Goods In Transit (ST/OT Orders) to General Ledger Reconciliation Module. |
 | **PO Receipts** | Received Not Vouchered to General Ledger Reconciliation Module. |
 | **Admin** | Administrative functions, such as assigning new users or updating company information. |
 | **University** | Links to videos and other collateral to assist in reconciliation processes. All users have access. |
 
-   </td>
-  </tr>
-</table>
 Clicking on Inventory, In Transit, or PO Receipts expands the navigation bar to show additional sub-pages available within each module.
 
 **2.3 Module Status Bar**
