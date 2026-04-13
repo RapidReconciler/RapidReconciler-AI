@@ -45,12 +45,12 @@ The banner is the blue bar that runs across the top of the web page. The followi
 
 | **Control** | **Description** |
 |---|---|
-| **Collapse Navigation Bar** | Hides or shows the left-side navigation panel. |
-| **Show/Hide Personal Data** | Toggles the display of personal user information. |
-| **Log Out** | Ends the current session and logs the user out of the application. |
-| **Full Screen** | Expands the application to full screen mode. |
-| **System Alerts** | Displays any active system alerts or notifications. |
-| **Show/Hide Help Panel** | Toggles the context-sensitive help panel on the right side of the screen. |
+| <img src="../Images/rr_collapse_navigation_bar.png" width="24px"/> **Collapse** | Hides or shows the left-side navigation panel. |
+| **Personal Data** | Toggles the display of personal user information. |
+| **Log Out** | Ends the current session and logs the user out. |
+| **Full Screen** | Expands the application to full screen. |
+| **System Alerts** | Displays any active system notifications. |
+| **Help Panel** | Toggles the context-sensitive help panel. |
 
 **Recommendation:** Do not log out until your training has been completed.
 
