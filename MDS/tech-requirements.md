@@ -2,7 +2,7 @@
 
 ---
 
-[RR Diagram](Images/RR%20Diagram.png)
+![RR Diagram](../Images/rr_diagram.png)
 
 ## RR Database Server
 

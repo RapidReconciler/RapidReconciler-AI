@@ -34,6 +34,8 @@ To assign or reset your password:
 - GSI has the ability to enable complex passwords for RapidReconciler.
 - Contact GSI at **<rrsupport@getgsi.com>** to enable this feature for your company.
 
+![Log In Screen](../Images/rr_log_in_screen.png)
+
 ---
 
 **Section 2: Navigating the Application**
