@@ -43,6 +43,8 @@ To assign or reset your password:
 
 The banner is the blue bar that runs across the top of the web page. The following controls are available within the banner:
 
+![rr_web_page_banner](../Images/rr_web_page_banner.png)
+
 | **Control** | **Description** |
 |---|---|
 | <img src="../Images/rr_collapse_navigation_bar.png" width="24px"/> **Collapse** | Hides or shows the left-side navigation panel. |
