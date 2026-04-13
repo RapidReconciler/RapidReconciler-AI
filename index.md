@@ -1,11 +1,11 @@
 # RapidReconciler
-## Training Manual Library
+## Document Library
 
 Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use the links below to navigate to individual training manuals by topic area.
 
 ---
 
-## RapidReconciler — GSI Technical Guide
+## Technical Guide
 
 | Document | Description |
 |----------|-------------|
@@ -15,7 +15,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 
 ---
 
-## RapidReconciler — Getting Started
+## Getting Started
 
 | Document | Description |
 |----------|-------------|
@@ -26,7 +26,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 
 ---
 
-## RapidReconciler — Inventory
+## Inventory
 
 | Document | Description |
 |----------|-------------|
@@ -41,7 +41,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 
 ---
 
-## RapidReconciler — In Transit
+## In Transit
 
 | Document | Description |
 |----------|-------------|
@@ -55,7 +55,7 @@ Welcome to the GSI RapidReconciler and JD Edwards training documentation. Use th
 
 ---
 
-## RapidReconciler — PO Receipts
+## PO Receipts
 
 | Document | Description |
 |----------|-------------|
