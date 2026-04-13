@@ -1,6 +1,3 @@
-Here is the document with sections renumbered starting at 1:
-
----
 
 **Rapid Reconciler**
 
@@ -12,7 +9,7 @@ Here is the document with sections renumbered starting at 1:
 
 RapidReconciler is accessible via Google Chrome, Microsoft Edge, or Safari.
 
-Navigate to the RapidReconciler Customer Data link:
+Navigate to the RapidReconciler web page:
 
 [Rapid Reconciler](https://rapidreconciler.getgsi.com/)
 
@@ -35,6 +32,8 @@ To assign or reset your password:
 - Contact GSI at **<rrsupport@getgsi.com>** to enable this feature for your company.
 
 ![Log In Screen](../Images/rr_log_in_screen.png)
+
+[Complex Passwords](../MDS/complex-password.md)
 
 ---
 
