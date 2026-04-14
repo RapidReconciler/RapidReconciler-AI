@@ -78,8 +78,10 @@ Clicking on Inventory, In Transit, or PO Receipts expands the navigation bar to 
 
 The module status bar provides information on your current location within the application and the status of the applicable data. It contains four elements:
 
+![rr_module_status_bar](../Images/rr_module_status_bar.png)
+
 - **Page Identifier** - Displays the name of the page you are currently on.
-- **Inventory Validation** - A green indicator confirms that the roll-forward from the prior period is accurate. Red indicates a potential issue that must be resolved before making journal entries.
+- **Inventory Validation** - A green indicator confirms that the roll-forward from the prior period is accurate. Red indicates a potential issue (typically an unposted batch) that must be resolved before making journal entries.
 - **System Status** - A green indicator confirms that the JDE import into RapidReconciler completed successfully. Red indicates a potential issue.
 - **Period End Selector** - Allows selection of the period to be reconciled (available on applicable modules).
 
@@ -108,4 +110,4 @@ If you are able to log in but no data is displayed, consider the following:
 - **Reload the Browser** - Use Shift + F5 to perform a hard reload of the browser.
 - **Clear Browser Data** - This procedure varies by browser. Contact your IT department for specific instructions.
 
-If none of the above resolves the issue, contact RapidReconciler Support at **<rrsupport@getgsi.com>**.
+If none of the above resolves the issue, email RapidReconciler Support at **<rrsupport@getgsi.com>**.
