@@ -32,18 +32,23 @@ VALC (Version and Licensing Control) is a GSI-developed web application hosted o
 
 VALC contains five main pages accessible from the top navigation:
 
+![Main Navigation](../Images/rr_valc_main_navigation.png)`
+
+
 | **Page**                | **Description**                                                        |
 | ----------------------- | ---------------------------------------------------------------------- |
-| **Clients** _(default)_ | Where clients are added and maintained                                 |
+| **Clients** _(default)_ | Where RapidReconciler clients are added and maintained                 |
 | **SQL Scripts**         | Used to deploy RapidReconciler database updates - _RR developers only_ |
 | **Message Users**       | Displays messages to users at login; messages include expiration dates |
-| **Genius Pages (2)**    | The remaining two pages are dedicated to Genius customers              |
-
-The **Create Client** button and **Status drop-down** (to toggle between active and inactive clients) are located in the top-right corner of the Clients page.
+| **Genius Pages**    | Two pages are dedicated to Genius customers, including Key Generator.  |
 
 **Step 1 - Create the Client Record**
 
+- Click the Clients page in the main navigation bar.
 - Click **Create Client** in the top-right corner.
+
+![Create Client](../Images/rr_valc_create_client.png)`
+
 - Complete the form using the following field guidance:
 
 | **Field**                     | **Value**                                                                                                          |
@@ -68,6 +73,8 @@ After confirming, the new client will appear in the grid with the following init
 - **Agent Version:** Blank _(populates once the agent connects)_
 - **System Status / Messages:** Blank _(populates after database setup is complete and the job runs for the first time)_
 
+![Create Client](../Images/rr_valc_manage_clients.png)`
+
 **Step 2 - Create the Initial User Account**
 
 An initial user account must be created before the agent can be installed.
@@ -75,6 +82,8 @@ An initial user account must be created before the agent can be installed.
 - Click the **Manage Clients** icon for the newly created client.
 - Select the **User Accounts** tab.
 - Click **New User** and complete the form as follows:
+
+![Create Client](../Images/rr_valc_new_user.png)`
 
 | **Field**        | **Value**                                                             |
 | ---------------- | --------------------------------------------------------------------- |
