@@ -53,7 +53,7 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | [ST/OT Transfer Order Accounting — Part 4](MDS/transfer-order-accounting-pt4) | Standard cost variance in receiving branch, DMAAI 4335 configuration |
 | [ST/OT: Inventory Tracking Without Receipts Routing](MDS/st-ot-tracking) | RapidReconciler As-Of alternative to receipts routing |
 | [ST/OT: Exclusions in RapidReconciler](MDS/st-ot-exclusions) | Unbalanced transfers, exclusion process, journal entries |
-| [ST/OT: Exclusion Variance Added to Orders List](MDS/st-ot-exclusion-variance) | ExclVarQty and ExclVarAmt columns, unexclude and re-exclude process |
+| [ST/OT: Exclusion Variance Added to Orders Page](MDS/st-ot-exclusion-variance) | ExclVarQty and ExclVarAmt columns, unexclude and re-exclude process |
 
 ---
 

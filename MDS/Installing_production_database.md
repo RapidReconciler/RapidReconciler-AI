@@ -1,4 +1,5 @@
 ﻿# Installing the RapidReconciler-Prod Database
+
 ## Technical Overview and First Steps
 
 ---
@@ -19,9 +20,9 @@ RapidReconciler is a Microsoft SQL Server based product. Anyone designated to in
 RapidReconciler consists of several hardware components. Setup is flexible and can vary based on the needs of the individual customer. The main components are:
 
 - **Database server** running Microsoft SQL Server. Data is extracted using Integration Services (Read Only).
-- **Application server** for the installation of the RapidReconciler agent and data services. See *Installing the RR Agent*.
-- **User PC** for data access via web browser. The user must be behind the company firewall to view data.
-- **Version control server** maintains licensing and control information for RapidReconciler configurations.
+- **Application server** for the installation of the RapidReconciler agent and data services.
+- **User PC** The user must be connected to the company network to view data.
+- **Version control server** maintains licensing and control information for RapidReconciler configurations. (VALC)
 
 ### Data Synchronized with the RR Agent
 
@@ -35,6 +36,8 @@ All data stored on GSI servers employs 256-bit encryption and is limited to:
 - Usernames and passwords *(GSI cannot retrieve passwords, only reset them)*
 - User access security settings (companies and tabs)
 - 5-digit company number and name from JD Edwards *(used for licensing purposes only)*
+
+Internet traffic is outbound only.
 
 ### Notes
 
@@ -52,20 +55,19 @@ When a new customer purchases RapidReconciler, the licensing is based on JD Edwa
 - The number of companies purchased
 - The exact JD Edwards company numbers (e.g. 00001, 00002, etc.)
 - The name of the customer (e.g. Acme Manufacturing)
-- The I/T contact email/phone number for the client — send the `RRV7 Technical Requirements.pdf` to them and have them return the requested information from page 3
+- The I/T contact email/phone number for the client — send the [Tech Requirements](../MDS/tech-requirements.md) to them and have them return the requested information from page 3
 
 Arrange a **2-hour web meeting** with the I/T contact in order to:
 
-1. Ensure the server(s) meet the minimum requirements
+1. Ensure the server(s) meet the minimum requirements. (Drivers, Visual Studio, SSMS, etc.)
 2. Install the RapidReconciler database and create the `rruser` ID and `RapidReconciler_Prod` SQL Agent job
-3. Configure and deploy the SSIS package
-4. Perform the initial data load
+3. Create the Integration Services Catalog
+4. Configure and deploy the SSIS package
+5. Perform the initial data load
 
 ---
 
-## Application Server Requirements
-
-> If the RR Agent is to be installed on the database server, this step can be skipped.
+## Separate Application Server Requirements (If Needed)
 
 | Requirement | Details |
 |---|---|
@@ -89,13 +91,9 @@ Arrange a **2-hour web meeting** with the I/T contact in order to:
 
 ---
 
-## Integration Services Requirements
+### SSIS Server (If different from the database server)
 
-> If integration services is installed and run on the database server, this step may be skipped.
-
-### SSIS Server
-
-- Windows Server 2008 or later
+- Windows Server 2016 or later
 - 16 GB RAM minimum
 - SQL Server Management Studio
 - SQL Server Data Tools
@@ -104,7 +102,7 @@ Arrange a **2-hour web meeting** with the I/T contact in order to:
 
 | JDE Data Source | Requirement |
 |---|---|
-| AS400 / I-Series | I-Series Access (Client Access) — ensure OLE DB component is installed; check OLE DB drivers (not selected by default) |
+| AS400 / I-Series | I-Series Access (Client Access) — ensure OLE DB component is installed for both 32 and 64 bit. |
 | Oracle | Oracle 32-bit client (64-bit optional) — select 'Administrator' option, make applicable `tnsnames.ora` entries; if installing both versions, place in the same Oracle home |
 | SQL Server | No additional configuration required |
 
@@ -116,12 +114,46 @@ Arrange a **2-hour web meeting** with the I/T contact in order to:
 
 | Requirement | Details |
 |---|---|
-| Operating System | Windows Server 2008 or later |
+| Operating System | Windows Server 2016 or later |
 | Processor | Quad core |
-| SQL Server | Standard Edition minimum, Version 2012 or later |
+| SQL Server | Standard Edition minimum, Version 2017 or later |
 | RAM | 16 GB minimum |
 | Authentication | Mixed mode |
-| Other | Create Integration Services Catalog, SQL Server Management Studio |
+| Other | Integration Services installed |
+
+## Creating the Integration Services Catalog
+
+The Integration Services Catalog (SSISDB) must exist on the target SQL Server before the RapidReconciler SSIS package can be deployed. If the catalog has already been created, skip to **Step 2** to create the RapidReconciler folder.
+
+---
+
+### Step 1 — Create the SSISDB Catalog
+
+1. Open **SQL Server Management Studio** and connect to the target SQL Server instance
+2. In **Object Explorer**, expand the server node
+3. Right-click **Integration Services Catalogs** and select **Create Catalog**
+4. In the **Create Catalog** dialog:
+   - Check **Enable CLR Integration** if not already enabled
+   - Check **Enable automatic execution of Integration Services stored procedure at SQL Server startup**
+   - Enter and confirm a **Password** to protect the database master key
+5. Click **OK** to create the catalog
+6. Confirm **SSISDB** now appears under **Integration Services Catalogs** in Object Explorer
+
+> **Note:** Creation of the SSISDB catalog requires sysadmin privileges on the SQL Server instance. The password entered here will be required if the catalog ever needs to be restored from backup — store it in a secure location.
+
+---
+
+### Step 2 — Create the RapidReconciler Folder
+
+1. In **Object Explorer**, expand **Integration Services Catalogs → SSISDB**
+2. Right-click **SSISDB** and select **Create Folder**
+3. In the **Create Folder** dialog:
+   - Set **Folder name** to `RapidReconciler`
+   - Optionally enter a description such as `RapidReconciler SSIS packages`
+4. Click **OK** to create the folder
+5. Confirm the `RapidReconciler` folder now appears under **SSISDB** in Object Explorer
+
+> **Note:** This folder name must match the deployment path used when deploying the SSIS project from Visual Studio. The path `/SSISDB/RapidReconciler/RapidReconciler` references this folder as the first `RapidReconciler` segment.
 
 ### Disk Space
 
@@ -130,120 +162,227 @@ Arrange a **2-hour web meeting** with the I/T contact in order to:
 
 **Example:** 2,000,000 cardex records/month requires **200 GB** disk space allocated.
 
-### If Installing Integration Services on the Same Database Server
-
-- SQL Server Data Tools *(free download from Microsoft)*
-- OLE DB provider — see [Integration Services Requirements](#integration-services-requirements)
-
-### If Installing the RR Agent on the Same Database Server
-
-- Internet Explorer 10+ or latest Google Chrome
-- Static external IP address
-- Access requirements and connectivity tests — see [Application Server Requirements](#application-server-requirements)
-
 ---
 
 ## Installing the RapidReconciler Database
 
 ### Step 1 — Send the Zip File to the Client
 
-[RRV7 - Build 178](https://github.com/RapidReconciler/rapidreconciler-sql/blob/main/Installation%20Files/RRV7%20-%20Build%20178.zip?raw=true)
+[RRV7 - Build 178](https://github.com/RapidReconciler/RapidReconciler-SQL/blob/main/Installation%20Files/RRV7%20-%20Build%20178.zip?raw=true)
 
-Using `github.com/.../raw/main/` instead of `raw.githubusercontent.com` triggers a download prompt rather than displaying the file.
-Have the I/T contact download and place the zip file on the database server and unzip the contents. The files will be needed for database and SSIS installation.
+Have the I/T contact download and place the zip file on the database server and unzip the contents. The files will be needed for database and SSIS installation. The zip contains the following scripts:
+
+| File | Purpose |
+|---|---|
+| `1 - RapidReconciler Database Creation Script.sql` | Creates the database, mdf/ldf files, and sets initial size |
+| `2 - RapidReconciler Database Object Script 178.sql` | Creates all database objects |
+| `3 - RapidReconciler User Creation Script.sql` | Creates the `rruser` SQL login |
+| `4 - RapidReconciler SQL Agent Job Creation Script.sql` | Creates the SQL Agent job |
+| `RapidReconciler-Prod.dtsx` | The SSIS package to be deployed to the SSIS Catalog |
 
 ### Step 2 — Create the Database
 
 1. Log on to the designated database server with the I/T contact
 2. Open SQL Server Management Studio
 3. Log in to SSMS with a login that has sys admin privileges
-4. Run the database creation script
+4. Run **`1 - RapidReconciler Database Creation Script.sql`**
 
 The script will:
+
 - Create `mdf` and `ldf` files in the default locations specified by the server instance
 - Set the initial DB size to **5 GB**
 - Create the database with the default name **`RapidReconciler_Prod`**
 
+> [!CAUTION]
+> Change the database name from Master to `RapidReconciler_Prod` in the connection dropdown after opening each of the following scripts.
+
 ### Step 3 — Add Database Objects
 
-Run the object creation script in the same SQL Server instance and wait for the **"Successfully Completed"** message.
+Run **`2 - RapidReconciler Database Object Script 178.sql`** in the same SQL Server instance and wait for the **"Successfully Completed"** message.
 
 ### Step 4 — Create the SQL User ID
 
-Run the `rruser` login creation script. These are the credentials the application uses to read data from the SQL database.
+Run **`3 - RapidReconciler User Creation Script.sql`**. These are the credentials the application uses to read and write data to the SQL database.
 
 ### Step 5 — Create the SQL Agent Job
-
-Run the SQL Agent job creation script. The job steps will need to be modified and a schedule added — this will be covered when deploying the SSIS package.
+l
+Run **`4 - RapidReconciler SQL Agent Job Creation Script.sql`**. The job steps will need to be modified and a schedule added — this will be covered later.
 
 ---
 
-## Configuring the Integration Services Package
+## Configuring and Deploying the Integration Services Package
 
-### Obtain Configuration Information
+### Prerequisites
 
-Gather the following JD Edwards-specific information (provided in the Technical Requirements documentation):
+- Visual Studio Community with the **SQL Server Integration Services** extension installed
+- The RapidReconciler SSIS package file `RapidReconciler-Prod.dtsx` extracted from the installation zip
+- Access to the target SQL Server with Integration Services Catalog configured.
 
-#### Variables
+---
 
-| Variable | Data Dictionary Value | Typical Default |
-|---|---|---|
-| Decimal places for extended cost | ECST | 2 |
-| Decimal places for unit cost | UNCS | 4 |
-| Decimal places for quantity on hand | PQOH | — |
-| Decimal places for transaction quantities in cardex | TRQT | — |
+### Step 1 — Obtain Configuration Information
 
-#### JD Edwards Connection
+Before opening Visual Studio, gather the following JD Edwards-specific information from the Technical Requirements documentation:
+
+#### JD Edwards Connection Details
 
 - Name or IP address of the JDE data server or data warehouse
 - Credentials for the JDE database *(use `rapidrec`/`rapidrec` if possible)*
 - JDE server type: **I-Series**, **Oracle**, or **Microsoft SQL Server**
 - Table qualifier name (e.g. `proddta`)
 
+#### Decimal Place Variables
+
+| Variable | Data Dictionary Value | Typical Default |
+|---|---|---|
+| Decimal places for extended cost | ECST | 2 |
+| Decimal places for unit cost | UNCS | 4 |
+| Decimal places for quantity on hand | PQOH | Customer-specific |
+| Decimal places for transaction quantities in cardex | TRQT | Customer-specific |
+
 ---
-# Deploying the RapidReconciler Integration Services Project
 
-### Prerequisites
-
-- Visual Studio Community with the **SQL Server Integration Services** extension installed
-- The RapidReconciler SSIS project file (`.ispac`) extracted from the installation zip
-- Access to the target SQL Server with Integration Services Catalog enabled
-
-### Step 1 — Open the Project in Visual Studio
+### Step 2 — Create the Visual Studio Solution
 
 1. Launch **Visual Studio Community**
-2. Open the RapidReconciler SSIS solution file from the unzipped installation files
+2. Select **Create a new project**
+3. Search for and select **Integration Services Project**, then click **Next**
+4. Set the **Project name** to `RapidReconciler`
+5. Choose an appropriate location on the server to save the solution
+6. Click **Create**
+7. Once the solution loads, confirm the project appears in **Solution Explorer** as `RapidReconciler`
 
-### Step 2 — Configure the Connection Managers
+---
 
-1. In the **Solution Explorer**, expand the project and locate the connection managers
-2. Update the JDE source connection with the server name or IP address, credentials, and table qualifier obtained during configuration
-3. Update the RapidReconciler destination connection with the database server name and `rruser` credentials
+### Step 3 — Add the Existing SSIS Package
 
-### Step 3 — Deploy the Project
+1. In **Solution Explorer**, right-click the `RapidReconciler` project
+2. Select **Add → Existing Item**
+3. Browse to the location where the installation zip was extracted
+4. Select **`RapidReconciler-Prod.dtsx`** and click **Add**
+5. Confirm the package appears under the `RapidReconciler` project in **Solution Explorer**
 
-1. In **Solution Explorer**, right-click the project and select **Deploy**
+> **Note:** If the package does not appear in Solution Explorer after adding it, right-click the project and select **Reload Project**, then verify the package is listed under the project node.
+
+---
+
+### Step 4 — Configure the Connection Managers
+
+1. In **Solution Explorer**, expand the project and locate the **Connection Managers**
+2. Double-click the **JDE source connection** and update the following:
+   - Server name or IP address of the JDE data server
+   - Database credentials *(use `rapidrec`/`rapidrec` if possible)*
+   - Table qualifier (e.g. `proddta`)
+3. Double-click the **RapidReconciler destination connection** and update the following:
+   - Database server name hosting `RapidReconciler_Prod`
+   - `rruser` credentials created in the database installation steps
+4. Save all changes
+
+---
+
+### Step 5 — Configure the Variables
+
+1. In **Solution Explorer**, open the `RapidReconciler-Prod.dtsx` package
+2. Navigate to the **Variables** window. Navigate to **View → Other Windows → Variables** if not visible.
+3. Update the following variables using the values gathered in Step 1:
+
+| Variable | Data Dictionary Value |
+|---|---|
+| Table qualifier for JDE data (e.g. `proddta.`) | Note: Ensure there is a period at the end of the name |
+| Decimal places for extended cost | ECST |
+| Decimal places for unit cost | UNCS |
+| Decimal places for quantity on hand | PQOH |
+| Decimal places for transaction quantities in cardex | TRQT |
+
+---
+
+### Step 6 — Deploy the Project to the SSIS Catalog
+
+1. In **Solution Explorer**, right-click the `RapidReconciler` project and select **Deploy**
 2. The **Integration Services Deployment Wizard** will open — click **Next**
 3. On the **Select Destination** page:
    - Set **Server name** to the target SQL Server instance
-   - Set **Path** to `/SSISDB/RapidReconciler/RapidReconciler` (or as specified)
+   - Connect to the server using **Windows Authentication**
+   - Set **Path** to `/SSISDB/RapidReconciler/RapidReconciler`
 4. Click **Next**, review the summary, then click **Deploy**
 5. Wait for all deployment steps to show a **Passed** status
 6. Click **Close** when complete
 
-### Step 4 — Verify the Deployment
+> **Note:** Windows Authentication is required for deployment to the SSIS catalog.
+> Ensure the account you are logged in with has **sysadmin** or **ssis_admin**
+> privileges on the target SQL Server instance before proceeding. 
+
+---
+
+### Step 7 — Verify the Deployment
 
 1. Open **SQL Server Management Studio** and connect to the target server
 2. Expand **Integration Services Catalogs → SSISDB → RapidReconciler**
 3. Confirm the RapidReconciler project appears and is accessible
 
-### Step 5 — Configure the SQL Agent Job Steps
+---
+
+### Step 8 — Configure the SQL Agent Job Steps
 
 1. In SSMS, navigate to **SQL Server Agent → Jobs → RapidReconciler_Prod**
 2. Right-click the job and select **Properties**
 3. Click **Steps** in the left panel
 4. Edit each step to point to the deployed SSIS package path in the SSISDB catalog
-5. Add a schedule as needed — see *How to Enable and Update a SQL Server Agent Job Schedule* below
+
+---
+
+## Performing the Initial Data Load
+
+### Step 1 — Open SQL Server Agent
+
+1. Launch **SQL Server Management Studio (SSMS)** and connect to your SQL Server instance.
+2. In the **Object Explorer**, expand the server node.
+3. Expand **SQL Server Agent**.
+4. Expand **Jobs**.
+
+### Step 2 — Open the Job Properties
+
+1. Right-click the job you want to modify.
+2. Select **Properties** from the context menu.
+3. The **Job Properties** dialog box will open.
+
+### Step 3 — Navigate to the Schedules Tab
+
+1. In the left-hand panel of the Job Properties dialog, click **Schedules**.
+2. You will see a list of schedules currently associated with the job.
+
+### Step 4 — Enable the Job Schedule
+
+1. Select the schedule from the list and click **Edit**.
+2. In the **Job Schedule Properties** dialog, check the **Enabled** checkbox at the top.
+
+### Step 5 — Update the Run Time
+
+---
+
+> **Note:** The RapidReconciler job should be scheduled to run during off-peak hours,
+such as overnight, to minimize impact on system performance and provide the most accurate results. 
+If possible, coordinate with the client to determine the best time for the initial data load,
+which may take longer than subsequent runs.
+
+---
+
+1. Under the **Daily frequency** section, update the **Occurs once at** or **Occurs every** time fields to your desired run time.
+2. Adjust the **Start date** and **End date** in the **Duration** section if needed.
+3. Click **OK** to save the schedule changes.
+
+### Step 6 — Save the Job
+
+1. Click **OK** in the **Job Properties** dialog to apply all changes.
+2. The job schedule is now enabled and updated.
+
+---
+
+> **Note:** Changes take effect at the next scheduled run time and will not interrupt a currently running job.
+
+---
+
+Once all steps have been completed, the client can be set up in VALC. [Set Up VALC](../MDS/installing-valc.md)
 
 ---
 
@@ -253,80 +392,48 @@ Gather the following JD Edwards-specific information (provided in the Technical 
 
 The `rruser` SQL login must be configured with the following permissions:
 
-| Object | Permission |
-|---|---|
-| `RapidReconciler_Prod` database | `db_datareader` |
-| `RapidReconciler_Prod` database | `db_datawriter` |
-| SQL Server Agent | `SQLAgentOperatorRole` in `msdb` |
+| Object | Account | Permission |
+|---|---|---|
+| `RapidReconciler_Prod` database | `rruser` | `db_datareader` |
+| `RapidReconciler_Prod` database | `rruser` | `db_datawriter` |
+| `RapidReconciler_Prod` database | SQL Agent service account | `db_datareader`, `db_datawriter` |
+| `msdb` | `rruser` | `SQLAgentOperatorRole` |
+| `tempdb` | SQL Agent service account or proxy | `db_datareader`, `db_datawriter`, `EXECUTE` |
 
-To configure:
+To configure `rruser`:
 
 1. In SSMS, navigate to **Security → Logins** and open the `rruser` login properties
 2. Under **User Mapping**, select `RapidReconciler_Prod` and assign `db_datareader` and `db_datawriter`
 3. Also map to `msdb` and assign `SQLAgentOperatorRole`
 4. Click **OK** to save
 
+### SQL Server Agent Service Account
+
+The SQL Server Agent service account must be configured separately from `rruser`. Ensure the following:
+
+- The service account has `db_datareader` and `db_datawriter` on `RapidReconciler_Prod`
+- The service account has **Log on as a service** rights on the server running the agent job
+- If a **proxy account** is used for job steps instead of the service account, the proxy must be explicitly granted access to the **SSIS subsystem** under **SQL Server Agent → Proxies**
+
 ### SSIS Catalog Permissions
 
 The account running the SQL Agent job must have access to execute the SSIS packages in the catalog:
 
-| Role | Purpose |
-|---|---|
-| `ssis_admin` | Full administrative access to the SSIS catalog |
-| `ssis_logreader` | Read access to execution logs |
-| `dc_operator` | Permission to execute packages |
+| Role | Account | Purpose |
+|---|---|---|
+| `ssis_admin` | SQL Agent service account or proxy | Full administrative access to the SSIS catalog |
+| `ssis_logreader` | SQL Agent service account or proxy | Read access to execution logs for troubleshooting |
+| `dc_operator` | SQL Agent service account or proxy | Permission to execute packages |
+| `READ` on SSIS Environment | SQL Agent service account or proxy | Required if environments are used to store connection credentials |
 
 To configure:
 
 1. In SSMS, expand **Integration Services Catalogs → SSISDB**
 2. Right-click **SSISDB** and select **Properties**
 3. Click **Permissions** and add the SQL Agent service account or `rruser`
-4. Grant the **`dc_operator`** role at minimum to allow package execution
+4. Grant **`dc_operator`** at minimum to allow package execution
 5. Grant **`ssis_logreader`** to allow log visibility for troubleshooting
-6. Click **OK** to save
+6. If SSIS environments are used to store connection manager parameters, grant **`READ`** on the environment and ensure it is referenced in the package execution properties
+7. Click **OK** to save
 
-> **Note:** The SQL Server Agent service account must also have **Log on as a service** rights on the server running the agent job.
-
----
-
-## Performing the Initial Data Load
-
-# How to Enable and Update a SQL Server Agent Job Schedule
-
-## Step 1 — Open SQL Server Agent
-
-1. Launch **SQL Server Management Studio (SSMS)** and connect to your SQL Server instance.
-2. In the **Object Explorer**, expand the server node.
-3. Expand **SQL Server Agent**.
-4. Expand **Jobs**.
-
-## Step 2 — Open the Job Properties
-
-1. Right-click the job you want to modify.
-2. Select **Properties** from the context menu.
-3. The **Job Properties** dialog box will open.
-
-## Step 3 — Navigate to the Schedules Tab
-
-1. In the left-hand panel of the Job Properties dialog, click **Schedules**.
-2. You will see a list of schedules currently associated with the job.
-
-## Step 4 — Enable the Job Schedule
-
-1. Select the schedule from the list and click **Edit**.
-2. In the **Job Schedule Properties** dialog, check the **Enabled** checkbox at the top.
-
-## Step 5 — Update the Run Time
-
-1. Under the **Daily frequency** section, update the **Occurs once at** or **Occurs every** time fields to your desired run time.
-2. Adjust the **Start date** and **End date** in the **Duration** section if needed.
-3. Click **OK** to save the schedule changes.
-
-## Step 6 — Save the Job
-
-1. Click **OK** in the **Job Properties** dialog to apply all changes.
-2. The job schedule is now enabled and updated.
-
----
-
-> **Note:** Changes take effect at the next scheduled run time and will not interrupt a currently running job.
+> **Note:** If the SQL Agent job steps run under a proxy account, the proxy must also be granted access to any network shares or UNC paths used by the SSIS package, in addition to the SSIS catalog permissions above.
