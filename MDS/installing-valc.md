@@ -18,6 +18,12 @@ Before beginning, collect the following information from the sales contract or t
 - IT contact email address and phone number
 - JD Edwards version _(optional - for reference only)_
 
+In addition:
+1) Ensure you have the necessary permissions to access VALC and perform client setup tasks.
+2) Make sure the RapidReconciler_Prod database has been configured and populated.
+
+`[Installing Production Database](../MDS/Installing_production_database.md)`
+
 **Part 1: Initial VALC Setup**
 
 **About VALC**
@@ -99,9 +105,11 @@ The new user will appear as a row on the User Accounts tab. These credentials wi
 **Step 3 - Configure Initial Modules**
 
 - Click the **Manage Clients** icon for the client.
-- Under the **Modules** section, check **Inventory** and **Admin** to start.
+- On the Client Details tab under the **Tabs** section, check **Inventory** and **Admin** to start.
 
 **Recommendation:** It is best practice to get the client running on Inventory and Admin before enabling additional modules.
+
+![Initial Tabs](../Images/rr_valc_initial_tabs.png)`
 
 The **Setup Step** field will display "Created" at this stage and will cycle through subsequent steps as the installation progresses.
 
@@ -114,6 +122,8 @@ The **Setup Step** field will display "Created" at this stage and will cycle thr
 - The **Setup Step** in the client's VALC record must show **"Created"** in order for the agent download prompt to appear.
 
 **Step 1 - Download and Install the Agent**
+
+![Download Agent](../Images/rr_valc_download_agent.png)`
 
 - From the customer's application server, open a web browser and navigate to: **<https://rapidreconciler.getgsi.com>**
 - Log in using the user credentials created in VALC (Step 2 above).

@@ -9,9 +9,11 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 | Document | Description |
 |----------|-------------|
-| [Installing a Client in VALC (GSI Use Only)](MDS/installing-valc) | Step-by-step VALC setup and RR Agent installation |
-| [Server Migration Guide](MDS/server-migration) | Moving RapidReconciler to a new dedicated or separate server |
 | [Technical Requirements](MDS/tech-requirements) | Installation and configuration requirements |
+| [Installing RapidReconciler-Prod)](MDS/Installing_production_database.md) | Step-by-step VALC setup and RR Agent installation |
+| [Installing a Client in VALC (GSI Use Only)](MDS/installing-valc) | Step-by-step database, user and job installation |
+| [Server Migration Guide](MDS/server-migration) | Moving RapidReconciler to a new dedicated or separate server |
+
 
 ---
 
