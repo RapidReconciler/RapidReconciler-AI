@@ -28,7 +28,7 @@ RapidReconciler consists of several hardware components. Setup is flexible and c
 
 All data stored on GSI servers employs 256-bit encryption and is limited to:
 
-- Public facing IP address of the application server.
+- Public facing IP address of the application server
 - Internal IP address of the application server
 - IP address of the database server
 - Credentials to access the RapidReconciler database
@@ -103,8 +103,8 @@ Arrange a **2-hour web meeting** with the I/T contact in order to:
 | JDE Data Source | Requirement |
 |---|---|
 | AS400 / I-Series | I-Series Access (Client Access) — ensure OLE DB component is installed for both 32 and 64 bit. |
-| Oracle | Oracle 32-bit client (64-bit optional) — select 'Administrator' option, make applicable `tnsnames.ora` entries; if installing both versions, place in the same Oracle home |
-| SQL Server | No additional configuration required |
+| Oracle | Oracle 32-bit client (64-bit optional) — select 'Administrator' option, make applicable `tnsnames.ora` entries; if installing both versions, place in the same Oracle home. |
+| SQL Server | No additional configuration required. |
 
 ---
 
@@ -120,6 +120,8 @@ Arrange a **2-hour web meeting** with the I/T contact in order to:
 | RAM | 16 GB minimum |
 | Authentication | Mixed mode |
 | Other | Integration Services installed |
+
+---
 
 ## Creating the Integration Services Catalog
 
@@ -150,7 +152,7 @@ The Integration Services Catalog (SSISDB) must exist on the target SQL Server be
 1. In **Object Explorer**, expand **Integration Services Catalogs → SSISDB**
 2. Right-click **SSISDB** and select **Create Folder**
 3. In the **Create Folder** dialog:
-   - Set **Folder name** to `RapidReconciler` or 'RR' as shown above
+   - Set **Folder name** to `RapidReconciler` or `RR` as shown above
    - Optionally enter a description such as `RapidReconciler SSIS packages`
 4. Click **OK** to create the folder
 5. Confirm the `RapidReconciler` folder now appears under **SSISDB** in Object Explorer
@@ -186,7 +188,7 @@ Have the I/T contact download and place the zip file on the database server and 
 
 1. Log on to the designated database server with the I/T contact
 2. Open SQL Server Management Studio
-3. Log in to SSMS with a login that has sys admin privileges
+3. Log in to SSMS with a login that has sysadmin privileges
 4. Run **`1 - RapidReconciler Database Creation Script.sql`**
 
 The script will:
@@ -207,7 +209,7 @@ Run **`2 - RapidReconciler Database Object Script 178.sql`** in the same SQL Ser
 Run **`3 - RapidReconciler User Creation Script.sql`**. These are the credentials the application uses to read and write data to the SQL database.
 
 ### Step 5 — Create the SQL Agent Job
-l
+
 Run **`4 - RapidReconciler SQL Agent Job Creation Script.sql`**. The job steps will need to be modified and a schedule added — this will be covered later.
 
 ---
@@ -218,7 +220,7 @@ Run **`4 - RapidReconciler SQL Agent Job Creation Script.sql`**. The job steps w
 
 - Visual Studio Community with the **SQL Server Integration Services** extension installed
 - The RapidReconciler SSIS package file `RapidReconciler-Prod.dtsx` extracted from the installation zip
-- Access to the target SQL Server with Integration Services Catalog configured.
+- Access to the target SQL Server with Integration Services Catalog configured
 
 ---
 
@@ -263,35 +265,35 @@ Before opening Visual Studio, gather the following JD Edwards-specific informati
 
 ### Step 4 — Configure the Connection Managers
 
-1. locate the **Connection Managers** at the bottom center of the display as shown in figure 1.
+1. Locate the **Connection Managers** at the bottom center of the display as shown in Figure 1.
 2. Double-click the **JDE source connection** and update the following:
    - Server name or IP address of the JDE data server
    - Database credentials *(use `rapidrec`/`rapidrec` if possible)*
-   - Click **Test Connection** to verify connectivity to the JDE data source.
-   - Click **OK** to save changes.
- 3. Double-click the **RapidReconciler destination connection** and update the following:
+   - Click **Test Connection** to verify connectivity to the JDE data source
+   - Click **OK** to save changes
+3. Double-click the **RapidReconciler destination connection** and update the following:
    - Database server name hosting `RapidReconciler_Prod`
-   - Select RapidReconciler_Prod from the dropdown.
+   - Select `RapidReconciler_Prod` from the dropdown
    - Enter the `rruser` credentials created in the database installation steps
-   - Click **Test Connection** to verify connectivity to the RapidReconciler_Prod database.
-   - Click **OK** to save changes.
+   - Click **Test Connection** to verify connectivity to the `RapidReconciler_Prod` database
+   - Click **OK** to save changes
 
 ---
 
 ### Step 5 — Configure the Variables
 
-1. Navigate to the **Variables** window. Navigate to **View → Other Windows → Variables** if not visible.
-1. Reference Figue 1 above for the variable names (In yellow).
-2. Update the following variables using the values gathered in Step 1:
+1. Navigate to the **Variables** window. Go to **View → Other Windows → Variables** if not visible.
+2. Reference Figure 1 above for the variable names (shown in yellow).
+3. Update the following variables using the values gathered in Step 1:
 
-| Variable                                            | Value                                 |
-| --------------------------------------------------- | ----------------------------------------------------- |
-| Start Date for data extraction                      | aaStartDateGr - Change this to 2 months prior to the current fiscal year|
-| Table qualifier for JDE data (e.g. `proddta.`)      | dbowner - Note: Ensure there is a period at the end of the name |
-| Decimal places for extended cost                    | DecExtCost - 1 + ECST number of zeros |
-| Decimal places for unit cost                        | DecUnitCost - 1 + UNCS number of zeros|
-| Decimal places for quantity on hand                 | DecQTY - 1 + PQOH number of zeros |
-| Decimal places for transaction quantities in cardex | DecQtyCX - 1 + TRQT number of zeros|
+| Variable | Value |
+|---|---|
+| Start Date for data extraction | aaStartDateGr - Change this to 2 months prior to the current fiscal year |
+| Table qualifier for JDE data (e.g. `proddta.`) | dbowner - Note: Ensure there is a period at the end of the name |
+| Decimal places for extended cost | DecExtCost - 1 + ECST number of zeros |
+| Decimal places for unit cost | DecUnitCost - 1 + UNCS number of zeros |
+| Decimal places for quantity on hand | DecQTY - 1 + PQOH number of zeros |
+| Decimal places for transaction quantities in cardex | DecQtyCX - 1 + TRQT number of zeros |
 
 Save all changes to the package by clicking **File → Save All** or pressing `Ctrl + Shift + S`.
 
@@ -309,9 +311,7 @@ Save all changes to the package by clicking **File → Save All** or pressing `C
 5. Wait for all deployment steps to show a **Passed** status
 6. Click **Close** when complete
 
-> **Note:** Windows Authentication is required for deployment to the SSIS catalog.
-> Ensure the account you are logged in with has **sysadmin** or **ssis_admin**
-> privileges on the target SQL Server instance before proceeding. 
+> **Note:** Windows Authentication is required for deployment to the SSIS catalog. Ensure the account you are logged in with has **sysadmin** or **ssis_admin** privileges on the target SQL Server instance before proceeding.
 
 ---
 
@@ -338,53 +338,43 @@ Save all changes to the package by clicking **File → Save All** or pressing `C
 
 ### Step 1 — Open SQL Server Agent
 
-1. Launch **SQL Server Management Studio (SSMS)** and connect to your SQL Server instance.
-2. In the **Object Explorer**, expand the server node.
-3. Expand **SQL Server Agent**.
-4. Expand **Jobs**.
+1. Launch **SQL Server Management Studio (SSMS)** and connect to your SQL Server instance
+2. In the **Object Explorer**, expand the server node
+3. Expand **SQL Server Agent**
+4. Expand **Jobs**
 
 ### Step 2 — Open the Job Properties
 
-1. Right-click the job RapidReconciler_Prod.
-2. Select **Properties** from the context menu.
-3. The **Job Properties** dialog box will open.
+1. Right-click the job **RapidReconciler_Prod**
+2. Select **Properties** from the context menu
+3. The **Job Properties** dialog box will open
 
 ### Step 3 — Navigate to the Schedules Tab
 
-1. In the left-hand panel of the Job Properties dialog, click **Schedules**.
-2. You will see a list of schedules currently associated with the job.
+1. In the left-hand panel of the Job Properties dialog, click **Schedules**
+2. You will see a list of schedules currently associated with the job
 
 ### Step 4 — Enable the Job Schedule
 
 ![SQL Agent Job Schedule](../Images/rr_sqlagent_jobschedule.png)
 
-1. Select the schedule from the list and click **Edit**.
-2. In the **Job Schedule Properties** dialog, check the **Enabled** checkbox at the top.
+1. Select the schedule from the list and click **Edit**
+2. In the **Job Schedule Properties** dialog, check the **Enabled** checkbox at the top
 
 ### Step 5 — Update the Run Time
 
----
+> **Note:** The RapidReconciler job should be scheduled to run during off-peak hours, such as overnight, to minimize impact on system performance and provide the most accurate results. If possible, coordinate with the client to determine the best time for the initial data load, which may take longer than subsequent runs.
 
-> **Note:** The RapidReconciler job should be scheduled to run during off-peak hours,
-such as overnight, to minimize impact on system performance and provide the most accurate results. 
-If possible, coordinate with the client to determine the best time for the initial data load,
-which may take longer than subsequent runs.
-
----
-
-1. Under the **Daily frequency** section, update the **Occurs once at** or **Occurs every** time fields to your desired run time.
-2. Adjust the **Start date** and **End date** in the **Duration** section if needed.
-3. Click **OK** to save the schedule changes.
+1. Under the **Daily frequency** section, update the **Occurs once at** or **Occurs every** time fields to your desired run time
+2. Adjust the **Start date** and **End date** in the **Duration** section if needed
+3. Click **OK** to save the schedule changes
 
 ### Step 6 — Save the Job
 
-1. Click **OK** in the **Job Properties** dialog to apply all changes.
-2. The job schedule is now enabled and updated.
+1. Click **OK** in the **Job Properties** dialog to apply all changes
+2. The job schedule is now enabled and updated
 
----
-
-> **Note:** Changes take effect at the next scheduled run time and will not interrupt a currently running job.
-After the initial load, the schedule can be adjusted as needed to meet the client's requirements for data refresh frequency and timing.
+> **Note:** Changes take effect at the next scheduled run time and will not interrupt a currently running job. After the initial load, the schedule can be adjusted as needed to meet the client's requirements for data refresh frequency and timing.
 
 ---
 
