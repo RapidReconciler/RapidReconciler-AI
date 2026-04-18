@@ -16,7 +16,7 @@ Before beginning, collect the following information from the sales contract or t
 
 - Number of companies purchased (per the sales contract)
 - Customer name (e.g., Acme Manufacturing)
-- IT contact email address and phone number
+- IT contact email address and phone number.
 - JD Edwards version *(optional — for reference only)*
 
 In addition:
