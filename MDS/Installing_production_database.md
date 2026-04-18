@@ -28,7 +28,7 @@ RapidReconciler consists of several hardware components. Setup is flexible and c
 
 All data stored on GSI servers employs 256-bit encryption and is limited to:
 
-- Public facing IP address of the application server
+- Public facing IP address of the application server.
 - Internal IP address of the application server
 - IP address of the database server
 - Credentials to access the RapidReconciler database
