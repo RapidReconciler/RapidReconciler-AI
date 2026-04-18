@@ -13,7 +13,7 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | [Installing RapidReconciler-Prod](MDS/Installing_production_database.md) | Step-by-step VALC setup and RR Agent installation |
 | [Installing a Client in VALC (GSI Use Only)](MDS/installing-valc) | Step-by-step database, user and job installation |
 | [Server Migration Guide](MDS/server-migration) | Moving RapidReconciler to a new dedicated or separate server |
-
+| [Certificate Management](../MDS/certificate_management.md) | SSL certificate scope, renewal process, responsibilities, and troubleshooting |
 
 ---
 
@@ -21,10 +21,11 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 | Document | Description |
 |----------|-------------|
-| [Adding a New Company](MDS/adding-company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
 | [Getting Started with the Application](MDS/getting-started-with-rapidreconciler) | Logging in, navigating the interface, and system requirements |
 | [Administrator Responsibilities](MDS/admin-responsibilities) | Company management, user setup, general settings, and offset accounts |
 | [Complex Password](MDS/complex-password) | Password policy requirements and reset process |
+| [Adding a New Company](MDS/adding-company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
+| [Managing Inventory Accounts](MDS/add-account-rr) | DMAAI model table process and refresh requirements |
 
 ---
 
@@ -33,7 +34,6 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | Document | Description |
 |----------|-------------|
 | [Inventory Key Concepts](MDS/inventory-key-concepts) | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes |
-| [How to Add an Inventory Account in RR](MDS/add-account-rr) | DMAAI model table process and refresh requirements |
 | [Inventory: Using the Application](MDS/inventory-using-application) | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
 | [Reconciliation: Top 6 Issues — Part 2](MDS/top-6-issues-pt2) | GL class code changes and reconciliation impact |
 | [Reconciliation: Top 6 Issues — Part 3](MDS/top-6-issues-pt3) | Product costing and R30543 cost component integrity |
