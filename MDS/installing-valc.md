@@ -4,9 +4,9 @@
 
 This guide covers the end-to-end process for setting up a new customer in VALC and installing the RapidReconciler Agent on their application server. The process consists of three main phases:
 
-- **Part 1: Initial VALC Setup** — Creating the client record, initial user account, and module configuration in the VALC portal.
-- **Part 2: RapidReconciler Agent Installation** — Downloading, installing, and validating the agent on the customer's server.
-- **Part 3: Completing the Setup in VALC** — Verifying connectivity, database status, and licensing company numbers.
+- **Part 1: Initial VALC Setup** -- Creating the client record, initial user account, and module configuration in the VALC portal.
+- **Part 2: RapidReconciler Agent Installation** -- Downloading, installing, and validating the agent on the customer's server.
+- **Part 3: Completing the Setup in VALC** -- Verifying connectivity, database status, and licensing company numbers.
 
 ---
 
@@ -17,7 +17,7 @@ Before beginning, collect the following information from the sales contract or t
 - Number of companies purchased (per the sales contract)
 - Customer name (e.g., Acme Manufacturing)
 - IT contact email address and phone number.
-- JD Edwards version *(optional — for reference only)*
+- JD Edwards version *(optional -- for reference only)*
 
 In addition:
 
@@ -36,7 +36,7 @@ VALC (Version and Licensing Control) is a GSI-developed web application hosted o
 
 > **Important:** Adding a customer in VALC is performed by GSI staff only. Note that this process will be transitioning to Active Directory control in a future update.
 
-**Login URL:** [Rapid Reconciler VALC](https://rr-valc-spa.cloudapp.net/) — Use the login credentials provided to you by GSI (SSO).
+**Login URL:** [Rapid Reconciler VALC](https://rr-valc-spa.cloudapp.net/) -- Use the login credentials provided to you by GSI (SSO).
 
 ### Navigating VALC
 
@@ -47,13 +47,13 @@ VALC contains five main pages accessible from the top navigation:
 | **Page** | **Description** |
 |---|---|
 | **Clients** *(default)* | Where RapidReconciler clients are added and maintained |
-| **SQL Scripts** | Used to deploy RapidReconciler database updates — *RR developers only* |
+| **SQL Scripts** | Used to deploy RapidReconciler database updates -- *RR developers only* |
 | **Message Users** | Displays messages to users at login; messages include expiration dates |
 | **Genius Pages** | Two pages are dedicated to Genius customers, including Key Generator |
 
 ---
 
-### Step 1 — Create the Client Record
+### Step 1 -- Create the Client Record
 
 - Click the **Clients** page in the main navigation bar.
 - Click **Create Client** in the top-right corner.
@@ -65,14 +65,14 @@ Complete the form using the following field guidance:
 | **Field** | **Value** |
 |---|---|
 | **Client Name** | Enter the customer's name (e.g., Acme Manufacturing) |
-| **Agent I/P Address** | Leave blank — populates automatically during agent installation |
+| **Agent I/P Address** | Leave blank -- populates automatically during agent installation |
 | **License Start Date** | Today's date |
 | **License End Date** | Last day of the current calendar year *(must be updated manually each year; users are locked out after this date)* |
 | **Version** | Select the latest version from the drop-down (this is the Agent version) |
-| **JDE Version** | Enter the customer's JDE version — informational only |
-| **HTTPS** | Select **True** — RapidReconciler requires HTTPS |
+| **JDE Version** | Enter the customer's JDE version -- informational only |
+| **HTTPS** | Select **True** -- RapidReconciler requires HTTPS |
 | **Maximum Companies Allowed** | Enter the number of licenses per the sales contract |
-| **Agent Protocol** | Select **SSL** — offline functionality is not available |
+| **Agent Protocol** | Select **SSL** -- offline functionality is not available |
 
 - Click **Confirm** to save the record.
 
@@ -90,7 +90,7 @@ After confirming, the new client will appear in the grid with the following init
 
 ---
 
-### Step 2 — Create the Initial User Account
+### Step 2 -- Create the Initial User Account
 
 An initial user account must be created before the agent can be installed.
 
@@ -115,7 +115,7 @@ The new user will appear as a row on the User Accounts tab. These credentials wi
 
 ---
 
-### Step 3 — Configure Initial Modules
+### Step 3 -- Configure Initial Modules
 
 - Click the **Manage Clients** icon for the client.
 - On the **Client Details** tab under the **Tabs** section, check **Inventory** and **Admin** to start.
@@ -128,7 +128,7 @@ The **Setup Step** field will display "Created" at this stage and will cycle thr
 
 ---
 
-### Step 4 — Configure Additional Fields
+### Step 4 -- Configure Additional Fields
 
 ![VALC Additional Fields](../Images/rr_valc_additional_fields.png)
 
@@ -138,12 +138,12 @@ The **Setup Step** field will display "Created" at this stage and will cycle thr
 | **Domain URL** | Example: rrprod-customername.getgsi.com |
 | **Max Companies Allowed** | Obtain from contract |
 | **Agent Protocol** | SSL |
-| **JDE Version** | Optional — reference only |
+| **JDE Version** | Optional -- reference only |
 | **HTTPS** | True |
 
 ---
 
-### Step 5 — Certificate Management
+### Step 5 -- Certificate Management
 
 - Contact I/T to add an **'A' record** to the GSI IP service provider configuration.
 - Provide the Agent Internal IP address and domain URL.
@@ -162,7 +162,7 @@ The **Setup Step** field will display "Created" at this stage and will cycle thr
 
 ---
 
-### Step 1 — Download and Install the Agent
+### Step 1 -- Download and Install the Agent
 
 ![Download Agent](../Images/rr_valc_download_agent.png)
 
@@ -177,7 +177,7 @@ The **Setup Step** field will display "Created" at this stage and will cycle thr
 
 ---
 
-### Step 2 — Validate the SQL Server Connection
+### Step 2 -- Validate the SQL Server Connection
 
 After installation, return to the web browser. Within a couple of minutes, the **"Validating Data"** screen will appear, followed by the SQL Server connection properties prompt.
 
@@ -196,7 +196,7 @@ Once submitted, the browser will display a **"Deploying"** status followed by th
 
 ---
 
-### Step 3 — Verify Connectivity in VALC
+### Step 3 -- Verify Connectivity in VALC
 
 Return to your local machine and log in to VALC to confirm the following:
 
