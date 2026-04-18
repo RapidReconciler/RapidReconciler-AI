@@ -230,7 +230,7 @@ Before opening Visual Studio, gather the following JD Edwards-specific informati
 
 #### JD Edwards Connection Details
 
-- Name or IP address of the JDE data server or data warehouse
+- Name or IP address of the JDE data server
 - Read only credentials for the JDE database *(use `rapidrec`/`rapidrec` if possible)*
 - JDE server type: **I-Series**, **Oracle**, or **Microsoft SQL Server**
 
@@ -240,23 +240,38 @@ Before opening Visual Studio, gather the following JD Edwards-specific informati
 
 1. Launch **Visual Studio Community**. Run as an administrator if possible to avoid permission issues during deployment.
 2. Select **Create a new project**
+
+![SSIS Create Project](../Images/rr_ssis_create_project.png)
+
+
 3. Search for and select **Integration Services Project**, then click **Next**
+
+![SSIS Integration Services Project Template](../Images/rr_ssis_is_project_template.png)
+
 4. Set the **Project name** to `RapidReconciler`
 5. Choose an appropriate location on the server to save the solution
 6. Click **Create**
+
+![SSIS Configure Project](../Images/rr_ssis_configure_project.png)
+
 7. Once the solution loads, confirm the project appears in **Solution Explorer** as `RapidReconciler`
 
 ---
 
 ### Step 3 -- Add the Existing SSIS Package
 
+![SSIS Add Existing Package](../Images/rr_ssis_add_existing_package.png)
+
+
 1. In **Solution Explorer**, right-click the `RapidReconciler` project
 2. Select **Add -> Existing Item**
 3. Browse to the location where the installation zip was extracted
 4. Select **`RapidReconciler-Prod.dtsx`** and click **Add**
 5. Confirm the package appears under the `RapidReconciler` project in **Solution Explorer**
-
-> **Note:** If the package does not appear in Solution Explorer after adding it, right-click the project and select **Reload Project**, then verify the package is listed under the project node.
+6. Double click the package to open it in the designer and verify the control flow and variables load correctly.
+7. If prompted to upgrade the package, click **OK** to allow Visual Studio to make any necessary updates to the package format.
+8. The package should open without errors. If there are connection errors, they can be ignored for now as the connections will be updated in the next steps.
+9. Passwords must be re-entered in the connection managers after deployment, so it is normal for the connections to show as invalid at this stage.
 
 ---
 
