@@ -74,7 +74,7 @@ Arrange a **2-hour web meeting** with the I/T contact in order to:
 | Operating System | Windows Server 2008 or later |
 | RAM | 16 GB minimum |
 | Credentials | Local administrative credentials for configuration |
-| Browser | Internet Explorer 10+ or latest Google Chrome |
+| Browser | Microsoft Edge, Safari or Chrome |
 | IP Address | Static external IP address |
 
 ### Access Requirements *(access by name preferred)*
@@ -143,12 +143,14 @@ The Integration Services Catalog (SSISDB) must exist on the target SQL Server be
 
 ---
 
+![SSIS Catalog](../Images/rr_ssis_catalog.png)
+
 ### Step 2 — Create the RapidReconciler Folder
 
 1. In **Object Explorer**, expand **Integration Services Catalogs → SSISDB**
 2. Right-click **SSISDB** and select **Create Folder**
 3. In the **Create Folder** dialog:
-   - Set **Folder name** to `RapidReconciler`
+   - Set **Folder name** to `RapidReconciler` or 'RR' as shown above
    - Optionally enter a description such as `RapidReconciler SSIS packages`
 4. Click **OK** to create the folder
 5. Confirm the `RapidReconciler` folder now appears under **SSISDB** in Object Explorer
@@ -227,24 +229,14 @@ Before opening Visual Studio, gather the following JD Edwards-specific informati
 #### JD Edwards Connection Details
 
 - Name or IP address of the JDE data server or data warehouse
-- Credentials for the JDE database *(use `rapidrec`/`rapidrec` if possible)*
+- Read only credentials for the JDE database *(use `rapidrec`/`rapidrec` if possible)*
 - JDE server type: **I-Series**, **Oracle**, or **Microsoft SQL Server**
-- Table qualifier name (e.g. `proddta`)
-
-#### Decimal Place Variables
-
-| Variable | Data Dictionary Value | Typical Default |
-|---|---|---|
-| Decimal places for extended cost | ECST | 2 |
-| Decimal places for unit cost | UNCS | 4 |
-| Decimal places for quantity on hand | PQOH | Customer-specific |
-| Decimal places for transaction quantities in cardex | TRQT | Customer-specific |
 
 ---
 
 ### Step 2 — Create the Visual Studio Solution
 
-1. Launch **Visual Studio Community**
+1. Launch **Visual Studio Community**. Run as an administrator if possible to avoid permission issues during deployment.
 2. Select **Create a new project**
 3. Search for and select **Integration Services Project**, then click **Next**
 4. Set the **Project name** to `RapidReconciler`
@@ -266,33 +258,42 @@ Before opening Visual Studio, gather the following JD Edwards-specific informati
 
 ---
 
+![SSIS Control Flow Variables](../Images/rr_ssis_controlflow_variables.png)
+**Figure 1 — RapidReconciler SSIS Package in Visual Studio**
+
 ### Step 4 — Configure the Connection Managers
 
-1. In **Solution Explorer**, expand the project and locate the **Connection Managers**
+1. locate the **Connection Managers** at the bottom center of the display as shown in figure 1.
 2. Double-click the **JDE source connection** and update the following:
    - Server name or IP address of the JDE data server
    - Database credentials *(use `rapidrec`/`rapidrec` if possible)*
-   - Table qualifier (e.g. `proddta`)
-3. Double-click the **RapidReconciler destination connection** and update the following:
+   - Click **Test Connection** to verify connectivity to the JDE data source.
+   - Click **OK** to save changes.
+ 3. Double-click the **RapidReconciler destination connection** and update the following:
    - Database server name hosting `RapidReconciler_Prod`
-   - `rruser` credentials created in the database installation steps
-4. Save all changes
+   - Select RapidReconciler_Prod from the dropdown.
+   - Enter the `rruser` credentials created in the database installation steps
+   - Click **Test Connection** to verify connectivity to the RapidReconciler_Prod database.
+   - Click **OK** to save changes.
 
 ---
 
 ### Step 5 — Configure the Variables
 
-1. In **Solution Explorer**, open the `RapidReconciler-Prod.dtsx` package
-2. Navigate to the **Variables** window. Navigate to **View → Other Windows → Variables** if not visible.
-3. Update the following variables using the values gathered in Step 1:
+1. Navigate to the **Variables** window. Navigate to **View → Other Windows → Variables** if not visible.
+1. Reference Figue 1 above for the variable names (In yellow).
+2. Update the following variables using the values gathered in Step 1:
 
-| Variable | Data Dictionary Value |
-|---|---|
-| Table qualifier for JDE data (e.g. `proddta.`) | Note: Ensure there is a period at the end of the name |
-| Decimal places for extended cost | ECST |
-| Decimal places for unit cost | UNCS |
-| Decimal places for quantity on hand | PQOH |
-| Decimal places for transaction quantities in cardex | TRQT |
+| Variable                                            | Value                                 |
+| --------------------------------------------------- | ----------------------------------------------------- |
+| Start Date for data extraction                      | aaStartDateGr - Change this to 2 months prior to the current fiscal year|
+| Table qualifier for JDE data (e.g. `proddta.`)      | dbowner - Note: Ensure there is a period at the end of the name |
+| Decimal places for extended cost                    | DecExtCost - 1 + ECST number of zeros |
+| Decimal places for unit cost                        | DecUnitCost - 1 + UNCS number of zeros|
+| Decimal places for quantity on hand                 | DecQTY - 1 + PQOH number of zeros |
+| Decimal places for transaction quantities in cardex | DecQtyCX - 1 + TRQT number of zeros|
+
+Save all changes to the package by clicking **File → Save All** or pressing `Ctrl + Shift + S`.
 
 ---
 
@@ -322,12 +323,14 @@ Before opening Visual Studio, gather the following JD Edwards-specific informati
 
 ---
 
-### Step 8 — Configure the SQL Agent Job Steps
+### Step 8 — Configure the SQL Agent Package Path
+
+![SSIS Package Path](../Images/rr_ssis_package_path.png)
 
 1. In SSMS, navigate to **SQL Server Agent → Jobs → RapidReconciler_Prod**
 2. Right-click the job and select **Properties**
 3. Click **Steps** in the left panel
-4. Edit each step to point to the deployed SSIS package path in the SSISDB catalog
+4. Edit step 1 to point to the deployed SSIS package path in the SSISDB catalog
 
 ---
 
@@ -342,7 +345,7 @@ Before opening Visual Studio, gather the following JD Edwards-specific informati
 
 ### Step 2 — Open the Job Properties
 
-1. Right-click the job you want to modify.
+1. Right-click the job RapidReconciler_Prod.
 2. Select **Properties** from the context menu.
 3. The **Job Properties** dialog box will open.
 
@@ -352,6 +355,8 @@ Before opening Visual Studio, gather the following JD Edwards-specific informati
 2. You will see a list of schedules currently associated with the job.
 
 ### Step 4 — Enable the Job Schedule
+
+![SQL Agent Job Schedule](../Images/rr_sqlagent_jobschedule.png)
 
 1. Select the schedule from the list and click **Edit**.
 2. In the **Job Schedule Properties** dialog, check the **Enabled** checkbox at the top.
@@ -379,6 +384,7 @@ which may take longer than subsequent runs.
 ---
 
 > **Note:** Changes take effect at the next scheduled run time and will not interrupt a currently running job.
+After the initial load, the schedule can be adjusted as needed to meet the client's requirements for data refresh frequency and timing.
 
 ---
 
@@ -396,9 +402,7 @@ The `rruser` SQL login must be configured with the following permissions:
 |---|---|---|
 | `RapidReconciler_Prod` database | `rruser` | `db_datareader` |
 | `RapidReconciler_Prod` database | `rruser` | `db_datawriter` |
-| `RapidReconciler_Prod` database | SQL Agent service account | `db_datareader`, `db_datawriter` |
 | `msdb` | `rruser` | `SQLAgentOperatorRole` |
-| `tempdb` | SQL Agent service account or proxy | `db_datareader`, `db_datawriter`, `EXECUTE` |
 
 To configure `rruser`:
 
