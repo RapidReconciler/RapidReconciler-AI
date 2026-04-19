@@ -14,6 +14,8 @@ This guide covers:
 
 - The structure and key fields of the F4111 table
 - Common questions about item ledger behavior
+- Identifying and correcting quantity integrity variances using R41544 and R41995
+- The Global Item Update creation date override risk and how to protect against it
 - How to correctly analyze the cardex and avoid the three most common analyst errors
 - A real-world example of a weighted average cost error identified through cardex analysis
 - Best practices for maintaining item ledger integrity
@@ -53,9 +55,36 @@ There are two date fields in the item ledger to consider when determining when a
 | Date Field | Description | Reliability |
 |---|---|---|
 | **Transaction Date** | The date typically associated with when the transaction occurred. Available on some entry screens and can be overridden by the user. Backdating and data entry errors are both common. | Less reliable |
-| **Creation Date** | The date the transaction record was created in F4111. More reliable, with one exception: if Global Item Update is enabled and the second or third item number is changed, all item ledger records for that item will have their creation date updated to the date of the change. | More reliable |
+| **Creation Date** (ILCRDJ) | The date the transaction record was created in F4111. More reliable under normal circumstances, but can be overwritten -- see Section 1.3.1 below. | More reliable -- with exceptions |
 
 > **Recommendation:** Use the creation date when attempting to determine when a transaction entered the system. However, there is no 100% reliable method for obtaining this information in all scenarios.
+
+#### 1.3.1 Global Item Update and Creation Date Override
+
+> **Warning:** The creation date in F4111 can be permanently overwritten by the Global Item Update program. Once overwritten, the original transaction entry dates cannot be recovered.
+
+Global Item Update (P4101) is a JD Edwards feature that transfers changes made to the second item number (LITM) or third item number in the Item Master table (F4101) to all other inventory tables that contain the same information -- including the item ledger (F4111).
+
+When Global Item Update is run following a change to the second or third item number, the program **R41803** updates matching records across all designated tables. The unintended consequence is that the **Creation Date field (ILCRDJ)** is also updated to the date the change was made -- for **every record** in the item ledger for that item, regardless of when those transactions originally occurred.
+
+**Processing options for P4101:**
+
+| Setting | Behavior |
+|---|---|
+| **Blank** | Do not transfer changes to other tables |
+| **1** | Transfer changes to all applicable tables |
+| **2** | Transfer changes to selected tables only (defined in UDC table 40/IC, which lists 57 tables by default including F4111) |
+
+**Impact of creation date override:**
+
+| Area | Impact |
+|---|---|
+| **Transaction dating** | Determining when a specific inventory transaction was entered becomes unreliable for all historical records on the affected item |
+| **RapidReconciler period logic** | RapidReconciler uses the creation date as part of its period assignment logic for item ledger records -- overwritten dates may affect historical period assignments |
+| **Audit and compliance** | In environments where transaction timestamps are required for audit or regulatory purposes, overwritten creation dates may create gaps in the audit trail |
+| **History reconstruction** | Once the change is made and Global Item Update is run, it may not be possible to reconstruct an accurate transaction history for the affected items |
+
+> **Important:** There is no "date updated" field or other reliable date field in the item ledger that can be used as an alternative once the creation date has been overwritten. The original transaction entry dates are effectively lost.
 
 ### 1.4 DMAAI Information
 
@@ -76,6 +105,30 @@ The item ledger table does **not** store information about which DMAAI entries w
 - Any changes to an item's **primary unit of measure** were performed using the recommended procedures.
 
 If any of these conditions are not met, a discrepancy between the item ledger summary and the item balance table may exist that is not indicative of a true inventory integrity issue, but rather a data management consideration.
+
+### 2.1 Item Balance / Ledger Integrity Report (R41544)
+
+The **Item Balance / Ledger Integrity Report (R41544)** is the JD Edwards tool used to identify integrity variances between the Quantity On-Hand in the Item Location table (F41021) and the Item Ledger (F4111).
+
+In many cases, the cause of these variances can only be attributed to corrupted data in the Item Location Quantity On-Hand field (F41021.PQOH), which is a running balance of all transactions added to and subtracted from an inventory location and/or lot. Since all transaction details are written to the Item Ledger (F4111) while the Item Balance Quantity On-Hand is a running total of all transactions done to date, **the Item Ledger (F4111) is assumed to be the source of truth.**
+
+Partial updates or corrupted data may occur because of an unpredictable event that terminates the application prematurely. In most cases it is not possible to explain how data was corrupted after the fact.
+
+### 2.2 Repost -- Update On-Hand Inventory (R41995)
+
+The **Repost -- Update On-Hand Inventory report (R41995)** was introduced to resolve quantity discrepancies between F41021 and F4111 without requiring direct SQL intervention.
+
+**Purpose:** R41995 calculates and reposts the Quantity On-Hand value in the Item Location table (F41021). It sums the transaction quantities in the Item Ledger (F4111), or calculates the quantity from both the Item Ledger (F4111) and the Item ASOF table (F41112), and updates the Item Location Quantity On-Hand value (F41021.PQOH).
+
+**Key behavior:**
+
+- Updates the Quantity On-Hand in F41021 to match the sum of transaction quantities in F4111
+- Does **not** create new records in the Item Ledger (F4111)
+- Does **not** create new records in the General Ledger (F0911)
+
+> **Important:** R41995 corrects the quantity balance in F41021 only. It does not adjust the dollar value of inventory or create any GL entries. If a dollar discrepancy also exists, a separate dollars-only adjustment will be required after running R41995.
+
+> **Best Practice:** Run R41544 on a regular basis to proactively identify quantity integrity variances. When a variance is confirmed, use R41995 to correct the F41021 balance rather than resorting to direct SQL updates, which carry significant risk.
 
 ---
 
@@ -196,7 +249,44 @@ Symptoms to watch for:
 
 ---
 
-## Section 5: Best Practices for Item Ledger Integrity
+---
+
+## Section 5: Global Item Update -- A Critical Warning
+
+### 5.1 Overview
+
+Global Item Update in JD Edwards is a feature that transfers changes made to the second item number (LITM) or third item number in the Item Master table (F4101) to all other inventory tables that contain the same information. While this is useful for maintaining item number consistency across tables, it carries a significant and permanent risk to the item ledger.
+
+### 5.2 The Problem -- Creation Date Override
+
+When Global Item Update is run following a change to the second or third item number, program **R41803** updates the item ledger records for the affected item. As a side effect, the **Creation Date field (ILCRDJ)** in F4111 is overwritten with the date the change was made -- for **every record** in the item ledger for that item.
+
+Since the creation date is the most reliable indicator of when a transaction was originally entered into the system, this overwrite effectively destroys the transaction date history for the item. There is no alternative date field in F4111 that can be used once ILCRDJ has been overwritten, and the original dates cannot be recovered.
+
+> **Critical:** In environments with large transaction volumes, a single item number change can overwrite thousands of item ledger records. This is an irreversible action.
+
+### 5.3 Impact Summary
+
+| Area | Impact |
+|---|---|
+| **Transaction dating** | All historical creation dates for the item are replaced with the date of the item number change |
+| **RapidReconciler period logic** | RapidReconciler uses ILCRDJ for period assignment -- overwritten dates may cause incorrect historical period assignments |
+| **Audit and compliance** | Transaction timestamps required for audit or regulatory purposes may be permanently lost |
+| **History reconstruction** | Original transaction entry dates cannot be reconstructed after Global Item Update is run |
+
+### 5.4 Precautions Before Running Global Item Update
+
+Before changing a second or third item number and running Global Item Update, take the following steps:
+
+1. **Evaluate necessity** -- Confirm the change is truly required and the business benefit outweighs the permanent loss of transaction date history.
+2. **Export and archive the item ledger** -- Before running the update, export the complete item ledger history for the affected item and save it. This preserves a record of the original creation dates even though F4111 itself cannot be restored.
+3. **Assess the scope** -- Determine how many item ledger records exist for the item before proceeding. Large transaction volumes amplify the impact.
+4. **Notify stakeholders** -- Inform reconciliation teams, cost accountants, auditors, and any teams using RapidReconciler before making the change, as it may affect period-end reporting, reconciliation accuracy, and historical analysis.
+5. **Consider the alternative** -- In some cases it may be preferable to leave the item number inconsistency in place rather than risk the creation date override. Evaluate whether the item number discrepancy has any operational impact before proceeding.
+
+---
+
+## Section 6: Best Practices for Item Ledger Integrity
 
 | Topic | Best Practice |
 |---|---|
@@ -208,43 +298,46 @@ Symptoms to watch for:
 | **Purging** | Never purge the item ledger without leaving a balance forward record to maintain continuity |
 | **UOM changes** | Follow the recommended procedure when changing the primary unit of measure -- see the [UOM Reference Guide](../MDS/uom-reference-guide.md) |
 | **DMAAI tracing** | Use RapidReconciler Transaction Detail Report to identify which DMAIs were used for a transaction when standard JDE tools cannot provide this |
+| **Quantity integrity** | Run R41544 (Item Balance/Ledger Integrity Report) regularly to identify variances between F41021 and F4111 |
+| **Quantity correction** | Use R41995 (Repost -- Update On-Hand Inventory) to correct F41021 quantity without creating item ledger or GL records -- do not use SQL |
+| **Global Item Update** | Export and archive the full item ledger before running Global Item Update -- creation dates (ILCRDJ) will be permanently overwritten and original dates cannot be recovered |
 | **Period-end analysis** | Run cardex analysis before period-end close to identify and resolve integrity issues before they become reconciling items |
 
 ---
 
-## Section 6: How RapidReconciler Helps
+## Section 7: How RapidReconciler Helps
 
 Analyzing the item ledger manually in JD Edwards is time-consuming, technically demanding, and prone to the errors described in this guide. RapidReconciler by GSI is purpose-built to eliminate these challenges by automating the reconciliation process and surfacing item ledger issues in a clear, actionable interface.
 
-### 6.1 Continuous Reconciliation vs. Point-in-Time Analysis
+### 7.1 Continuous Reconciliation vs. Point-in-Time Analysis
 
 The manual cardex analysis process produces a snapshot at a single point in time. If a transaction posts after the analysis is run, the work must be repeated. RapidReconciler updates automatically with each nightly import cycle, providing a **continuous, up-to-date view** of inventory value against the general ledger without requiring manual intervention.
 
-### 6.2 Posting Code Filtering -- Handled Automatically
+### 7.2 Posting Code Filtering -- Handled Automatically
 
 One of the most common analyst errors -- including memo transactions (ILIPCD = "X") in the summary -- is handled automatically by RapidReconciler. The application excludes non-posting transactions from all reconciliation calculations, eliminating the risk of false variances caused by this error.
 
-### 6.3 Unit of Measure Handling
+### 7.3 Unit of Measure Handling
 
 RapidReconciler reads quantity data directly from the JD Edwards tables and applies the correct unit of measure conversions automatically. Analysts do not need to manually identify non-primary UOM transactions or apply conversion factors before comparing totals -- the application handles this consistently for every item and every transaction.
 
-### 6.4 Cost Level Awareness for Average Cost Items
+### 7.4 Cost Level Awareness for Average Cost Items
 
 RapidReconciler respects the cost level configuration for each item, ensuring that average cost items are analyzed at the correct level (Cost Level 2 or Cost Level 3) without requiring the analyst to manually set wildcard filters or manage analysis boundaries. This eliminates the third common analyst error entirely.
 
-### 6.5 Weighted Average Cost Variance Detection
+### 7.5 Weighted Average Cost Variance Detection
 
 The type of weighted average cost error described in Section 4 -- where a receipt fails to trigger a cost update and subsequent transactions are processed at the old cost -- can persist undetected for months in a manual reconciliation environment. RapidReconciler surfaces dollar variances between the item ledger and the general ledger automatically, allowing these issues to be identified and investigated as they occur rather than at period end.
 
-### 6.6 DMAAI Traceability
+### 7.6 DMAAI Traceability
 
 As noted in Section 1.4, JD Edwards does not store DMAAI information in the item ledger. The **RapidReconciler Transaction Detail Report** bridges this gap by combining item ledger data with the applicable DMAAI configuration at the time of each transaction. This allows analysts to quickly determine which GL accounts were impacted by a transaction and whether the correct DMAAI entries were used -- without manually cross-referencing multiple JD Edwards screens.
 
-### 6.7 Drill-Down from Variance to Transaction
+### 7.7 Drill-Down from Variance to Transaction
 
 When a reconciling item is identified, RapidReconciler allows users to drill down directly from the variance to the underlying JD Edwards transactions. This eliminates the need to navigate between multiple JD Edwards applications -- Item Ledger, Account Ledger, Cost Revisions, and DMAAI -- to trace the source of a discrepancy. The full transaction context is available in a single view.
 
-### 6.8 Summary of RapidReconciler Benefits for Cardex Analysis
+### 7.8 Summary of RapidReconciler Benefits for Cardex Analysis
 
 | Manual JDE Approach | RapidReconciler |
 |---|---|
@@ -260,10 +353,10 @@ When a reconciling item is identified, RapidReconciler allows users to drill dow
 
 ---
 
-## Section 7: Related Documentation
+## Section 8: Related Documentation
 
 - [DMAAI Reference Guide](../MDS/dmaai-reference-guide.md)
 - [Product Costing Reference Guide](../MDS/product-costing-reference.md)
 - [GL Class Code Management and Change Procedures](../MDS/gl-class-code-changes.md)
 - [UOM Reference Guide](../MDS/uom-reference-guide.md)
-- [Stock Status and Trial Balance Reconciliation](../MDS/stock-status-trial-balance.md)
+

@@ -36,6 +36,8 @@ When a purchase order or sales order is entered, the GL Class Code is copied fro
 
 > **Key Takeaway:** The GL Class Code flows downward through the hierarchy -- from Item Master to Item Branch to Item Location to Order Line -- but it does **not** update automatically. Each level must be maintained independently.
 
+![GL Class Code Hierarchy](../Images/rr_inv_glclass_levels.png)
+
 ---
 
 ## Section 2: How GL Class Codes Are Used in Transactions

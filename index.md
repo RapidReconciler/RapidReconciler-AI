@@ -26,7 +26,6 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | [Complex Password](MDS/complex-password) | Password policy requirements and reset process |
 | [Administrator Responsibilities](MDS/admin-responsibilities) | Company management, user setup, general settings, and offset accounts |
 | [Adding a New Company](MDS/adding-company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
-| [Managing Inventory Accounts](MDS/add-account-rr) | DMAAI model table process and refresh requirements |
 
 ---
 
@@ -35,8 +34,8 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | Document                                                                           | Description                                                                                                 |
 | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | [Inventory Key Concepts](MDS/inventory-key-concepts)                               | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes    |
+| [Managing Inventory Accounts](MDS/add-account-rr) | DMAAI model table process and refresh requirements |
 | [Inventory: Using the Application](MDS/inventory-using-application)                | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
-| [RapidReconciler: Transaction Detail Report Update](MDS/transaction-detail-report) | Enhanced drill-down for intercompany, transfer, and direct ship orders                                      |
 | [Working with the Item Ledger](MDS/item-ledger-faq) | Balances, posting codes, dates, DMAAs, and integrity conditions |
 | [Ultimate DMAAI Guide](MDS/distribution-aais)                                      | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing                      |
 | [Managing GL Class Codes](MDS/gl-class-code-changes)                               | Procedure, hierarchy of change locations, why adjustments are required                                      |
@@ -44,6 +43,7 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | [Product Costing Guide](MDS/weighted-average-cost)                                 | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact    |
 | [Zero Balance Adjustments](MDS/zero-balance-adjustments) | Purpose, purchasing and inventory AAIs, journal entry examples |
 | [Handling Cardex Variance](MDS/dollars-only-adjustment) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
+| [Understanding Outside Operations](MDS/outside-operations) | Item master, work center, routing, receipt, and WIP journal entries |
 
 ---
 
@@ -75,9 +75,6 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 | Document | Description |
 |----------|-------------|
-| [Outside Operations: Setup and Accounting](MDS/outside-operations) | Item master, work center, routing, receipt, and WIP journal entries |
-| [Outside Operations: Troubleshooting](MDS/outside-operations-troubleshooting) | Why POs are not created — item, system, routing, vendor, and security issues |
-| [Global Item Update: A "Gotcha"](MDS/global-item-update) | Creation date override on item ledger records |
 | [FAQ: Sales Update (P42800)](MDS/sales-update-faq) | File updates, processing order, AAIs, batch types, proof vs. final, errors |
 | [Tax in Sales](MDS/tax-in-sales) | Tax explanation codes, Rate/Area setup, AAIs, S/V/C/E examples |
 | [Sales Order Intercompany Processing](MDS/intercompany-processing) | SI/SK/OK orders, R4210IC, journal entries, cost alignment |
