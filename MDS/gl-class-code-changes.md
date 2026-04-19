@@ -1,88 +1,197 @@
-**GL Class Codes - Professional Training Guide**
+# GL Class Code Management and Change Procedures
 
-**Overview**
+## Overview
 
-GL Class Codes are item attributes assigned in JD Edwards (JDE) that determine how inventory transactions are recorded in the General Ledger. The mapping between GL Class Codes and journal entries is defined in the Distribution/Manufacturing Automatic Accounting Instructions (DMAIIs), which are covered separately.
+GL Class Codes are 4-character item attributes assigned in JD Edwards that determine how inventory transactions are recorded in the General Ledger. The mapping between GL Class Codes and journal entries is defined in the Distribution/Manufacturing Automatic Accounting Instructions (DMAAIs).
 
-This guide covers four topics:
+This document covers:
 
 - The GL Class Code hierarchy
-- How to change a GL Class Code correctly
 - How GL Class Codes are used in transactions
+- The correct procedure for changing a GL Class Code
 - Integrity Report 5
+- Common mistakes and how to avoid them
 
-**1\. The GL Class Code Hierarchy**
+---
 
-GL Class Codes exist at four levels in JDE. Understanding this hierarchy is essential for maintaining accurate and consistent accounting records.
+## Section 1: The GL Class Code Hierarchy
 
-**Level 1 - Item Master**
+GL Class Codes exist at four levels in JD Edwards. Understanding this hierarchy is essential for maintaining accurate and consistent accounting records.
 
-The GL Class Code is first assigned when a new item is created in the Item Master. This is the foundation of the hierarchy.
+### Level 1 -- Item Master
 
-**Level 2 - Item Branch**
+The GL Class Code is first assigned when a new item is created in the Item Master. This is the foundation of the hierarchy and the starting point for all subsequent levels.
+
+### Level 2 -- Item Branch
 
 When branch plant records are created for an item, the GL Class Code is copied from the Item Master to each branch plant record. While each branch plant may technically carry a different value, this is uncommon and generally not recommended.
 
-**Level 3 - Item Location**
+### Level 3 -- Item Location
 
-Each branch plant must have at least one primary location assigned to an item before any transactions can be processed. Additional secondary locations may also be defined. When locations are created, the GL Class Code is copied from the Item Branch record. Again, different values per location are possible but uncommon.
+Each branch plant must have at least one primary location assigned to an item before any transactions can be processed. Additional secondary locations may also be defined. When locations are created, the GL Class Code is copied from the Item Branch record. Different values per location are possible but uncommon.
 
-**Level 4 - Sales Order / Purchase Order**
+### Level 4 -- Sales Order / Purchase Order
 
 When a purchase order or sales order is entered, the GL Class Code is copied from the item's location record to each order line via the **Additional Info** form.
 
-**Key Takeaway:** The GL Class Code flows downward through the hierarchy - from Item Master → Item Branch → Item Location → Order Line - but it does **not** update automatically. Each level must be maintained independently.
+> **Key Takeaway:** The GL Class Code flows downward through the hierarchy -- from Item Master to Item Branch to Item Location to Order Line -- but it does **not** update automatically. Each level must be maintained independently.
 
-**2\. Changing a GL Class Code**
+---
 
-**Important: Changes Do Not Cascade**
+## Section 2: How GL Class Codes Are Used in Transactions
 
-A common misconception is that updating the GL Class Code at the Item Master level will automatically update all lower levels. **This is not the case.** Each level must be updated manually, which can be a time-consuming process depending on the number of branch plants and locations involved.
+Different transaction types retrieve the GL Class Code from different levels of the hierarchy:
 
-**Handling Inventory On Hand**
+| Transaction Type | GL Class Code Source | Timing |
+|---|---|---|
+| Work Orders (material issues and completions) | Item Branch level | Batch -- during manufacturing accounting (R31802) |
+| Sales Orders and Purchase Orders (shipments and receipts) | Order line level | Real time |
+| Inventory Transactions (issues, adjustments, transfers, cycle counts) | Item Location level | Real time |
 
-Before changing a GL Class Code, any existing on-hand inventory must be addressed. Failing to do so will result in the item's value remaining in the old GL account, with no transaction created to move it to the new account.
+> **Important:** Because different transaction types pull the GL Class Code from different levels, the code must be **consistent across all levels** for a given item. If values differ, the same item could post to different GL accounts depending on the transaction type -- creating inconsistencies in financial reporting and inventory valuation.
 
-**The correct process is:**
+---
 
-- **Adjust out** all on-hand quantity under the current GL Class Code.
-- **Update** the GL Class Code at all applicable levels (Item Master, Item Branch, Item Location, and any open order lines).
-- **Adjust in** the quantity under the new GL Class Code.
+## Section 3: The Risk of Changing GL Class Codes with Quantity on Hand
 
-**Why This Matters - An Example**
+JD Edwards allows changes to GL Class Code fields at any level of the hierarchy **without checking whether there is quantity on hand for the item**. This presents a significant accounting risk.
 
-Suppose an item is incorrectly coded as a raw material, and inventory is received against it. The dollar value of that receipt posts to the raw material account in the General Ledger. When the error is discovered and the code is changed to finished goods - without first adjusting the inventory out - the value remains in the raw material account. There is no transaction to trigger a reallocation.
+> **Critical Rule:** GL Class Codes should only be changed when the quantity on hand for the item is **zero**. Changing a GL Class Code while quantity exists in inventory will cause account discrepancies that surface as reconciling items at period end.
 
-By adjusting the quantity out first, then changing the code, then adjusting back in, the system generates the appropriate journal entries to move the value from the raw material account to the finished goods account.
+### What Goes Wrong -- Incorrect Process
 
-**Key Takeaway:** Always adjust inventory out before changing a GL Class Code, then adjust it back in after the code has been updated at all levels.
+The following example illustrates what happens when a GL Class Code is changed while quantity is still on hand.
 
-**3\. Transaction Usage**
+**Scenario:** An item was misclassified as a finished good and needed to be reclassified as a raw material. A receipt of $100 had already occurred before the change was made.
 
-Different transaction types retrieve the GL Class Code from different levels of the hierarchy. This is summarized below:
+| Step | Transaction | Account Debited | Account Credited |
+|---|---|---|---|
+| 1 | Receipt (OV) of $100 | Finished Goods | RNV |
+| 2 | GL Class Code changed to Raw Materials (quantity still on hand) | -- | -- |
+| 3 | Material issue (IM) | WIP | **Raw Materials** |
 
-| **Transaction Type**                                                  | **GL Class Code Source** |
-| --------------------------------------------------------------------- | ------------------------ |
-| Work Orders (material issues & completions)                           | Item Branch level        |
-| Sales Orders & Purchase Orders (shipments & receipts)                 | Order line level         |
-| Inventory Transactions (issues, adjustments, transfers, cycle counts) | Item Location level      |
+**Result:** The Finished Goods account still carries the $100 receipt with no corresponding relief. The Raw Materials account was credited on the issue even though it was never debited. An account discrepancy exists that will surface as a reconciling item at period end.
 
-Journal entries for work order transactions are created during the manufacturing accounting batch process, while sales/purchase order and inventory transactions are processed in real time.
+### What Happens Correctly -- Correct Process
 
-**Why Consistency Matters**
+The following example shows the same reclassification handled properly.
 
-Because different transaction types pull the GL Class Code from different levels, it is critical that the code is **consistent across all levels** for a given item. If the values differ, the same item could post to different GL accounts depending on the transaction type - creating inconsistencies in financial reporting and inventory valuation.
+| Step | Transaction | Account Debited | Account Credited |
+|---|---|---|---|
+| 1 | Receipt (OV) of $100 | Finished Goods | RNV |
+| 2 | Inventory adjustment (IA) to zero out quantity | -- | **Finished Goods** |
+| 3 | GL Class Code changed to Raw Materials (quantity now at zero) | -- | -- |
+| 4 | Inventory adjustment (IA) to re-establish quantity | **Raw Materials** | -- |
+| 5 | Material issue (IM) | WIP | **Raw Materials** |
 
-**Key Takeaway:** GL Class Codes should always be the same across all levels for a given item. Inconsistencies can lead to incorrect journal entries and valuation errors.
+**Result:** All accounts reflect the correct balances with no discrepancies.
 
-**4\. Integrity Report 5**
+---
+
+## Section 4: Procedure for Changing a GL Class Code
+
+Follow this procedure any time a GL Class Code change is required for an item that is or has been in inventory.
+
+### Step 1 -- Verify Quantity on Hand
+
+- Confirm the current on-hand balance for the item across **all locations and lots**.
+- Check for quantity in transit or on open orders that may also need to be addressed.
+- If quantity on hand is already zero, proceed to Step 3.
+
+### Step 2 -- Adjust Inventory to Zero
+
+- Perform an **inventory adjustment (IA)** to issue out all quantity on hand.
+- This ensures the current GL account is properly relieved before the code is changed.
+- Document the adjustment with a clear remark referencing the GL Class Code change for audit purposes.
+
+> **Note:** If the item exists across multiple locations or lots, each must be adjusted individually. Do not proceed to the next step until all locations show zero on-hand quantity.
+
+### Step 3 -- Update the GL Class Code at All Levels
+
+Update the GL Class Code at **every applicable level** in the following order:
+
+1. **Item Master** (F4101)
+2. **Item Branch** for each applicable branch plant (F4102)
+3. **Item Location** for each applicable location (F41021)
+4. **Open Sales Order lines** -- update via the Additional Info form on each open line
+5. **Open Purchase Order lines** -- update via the Additional Info form on each open line
+
+> **Important:** Changes do not cascade. Updating the Item Master does not automatically update Item Branch, Item Location, or open order lines. Each level must be updated manually.
+
+### Step 4 -- Adjust Inventory Back In
+
+- Perform a second **inventory adjustment (IA)** to re-establish the on-hand quantity under the new GL Class Code.
+- This ensures the correct GL account is debited for the inventory value.
+- Document this adjustment with the same reference as Step 2 for a complete audit trail.
+
+### Step 5 -- Verify Account Balances
+
+- Confirm that the **old account** has been fully relieved.
+- Confirm that the **new account** reflects the correct balance.
+- Run **Integrity Report 5** (see Section 5) to verify that GL Class Codes are now consistent across Item Branch and Item Location records.
+
+---
+
+## Section 5: Inventory Integrity Report 5
 
 **Integrity Report 5** identifies items where the GL Class Code at the Item Branch level does not match the GL Class Code on one or more of its corresponding Item Location records.
 
-Since these values are expected to be the same, any item appearing on this report should be reviewed promptly and corrected in JD Edwards as appropriate.
+Since these values are expected to be the same, any item appearing on this report should be reviewed promptly and corrected in JD Edwards before the discrepancy affects transaction accuracy.
 
-**How to Run Integrity Report 5**
+> **Best Practice:** Run Integrity Report 5 regularly -- particularly after any GL Class Code change -- to proactively identify and resolve mismatches before they cause incorrect journal entries or period-end reconciliation issues.
 
-_(Follow your organization's standard instructions for accessing and running this report in JDE.)_
+![Inventory Integrity Report 5](../Images/rr_inv_integrity5.png)
 
-**Key Takeaway:** Run Integrity Report 5 regularly to proactively identify and resolve GL Class Code mismatches before they affect transaction accuracy.
+Integrity Report 5 can be accessed via the RapidReconciler application under the Inventory Integrity Reports menu. Review the report output for any items listed and take corrective action as needed to ensure GL Class Codes are consistent across all levels of the hierarchy.
+
+## Section 6: Organizational Best Practices
+
+### Establish a Formal Change Procedure
+
+Establish a formal procedure within your organization that requires on-hand quantity to be at zero before any GL Class Code change is processed. This discipline prevents significant reconciliation issues at month end.
+
+Consider requiring the following approvals before a GL Class Code change is processed:
+
+- Review by the cost accountant or inventory accountant
+- Confirmation that all on-hand quantity has been adjusted to zero
+- Sign-off that all hierarchy levels have been updated
+
+### Keep GL Class Codes Consistent Across All Levels
+
+GL Class Codes should always be the same across all levels for a given item. Run Integrity Report 5 regularly to identify and correct any mismatches.
+
+### Document All Changes
+
+Document GL Class Code changes with clear remarks on the adjustment transactions and maintain a log of changes for audit purposes. Include:
+
+- The item number and description
+- The old and new GL Class Code
+- The reason for the change
+- The date and who processed the change
+- The adjustment transaction document numbers
+
+### Timing of Changes
+
+Where possible, schedule GL Class Code changes during periods of low inventory activity -- ideally when on-hand quantity is naturally at zero -- to minimize the number of adjustment transactions required and reduce the risk of timing errors.
+
+---
+
+## Section 7: Quick Reference Summary
+
+| Topic | Key Point |
+|---|---|
+| GL Class Code hierarchy | Item Master > Item Branch > Item Location > Order Line |
+| Automatic cascade | Changes do **not** cascade -- each level must be updated manually |
+| When to change | Only when quantity on hand is **zero** across all locations and lots |
+| Adjustment process | Adjust out, change code at all levels, adjust back in |
+| Open orders | Update GL Class Code on all open sales and purchase order lines |
+| Verification | Run Integrity Report 5 after every GL Class Code change |
+| Audit trail | Document all adjustments with clear remarks referencing the change |
+| Timing | Schedule changes during periods of low or zero inventory activity |
+
+---
+
+## Section 8: Related Documentation
+
+- [DMAAI Reference Guide](../MDS/dmaai-reference-guide.md)
+- [Account Management -- Adding an Inventory Account](../MDS/add-account-rr.md)
