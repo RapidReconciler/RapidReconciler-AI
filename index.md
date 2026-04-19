@@ -21,27 +21,29 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 | Document | Description |
 |----------|-------------|
+| [Why RapidReconciler?](MDS/stock-status-trial-balance) | Timing, backdating, report definition |
 | [Getting Started with the Application](MDS/getting-started-with-rapidreconciler) | Logging in, navigating the interface, and system requirements |
-| [Administrator Responsibilities](MDS/admin-responsibilities) | Company management, user setup, general settings, and offset accounts |
 | [Complex Password](MDS/complex-password) | Password policy requirements and reset process |
+| [Administrator Responsibilities](MDS/admin-responsibilities) | Company management, user setup, general settings, and offset accounts |
 | [Adding a New Company](MDS/adding-company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
 | [Managing Inventory Accounts](MDS/add-account-rr) | DMAAI model table process and refresh requirements |
-| [Ultimate DMAAI Guide](MDS/distribution-aais) | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
-| [Managing GL Class Codes](MDS/gl-class-code-changes) | Procedure, hierarchy of change locations, why adjustments are required |
-| [About Units of Measure](MDS/changing-primary-uom) | Risks, procedure, and considerations for history, BOM, GL, warehousing, EDI |
 
 ---
 
 ## Inventory
 
-| Document | Description |
-|----------|-------------|
-| [Inventory Key Concepts](MDS/inventory-key-concepts) | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes |
-| [Inventory: Using the Application](MDS/inventory-using-application) | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
-| [Reconciliation: Top 6 Issues — Part 3](MDS/top-6-issues-pt3) | Product costing and R30543 cost component integrity |
-| [RapidReconciler: Transaction Detail Report Update](MDS/transaction-detail-report) | Enhanced drill-down for intercompany, transfer, and direct ship orders |
-| [Stock Status vs. Trial Balance — Part 1](MDS/stock-status-trial-balance) | Timing, backdating, report definition |
-| [Stock Status vs. Trial Balance — Part 2](MDS/stock-status-trial-balance-pt2) | DMAAI setup and GL class code change impacts |
+| Document                                                                           | Description                                                                                                 |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [Inventory Key Concepts](MDS/inventory-key-concepts)                               | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes    |
+| [Inventory: Using the Application](MDS/inventory-using-application)                | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
+| [RapidReconciler: Transaction Detail Report Update](MDS/transaction-detail-report) | Enhanced drill-down for intercompany, transfer, and direct ship orders                                      |
+| [Working with the Item Ledger](MDS/item-ledger-faq) | Balances, posting codes, dates, DMAAs, and integrity conditions |
+| [Ultimate DMAAI Guide](MDS/distribution-aais)                                      | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing                      |
+| [Managing GL Class Codes](MDS/gl-class-code-changes)                               | Procedure, hierarchy of change locations, why adjustments are required                                      |
+| [About Units of Measure](MDS/changing-primary-uom)                                 | Changing the primary unit of measure, impact on inventory transactions, and cardex analysis considerations  |
+| [Product Costing Guide](MDS/weighted-average-cost)                                 | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact    |
+| [Zero Balance Adjustments](MDS/zero-balance-adjustments) | Purpose, purchasing and inventory AAIs, journal entry examples |
+| [Handling Cardex Variance](MDS/dollars-only-adjustment) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
 
 ---
 
@@ -73,7 +75,6 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 | Document | Description |
 |----------|-------------|
-| [R30837 WIP Revaluation for Standard Costing](MDS/wip-revaluation) | How WIP reval works, prerequisites, setup, journal entries, full example |
 | [Outside Operations: Setup and Accounting](MDS/outside-operations) | Item master, work center, routing, receipt, and WIP journal entries |
 | [Outside Operations: Troubleshooting](MDS/outside-operations-troubleshooting) | Why POs are not created — item, system, routing, vendor, and security issues |
 | [Global Item Update: A "Gotcha"](MDS/global-item-update) | Creation date override on item ledger records |
@@ -83,15 +84,6 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | [Taxes in Procurement](MDS/taxes-procurement) | Tax setup, explanation codes, AAIs, and GL treatment for S, U, V, C, B codes |
 | [Landed Costs in EnterpriseOne](MDS/landed-costs) | Setup, cost rules, journal entries, F43121 records, performance notes |
 | [Flexible Accounting for Distribution](MDS/flexible-accounting) | Background, requirements, enabling, establishing flexible accounts |
-| [How to Set Up a Branch/Plant](MDS/branch-plant-setup) | Address book, business unit, constants, and default branch update |
-| [Unit of Measure Conversion](MDS/uom-conversion) | Hierarchy, standard vs. item conversions, weight and volume setup |
-| [Weighted Average Cost](MDS/weighted-average-cost) | Setup, UDC 40/AV, online vs. batch, landed cost and receipt routing impacts |
-| [Costs in EnterpriseOne](MDS/costs-enterpriseone) | Cost levels, cost methods, F4105 storage, IB transactions, R41815 conversion |
-| [Zero Balance Adjustments](MDS/zero-balance-adjustments) | Purpose, purchasing and inventory AAIs, journal entry examples |
-| [Cardex Analysis: Weighted Average Cost Error](MDS/cardex-weighted-average-error) | Identifying and investigating weighted average cost calculation errors |
-| [Cardex Analysis: 3 Common Analyst Errors](MDS/cardex-analyst-errors) | Memo transactions, alternate UOM, average cost item analysis levels |
-| [Performing a Dollars-Only Inventory Adjustment](MDS/dollars-only-adjustment) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
-| [Item Ledger: Top 5 Questions Answered](MDS/item-ledger-faq) | Balances, posting codes, dates, DMAAs, and integrity conditions |
 | [Direct Ship Orders](MDS/direct-ship-orders) | Setup, line type, AAIs, partial shipments, multi-currency, ECS |
 
 ---
