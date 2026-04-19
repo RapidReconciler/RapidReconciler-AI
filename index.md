@@ -44,20 +44,18 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | [Zero Balance Adjustments](MDS/zero-balance-adjustments) | Purpose, purchasing and inventory AAIs, journal entry examples |
 | [Handling Cardex Variance](MDS/dollars-only-adjustment) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
 | [Understanding Outside Operations](MDS/outside-operations) | Item master, work center, routing, receipt, and WIP journal entries |
+| [Sales Order Reference Guide](../MDS/sales_order_reference.md) | Sales order types, processing flow, AAIs, journal entries, and common issues |
 
 ---
 
 ## In Transit
 
-| Document | Description |
-|----------|-------------|
-| [In Transit Key Concepts](MDS/in-transit-key-concepts) | ST/OT process, accounting setup, order pairs, exclusions |
-| [In Transit: Using the Application](MDS/in-transit-using-application) | Orders page, reconciliation page, transactions page, As-Of page, integrity reports |
-| [ST/OT Transfer Order Accounting — Part 3](MDS/transfer-order-accounting-pt3) | OT receipt with DMAAI 4335, cost change before shipment |
-| [ST/OT Transfer Order Accounting — Part 4](MDS/transfer-order-accounting-pt4) | Standard cost variance in receiving branch, DMAAI 4335 configuration |
-| [ST/OT: Inventory Tracking Without Receipts Routing](MDS/st-ot-tracking) | RapidReconciler As-Of alternative to receipts routing |
-| [ST/OT: Exclusions in RapidReconciler](MDS/st-ot-exclusions) | Unbalanced transfers, exclusion process, journal entries |
-| [ST/OT: Exclusion Variance Added to Orders Page](MDS/st-ot-exclusion-variance) | ExclVarQty and ExclVarAmt columns, unexclude and re-exclude process |
+| Document                                                                   | Description                                                                        |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| [In Transit Key Concepts](MDS/in-transit-key-concepts)                     | ST/OT process, accounting setup, order pairs, exclusions                           |
+| [In Transit: Using the Application](MDS/in-transit-using-application)      | Orders page, reconciliation page, transactions page, As-Of page, integrity reports |
+| [Transfer Order Exclusion Guide](../MDS/transfer_order_exclusion_guide.md) | Exclusion types, setup, and troubleshooting                                        |
+| [Transfer Order Reference Guide](../MDS/transfer_order_reference.md)       | Transfer order types, processing flow, AAIs, journal entries, and common issues    |
 
 ---
 
@@ -68,20 +66,7 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | [PO Receipts Key Concepts](MDS/po-receipts-key-concepts) | RNV definition, process flow, Table F43121, match types, challenges |
 | [PO Receipts: Using the Application](MDS/po-receipts-using-application) | Orders page, reconciliation page, line analysis, how to reconcile |
 | [Reconciling RNV Accounts in RapidReconciler](MDS/reconciling-rnv) | Summary, drill-down, and suspension features in RR V7 |
-
----
-
-## Reference Library
-
-| Document | Description |
-|----------|-------------|
-| [FAQ: Sales Update (P42800)](MDS/sales-update-faq) | File updates, processing order, AAIs, batch types, proof vs. final, errors |
-| [Tax in Sales](MDS/tax-in-sales) | Tax explanation codes, Rate/Area setup, AAIs, S/V/C/E examples |
-| [Sales Order Intercompany Processing](MDS/intercompany-processing) | SI/SK/OK orders, R4210IC, journal entries, cost alignment |
-| [Taxes in Procurement](MDS/taxes-procurement) | Tax setup, explanation codes, AAIs, and GL treatment for S, U, V, C, B codes |
-| [Landed Costs in EnterpriseOne](MDS/landed-costs) | Setup, cost rules, journal entries, F43121 records, performance notes |
-| [Flexible Accounting for Distribution](MDS/flexible-accounting) | Background, requirements, enabling, establishing flexible accounts |
-| [Direct Ship Orders](MDS/direct-ship-orders) | Setup, line type, AAIs, partial shipments, multi-currency, ECS |
+| [Purchase Order Reference Guide](../MDS/purchase_order_reference.md) | Purchase order types, processing flow, AAIs, journal entries, and common issues |
 
 ---
 

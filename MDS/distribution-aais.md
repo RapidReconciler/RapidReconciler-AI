@@ -55,9 +55,7 @@ The Business Unit is optional in AAI setup. If left blank, the system pulls the 
 
 ### 1.4 GL Class Code Sources
 
-For inventory transactions, the GL class code is sourced from the **Item Location table (F41021)**, or for non-stock items, from the **Item Master table (F4101)**.
-For manufacturing transactions, the GL class code is sourced from the **Item Branch table (F4102)**
-For sales and purchasing transactions, the GL class code is determined by the inventory interface for the line type:
+For inventory transactions, the GL class code is sourced from the **Item Location table (F41021)**, or for non-stock items, from the **Item Master table (F4101)**. For sales and purchasing transactions, the GL class code is determined by the inventory interface for the line type:
 
 | Inventory Interface | GL Class Code Source |
 |---|---|
@@ -569,3 +567,165 @@ If multiple accounts need to be maintained that were previously driven by MCU, O
 - Update the GL class code on applicable items to align with the new AAI structure.
 
 > **Note:** In AAI setup, the MCU field may be left blank. In that case, the MCU from the purchase order detail line is used to construct the account, with the object and subsidiary sourced from the company, document type, and GL class code.
+
+---
+
+## Section 8: Flexible Accounting for Distribution
+
+### 8.1 Overview
+
+Flexible Accounting provides greater flexibility in how accounting information is recorded for sales and purchasing transactions. Prior to Flexible Accounting, the only way to pass detailed information to the general ledger was through the subledger field, which could only capture one piece of information.
+
+With Flexible Accounting, the **business unit** portion of an account number can be defined based on a combination of fields -- for example, a sold-to address number, an address book category code, and an item category code. This allows organizations to be highly specific in their accounting for who, where, and what is being sold or purchased.
+
+**Programs where Flexible Accounting is applied:**
+
+| Module | Program | When Applied |
+|---|---|---|
+| **Sales** | Sales Update (R42800) | During final invoice and GL update |
+| **Purchasing** | Purchase Receipts (P4312) | At receipt |
+| **Purchasing** | Match Voucher to Open Receipts (P4314) | At voucher match |
+| **Inventory** | Issues (P4112), Transfers (P4113), Adjustments (P4114), Reclassification (P4116) | Partial support -- see Section 8.6 |
+
+> **Important:** Setting up the account structure is a business decision that should be made during the implementation and planning phase. Switching between standard accounting and Flexible Accounting mid-stream is technically possible but not easily accomplished and should be carefully evaluated before proceeding.
+
+### 8.2 Requirements
+
+Three steps must be completed to activate Flexible Accounting:
+
+1. **Enable Flexible Accounting** -- Define the Rule Setup Method and associate programs with tables.
+2. **Identify the AAIs to be flexed** -- Determine which AAI table numbers will use Flexible Accounting.
+3. **Define the Flexible account rules** -- Specify how account components will be constructed from combinations of fields.
+
+### 8.3 Enabling Flexible Accounting (P16902)
+
+Both enabling steps are performed from menu **G1631** using the **Enable Functionality by Application** option (P16902).
+
+#### Step 1 -- Establishing the Rule Setup Method
+
+The Rule Setup Method defines how the system creates Flexible Accounting entries. Add an **SM** type of functionality if not already present:
+
+1. Click **Add**.
+2. Enter **SM** in the Type of Functionality field, then tab.
+3. Enter **A** in the Setup Method field and the relevant application name (e.g., R42800, P4312, or P4314).
+
+**Available Setup Methods:**
+
+| Code | Method |
+|---|---|
+| **O** | Object |
+| **A** | AAI |
+| **C** | Combination of Object and AAI |
+
+> **Note:** If the Setup Method is set to **"C"** (Combination) and flex information is configured to flex a specific field differently based on Object vs. AAI, **Object takes precedence**.
+
+#### Step 2 -- Establishing Program/Table Relationships
+
+Associate the program using Flexible Accounting with the tables it will access. Add the relationship using the Enable Functionality form if not already defined.
+
+> **Important:** Only the tables listed for an application are supported. Adding a new table to the Enable Functionality form is considered a modification and is not supported.
+
+### 8.4 AAIs That Can Be Flexed
+
+#### Sales Order Processing
+
+Only the following AAIs can be flexed for Sales Order Processing:
+
+| Category | AAIs |
+|---|---|
+| **Sales** | 4220, 4230, 4240, 4245, 4250 |
+| **Advanced Pricing** | 4270, 4280 |
+
+> **Note:** AAI 4245 is invoked when accounts receivable is bypassed by setting processing option #2 on the Update tab of Sales Update (R42800) to "1."
+
+#### Purchasing
+
+With the advent of Product Costing, **all AAIs** can be flexed for Purchasing processes.
+
+> **Note:** Flex accounts can be set up using either a To/From Object account **or** a specific AAI in Flex Accounting rules -- but not both simultaneously.
+
+### 8.5 Setting Up Flexible Account Rules (P40296)
+
+Flexible account rules are defined using the **Flexible Sales Accounting program (P40296)** off menu **G4241**.
+
+**Account components that can be flexed:**
+
+| Component | Maximum Segments | Maximum Characters |
+|---|---|---|
+| **Business Unit** | 6 segments | 12 characters |
+| **Subsidiary** | 4 segments | 8 characters |
+| **Subledger** | -- | -- |
+
+> **Important:** The **object account cannot be flexed.**
+
+**Account structure requirements:** A consistent account structure must be used across all companies and business units. This is required for multi-company consolidations and automated intercompany settlements. If Flexible Accounting is also used on the financials side, the distribution business units and subsidiary must use the same number of characters as the financials Flexible Accounting configuration.
+
+**Step-by-Step Setup Procedure:**
+
+**Step 1 -- Identify the AAI and define the Flexible account rule**
+
+Identify which AAI table number will be flexed and define the rule. For example, to flex the Revenue AAI (4230) using an address book number and an item category code:
+
+- The Business Unit field is constructed from a combination of the sold-to address book number and an item category code (e.g., SRP4 from F4211/F4102).
+- The Data Type field determines which address book record is used (Sold To, Ship To, or Parent Address Number).
+- Each additional AAI to be flexed requires its own separate rule definition.
+
+**Step 2 -- Define valid combinations in the Branch/Plant**
+
+Define the valid combinations of values that can result from the Flexible configuration. For example, address book number 4242 combined with category code ACC results in **4242ACC**.
+
+**Step 3 -- Verify the chart of accounts**
+
+Confirm that the appropriate chart of accounts information has been established for the flexed branch/plant value.
+
+**Step 4 -- Configure the DMAAI correctly**
+
+When using Flexible Accounting, the field being flexed (business unit or subsidiary) must be left **blank** in the DMAAI setup. Entering a hard-coded value would override the Flexible Accounting configuration.
+
+**Example DMAAI configuration with Flexible Accounting:**
+
+| Field | Value |
+|---|---|
+| Company | 50000 |
+| Document Type | LM |
+| GL Class | IN30 |
+| Business Unit | **Blank** (allows Flexible Accounting to populate) |
+| Object Account | 5020 |
+
+**Step 5 -- Activate via processing options**
+
+Set the processing options behind the applicable programs to validate and create Flexible Accounting entries:
+
+- Sales Update (R42800)
+- Purchase Order Receipts (P4312)
+- Voucher Match (P0411 / P4314)
+
+> **Note:** If using both Landed Cost and Flexible Accounting, ensure that the processing option for Landed Cost Selection (P43291) is also configured correctly.
+
+### 8.6 Flexible Accounting for Inventory Programs
+
+Flexible Accounting is only **partially supported** within the Inventory programs (P4112, P4113, P4114, P4116). There is no processing option to turn Flexible Accounting on or off for these programs -- if AAIs 4122 or 4124 are set up in the Flexible Accounting tables, they will be used automatically.
+
+**To enable Flexible Accounting for inventory programs:** Set up **SM** and **FA** for **XT4111Z1** in the Enable Functionality by Application program (P16902) off menu G1631.
+
+**Special consideration for Inventory Issues (P4112):**
+
+Processing options 1 and 2 on the Process tab of P4112 control whether a manual account can be entered for the transaction:
+
+- If a manual account is entered, it will be used **in place of** the 4124 AAI.
+- Flexible Accounting will **not** be applied to manually entered accounts.
+- Flexible Accounting can be set up by object and works correctly for AAIs 4122 and 4124, but will have **no effect** on manually entered accounts.
+
+### 8.7 Selective Use of Flexible Accounting
+
+Because Flexible Accounting can consume significant space in the financials tables, it is common for organizations to track Flexible Accounting information for only a select group of customers and/or items. This requires creating a **separate version** of the applicable programs (R42800, P4312, and/or P4314) with data selection targeting the relevant customers or items.
+
+### 8.8 Flexible Accounting vs. Standard AAI -- Key Differences
+
+| Aspect | Standard AAI | Flexible Accounting |
+|---|---|---|
+| Business unit source | Hard-coded in AAI or pulled from Branch/Plant | Dynamically constructed from combinations of transaction fields |
+| Flexibility | One account per company/document type/GL class combination | Multiple account combinations based on customer, item, and other attributes |
+| Setup complexity | Simple | Complex -- requires enabling, rule definition, chart of accounts setup, and DMAAI blank configuration |
+| Object account | Can be specified in AAI | **Cannot be flexed** -- must be set in standard AAI |
+| Mid-stream change | Straightforward | Not recommended -- carefully evaluate before changing |
