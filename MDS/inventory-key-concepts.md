@@ -20,7 +20,9 @@
 
 ## 1. Preparing Item Data for Reconciliation
 
-### The Model DMAAI Table
+### The Model DMAAI Table in JD Edwards
+
+![JDE DMAIIs](../Images/rr_inventory_jde_dmaais.png)
 
 The **Model DMAAI Table** is a foundational concept in RapidReconciler. DMAAI table **4152** with document type **PI** has been designated as the default model table. The document type may be changed by the RR administrator in Company settings.
 
@@ -51,7 +53,13 @@ The Model DMAAI Table must be vetted for accuracy before RapidReconciler can pro
 - Vetting DMAAI 4152 PI is essential for accurate results in RapidReconciler.
 - If document type PI does not meet business needs, establish a dedicated document type and update the Companies configuration in RapidReconciler.
 
+- Use Integrity report 1 shown below to validate that the new DMAAI entry is set up correctly and will be picked up by RapidReconciler:
+
+![Inventory Integrity Model DMAAI](../Images/rr_inventory_integrity1_modeldmaai.png)
+
 ### Managing Inventory Accounts
+
+[Add an Inventory Account](../MDS/add-account-rr.md)
 
 The Model DMAAI Table also controls which accounts appear in the RapidReconciler inventory filters. Company numbers, business units, object accounts, and subsidiaries are pulled directly from this table and populate the filter widget on the reconciliation page.
 
@@ -158,6 +166,10 @@ This variance source checks the integrity between F0911 (GL detail) and F0902 (a
 
 ### Common Batch Posting Errors
 
+![Inventory Batch Popup](../Images/rr_inv_batch_popup.png)
+
+Use the account, gl date, approval and posting status columns on the GL Batches variance preview screen to identify any batches that have not posted successfully. Common errors include:
+
 | **Error** | **Description** |
 |---|---|
 | Missing Batch Headers | A batch header record in table F0011 is absent |
@@ -190,6 +202,15 @@ Two transaction types fall into the End of Day category:
 | Sales Order shipment confirmations | RI | Sales Update batch (R42800) |
 
 All other transaction types (PO receipts, issues, adjustments, transfers) update the general ledger simultaneously with the item ledger.
+The type column will display the apprpriate batch header status message:
+
+| Status | Description |
+|---|---|
+| **Error** | The document type is not Sales or Manufacturing. |
+| **Sales** | The sales update program has not yet run to pick up the transaction. This is typical for transactions that occurred on the current day. |
+| **Manufacturing** | The manufacturing accounting program has not yet run to pick up the transaction. This is typical for transactions that occurred on the current day. |
+
+![Inventory EOD Popup](../Images/rr_inv_eod_popup.png)
 
 **Key Takeaways:**
 

@@ -18,6 +18,9 @@ RapidReconciler uses **DMAAI table 4152** with document type **PI** as the defau
 
 ### 1.1 How RapidReconciler Uses DMAAI
 
+![JDE DMAIIs](../Images/rr_inventory_jde_dmaais.png)
+
+
 The DMAAI (Default Model AAI) table in JD Edwards defines the general ledger accounts associated with inventory transactions by GL class code. RapidReconciler reads these entries to determine which accounts to display in the reconciliation interface.
 
 | Setting | Default Value |
@@ -60,6 +63,10 @@ Follow these steps to add a new inventory account in RapidReconciler:
 
 > **Tip:** If you are unsure which GL class code to use, refer to your JD Edwards item master records or consult your JD Edwards administrator. The GL class code on the DMAAI entry must match the GL class code assigned to the inventory items you want to reconcile.
 
+Use Integrity report 1 shown below to validate that the new DMAAI entry is set up correctly and will be picked up by RapidReconciler:
+
+![Inventory Integrity Model DMAAI](../Images/rr_inventory_integrity1_modeldmaai.png)
+
 ### 2.2 Additional Requirements
 
 In addition to creating the DMAAI entry, the following conditions must be met before the new account will appear in RapidReconciler:
@@ -73,6 +80,9 @@ In addition to creating the DMAAI entry, the following conditions must be met be
 ---
 
 ## Section 3: Troubleshooting
+
+![Inventory Filter Refresh](../Images/rr_inventory_filter_refresh.png)
+
 
 | Symptom | Likely Cause | Action |
 |---|---|---|

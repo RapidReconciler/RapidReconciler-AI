@@ -7,13 +7,40 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 ## Technical Documents
 
-| Document | Description |
-|----------|-------------|
-| [Technical Requirements](MDS/tech-requirements) | Installation and configuration requirements |
-| [Installing RapidReconciler-Prod](MDS/Installing_production_database.md) | Step-by-step VALC setup and RR Agent installation |
-| [Installing a Client in VALC (GSI Use Only)](MDS/installing-valc) | Step-by-step database, user and job installation |
-| [Server Migration Guide](MDS/server-migration) | Moving RapidReconciler to a new dedicated or separate server |
-| [Certificate Management](../MDS/certificate_management.md) | SSL certificate scope, renewal process, responsibilities, and troubleshooting |
+| Document | Section | Description |
+|---|---|---|
+| [Technical Requirements](MDS/tech-requirements) | [RR Database Server](MDS/tech-requirements#rr-database-server) | Minimum server requirements, SQL Server specifications, storage estimates, and network information |
+| | [Integration Services](MDS/tech-requirements#integration-services) | Alternate server requirements, SSMS, Visual Studio, and OLE DB provider configuration for AS/400, Oracle, and SQL Server |
+| | [RR Application Server](MDS/tech-requirements#rr-application-server) | Server requirements, internal and external network access, and port configuration |
+| | [End User PC](MDS/tech-requirements#end-user-pc) | Operating system, browser, and network requirements for end users |
+| | [JD Edwards Information](MDS/tech-requirements#jd-edwards-information) | Data dictionary variables and JDE connection details required for installation |
+| | [Table Listing](MDS/tech-requirements#table-listing) | All JD Edwards tables accessed by RapidReconciler in read-only mode |
+| | [Appendix A -- Integration Services Catalog](MDS/tech-requirements#appendix-a--creating-the-integration-services-catalog) | Steps to create the SSISDB catalog and RapidReconciler project folder |
+| | [Appendix B -- Proof of Concept](MDS/tech-requirements#appendix-b--proof-of-concept-requirements) | Steps and table extract statements for providing data to GSI for a proof of concept |
+| [Installing RapidReconciler-Prod](MDS/Installing_production_database.md) | [Skill Sets](MDS/Installing_production_database.md#skill-sets) | Required technical knowledge for installation |
+| | [Architecture Overview](MDS/Installing_production_database.md#architecture-overview) | Hardware components, data synchronized with the RR Agent, and network notes |
+| | [Working with a New Client](MDS/Installing_production_database.md#working-with-a-new-client) | Information to gather from the sales rep and web meeting agenda |
+| | [Separate Application Server Requirements](MDS/Installing_production_database.md#separate-application-server-requirements-if-needed) | Server, access, and OLE DB provider requirements for separate server configurations |
+| | [Database Server Requirements](MDS/Installing_production_database.md#database-server-requirements) | Minimum SQL Server requirements for the database server |
+| | [Creating the Integration Services Catalog](MDS/Installing_production_database.md#creating-the-integration-services-catalog) | Steps to create the SSISDB catalog and RapidReconciler folder |
+| | [Installing the RapidReconciler Database](MDS/Installing_production_database.md#installing-the-rapidreconciler-database) | Steps to create the database, objects, SQL user, and SQL Agent job |
+| | [Configuring and Deploying the Integration Services Package](MDS/Installing_production_database.md#configuring-and-deploying-the-integration-services-package) | Steps to create the Visual Studio solution, configure connections and variables, and deploy the SSIS package |
+| | [Performing the Initial Data Load](MDS/Installing_production_database.md#performing-the-initial-data-load) | Steps to enable and configure the SQL Agent job schedule |
+| | [Security Requirements](MDS/Installing_production_database.md#security-requirements) | SQL login permissions, Agent service account, and SSIS catalog permissions |
+| [Installing a Client in VALC (GSI Use Only)](MDS/installing-valc) | [Part 1: Initial VALC Setup](MDS/installing-valc#part-1-initial-valc-setup) | Creating the client record, initial user account, module configuration, additional fields, and certificate management |
+| | [Part 2: Installing the RapidReconciler Agent](MDS/installing-valc#part-2-installing-the-rapidreconciler-agent) | Downloading and installing the agent, validating the SQL Server connection, and verifying connectivity in VALC |
+| | [Part 3: Completing the Setup in VALC](MDS/installing-valc#part-3-completing-the-setup-in-valc) | Verifying database status and licensing company numbers |
+| | [Summary Checklist](MDS/installing-valc#summary-checklist) | End-to-end installation checklist |
+| [Server Migration Guide](MDS/server-migration) | [Section 1: Overview](MDS/server-migration#section-1-overview) | Migration scenarios and pre-migration planning |
+| | [Section 2: Dedicated Server Migration](MDS/server-migration#section-2-dedicated-server-migration) | Prerequisites, database backup and restore, SSIS package migration, SQL Agent job, RR Agent installation, and obtaining IP addresses |
+| | [Section 3: Separate Servers Migration](MDS/server-migration#section-3-separate-servers-migration) | Application server and database server prerequisites and migration steps |
+| | [Section 4: Update VALC and Cloudflare](MDS/server-migration#section-4-update-valc-and-cloudflare) | Updating VALC IP addresses, Cloudflare DNS update, enabling the SQL Agent job schedule, and testing |
+| | [Section 5: Post-Migration Checklist](MDS/server-migration#section-5-post-migration-checklist) | End-to-end migration checklist |
+| [Certificate Management](MDS/certificate_management.md) | [Components](MDS/certificate_management.md#components) | Overview of the wildcard SSL certificate, DNS 'A' record, domain URL, and RR Agent |
+| | [DNS Configuration](MDS/certificate_management.md#dns-configuration) | How 'A' records work, when they are required, and the process to request one |
+| | [SSL Certificate Management](MDS/certificate_management.md#ssl-certificate-management) | Certificate scope, renewal process, backend update, agent deployment via VALC, and verification |
+| | [Responsibilities Summary](MDS/certificate_management.md#responsibilities-summary) | Task ownership by role across GSI, GSI I/T, and the UI developer |
+| | [Troubleshooting](MDS/certificate_management.md#troubleshooting) | Common connectivity and certificate issues with causes and actions |
 
 ---
 
