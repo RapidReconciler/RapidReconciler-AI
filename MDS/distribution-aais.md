@@ -36,22 +36,6 @@ Distribution AAIs are stored in the **Distribution/Manufacturing AAI Values tabl
 | **Sales** | 4200s | Cost of goods sold, revenue, receivables, and pricing |
 | **Purchasing** | 4300s | Receipts, RNV, voucher match, variances, and landed costs |
 
-### How RapidReconciler Uses AAIs
-
-DMAAI configuration is one of the most common root causes of inventory reconciliation variances. When an AAI points to the wrong account -- or is missing entirely -- transactions post silently to an incorrect GL account, and the discrepancy only surfaces during reconciliation. Tracing the root cause manually requires cross-referencing DMAAI table entries, transaction document types, and GL class code assignments across potentially thousands of transactions.
-
-RapidReconciler uses the DMAAI configuration directly to support the reconciliation process in several ways:
-
-| RapidReconciler Feature | How AAIs Are Used |
-|---|---|
-| **Model AAI Table (Integrity Report 1)** | Uses DMAAI table 4152 to assign a GL account to every item ledger transaction and balance record during import. If a GL class code is missing from the model table, that item's value is excluded from the reconciliation. |
-| **DMAAI Entry Integrity (Integrity Report 2)** | Compares entries in the model table to other balance sheet DMAAI tables (3110, 3130, 4122, 4126, 4134, 4172, 4240, 4310). Identifies business unit, object, and subsidiary mismatches and net-zero account configurations that would prevent transactions from reaching the correct GL account. |
-| **Report 0 -- JDE DMAAs** | Provides a filterable, sortable view of all DMAAI entries from F4095 and F4096 (including flex accounting) within RapidReconciler. Used to diagnose specific transactions on the Transactions page without navigating through JD Edwards setup menus. |
-| **Transaction Detail -- Section 6** | When drilling into an unreconciled transaction on the Transactions page, Section 6 of the detail report lists all DMAAI entries for each GL class code in the transaction, making it straightforward to identify which AAI caused the account mismatch. |
-| **Flexible Accounting support** | RapidReconciler reads flex accounting rules from F4096 alongside F4095, ensuring that transactions using Flexible Sales Accounting are correctly assigned to their flexed accounts in the reconciliation. |
-
-> **Practical impact:** A single incorrectly configured AAI can cause every transaction of a given type and GL class to post to the wrong account -- producing a systematic variance that grows every period. RapidReconciler's integrity reports surface these mismatches proactively, before they accumulate into large reconciling items at period end.
-
 ---
 
 ## Section 1: AAI Setup and Configuration

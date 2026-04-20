@@ -37,24 +37,6 @@ This guide walks through the full reconciliation process using RapidReconciler -
 
 This guide covers the **Inventory module** specifically. For In Transit and PO Receipts reconciliation, see the related documentation in Section 10.
 
-### How RapidReconciler Helps
-
-The traditional approach to inventory reconciliation in JD Edwards relies on running a Stock Status report and comparing it to the trial balance -- a process with five well-documented failure points: timing, backdating, report definition errors, DMAAI misconfiguration, and GL class code changes. Each of these can produce a mismatch that takes hours to trace manually and recurs every period if the root cause is not identified and corrected.
-
-RapidReconciler replaces the point-in-time report comparison with a continuous, automated reconciliation that is updated with every nightly import:
-
-| RapidReconciler Feature | How It Helps |
-|---|---|
-| **Valuation Section** | Compares the summarized F4111 perpetual balance to the F0902 GL balance automatically for every period, eliminating the need to run and compare two separate JD Edwards reports. |
-| **Variance Calculation Section** | Breaks the total out-of-balance amount into six specific sources -- Carry Forward, GL Batches, End of Day, Transactions, Cardex, and Manual Journal Entries -- so each can be addressed with the correct corrective action rather than treating the total as one unexplained number. |
-| **Transactions Page** | Identifies individual documents where the item ledger (F4111) does not match the GL (F0911), surfaces the specific matching field that differs, and provides full drill-down to the DMAAI setup responsible for the mismatch. |
-| **As-Of Page** | Provides a period-end inventory position by item, branch, location, and lot, with cardex transaction detail and variance indicators (QtyVar, AmtVar) at the item level. Replaces the Stock Status report with a continuously maintained view that is not dependent on report timing. |
-| **Cardex Integrity Pop-Up** | Automatically compares summarized F4111 to F41021 for every item on every import cycle, surfaces only the items with variances, and distinguishes between quantity issues (requiring IT intervention) and dollar-only issues (requiring a dollars-only IA adjustment). |
-| **Integrity Reports 2--6** | Proactively identify DMAAI mismatches, excluded GL class codes, UOM conversion gaps, GL class code inconsistencies between item branch and location records, and frozen cost discrepancies -- the configuration issues that silently cause reconciling variances -- before they accumulate into large period-end problems. |
-| **Audit Report** | Produces a complete period-end reconciliation record including account summaries, unposted batches, open orders, manual entries, transaction variances, and perpetual detail -- all in a single exportable document for audit and internal review. |
-
-> **Key principle:** RapidReconciler does not correct inventory data -- all corrections are made in JD Edwards. RapidReconciler's role is to identify what is out of balance, exactly where the discrepancy originates, and what the correct corrective action is -- so the period-end close becomes a confirmation of an already-understood position rather than a discovery exercise.
-
 > **Important:** RapidReconciler data is refreshed nightly. Transactions entered in JD Edwards after the most recent import will not appear until the following night's refresh. Both status lights on the Reconciliation page must be **green** before making any adjustments to the general ledger.
 
 ---

@@ -26,23 +26,6 @@ This document covers:
 - Integrity Report 5
 - Common mistakes and how to avoid them
 
-### How RapidReconciler Helps
-
-GL Class Code issues are among the most common and difficult-to-detect causes of inventory reconciliation variances. Because JD Edwards allows class code changes without checking for quantity on hand -- and because changes do not cascade automatically through the hierarchy -- mismatches can persist silently for extended periods before surfacing as unexplained GL discrepancies.
-
-Without a dedicated tool, identifying GL class code problems requires manually reviewing item master, item branch, and item location records and cross-referencing them against open order lines -- a process that is impractical to perform routinely across a large item population.
-
-RapidReconciler addresses this in two ways:
-
-| RapidReconciler Feature | How It Helps with GL Class Codes |
-|---|---|
-| **Integrity Report 5 -- GL Class Integrity** | Automatically compares the GL class code on the Item Branch record (F4102) to the GL class code on every associated Item Location record (F41021). Any mismatch is listed immediately, regardless of item population size. This report should be reviewed monthly and after every GL class code change. |
-| **Integrity Report 3 -- Excluded GL Classes** | Identifies items whose GL class code is not present in the model DMAAI table (4152). Items with missing GL class codes are excluded from the reconciliation entirely -- their inventory value is not counted. This catches situations where a class code change introduced a new GL class that was never added to the model table. |
-| **As-Of Page** | When a GL class code is changed without following the correct adjustment procedure, the item will appear with multiple rows on the As-Of page -- one for each GL class code that has been used. This is a direct visual indicator that a mid-change procedure error occurred, and it pinpoints exactly which item and account is affected. |
-| **Transaction Detail -- Section 6** | When drilling into an unreconciled transaction on the Transactions page, Section 6 lists all DMAAI entries for the GL class codes in that transaction. If a class code change caused a transaction to post to the wrong account, this section identifies exactly which AAI and class code was responsible. |
-
-> **Key principle:** RapidReconciler does not correct GL class code issues -- all corrections must be made in JD Edwards. RapidReconciler's role is to surface the problem quickly and precisely, so the correct adjustment procedure (adjust out, change code, adjust back in) can be applied before the discrepancy compounds across multiple periods.
-
 ---
 
 ## Section 1: The GL Class Code Hierarchy

@@ -34,24 +34,6 @@ Although the document references order types ST/OT, it will detect different tra
 | **GL Balance** | F0902 Account Balances | General ledger period-end balance for the In Transit clearing account |
 | **Out of Balance** | Difference between the two | What must be explained and resolved |
 
-### How RapidReconciler Helps
-
-Without a dedicated tool, reconciling the In Transit clearing account requires manually comparing shipment and receipt quantities and amounts for every open transfer order, then matching those figures to the GL balance -- a process that becomes increasingly complex as transfer volume grows, cost changes occur, and unresolved order pairs accumulate.
-
-RapidReconciler automates this comparison and surfaces the specific orders, amounts, and variance types that require attention:
-
-| RapidReconciler Feature | How It Helps |
-|---|---|
-| **Orders Page** | Automatically calculates the in-transit position (Shipments − Receipts) for every order pair and displays only those with an open quantity or amount. Orders that reconcile exactly are removed automatically -- no manual filtering required. |
-| **Exclusion Process** | When both the ST and OT orders are fully closed (status 999) but a residual balance remains, the Exclusion feature isolates those amounts from the reconciliation and surfaces the exact journal entry value needed to clear the In Transit GL account. |
-| **Exclusion Variance Columns (ExclVarQty / ExclVarAmt)** | Monitors previously excluded orders for new activity. If a receipt is processed against an excluded open PO, these columns surface the discrepancy immediately so the exclusion can be recalculated rather than omitting the new transactions from the reconciliation. |
-| **Variance Calculation Section** | Breaks down the full out-of-balance amount into its specific sources -- Carry Forward, GL Batches, End of Day, Transactions, and Exclusions -- so each can be addressed with the correct corrective action rather than treating the total as a single unexplained variance. |
-| **As-Of Page** | Reconstructs the in-transit position as of any historical period end date, calculated backwards from the current position. Provides full transaction-level detail with drill-down and export capability for period-end documentation and audit support. |
-| **Integrity Report 2 -- Missing GL Classes** | Identifies transfer order pairs where the GL class code is missing from the transit DMAAI table, causing those amounts to be excluded from the reconciliation silently. |
-| **Integrity Report 4 -- Transfer Cost Variances** | Lists orders where the ST sales cost or price does not match the OT purchase order cost -- the most common cause of In Transit balances that do not clear after receipt. Surfaces these before they accumulate into large unresolved period-end variances. |
-
-> **Key principle:** RapidReconciler does not correct In Transit issues -- all corrections are made in JD Edwards or through manual journal entries. RapidReconciler's role is to identify exactly which orders are unbalanced, by how much, and why -- so the right corrective action can be taken efficiently rather than discovered at period end.
-
 > **Before proceeding:** Ensure you understand your organization's transfer order types and whether goods are transferred at cost or with a markup. This determines the DMAAI configuration in use. See the [In Transit Key Concepts Guide](../MDS/in-transit-key-concepts.md) for background.
 
 ---

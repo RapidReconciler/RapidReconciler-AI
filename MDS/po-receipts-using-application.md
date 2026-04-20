@@ -35,25 +35,6 @@ The RapidReconciler PO Receipts module reconciles the Received-Not-Vouchered (RN
 
 **Key difference from Inventory and In Transit modules:** The PO Receipts module has **no period selector**. Because the F43121 table overwrites records on reversal rather than creating new entries, As-Of reporting is not possible. The reconciliation is always performed as a **current balance-to-balance comparison** -- open receipts now vs. GL balance now.
 
-### How RapidReconciler Helps
-
-Without a dedicated tool, reconciling the RNV account requires manually extracting F43121 data, matching Match Type 1 and Match Type 2 records by order and line, identifying which receipts have no corresponding voucher, and comparing the net open balance to the GL -- across potentially thousands of purchase order lines. The absence of As-Of reporting from F43121 means there is no historical roll-forward to work from; only the current state of the table is available.
-
-RapidReconciler imports F43121 and F0911 data automatically and performs the comparison on every nightly cycle, surfacing only the orders and documents that require attention:
-
-| RapidReconciler Feature | How It Helps |
-|---|---|
-| **Orders Page** | Automatically calculates the open receipt position for every purchase order and displays only those with open amounts or variances between F43121 and the GL. Fully vouchered and reconciled orders are removed automatically. |
-| **Reconciled / Suspended Filters** | Allow the user to focus on unreconciled orders, audit suspended orders, or validate the full open receipts listing -- without manual sorting or filtering of raw data. |
-| **Calculation Section** | Separates the total out-of-balance amount into Open Receipts, Unreconciled, and Batches components, and provides a Suggested Entry amount that excludes outstanding variances -- making it straightforward to decide whether to close around unresolved items or resolve them first. |
-| **PO Receipts Aging Chart** | Provides a visual breakdown of open receipts by period, immediately identifying whether the RNV balance is driven by recent legitimate activity or by aging receipts that have not been vouchered -- without running a separate aging report. |
-| **Suspension Feature** | Removes orders cleared by manual voucher entry, PRLAND = 3 landed cost records, or data cutoff artifacts from the variance calculation -- isolating genuine unresolved items from known exceptions without requiring changes to JD Edwards data. |
-| **Line Analysis Page** | Provides a side-by-side F43121 vs. GL comparison at the document level for any purchase order line, with the ability to exclude specific documents and add audit notes -- making it possible to trace the exact document causing a variance rather than reviewing the full order. |
-| **Document Button** | Displays all transactions for a PO line with a Variance column identifying precisely which documents have discrepancies between F43121 and F0911, eliminating the need to cross-reference two separate data extracts. |
-| **Unreconciled Link** | Navigates directly from the Reconciliation page to a pre-filtered Orders page showing only the orders requiring action -- removing the need to manually filter through the full order listing each period. |
-
-> **Key principle:** RapidReconciler does not correct RNV issues -- all corrections are made in JD Edwards or through manual journal entries. RapidReconciler's role is to identify which purchase orders are unbalanced, at which line and document, and by how much -- so the correct corrective action can be applied efficiently rather than discovered at period end.
-
 > **Before proceeding:** Ensure you are familiar with the RNV account, F43121 match types, and what creates and clears the RNV balance. See the [PO Receipts Key Concepts Guide](../MDS/po-receipts-key-concepts.md).
 
 ---
