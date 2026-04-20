@@ -4,6 +4,16 @@
 
 ---
 
+## Table of Contents
+
+1. [About RapidReconciler Administration](#section-1-about-rapidreconciler-administration)
+2. [Company Management](#section-2-company-management)
+3. [User Management](#section-3-user-management)
+4. [General Settings](#section-4-general-settings)
+5. [Offset Accounts (Inventory Offsets)](#section-5-offset-accounts-inventory-offsets)
+
+---
+
 ## Section 1: About RapidReconciler Administration
 
 ### 1.1 Overview

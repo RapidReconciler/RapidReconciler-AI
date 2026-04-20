@@ -1,5 +1,21 @@
 ﻿# RapidReconciler Password Policy
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Password Requirements](#password-requirements)
+  - [Character Complexity](#character-complexity)
+- [Logging In](#logging-in)
+- [Resetting a Password](#resetting-a-password)
+- [Administration](#administration)
+  - [Assigning a Temporary Password](#assigning-a-temporary-password)
+  - [Enabling or Disabling the Password Policy](#enabling-or-disabling-the-password-policy)
+  - [Locked or Inaccessible Accounts](#locked-or-inaccessible-accounts)
+- [Enabling the Complex Password Policy](#enabling-the-complex-password-policy)
+- [Quick Reference](#quick-reference)
+
+---
+
 ## Overview
 
 RapidReconciler supports an optional complex password policy that can be enabled by a RapidReconciler administrator. When enabled, all user passwords must conform to the requirements outlined in this document. This policy is designed to protect sensitive financial reconciliation data and align with common enterprise security standards.

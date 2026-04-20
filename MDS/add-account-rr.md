@@ -4,6 +4,16 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: DMAAI Configuration in JD Edwards](#section-1-dmaai-configuration-in-jd-edwards)
+- [Section 2: How to Add an Inventory Account](#section-2-how-to-add-an-inventory-account)
+- [Section 3: Troubleshooting](#section-3-troubleshooting)
+- [Section 4: Quick Reference](#section-4-quick-reference)
+
+---
+
 ## Overview
 
 Inventory accounts in RapidReconciler are sourced directly from the **DMAAI model table in JD Edwards**. This is the only JD Edwards configuration required for RapidReconciler to function. Accounts cannot be added directly within the RapidReconciler application -- all additions and changes must be made in JD Edwards, after which RapidReconciler picks them up during the next scheduled refresh cycle.

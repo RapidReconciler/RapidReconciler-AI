@@ -3,6 +3,14 @@
 
 **Training Manual: Getting Started with the Application**
 
+## Table of Contents
+
+- [Section 1: Logging In to the Application](#section-1-logging-in-to-the-application)
+- [Section 2: Navigating the Application](#section-2-navigating-the-application)
+- [Section 3: Preparing to Use the Application](#section-3-preparing-to-use-the-application)
+
+---
+
 **Section 1: Logging In to the Application**
 
 **1.1 Accessing RapidReconciler**
@@ -11,7 +19,7 @@ RapidReconciler is accessible via Google Chrome, Microsoft Edge, or Safari.
 
 Navigate to the RapidReconciler web page:
 
-[Rapid Reconciler](https://rapidreconciler.getgsi.com/)
+[RapidReconciler Web Page](https://rapidreconciler.getgsi.com/)
 
 **Important:** The credentials you have been provided will only work on one of the two links. Choose the appropriate link based on your user type.
 

@@ -4,6 +4,23 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: AAI Setup and Configuration](#section-1-aai-setup-and-configuration)
+- [Section 2: Manufacturing AAIs (3000 Series)](#section-2-manufacturing-aais-3000-series)
+- [Section 3: WIP Revaluation for Standard Cost (R30837)](#section-3-wip-revaluation-for-standard-cost-r30837)
+- [Section 4: Weighted Average Cost (Method 02)](#section-4-weighted-average-cost-method-02)
+- [Section 5: Actual Cost (Method 09)](#section-5-actual-cost-method-09)
+- [Section 6: Inventory AAIs (4100 Series)](#section-6-inventory-aais-4100-series)
+- [Section 7: Sales AAIs (4200 Series)](#section-7-sales-aais-4200-series)
+- [Section 8: Purchasing AAIs (4300 Series)](#section-8-purchasing-aais-4300-series)
+- [Section 9: Complete AAI Quick Reference](#section-9-complete-aai-quick-reference)
+- [Section 10: F4095 Key Structure and Account Maintenance](#section-10-f4095-key-structure-and-account-maintenance)
+- [Section 11: Flexible Accounting for Distribution](#section-11-flexible-accounting-for-distribution)
+
+---
+
 ## Overview
 
 Automatic Accounting Instructions (AAIs) determine which general ledger accounts are affected when transactions are created by JD Edwards programs. They serve as the mapping layer between business transactions and the general ledger.

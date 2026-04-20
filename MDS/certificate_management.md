@@ -1,5 +1,17 @@
 # RapidReconciler SSL Certificate and DNS Management
 
+## Table of Contents
+
+1. [Overview](#overview)
+2. [Components](#components)
+3. [DNS Configuration](#dns-configuration)
+4. [SSL Certificate Management](#ssl-certificate-management)
+5. [Responsibilities Summary](#responsibilities-summary)
+6. [Troubleshooting](#troubleshooting)
+7. [Related Documentation](#related-documentation)
+
+---
+
 ## Overview
 
 The RapidReconciler user interface is secured using a wildcard SSL certificate (`*.getgsi.com`) provisioned and managed by GSI. This approach eliminates the need for individual customers to purchase, configure, or renew their own SSL certificates, reducing both cost and administrative overhead.

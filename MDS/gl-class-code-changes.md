@@ -1,5 +1,19 @@
 # GL Class Code Management and Change Procedures
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: The GL Class Code Hierarchy](#section-1-the-gl-class-code-hierarchy)
+- [Section 2: How GL Class Codes Are Used in Transactions](#section-2-how-gl-class-codes-are-used-in-transactions)
+- [Section 3: The Risk of Changing GL Class Codes with Quantity on Hand](#section-3-the-risk-of-changing-gl-class-codes-with-quantity-on-hand)
+- [Section 4: Procedure for Changing a GL Class Code](#section-4-procedure-for-changing-a-gl-class-code)
+- [Section 5: Inventory Integrity Report 5](#section-5-inventory-integrity-report-5)
+- [Section 6: Organizational Best Practices](#section-6-organizational-best-practices)
+- [Section 7: Quick Reference Summary](#section-7-quick-reference-summary)
+- [Section 8: Related Documentation](#section-8-related-documentation)
+
+---
+
 ## Overview
 
 GL Class Codes are 4-character item attributes assigned in JD Edwards that determine how inventory transactions are recorded in the General Ledger. The mapping between GL Class Codes and journal entries is defined in the Distribution/Manufacturing Automatic Accounting Instructions (DMAAIs).

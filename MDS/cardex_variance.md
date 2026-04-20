@@ -4,6 +4,18 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Before You Begin](#before-you-begin)
+- [Step 1 -- Open the Cardex Integrity Pop-Up in RapidReconciler](#step-1----open-the-cardex-integrity-pop-up-in-rapidreconciler)
+- [Step 2 -- Validate the Variance in JD Edwards](#step-2----validate-the-variance-in-jd-edwards)
+- [Step 3 -- Perform a Dollars-Only Adjustment in JD Edwards](#step-3----perform-a-dollars-only-adjustment-in-jd-edwards)
+- [Step 4 -- Resolve the Variance in RapidReconciler Using Re-Roll](#step-4----resolve-the-variance-in-rapidreconciler-using-re-roll)
+- [Step 5 -- Confirm the Result in RapidReconciler](#step-5----confirm-the-result-in-rapidreconciler)
+
+---
+
 ## Overview
 
 A cardex integrity variance occurs when the summarized quantity or extended amount in the item ledger does not match the on-hand balances in JD Edwards. Common causes include:
