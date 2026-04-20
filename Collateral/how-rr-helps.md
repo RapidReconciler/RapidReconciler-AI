@@ -4,7 +4,7 @@
 
 ---
 
-Reconciling inventory to the general ledger in JD Edwards is one of the most time-consuming tasks in a period-end close. The standard approach -- running a Stock Status report and comparing it to the trial balance -- has five well-documented failure points: **timing**, **backdating**, **report definition errors**, **DMAAI misconfiguration**, and **GL class code changes**. Each one produces a mismatch that must be traced manually, and most recur every period if the root cause is never found.
+Reconciling inventory to the general ledger in JD Edwards is one of the most time-consuming tasks in a period-end close. The standard approach: running a Stock Status report and comparing it to the trial balance -- has five well-documented failure points: **timing**, **backdating**, **report definition errors**, **DMAAI misconfiguration**, and **GL class code changes**. Each one produces a mismatch that must be traced manually, and most recur every period if the root cause is never found.
 
 RapidReconciler replaces that manual process with a continuous, automated reconciliation updated every nightly import cycle. Rather than discovering what went wrong at period end, reconcilers confirm a position they already understand.
 
