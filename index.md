@@ -5,6 +5,14 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 ---
 
+## Collateral Documents
+
+| Document | Description |
+|----------|-------------|
+
+
+---
+
 ## Technical Documents
 
 | Document | Description |
