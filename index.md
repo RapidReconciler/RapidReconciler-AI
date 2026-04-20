@@ -39,22 +39,21 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 ## Inventory
 
-| Document                                                                           | Description                                                                                                 |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| [Inventory Key Concepts](MDS/inventory-key-concepts.md)                               | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes    |
+| Document | Description |
+|----------|-------------|
+| [Inventory Key Concepts](MDS/inventory-key-concepts.md) | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes |
 | [Managing Inventory Accounts](MDS/add-account-rr.md) | DMAAI model table process and refresh requirements |
-| [Inventory: Using the Application](MDS/inventory-using-application.md)                | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
+| [Inventory: Using the Application](MDS/inventory-using-application.md) | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
+| [Transaction Detail Analysis Guide](MDS/transaction-detail-analysis-guide.md) | Transaction types, sources, and descriptions |
 | [Working with the Item Ledger](MDS/item-ledger-faq.md) | Balances, posting codes, dates, DMAAs, and integrity conditions |
-| [Ultimate DMAAI Guide](MDS/distribution-aais.md)                                      | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing                      |
-| [Managing GL Class Codes](MDS/gl-class-code-changes.md)                               | Procedure, hierarchy of change locations, why adjustments are required                                      |
-| [About Units of Measure](MDS/uom_reference_guide.md)                                 | Changing the primary unit of measure, impact on inventory transactions, and cardex analysis considerations  |
-| [Product Costing Guide](MDS/product-costing.md)                                 | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact    |
+| [Ultimate DMAAI Guide](MDS/distribution-aais.md) | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
+| [Managing GL Class Codes](MDS/gl-class-code-changes.md) | Procedure, hierarchy of change locations, why adjustments are required |
+| [About Units of Measure](MDS/uom_reference_guide.md) | Changing the primary unit of measure, impact on inventory transactions, and cardex analysis considerations |
+| [Product Costing Guide](MDS/product-costing.md) | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact |
 | [Zero Balance Adjustments](MDS/zero-balance-adjustments.md) | Purpose, purchasing and inventory AAIs, journal entry examples |
 | [Handling Cardex Variance](MDS/cardex_variance.md) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
 | [Understanding Outside Operations](MDS/outside-operations.md) | Item master, work center, routing, receipt, and WIP journal entries |
 | [Sales Order Reference Guide](MDS/sales_order_reference.md) | Sales order types, processing flow, AAIs, journal entries, and common issues |
-
----
 
 ## In Transit
 
