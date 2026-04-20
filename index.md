@@ -5,6 +5,14 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 ---
 
+## Collateral Documents
+
+| Document | Description |
+|----------|-------------|
+| [How RapidReconciler Helps](../Collateral/how-rr-helps.md) | Overview of the application's benefits and value proposition |
+
+---
+
 ## Technical Documents
 
 | Document | Description |
