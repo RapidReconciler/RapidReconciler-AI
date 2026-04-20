@@ -9,7 +9,7 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 | Document | Description |
 |----------|-------------|
-[How RapidReconciler Helps](/RapidReconciler-AI/Collateral/how-rr-helps.html)
+| [How RapidReconciler Helps](/RapidReconciler-AI/Collateral/how-rr-helps.html) | Overview of the application's benefits and value proposition |
 
 ---
 
