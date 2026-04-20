@@ -27,6 +27,20 @@ A cardex integrity variance occurs when the summarized quantity or extended amou
 
 **JD Edwards is the system of record.** RapidReconciler calculates its cardex variance only from the point in time when the program was first initiated, or from the date the data was last reset -- it does not have visibility into transaction history that predates that point. If a discrepancy exists between RapidReconciler and JD Edwards, the Re-Roll options are used to synchronize RapidReconciler to match JD Edwards -- not the other way around.
 
+### How RapidReconciler Helps
+
+Without a dedicated tool, identifying cardex integrity variances requires manually summarizing the item ledger in Excel, excluding memo transactions, and comparing the totals to the Item Location table (F41021) -- a process that must be repeated for every item, every period. RapidReconciler performs this comparison automatically across the entire item population on every nightly import cycle.
+
+**The Cardex Integrity pop-up** in RapidReconciler surfaces only the items where a discrepancy exists, along with the exact quantity and dollar variance for each. This eliminates the manual extraction and comparison process entirely and makes it immediately clear which items require investigation and what type of correction is needed.
+
+| What RapidReconciler Does | Benefit |
+|---|---|
+| Compares summarized F4111 to F41021 automatically for every item on every nightly import | No manual extraction or calculation required |
+| Excludes memo transactions (ILIPCD = "X") and applies UOM conversions automatically | Results are accurate without manual data manipulation |
+| Identifies whether the variance is a quantity issue, a dollar issue, or both | Directs the user to the correct corrective action immediately |
+| Provides the Re-Roll options to synchronize RapidReconciler after a JD Edwards correction | Clears the variance from the reconciliation without requiring a data reset |
+| Reflects the corrected position after the next nightly refresh | Provides confirmation that the correction was successful |
+
 This guide walks through the full process -- from identifying a variance in RapidReconciler, validating it in JD Edwards, performing a correction in JD Edwards if needed, and synchronizing RapidReconciler using the Re-Roll options.
 
 ---
@@ -298,5 +312,3 @@ After completing the Re-Roll, the RapidReconciler Cardex Integrity pop-up will r
 **5.2** Confirm that **QtyVar** and **AmtVar** both show **0**.
 
 **5.3** If a variance still appears, review the item's transaction history and repeat the validation steps in Step 2 before taking further action.
-
-
