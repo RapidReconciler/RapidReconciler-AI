@@ -1,5 +1,16 @@
 # Installing a Client in VALC (Internal Use Only)
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Part 1: Initial VALC Setup](#part-1-initial-valc-setup)
+- [Part 2: Installing the RapidReconciler Agent](#part-2-installing-the-rapidreconciler-agent)
+- [Part 3: Completing the Setup in VALC](#part-3-completing-the-setup-in-valc)
+- [Summary Checklist](#summary-checklist)
+
+---
+
 ## Overview
 
 This guide covers the end-to-end process for setting up a new customer in VALC and installing the RapidReconciler Agent on their application server. The process consists of three main phases:

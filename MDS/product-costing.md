@@ -4,6 +4,21 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: Cost Methods in JD Edwards](#section-1-cost-methods-in-jd-edwards)
+- [Section 2: Standard Cost (Method 07)](#section-2-standard-cost-method-07)
+- [Section 3: WIP Revaluation for Standard Cost (R30837)](#section-3-wip-revaluation-for-standard-cost-r30837)
+- [Section 4: Weighted Average Cost (Method 02)](#section-4-weighted-average-cost-method-02)
+- [Section 5: Actual Cost (Method 09)](#section-5-actual-cost-method-09)
+- [Section 6: Costing and Inventory Reconciliation](#section-6-costing-and-inventory-reconciliation)
+- [Section 7: Cost Method Selection Guide](#section-7-cost-method-selection-guide)
+- [Section 8: Quick Reference Summary](#section-8-quick-reference-summary)
+- [Section 9: Related Documentation](#section-9-related-documentation)
+
+---
+
 ## Overview
 
 Accurate product costing is foundational to inventory reconciliation. When costs are configured or maintained incorrectly, variances between the item ledger and the general ledger are inevitable -- and often difficult to trace. This guide covers the three primary costing approaches used in JD Edwards, their setup requirements, common failure points, and best practices for maintaining cost integrity.
@@ -76,7 +91,7 @@ A discrepancy between the cost ledger and the sum of its cost components typical
   - **General ledger (manufacturing accounting)** books the transaction by cost component: **$389**
   - **Result:** An $11 discrepancy between the item ledger and the general ledger -- a direct reconciling variance
 
-### 2.4 Identifying Cost Integrity Issues -- Report R30543
+### 2.4 Identifying Cost Integrity Issues -- Report R30543 and RapidReconciler Integrity Report 6
 
 The **R30543 Cost Component/Ledger Integrity Report** identifies items where the cost ledger value does not equal the sum of its cost components.
 
@@ -87,6 +102,10 @@ The **R30543 Cost Component/Ledger Integrity Report** identifies items where the
 3. For each item identified, perform a **cost re-roll** to recalculate and reset the cost ledger to the correct sum of components.
 
 > **Best Practice:** Run R30543 on a periodic basis -- ideally before each period-end close -- to proactively identify and resolve cost discrepancies before items are issued to work orders or processed through manufacturing accounting. Catching mismatches early eliminates the downstream impact on the item ledger and general ledger.
+
+**RapidReconciler Integrity Report 6** provides the same standard cost integrity check directly within RapidReconciler, without the need to run a separate JD Edwards report. It identifies items where the cost ledger value (F4105, method 07) does not match the sum of cost components in F30026 -- the same condition detected by R30543 -- and surfaces them in a consolidated view alongside other inventory integrity issues.
+
+> **Recommendation:** Use RapidReconciler Integrity Report 6 as part of the regular period-end review process. Because it runs within RapidReconciler's import cycle rather than requiring a separate JD Edwards job submission, it provides a faster and more accessible way to monitor standard cost integrity on an ongoing basis.
 
 ### 2.5 Standard Cost AAI Requirements
 
@@ -460,7 +479,7 @@ Regardless of which cost method is in use, costing issues are a leading cause of
 
 | Symptom | Cause | Detection | Resolution |
 |---|---|---|---|
-| Item ledger and GL record different values for the same work order transaction | Cost ledger manually changed without re-rolling components | R30543 Cost Component/Ledger Integrity Report | Re-roll cost for affected items using P30820 and P30835 |
+| Item ledger and GL record different values for the same work order transaction | Cost ledger manually changed without re-rolling components | R30543 Cost Component/Ledger Integrity Report or **RapidReconciler Integrity Report 6** | Re-roll cost for affected items using P30820 and P30835 |
 
 ### 6.2 Weighted Average Cost -- Negative Quantity
 
@@ -488,13 +507,63 @@ Regardless of which cost method is in use, costing issues are a leading cause of
 
 ---
 
-## Section 7: Quick Reference Summary
+## Section 7: Cost Method Selection Guide
+
+Choosing the correct cost method is a foundational implementation decision. Changing cost methods mid-stream is technically possible but operationally complex and carries significant reconciliation risk. The following guidance helps organizations select the appropriate method during implementation.
+
+### 7.1 Comparison of Primary Cost Methods
+
+| Factor | Standard Cost (07) | Weighted Average (02) | Actual Cost (09) |
+|---|---|---|---|
+| **Best suited for** | Manufacturing environments with stable, repeatable costs | Distribution or mixed environments where purchase costs vary | Job-shop or high-value, low-volume manufacturing |
+| **Cost source** | Frozen standard from F30026 cost components | Recalculated automatically at each receipt | Actual costs captured per work order |
+| **Variance visibility** | Explicit -- purchasing, labor, material, and overhead variances are each broken out | Implicit -- cost changes absorbed into the average; no separate variance | Explicit -- full actual cost per work order |
+| **Inventory value** | Fixed until standard is updated and frozen | Fluctuates with each purchase cost change | Varies by work order |
+| **Period-end complexity** | Moderate -- requires cost roll management and WIP revaluation when costs change | Low-to-moderate -- self-maintaining but sensitive to negative quantities | High -- requires careful work order management |
+| **Inventory Cost Level** | 1, 2, or 3 | 1, 2, or 3 | 2 or 3 required |
+| **Component cost method** | Any | Any | Cannot be 09 |
+| **Negative quantity risk** | Low -- cost is fixed | **High** -- negative quantities corrupt the average cost | Moderate |
+| **Common in** | Discrete manufacturing | Distribution, process manufacturing | Contract manufacturing, aerospace, defense |
+
+### 7.2 Key Decision Factors
+
+**Use Standard Cost (07) when:**
+- The organization manufactures a stable product line with predictable material, labor, and overhead costs
+- Management requires explicit variance reporting (purchase price variance, labor efficiency variance, etc.)
+- A formal annual or semi-annual cost roll process is acceptable
+
+**Use Weighted Average Cost (02) when:**
+- The organization primarily purchases and resells items rather than manufacturing them
+- Purchase costs fluctuate frequently and variance tracking is not required
+- Inventory Cost Level 1 is preferred for simplicity
+
+**Use Actual Cost (09) when:**
+- Each unit or work order is unique (job-shop, project-based manufacturing)
+- Precise cost capture per job is required for profitability analysis or customer billing
+- The organization has the operational discipline to manage work orders to completion before closing
+
+### 7.3 Changing Cost Methods
+
+If a cost method change is required after go-live, the following steps are generally required:
+
+1. **Adjust inventory to zero** for all affected items before changing the cost method. Changing the cost method with quantity on hand can produce incorrect journal entries and cardex integrity issues.
+2. **Update P4105** for each affected item to the new cost method.
+3. **Update UDC 40/AV** if switching to or from weighted average cost.
+4. **Adjust inventory back in** under the new cost method.
+5. **Run R30543** after any standard cost change to verify cost component/ledger integrity.
+6. **Test in a non-production environment** before making changes to production data.
+
+> **Warning:** Changing the cost method on items with open work orders or open purchase orders requires additional steps. Consult with a JD Edwards specialist before proceeding.
+
+---
+
+## Section 8: Quick Reference Summary
 
 | Topic | Key Point |
 |---|---|
 | Cost storage | All costs stored in F4105 in the primary UOM |
 | Standard cost components | Stored in F30026; must equal F4105 method 07 value |
-| Standard cost integrity | Run R30543 periodically to detect component/ledger mismatches |
+| Standard cost integrity | Run R30543 periodically to detect component/ledger mismatches; **RapidReconciler Integrity Report 6** provides the same check within the reconciliation workflow |
 | WIP revaluation | Run R30837 from R30835 whenever standard costs change and open work orders exist |
 | WIP revaluation -- closed work orders | R30837 does not revalue closed work orders (PPFG = 3 in F4801) |
 | WIP revaluation -- prerequisite | Always run R31802A before R30812 and R30835/R30837 |
@@ -511,7 +580,7 @@ Regardless of which cost method is in use, costing issues are a leading cause of
 
 ---
 
-## Section 8: Related Documentation
+## Section 9: Related Documentation
 
 - [DMAAI Reference Guide](../MDS/dmaai-reference-guide.md)
 - [Manufacturing AAIs and Accounting](../MDS/manufacturing-aais.md)

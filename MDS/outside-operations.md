@@ -4,6 +4,27 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: How Outside Operations Work -- Process Flow](#section-1-how-outside-operations-work----process-flow)
+- [Section 2: Item Master Setup (F4101)](#section-2-item-master-setup-f4101)
+- [Section 3: Item Branch Setup (F4102)](#section-3-item-branch-setup-f4102)
+- [Section 4: Work Center Setup (F3006)](#section-4-work-center-setup-f3006)
+- [Section 5: Routing Master Setup (F3003)](#section-5-routing-master-setup-f3003)
+- [Section 6: Standard Cost Simulation and Freeze](#section-6-standard-cost-simulation-and-freeze)
+- [Section 7: Generate and Print Work Orders (R31410)](#section-7-generate-and-print-work-orders-r31410)
+- [Section 8: Purchase Order Receipt (P4312)](#section-8-purchase-order-receipt-p4312)
+- [Section 9: Manufacturing WIP Journal Entries (R31802A)](#section-9-manufacturing-wip-journal-entries-r31802a)
+- [Section 10: Voucher Match](#section-10-voucher-match)
+- [Section 11: Complete Journal Entry Summary](#section-11-complete-journal-entry-summary)
+- [Section 12: Troubleshooting -- Why a Purchase Order Is Not Created](#section-12-troubleshooting----why-a-purchase-order-is-not-created)
+- [Section 13: Common Mistakes and How to Avoid Them](#section-13-common-mistakes-and-how-to-avoid-them)
+- [Section 14: Quick Setup Checklist](#section-14-quick-setup-checklist)
+- [Section 15: Related Documentation](#section-15-related-documentation)
+
+---
+
 ## Overview
 
 An Outside Operation is Manufacturing's vehicle to interface with Accounts Payable, allowing a purchase order to be created in JD Edwards so that when a vendor sends an invoice for their services, a voucher match can be performed. An Outside Operation represents **payment for services rendered** -- it is not an inventoried item.

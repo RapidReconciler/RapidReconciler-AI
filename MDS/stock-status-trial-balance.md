@@ -4,6 +4,20 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: Reason 1 -- Timing](#section-1-reason-1----timing)
+- [Section 2: Reason 2 -- Backdating](#section-2-reason-2----backdating)
+- [Section 3: Reason 3 -- Report Definition](#section-3-reason-3----report-definition)
+- [Section 4: Reason 4 -- DMAAI Setup](#section-4-reason-4----dmaai-setup)
+- [Section 5: Reason 5 -- GL Class Code Changes](#section-5-reason-5----gl-class-code-changes)
+- [Section 6: Summary of All Five Reasons](#section-6-summary-of-all-five-reasons)
+- [Section 7: Why RapidReconciler Is a Better Solution](#section-7-why-rapidreconciler-is-a-better-solution)
+- [Related Documentation](#related-documentation)
+
+---
+
 ## Overview
 
 A core component of the period-end close process is reconciling inventory balances to the general ledger. This typically involves producing two reports:

@@ -4,6 +4,16 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: Tax in Procurement](#section-1-tax-in-procurement)
+- [Section 2: Landed Costs](#section-2-landed-costs)
+- [Section 3: Receipts Routing](#section-3-receipts-routing)
+- [Section 4: Related Documentation](#section-4-related-documentation)
+
+---
+
 ## Overview
 
 This reference guide covers three key areas of JD Edwards Purchase Order Management. Each section is self-contained and can be referenced independently.

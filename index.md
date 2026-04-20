@@ -40,7 +40,7 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | [Ultimate DMAAI Guide](MDS/distribution-aais.md)                                      | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing                      |
 | [Managing GL Class Codes](MDS/gl-class-code-changes.md)                               | Procedure, hierarchy of change locations, why adjustments are required                                      |
 | [About Units of Measure](MDS/uom_reference_guide.md)                                 | Changing the primary unit of measure, impact on inventory transactions, and cardex analysis considerations  |
-| [Product Costing Guide](MDS/weighted-average-cost.md)                                 | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact    |
+| [Product Costing Guide](MDS/product-costing.md)                                 | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact    |
 | [Zero Balance Adjustments](MDS/zero-balance-adjustments.md) | Purpose, purchasing and inventory AAIs, journal entry examples |
 | [Handling Cardex Variance](MDS/cardex_variance.md) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
 | [Understanding Outside Operations](MDS/outside-operations.md) | Item master, work center, routing, receipt, and WIP journal entries |

@@ -4,6 +4,22 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: ST/OT Order Structure](#section-1-stot-order-structure)
+  - [1.4 JD Edwards Setup Requirements](#14-jd-edwards-setup-requirements-for-stot-orders)
+- [Section 2: Transfer at Cost -- No Branch Cost Variance](#section-2-transfer-at-cost----no-branch-cost-variance)
+- [Section 3: Transfer at Cost -- Branch Cost Variance (Different Standard Costs)](#section-3-transfer-at-cost----branch-cost-variance-different-standard-costs)
+- [Section 4: Transfer at Cost Plus (With Markup)](#section-4-transfer-at-cost-plus-with-markup)
+- [Section 5: Complete Scenario Matrix](#section-5-complete-scenario-matrix)
+- [Section 6: In-Transit Inventory Tracking](#section-6-in-transit-inventory-tracking)
+- [Section 7: Period-End Reconciliation Considerations](#section-7-period-end-reconciliation-considerations)
+- [Section 8: DMAAI Quick Reference for Transfer Orders](#section-8-dmaai-quick-reference-for-transfer-orders)
+- [Section 9: Related Documentation](#section-9-related-documentation)
+
+---
+
 ## Overview
 
 ST/OT transfer orders in JD Edwards are used to move materials between branch plants within the same company. The process uses a clearing account to hold the value of goods while they are in transit between locations.
@@ -59,6 +75,22 @@ The ST and OT orders are linked. The cost on the ST becomes the price on the OT.
 *See Section 3 for the critical distinction on DMAAI 4335 configuration.
 
 > **Important:** The RapidReconciler In Transit balance at shipment uses the **price** if the In Transit account is configured in DMAAI 4245, or the **cost** if the In Transit account is configured in DMAAI 4220. At receipt, the balance uses the **cost on the PO**.
+
+### 1.4 JD Edwards Setup Requirements for ST/OT Orders
+
+Before processing ST/OT transfer orders, confirm the following are configured correctly in JD Edwards:
+
+| Requirement | Description |
+|---|---|
+| **Order Activity Rules** | Must be configured for both ST and OT order types at each applicable status code |
+| **Line Type** | The line type used on ST/OT orders must have the correct inventory interface setting |
+| **Branch/Plant constants** | Both the shipping and receiving Branch/Plants must be configured and active |
+| **AAIs** | DMAIIs 4220/4230/4240/4245/4310/4320/4335 must be set up for the applicable order types and GL class codes |
+| **Item setup** | The item must be set up in both the shipping and receiving Branch/Plants with consistent GL class codes |
+| **Standard cost** | If using standard cost, costs should be frozen in both Branch/Plants before transfer orders are entered |
+| **Inter-branch markup** | If transferring at cost plus, Branch Sales Markup (P3403) must be configured before orders are entered |
+
+---
 
 ---
 
@@ -308,7 +340,7 @@ Within the In Transit As-Of transaction details, an item labeled **"Exclusion Ad
 
 If the In Transit GL account carries a balance at period end, investigate using the following approach:
 
-1. **Identify open transfer orders** -- Use the RapidReconciler In Transit As-Of page or JD Edwards open order inquiry to identify all ST orders that have shipped but not yet been fully received.
+1. **Identify open transfer orders** -- Use the RapidReconciler In Transit Orders page or JD Edwards open order inquiry to identify all ST orders that have shipped but not yet been fully received.
 2. **Verify the OT cost matches the ST price** -- For cost plus transfers, confirm the OT purchase order cost matches the ST sales order price. A mismatch is the most common cause of an unresolved In Transit balance.
 3. **Check for DMAAI 4335 mismatches** -- Confirm that DMAAI 4335 is configured correctly for the scenario that occurred.
 4. **Identify standard cost changes** -- Determine whether any standard cost updates occurred between order entry and shipment or between shipment and receipt.
@@ -324,9 +356,20 @@ If the In Transit GL account carries a balance at period end, investigate using 
 | Configure DMAAI 4335 for the most common scenario | Reduces unresolved In Transit balances |
 | Use RapidReconciler In Transit As-Of report at period end | Identifies open items before they become reconciling issues |
 
----
+### 7.3 Manual Journal Entry for Unresolved In Transit Balances
 
-## Section 8: DMAAI Quick Reference for Transfer Orders
+When the In Transit account does not clear and the variance cannot be resolved through normal JD Edwards processing, a manual journal entry is required. The appropriate offsetting account depends on the cause:
+
+| Cause | Debit | Credit | Notes |
+|---|---|---|---|
+| OT cost does not match ST price (cost plus) | In Transit | COGS or Variance account | The price/cost mismatch created an unresolved balance |
+| Branch cost variance with multiple variances | In Transit or PPV | In Transit or PPV | Net the two sides to determine the required entry |
+| Goods lost or damaged in transit | Expense / Write-Off | In Transit | Removes the value from In Transit and expenses the loss |
+| Cost change after shipment, before receipt | In Transit | Inventory Variance | Adjusts for the timing difference in the cost update |
+
+> **Best Practice:** Document all manual journal entries with the ST and OT order numbers, the reason the variance occurred, and the period in which it was posted. Use RapidReconciler's In Transit reconciliation to confirm the balance clears after the entry is posted.
+
+---
 
 | DMAAI | Account | Transfer at Cost | Transfer at Cost Plus | Notes |
 |---|---|---|---|---|

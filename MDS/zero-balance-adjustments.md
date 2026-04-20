@@ -4,6 +4,20 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: Why Zero Balance Adjustments Occur](#section-1-why-zero-balance-adjustments-occur)
+- [Section 2: Purchasing Zero Balance Adjustments](#section-2-purchasing-zero-balance-adjustments)
+- [Section 3: Inventory Zero Balance Adjustments](#section-3-inventory-zero-balance-adjustments)
+- [Section 4: Sales Module](#section-4-sales-module)
+- [Section 5: Identifying Zero Balance Adjustments in the Item Ledger](#section-5-identifying-zero-balance-adjustments-in-the-item-ledger)
+- [Section 6: Reconciliation Considerations](#section-6-reconciliation-considerations)
+- [Section 7: Complete AAI Reference](#section-7-complete-aai-reference)
+- [Section 8: Related Documentation](#section-8-related-documentation)
+
+---
+
 ## Overview
 
 A Zero Balance Adjustment is automatically created in the General Ledger when the inventory quantity for an item goes to zero while a cost value remains associated with that item. This occurs regardless of which inventory cost method is selected in the Cost Revisions file (F4105).

@@ -4,6 +4,21 @@
 
 ![RR Diagram](../Images/rr_diagram.png)
 
+---
+
+## Table of Contents
+
+- [RR Database Server](#rr-database-server)
+- [Integration Services](#integration-services)
+- [RR Application Server](#rr-application-server)
+- [End User PC](#end-user-pc)
+- [JD Edwards Information](#jd-edwards-information)
+- [Table Listing](#table-listing)
+- [Appendix A -- Creating the Integration Services Catalog](#appendix-a--creating-the-integration-services-catalog)
+- [Appendix B -- Proof of Concept Requirements](#appendix-b--proof-of-concept-requirements)
+
+---
+
 ## RR Database Server
 
 In most cases, existing servers running Microsoft SQL Server will meet the minimum requirements. If a new server needs to be built, use the guidelines below.
@@ -236,7 +251,7 @@ To provide data to GSI for a proof of concept, follow the steps below.
 | F4311 | Purchase Order Details | `SELECT * FROM F4311 WHERE PDTRDJ >= 124350` |
 | F4801 | Work Order Headers | `SELECT * FROM F4801 WHERE WAUPMJ >= 125001` |
 | F4102 | Item Branch Plant | `SELECT * FROM F4102` |
-| F0015 | Currency Exchange Rates | `SELECT * FROM F0015 WHERE CXEFT >= 122001` |
-| F1113 | Restatement Rates | `SELECT * FROM F1113 WHERE C1EFT >= 122001` |
+| F0015 | Currency Exchange Rates | `SELECT * FROM F0015 WHERE CXEFT >= 125001` |
+| F1113 | Restatement Rates | `SELECT * FROM F1113 WHERE C1EFT >= 125001` |
 | F43121 | Purchase Order Receipts | `SELECT * FROM F43121` |
 | F0101 | Address Book | `SELECT ABAN8, ABALPH FROM F0101` |

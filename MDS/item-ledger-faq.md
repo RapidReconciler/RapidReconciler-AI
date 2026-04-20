@@ -4,6 +4,20 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: F4111 Table Structure and Key Fields](#section-1-f4111-table-structure-and-key-fields)
+- [Section 2: Should the Item Ledger Sum Equal the Item Balance Table?](#section-2-should-the-item-ledger-sum-equal-the-item-balance-table)
+- [Section 3: How to Correctly Analyze the Cardex](#section-3-how-to-correctly-analyze-the-cardex)
+- [Section 4: Real-World Example -- Weighted Average Cost Calculation Error](#section-4-real-world-example----weighted-average-cost-calculation-error)
+- [Section 5: Global Item Update -- A Critical Warning](#section-5-global-item-update----a-critical-warning)
+- [Section 6: Best Practices for Item Ledger Integrity](#section-6-best-practices-for-item-ledger-integrity)
+- [Section 7: How RapidReconciler Helps](#section-7-how-rapidreconciler-helps)
+- [Section 8: Related Documentation](#section-8-related-documentation)
+
+---
+
 ## Overview
 
 The JD Edwards item ledger -- table F4111, commonly referred to as "The Cardex" -- contains the complete transaction history for items in the inventory system. All transactions that impact an item's quantity on hand are recorded in this table, including receipts, transfers, sales shipments, material issues, completions, and more.

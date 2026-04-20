@@ -4,6 +4,20 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: Unbalanced Transfer Orders -- The Problem](#section-1-unbalanced-transfer-orders----the-problem)
+- [Section 2: The Exclusion Process in RapidReconciler](#section-2-the-exclusion-process-in-rapidreconciler)
+- [Section 3: Exclusion Variance -- Monitoring Previously Excluded Orders](#section-3-exclusion-variance----monitoring-previously-excluded-orders)
+- [Section 4: Exclusion Adjust in the In Transit As-Of View](#section-4-exclusion-adjust-in-the-in-transit-as-of-view)
+- [Section 5: Journal Entry Guidance](#section-5-journal-entry-guidance)
+- [Section 6: Period-End Reconciliation Workflow](#section-6-period-end-reconciliation-workflow)
+- [Section 7: Key Takeaways](#section-7-key-takeaways)
+- [Section 8: Related Documentation](#section-8-related-documentation)
+
+---
+
 ## Overview
 
 In a perfect world, every ST/OT transfer order would ship and receive at identical quantities and amounts, leaving the In Transit clearing account with a zero balance at period end. In practice, this is rarely the case. Processing discrepancies, receiving errors, and timing differences between shipment and receipt create situations that standard JD Edwards cannot resolve once orders are closed.
@@ -33,6 +47,16 @@ Since In Transit is calculated as **Quantity Shipped minus Quantity Received**, 
 | **Quantity received differs from quantity shipped** | A short shipment or counting error at the receiving dock results in a quantity mismatch. Both orders are eventually closed without correction. |
 | **Cost variance at close** | The amount received differs from the amount shipped due to a cost change or pricing discrepancy, leaving a dollar balance with no quantity variance. |
 | **Manual status advancement** | An order is advanced to status 999 manually without being fully processed, bypassing normal receipt matching. |
+
+### 1.5 Prevention
+
+While exclusions are sometimes unavoidable, the following practices reduce their frequency:
+
+- **Train receiving staff** on how to identify and correctly receive against multiple open purchase orders for the same item rather than applying all units to one.
+- **Implement receiving controls** that require a PO number to be scanned or entered before processing a receipt, reducing the risk of receiving against the wrong order.
+- **Monitor open transfer orders** regularly so that discrepancies are caught and corrected before orders are closed at status 999.
+- **Avoid manual status advancement** to 999 without confirming that all receipt and voucher activity has been properly completed.
+- **Coordinate between shipping and receiving locations** on large or split shipments to ensure both sites understand which units belong to which order.
 
 ### 1.3 Example -- Multiple Orders for the Same Item
 
@@ -177,7 +201,43 @@ When orders are excluded, an **"Exclusion Adjust"** entry appears in the In Tran
 
 ---
 
-## Section 5: Period-End Reconciliation Workflow
+## Section 5: Journal Entry Guidance
+
+Once an order pair has been excluded, an offsetting journal entry is required to clear the unbalanced amount from the In Transit GL account. The appropriate entry depends on why the imbalance exists.
+
+### 5.1 Determining the Correct Offsetting Account
+
+| Scenario | Debit | Credit | Notes |
+|---|---|---|---|
+| Quantity shipped but never received (goods lost or written off) | Expense / Write-Off account | In Transit | Represents the cost of goods that were never received |
+| Quantity received against wrong order (goods actually received) | In Transit | Inventory | Goods are physically in stock; inventory account should carry the value |
+| Cost variance between ship and receive amounts | In Transit or Variance account | In Transit or Variance account | Depends on whether the variance is favorable or unfavorable and your organization's policy |
+| Duplicate shipment confirmation (goods not actually shipped) | In Transit | Inventory (Branch A) | Reverses the incorrect shipment entry |
+
+> **Important:** Consult your cost accountant or controller before posting any manual journal entry to the In Transit account. The appropriate offsetting account will depend on the specific circumstances of the unbalanced order and your organization's accounting policies.
+
+### 5.2 Documenting the Journal Entry
+
+Every manual journal entry posted to clear an excluded order should include the following in the memo or description field:
+
+- The ST order number and OT order number
+- The item number and quantity involved
+- The reason the order was excluded (e.g., "received against wrong PO," "quantity discrepancy at close")
+- The date of the exclusion in RapidReconciler
+- Reference to the RapidReconciler exclusion for audit traceability
+
+### 5.3 Reversing a Journal Entry After Re-Exclusion
+
+If new activity occurs on a previously excluded order and the unexclude/re-exclude process is performed, the original journal entry may need to be adjusted:
+
+1. Determine the new net exclusion amount after re-exclusion.
+2. If the amount has changed, reverse the original journal entry.
+3. Post a new journal entry for the updated net amount.
+4. Update the documentation to reflect the revised entry.
+
+---
+
+## Section 6: Period-End Reconciliation Workflow
 
 ### 5.1 Recommended Monthly Procedure
 
@@ -205,17 +265,18 @@ The exclusion process is a reconciliation tool, not a substitute for correcting 
 
 ---
 
-## Section 6: Key Takeaways
+## Section 7: Key Takeaways
 
 - **Unbalanced transfer orders are common** in high-volume environments and cannot be resolved through standard JD Edwards processing once both orders are closed at status 999.
 - **The Exclusion process** isolates unbalanced orders from the In Transit reconciliation, surfaces the exact amount needing a journal entry, and maintains an audit trail through the Exclusion Adjust entry in As-Of details.
 - **Exclusion Variance columns** (ExclVarQty and ExclVarAmt) protect against the risk of new activity being applied to previously excluded open orders -- always review these columns during the periodic reconciliation.
 - **The unexclude/re-exclude process** recalculates exclusion amounts to include all activity, ensuring the reconciliation remains accurate after new transactions occur on excluded orders.
 - **Exclusion is a reconciliation tool** -- it does not fix the underlying JD Edwards data. Where possible, resolve the root cause in JD Edwards before resorting to exclusion.
+- **Materiality matters** -- not every exclusion requires a journal entry. Establish a materiality threshold with your controller and document the policy. Small immaterial variances may be acceptable to leave without a journal entry, provided they are documented and reviewed at each period end.
 
 ---
 
-## Section 7: Related Documentation
+## Section 8: Related Documentation
 
 - [Transfer Order Reference Guide](../MDS/transfer_order_reference.md)
 - [In Transit Key Concepts](../MDS/in-transit-key-concepts.md)

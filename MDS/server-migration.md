@@ -4,6 +4,16 @@
 
 ---
 
+## Table of Contents
+
+- [Section 1: Overview](#section-1-overview)
+- [Section 2: Dedicated Server Migration](#section-2-dedicated-server-migration)
+- [Section 3: Separate Servers Migration](#section-3-separate-servers-migration)
+- [Section 4: Update VALC and Cloudflare](#section-4-update-valc-and-cloudflare)
+- [Section 5: Post-Migration Checklist](#section-5-post-migration-checklist)
+
+---
+
 ## Section 1: Overview
 
 This guide covers the steps required to migrate the RapidReconciler environment to a new server. There are two migration scenarios depending on the server architecture:

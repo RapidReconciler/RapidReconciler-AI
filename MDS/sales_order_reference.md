@@ -4,6 +4,17 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: Sales Update (R42800)](#section-1-sales-update-r42800)
+- [Section 2: Tax in Sales](#section-2-tax-in-sales)
+- [Section 3: Direct Ship Orders](#section-3-direct-ship-orders)
+- [Section 4: Sales Order Intercompany Processing](#section-4-sales-order-intercompany-processing)
+- [Section 5: Related Documentation](#section-5-related-documentation)
+
+---
+
 ## Overview
 
 This reference guide covers four key areas of JD Edwards Sales Order Management. Each section is self-contained and can be referenced independently.
