@@ -1,3 +1,6 @@
+---
+---
+
 # How RapidReconciler Helps
 
 ## Reconciliation for JD Edwards Inventory, In Transit, and PO Receipts
