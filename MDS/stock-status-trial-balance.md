@@ -114,7 +114,6 @@ For each module, variances are broken into labeled sources so the correct correc
 
 ## Related Documentation
 
-- [DMAAI Reference Guide](../MDS/dmaai-reference-guide.md)
+- [DMAAI Reference Guide](../MDS/distribution-aais.md)
 - [GL Class Code Management and Change Procedures](../MDS/gl-class-code-changes.md)
 - [Inventory: Using the Application](../MDS/inventory-using-application.md)
-- [Stock Status and Trial Balance -- Why They Don't Match](../MDS/stock-status-trial-balance.md)

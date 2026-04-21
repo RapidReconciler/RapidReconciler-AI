@@ -31,11 +31,11 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | Document | Description |
 |----------|-------------|
 | [How RapidReconciler Helps Document](/MDS/how-rr-helps.md) | Printable version of the application's benefits and value proposition |
-| [Reconciliation Process](MDS/stock-status-trial-balance.md) | Timing, backdating, report definition |
-| [Getting Started with the Application](MDS/getting-started-with-rapidreconciler.md) | Logging in, navigating the interface, and system requirements |
+| [JDE vs. RapidReconciler Process](MDS/stock-status-trial-balance.md) | Timing, backdating, report definition |
+| [Using the Application](MDS/getting-started-with-rapidreconciler.md) | Logging in, navigating the interface, and system requirements |
 | [Complex Password](MDS/complex-password.md) | Password policy requirements and reset process |
 | [Administrator Responsibilities](MDS/admin-responsibilities.md) | Company management, user setup, general settings, and offset accounts |
-| [Adding a New Company](MDS/adding-company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
+| [Adding a New Company License](MDS/adding-company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
 
 ---
 
@@ -46,7 +46,6 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | [Inventory Key Concepts](MDS/inventory-key-concepts.md) | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes |
 | [Managing Inventory Accounts](MDS/add-account-rr.md) | DMAAI model table process and refresh requirements |
 | [Inventory: Using the Application](MDS/inventory-using-application.md) | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
-| [Transaction Detail Analysis Guide](MDS/transaction-detail-analysis-guide.md) | Transaction types, sources, and descriptions |
 | [Working with the Item Ledger](MDS/item-ledger-faq.md) | Balances, posting codes, dates, DMAAs, and integrity conditions |
 | [Ultimate DMAAI Guide](MDS/distribution-aais.md) | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
 | [Managing GL Class Codes](MDS/gl-class-code-changes.md) | Procedure, hierarchy of change locations, why adjustments are required |

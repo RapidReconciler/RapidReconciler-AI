@@ -20,6 +20,10 @@
 
 ## 1. Preparing Item Data for Reconciliation
 
+> **Related Documents:** [Managing Inventory Accounts](MDS/add-account-rr.md) | [Ultimate DMAAI Guide](MDS/distribution-aais.md) 
+
+> **Related Video** [Model DMAAI Video Tutorial](https://vimeo.com/222668358)
+
 ### The Model DMAAI Table in JD Edwards
 
 ![JDE DMAIIs](../Images/rr_inventory_jde_dmaais.png)
@@ -68,8 +72,6 @@ The Model DMAAI Table also controls which accounts appear in the RapidReconciler
 - Inventory module filters in RapidReconciler are populated from the Model DMAAI Table.
 - Account management is performed by updating the Model DMAAI Table in JD Edwards — there is no direct account entry in RapidReconciler.
 
-[Model DMAAI Video Tutorial](https://vimeo.com/222668358)
-
 ### Assigning GL Account Information to Item Data
 
 Item ledger (cardex) and item location records in JD Edwards do not contain GL account information. Each record does, however, contain the GL class code of the item being transacted. During the import process, RapidReconciler appends GL account information to each item ledger (F4111) and item location (F41021) record by using the Model DMAAI Table as a cross-reference.
@@ -92,7 +94,7 @@ Each item ledger record must be allocated to a fiscal period in order to perform
 
 RapidReconciler employs internal date logic to determine the correct fiscal period, using the following hierarchy:
 
-- **GL Date** — If a GL date exists on the item ledger record and is on or after the first day of the fiscal year, the period is assigned using the GL date.
+- **GL Date** — If a GL date exists on the item ledger record, the period is assigned using the GL date.
 - **Creation Date** — If no GL date is populated (possible for unprocessed End of Day transactions), the period is assigned using the creation date.
 
 > **Note:** These rules apply to the initial data load only and account for the possibility that creation dates may have been overwritten by the Global Item Update program in JD Edwards.
@@ -125,6 +127,8 @@ The process works as follows:
 ---
 
 ## 2. Inventory Reconciliation and Sources of Variance
+
+> **Related Documents:** [JDE vs. RapidReconciler Process](MDS/stock-status-trial-balance.md)
 
 ### What Is Inventory Reconciliation?
 
@@ -237,6 +241,8 @@ If a batch number is present, there may be a data issue in RapidReconciler. Iden
 
 ## 5. Variance Source 3 - Transactional Variances
 
+> **Related Documents:** [Working with the Item Ledger](MDS/item-ledger-faq.md) | [Sales Order Reference Guide](MDS/sales_order_reference.md) | [Purchase Order Reference Guide](MDS/purchase_order_reference.md) | [Understanding Outside Operations](MDS/outside-operations.md)
+
 ### What Are Transactional Variances?
 
 Transactional variances represent differences between the item ledger table (F4111) and the GL detail table (F0911) for transactions that have been fully completed. RapidReconciler displays only transactions with discrepancies — it functions as an exception list.
@@ -273,6 +279,8 @@ If matching criteria are fully met with no amount discrepancy, the transaction i
 ---
 
 ## 6. Variance Source 4 - Cardex Variance
+
+> **Related Documents:** [Handling Cardex Variance](MDS/cardex_variance.md) | [Working with the Item Ledger](MDS/item-ledger-faq.md) | [About Units of Measure](MDS/uom_reference_guide.md) | [Product Costing Guide](MDS/product-costing.md)
 
 ### What Is Cardex Variance?
 
@@ -322,6 +330,8 @@ Clicking the button presents three options. Review each option carefully before 
 ---
 
 ## 7. GL Class Codes
+
+> **Related Documents:** [Managing GL Class Codes](MDS/gl-class-code-changes.md) | [Ultimate DMAAI Guide](MDS/distribution-aais.md) | [Zero Balance Adjustments](MDS/zero-balance-adjustments.md)
 
 ### Hierarchy
 
