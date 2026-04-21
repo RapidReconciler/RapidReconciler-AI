@@ -16,6 +16,7 @@
 - [Section 7: Sub Type Reference](#section-7-sub-type-reference)
 - [Section 8: Document Type Reference](#section-8-document-type-reference)
 - [Section 9: Related Documentation](#section-9-related-documentation)
+- [Section 10: Using Claude for Automated Analysis](#section-10-using-claude-for-automated-analysis)
 
 ---
 
@@ -137,7 +138,7 @@ The most important section for understanding what RapidReconciler sees and how i
 | **Variance** | CardexAmount minus LedgerAmount. Non-zero = unreconciled. |
 | **RR Total row** | Summary line showing the net variance. The Variance column here matches what appears on the Transactions page. |
 
-> **Key diagnostic:** If CardexAmount = 0 and LedgerAmount is non-zero, the variance is entirely GL-side with no cardex entry. If LedgerAmount = 0 and CardexAmount is non-zero, the variance is entirely cardex-side with no GL entry.
+> **Key diagnostic:** If CardexAmount = 0 and LedgerAmount is non-zero, the variance is entirely GL-side with no cardex entry. If LedgerAmount = 0 and CardexAmount is non-zero, the variance is entirely cardex-side with no GL entry. If both are non-zero but unequal, compare at the individual batch and account level -- a single line item may be missing from one side even though other lines in the same batch reconcile cleanly (see Section 4.3).
 
 ### 2.7 Header Comp
 
@@ -221,6 +222,7 @@ Common mismatch scenarios:
 | Period mismatch | Same amounts but in different period rows | Backdating; Sales Update or Manufacturing Accounting processed in a different period than the cardex |
 | GL-only entry | CardexAmount = 0, LedgerAmount has a value | Manual journal entry to inventory account; payment or discount entry coded to inventory; voucher with no receipt |
 | Cardex-only entry | LedgerAmount = 0, CardexAmount has a value | Unposted batch; cardex written but GL not updated |
+| Partial cardex-only entry | Both totals are non-zero but unequal; one or more RR Summary rows show LedgerAmount = 0 for a specific batch/account | A single line item within an otherwise-posted batch has no GL counterpart -- see Section 4.3 |
 
 ---
 
@@ -272,9 +274,11 @@ This means the **true variance is larger than what RapidReconciler is showing**.
 ### 4.3 Cardex-Only Entry (No GL)
 
 **Symptoms:**
-- F4111 Total has a non-zero amount
-- F0911 Total = $0.00
+- F4111 Total has a non-zero amount **and** F0911 Total = $0.00 (full cardex-only); **OR**
+- F0911 Total is non-zero but smaller than the F4111 Total for the same GL class and batch, and one or more RR Summary rows show CardexAmount non-zero with LedgerAmount = $0.00 (partial cardex-only -- a single line item within an otherwise-posted batch has no GL counterpart)
 - Appears in the GL Batches variance on the Reconciliation page
+
+> **Important distinction:** The partial variant does not set off the obvious "F0911 Total = $0.00" alarm. The batch is fully posted and other lines reconcile cleanly. The only indicators are the RR Summary cardex-only row for a specific batch/account combination and a gap between the F4111 and F0911 totals for that GL class. Always compare totals at the GL class and batch level, not just at the document level.
 
 **Common causes:**
 
@@ -282,6 +286,7 @@ This means the **true variance is larger than what RapidReconciler is showing**.
 |---|---|---|
 | Unposted batch | PC field in F4111 is not "P"; batch visible in GL Batches variance | Post the batch in JD Edwards |
 | Batch posted to wrong period or company | F4111 record exists but GL entry is in different period/company | Locate the GL entry; determine if a period or company mismatch exists |
+| Partial batch GL failure -- single line missing from an otherwise-posted batch | PC = "P" on all F4111 rows; all other lines in the same batch and GL class have matching F0911 entries; one cardex line has no GL counterpart; the missing line often has a unit cost that is a significant outlier relative to other lines in the same transaction | First, query F0911 for the document and batch across **all** accounts (not just inventory) -- the GL entry may have posted to an unexpected account rather than being absent entirely. If no entry exists anywhere, post a manual journal entry for the specific line amount. Investigate whether the outlier unit cost caused the GL interface to reject or suppress the line. |
 
 ### 4.4 Account Mismatch (Both Cardex and GL Exist but in Different Accounts)
 
@@ -452,6 +457,7 @@ Before reviewing anything else, scan the top of the report for an **Unassigned**
 - Is CardexAmount zero? → GL-only entry. The variance is entirely on the GL side.
 - Is LedgerAmount zero? → Cardex-only entry. Check for unposted batches.
 - Are there multiple rows? → Mismatch on company, account, period, or document fields.
+- Are both totals non-zero but unequal, with one or more rows showing LedgerAmount = $0.00 for a specific batch? → Partial cardex-only entry. A single line item within an otherwise-posted batch may be missing from the GL. See Section 4.3.
 - Single row with matching amounts? → This should not appear as unreconciled. Investigate the tolerance setting.
 
 **Step 4 -- Review the F4111 Data**
@@ -460,6 +466,7 @@ Before reviewing anything else, scan the top of the report for an **Unassigned**
 - Check the PC (posting code) field. "X" = memo transaction; should not be present for stock transactions.
 - Note the GLDate vs. TransDate. A large gap may indicate a period mismatch.
 - Are there two rows for the same document with one showing zero quantity and a "Standard Cost Change" or "Inventory Cost Change" comment? → See Sections 4.9 and 4.10.
+- When the RR Summary shows a partial cardex-only pattern, scan the F4111 unit costs for outliers. A single line with a unit cost that is a significant multiple of all others is a strong indicator of where the GL gap originates.
 
 **Step 5 -- Review the F0911 Inv Acct**
 
@@ -467,6 +474,7 @@ Before reviewing anything else, scan the top of the report for an **Unassigned**
 - Does the account match the F4111 GLClass and the model table account?
 - Note the batch number -- does it match the F4111 batch number?
 - Check the Comment field for supplier name or other context.
+- When the RR Summary shows a partial cardex-only pattern, compare the F0911 entries for each GL class and batch individually against the corresponding F4111 lines. A GL class total that is smaller than its F4111 counterpart points to the specific account and batch where the missing line item will be found. Before concluding the GL entry is absent, query F0911 across **all** accounts for the document and batch -- the entry may have posted to an unexpected account rather than being missing entirely.
 
 **Step 6 -- Review the Receipts Section**
 
@@ -481,6 +489,7 @@ Before reviewing anything else, scan the top of the report for an **Unassigned**
 - Check for Comment flags (Missing entry, Mismatch, Net Zero).
 - Identify which AAI produced the GL account shown in F0911.
 - Compare to the model table account.
+- If the DMAAs show no flags and the DMAAI configuration is clean, the variance is not a configuration issue -- focus the investigation on the GL posting history for the specific document and batch (see Step 5 note on partial cardex-only patterns).
 
 **Step 8 -- Determine Root Cause and Corrective Action**
 
@@ -550,3 +559,63 @@ Common document types appearing in the Transaction Detail report:
 - [Cardex Integrity Variance Guide](../MDS/cardex_variance.md)
 - [Purchase Order Reference Guide](../MDS/purchase_order_reference.md)
 - [Stock Status and Trial Balance Reconciliation](../MDS/stock-status-trial-balance.md)
+
+---
+
+## Section 10: Using Claude for Automated Analysis
+
+Claude can perform the full Section 6 analysis procedure automatically and return a single updated `.xlsx` file with the findings written directly into the workbook and all problem rows highlighted. This eliminates manual annotation and ensures consistent output across analysts.
+
+### 10.1 First Request in a Session
+
+On the first request, upload **both files** together:
+
+1. This guide (`.md`)
+2. The Transaction Detail report (`.xlsx`)
+
+Then use the following prompt:
+
+> *"Analyze this file using the guide as a template, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis' and all problem rows highlighted."*
+
+Claude will read the guide to understand the report structure and variance patterns, work through the Section 6 procedure against the Excel data, highlight the relevant rows on the Transaction Details sheet, and add the analysis as a new sheet in the same workbook. The returned file is a drop-in replacement for the original -- the Transaction Details sheet is unchanged except for the highlights.
+
+### 10.2 Follow-On Requests in the Same Session
+
+Once the guide has been uploaded in a session, Claude retains it in context for the remainder of the conversation. Subsequent Transaction Detail reports **do not require the guide to be uploaded again**. Simply upload the new `.xlsx` and use a shorter prompt:
+
+> *"Analyze this file and return it with the analysis sheet and highlights."*
+
+Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide again -- Claude will use it and ignore the duplication.
+
+### 10.3 Output Specification
+
+**File naming:** The returned file will use the original filename as the base with the document number and document type appended, e.g. `TransactionDetails_20260421-1103_1309532_IM.xlsx`. Claude will read the document number and type from the Doc Header row of the Transaction Details sheet before saving.
+
+The returned workbook will contain two sheets:
+
+**Sheet 1 — Transaction Details (original sheet, highlights added)**
+
+| Highlight | Color | Rows |
+|---|---|---|
+| Root cause | Red | The specific F4111 line item(s) directly responsible for the variance |
+| Related | Orange | Doc Header; the corresponding F0911 Inv Acct entries for the affected GL class and batch; the RR Summary rows showing the unmatched cardex and orphaned GL amounts |
+
+**Sheet 2 — RR Analysis (new sheet)**
+
+The analysis sheet will follow this structure:
+
+| Section | Content |
+|---|---|
+| **Document** | Document number, type, order number, order type, company, period, variance amount |
+| **Unassigned Check** | Whether an Unassigned section is present; true cardex total if understated |
+| **RR Summary Findings** | CardexAmount, LedgerAmount, Variance; whether the pattern is full cardex-only, GL-only, partial, or account/period mismatch |
+| **Root Cause** | Section 4 pattern classification; specific item, batch, GL class, and account involved |
+| **Evidence** | Row numbers from the Transaction Details sheet that support the finding |
+| **Recommended Action** | Corrective action from Section 4; journal entry details where applicable; any further investigation steps required before posting |
+
+### 10.4 Notes and Limitations
+
+- Claude analyzes the data as exported. If the source report was generated with filters applied or sections suppressed, the analysis reflects only what is present in the file.
+- The highlight colors applied by Claude are standard fills. If the original file already uses cell fill colors for other purposes, advise Claude of the existing convention in the prompt so it can use different colors.
+- For very large Transaction Detail reports spanning many documents or periods, include a note in the prompt identifying the specific document number to focus on if only one transaction is under investigation.
+- Claude will note if a finding requires further investigation in JD Edwards (e.g., querying F0911 across all accounts for a specific batch) that cannot be completed from the Excel file alone. These items will appear as open questions in the Recommended Action section of the analysis sheet.
