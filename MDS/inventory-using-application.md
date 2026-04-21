@@ -92,6 +92,8 @@ For a full table listing, see the [Technical Requirements Guide](../MDS/tech-req
 
 ## Section 1: The Reconciliation Page
 
+![rr-inv-rec-page](../Images/rr-inv-rec-page.png)
+
 ### 1.1 Overview
 
 The Reconciliation page is the default page displayed upon login. This is where all variance sources are summarized and where the majority of reconciliation work is performed.
@@ -276,6 +278,8 @@ Output format: Excel or PDF.
 
 ## Section 5: Inventory Transactions Page
 
+![rr-inv-transactions-page](../Images/rr-inv-transactions-page.png)
+
 ### 5.1 Overview
 
 The Transactions page lists documents where the item ledger (F4111) does not match the GL (F0911) based on the matching criteria. Only reconciling items are displayed -- internally reconciled transactions do not appear.
@@ -297,7 +301,7 @@ Transactions that differ by less than 1 monetary unit are not displayed by defau
 
 ### 5.4 Transaction Detail Report
 
-Click the **+** icon at the left of any row to expand the transaction detail. The report is organized into six sections:
+Click the **+** icon at the left of any row to expand the transaction detail. The green icon on the left will export the detail data to Excel. The report is organized into six sections:
 
 | Section | Description |
 |---|---|
@@ -306,7 +310,7 @@ Click the **+** icon at the left of any row to expand the transaction detail. Th
 | **Section 3 -- F0911 GL** | All F0911 rows for the selected company, document type, and document number |
 | **Section 4 -- RapidReconciler** | How RapidReconciler matches and summarizes the data. One row = match; multiple rows = mismatch |
 | **Section 5 -- Order Data** | For PO receipts and sales shipments, all lines for the associated order. For intercompany orders, includes related order information. |
-| **Section 6 -- DMAAs** | All DMAAI entries for each GL class code in the transaction. First row is from the model table. |
+| **Section 6 -- DMAAIs** | All DMAAI entries for each GL class code in the transaction. First row is from the model table. |
 
 **Tips for analysis:**
 - Verify that company number, account number, and period ending date match across Sections 2 and 3.
@@ -319,6 +323,8 @@ Click the **+** icon at the left of any row to expand the transaction detail. Th
 ---
 
 ## Section 6: Inventory As-Of Page
+
+![rr-inv-asof-page](../Images/rr-inv-asof-page.png)
 
 ### 6.1 Overview
 
@@ -361,6 +367,11 @@ For the complete procedure, see the [GL Class Code Management Guide](../MDS/gl-c
 
 ## Section 7: Inventory Roll Forward Page
 
+The admin-configurable Roll Forward report is designed to provide visibility into item activity within a specified date range. It is not part of the standard reconciliation process but can be used for informational purposes or to support specific investigations.
+Reference the administrator guide for configuration details. [Administrator Responsibilities](../MDS/admin-responsibilities.md)
+
+![rr-inv-rollforward-page](../Images/rr-inv-rollforward-page.png)
+
 The Roll Forward page lists item activity within a specified date range, with document and order types assigned to report columns by the administrator. This is an informational report and is not part of the standard reconciliation process.
 
 **To validate the Roll Forward report:** Review the Variance column on the far right. Any non-zero value indicates a document or order type may be missing from the report configuration. Contact the administrator to review.
@@ -368,6 +379,8 @@ The Roll Forward page lists item activity within a specified date range, with do
 ---
 
 ## Section 8: Integrity Reports
+
+![rr-inv-integrity-reports-page](../Images/rr-inv-integrity-reports-page.png)
 
 Integrity reports identify JD Edwards configuration issues that will cause reconciling items if not corrected. Review and act on these reports when RapidReconciler is first installed, and then **monthly** as part of the period-end process.
 
