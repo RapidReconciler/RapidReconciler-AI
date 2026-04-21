@@ -299,6 +299,20 @@ Transactions that differ by less than 1 monetary unit are not displayed by defau
 | **Order Type** | The JD Edwards order type |
 | **Document Type** | The JD Edwards document type |
 
+***Filter Widget Tips:***
+
+Use the **Filters** widget to isolate specific transaction types:
+
+- **Target icon**: Click the target icon next to any filter value to display only that value and hide all others in that category. For example, click the target next to "Sales" to show only sales transactions and hide Inventory, Manufacturing, and Purchasing entries.
+- **Toggle switch**: Click the toggle next to any filter value to turn it on or off independently, without affecting other selections. For example, click the target for "Sales," then toggle "Inventory" back on to view both sales and inventory transactions together.
+
+![rr-inv-transactions-filters](../Images/rr-inv-transactions-filters.png)
+
+***Subtotals Widget Tips:***
+
+The **Type** column of the **Subtotals Filter** has a dropdown filter that can be used to summarize totals by type, sub type, order type or document type:
+![rr-inv-transactions-subtotal-dropdown](../Images/rr-inv-transactions-subtotal-dropdown.png)
+
 ### 5.4 Transaction Detail Report
 
 Click the **+** icon at the left of any row to expand the transaction detail. The green icon on the left will export the detail data to Excel. The report is organized into six sections:
