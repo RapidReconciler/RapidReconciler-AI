@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RapidReconciler — Data Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gsi-blue: #1a4fa0;
+    --gsi-blue-dark: #0d3272;
+    --gsi-blue-mid: #2163c0;
+    --gsi-blue-light: #dbeafe;
+    --gsi-orange: #e8630a;
+    --navy: #0d1f3c;
+    --slate: #4b5563;
+    --slate-light: #9ca3af;
+    --rule: #e5e7eb;
+    --bg-off: #f4f7fb;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: #c8d4e3;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  .sheet {
+    background: var(--white);
+    width: 940px;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.22);
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--gsi-blue-dark);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* decorative circle */
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    pointer-events: none;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .header-left {
+    flex: 1;
+    padding: 32px 40px 28px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Logos row */
+  .logos {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .logos img.rr-logo {
+    height: 38px;
+    display: block;
+    border-radius: 4px;
+  }
+
+  .logo-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba(255,255,255,0.25);
+    flex-shrink: 0;
+  }
+
+  .logos img.gsi-logo {
+    height: 32px;
+    display: block;
+  }
+
+  .header-headline {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.45;
+    max-width: 430px;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .header-intro {
+    margin-top: 12px;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.9);
+    max-width: 430px;
+    line-height: 1.6;
+  }
+
+  /* Quote panel */
+  .header-quote {
+    width: 262px;
+    flex-shrink: 0;
+    background: var(--gsi-blue-mid);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+
+  .header-quote::before {
+    content: '"';
+    position: absolute;
+    top: 4px; left: 16px;
+    font-size: 72px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    color: rgba(255,255,255,0.1);
+    line-height: 1;
+  }
+
+  .quote-text {
+    font-size: 12px;
+    font-style: italic;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.65;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .quote-attr {
+    font-size: 11px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--gsi-orange);
+    line-height: 1.5;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── STATS STRIP ── */
+  .stats {
+    background: var(--gsi-blue-mid);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .stat {
+    padding: 14px 16px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-n {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .stat-n span { color: var(--gsi-orange); }
+
+  .stat-l {
+    font-size: 10px;
+    color: rgba(255,255,255,0.65);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+  }
+
+  /* ── BODY ── */
+  .body { padding: 30px 40px; }
+
+  .sl { font-family:'Montserrat',sans-serif; font-size:9px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--gsi-blue); margin-bottom:4px; }
+  .st { font-family:'Montserrat',sans-serif; font-size:17px; font-weight:800; color:var(--navy); margin-bottom:10px; line-height:1.2; }
+  .sb { font-size:12.5px; color:var(--slate); line-height:1.65; }
+
+  .divider { height:1px; background:var(--rule); margin:22px 0; position:relative; }
+  .divider::before { content:''; position:absolute; left:0; top:-0.5px; width:44px; height:2px; background:var(--gsi-blue); }
+
+  /* two col */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-bottom:22px; }
+
+  /* blue feature box */
+  .kf-box { background:var(--gsi-blue); border-radius:5px; padding:18px 20px; }
+  .kf-title { font-family:'Montserrat',sans-serif; font-size:12.5px; font-weight:800; color:#fff; text-transform:uppercase; letter-spacing:.04em; margin-bottom:12px; }
+  .kf-list { list-style:none; }
+  .kf-list li { font-size:11.5px; color:rgba(255,255,255,.9); padding:5px 0 5px 18px; position:relative; border-bottom:1px solid rgba(255,255,255,.1); line-height:1.4; }
+  .kf-list li:last-child { border-bottom:none; }
+  .kf-list li::before { content:'✓'; position:absolute; left:0; top:5px; font-size:10px; color:var(--gsi-orange); font-weight:700; }
+
+  /* feature list */
+  .fl { list-style:none; margin-top:10px; }
+  .fl li { font-size:12px; color:var(--slate); padding:6px 0 6px 18px; border-bottom:1px solid var(--rule); position:relative; line-height:1.4; }
+  .fl li:last-child { border-bottom:none; }
+  .fl li::before { content:'✓'; position:absolute; left:0; top:6px; color:var(--gsi-blue); font-weight:700; font-size:10.5px; }
+  .fl li strong { display:block; font-size:11.5px; font-weight:600; color:var(--navy); }
+
+  /* module cards */
+  .mod-head { background:var(--gsi-blue); color:#fff; padding:9px 14px; border-radius:4px 4px 0 0; font-family:'Montserrat',sans-serif; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; }
+  .mod-body { border:1px solid var(--rule); border-top:none; border-radius:0 0 4px 4px; padding:13px 15px; }
+  .mod-body p { font-size:11.5px; color:var(--slate); line-height:1.5; margin-bottom:8px; }
+
+  .mod-cols { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:22px; }
+  .mod-right { display:flex; flex-direction:column; gap:14px; }
+
+  /* integrity grid */
+  .ig { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-top:12px; }
+  .ic { background:var(--bg-off); border-left:3px solid var(--gsi-blue); padding:10px 12px; border-radius:0 4px 4px 0; }
+  .ic-n { font-family:'Montserrat',sans-serif; font-size:9px; font-weight:700; letter-spacing:.1em; color:var(--gsi-orange); text-transform:uppercase; margin-bottom:2px; }
+  .ic-t { font-size:11.5px; font-weight:600; color:var(--navy); margin-bottom:2px; }
+  .ic-d { font-size:10.5px; color:var(--slate); line-height:1.45; }
+
+  /* why band */
+  .why { background:var(--gsi-blue-dark); padding:20px 40px; margin:0 -40px; }
+  .why-t { font-family:'Montserrat',sans-serif; font-size:14px; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:.06em; text-align:center; margin-bottom:14px; }
+  .why-t span { color:var(--gsi-orange); }
+  .why-g { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .wc { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); border-radius:4px; padding:13px 14px; text-align:center; }
+  .wc-icon { font-size:22px; margin-bottom:6px; display:block; }
+  .wc-n { font-family:'Montserrat',sans-serif; font-size:22px; font-weight:900; color:#fff; line-height:1; margin-bottom:2px; }
+  .wc-n span { color:var(--gsi-orange); }
+  .wc-l { font-size:10.5px; color:rgba(255,255,255,.7); line-height:1.4; }
+
+  /* before after */
+  .ba { display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--rule); border-radius:4px; overflow:hidden; margin-top:12px; }
+  .bah { padding:9px 14px; font-family:'Montserrat',sans-serif; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; border-bottom:1px solid var(--rule); }
+  .bah.b { background:#fef2f2; color:#b91c1c; border-right:1px solid var(--rule); }
+  .bah.a { background:#eff6ff; color:var(--gsi-blue); }
+  .bac { padding:8px 14px; font-size:11.5px; color:var(--slate); line-height:1.45; border-bottom:1px solid var(--rule); }
+  .bac.bc { border-right:1px solid var(--rule); }
+  .bac:nth-last-child(-n+2) { border-bottom:none; }
+
+  /* footer */
+  .footer { background:var(--gsi-blue-dark); padding:16px 40px; display:flex; align-items:center; justify-content:space-between; }
+  .footer-l { font-family:'Montserrat',sans-serif; font-size:11px; font-weight:700; color:rgba(255,255,255,.85); }
+  .footer-ds { font-family:'Montserrat',sans-serif; font-size:9.5px; font-weight:600; color:rgba(255,255,255,.35); text-transform:uppercase; letter-spacing:.08em; margin-top:3px; }
+  .footer-r { font-size:11px; color:rgba(255,255,255,.55); text-align:right; line-height:1.7; }
+  .footer-r a { color:#93c5fd; text-decoration:none; }
+
+  @media print {
+    body { background:white; padding:0; }
+    .sheet { box-shadow:none; width:100%; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="logos">
+          <img class="rr-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAM8AAAAvCAYAAABExZ7dAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAACb0lEQVR4nO3aSW7EIBBAUTvK/a9MNrFkWdQExdDt/5YdoJgxdo4DAAAAAAAAAAAAAADAcmYVVEoproDnmRaz1b2ukfpc+e55PO3eoc27kcag1se7+pkdsPybHXelN7b5DX5XBS6llFW7y6q4K9u8m2/ohyGLR+qYb959tcnwze1+s6knz3mep2ci1dJYC/L6+zNvLZ915/GUUcsjpbu3W0sXvYtF6+lNb93tonVrGYOesp/pnu3IOvWWPbbVaAvLukhKeaOdVStn9MmhxYy017swvTGkvKPiWHrLzh7HbRaPtptEGl3bLb0LyHoDlEFqW6TNWp5aW60YUv9oJ5AWR8rTw5of1hiP2ACnvm3zNKDWAd4da9QldMSOef9da3Nt14/UM5reStOTJ2MCt4zFtbAuvXW4DDl5WjppxMT33rGy6jL68e5Ou19Ffs9itb0nvqdsz+mTbdljW/YRO7rTWhfis4za7zMXnWT2xGu109xYsnh2nESjY3/CxMzwlnYex8TvPNbkfP6956XBKi3tlvJ9qpEn2G79NP3fcyzZl7pI3Nkxd/IJ7d9tA522eLRXl9FTyZumtbMzy+rJf12CveVF02eyFp9Wt96ye8tvtcXJ07OwpLSZHdlTljbw2itcKWb0hPC8mMk+daQxzIij9dXs03PZv+doz8a1+493AtfSRb4T3evXWgetbrVvINquGX0rKX0zkmJkTjit/0aXveKxc4uT5zj83ye0SSZNnN569A6MlV+KqfVJbRF6TrlIvVq01G2Hsl9pxbMucBwbnTzAp2HxAI1YPAAAAAAAAAAAAAAAAAAAAAAAAACA7f0BRuhoRlsC80MAAAAASUVORK5CYII=" alt="RapidReconciler">
+          <div class="logo-divider"></div>
+          <img class="gsi-logo" src="data:image/png;base64,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" alt="GSI">
+        </div>
+        <div class="header-headline">JD Edwards Inventory, In-Transit and<br>Received Not Vouchered Reconciliation Solution</div>
+        <div class="header-intro">Over 200 companies in 17 countries use RapidReconciler to streamline their JD Edwards reconciliations -- identifying root causes and taking corrective action to minimize future occurrences.</div>
+      </div>
+      <div class="header-quote">
+        <div class="quote-text">"Using RapidReconciler, we were able to reduce the time it took to reconcile inventory to the general ledger each month by 94%."</div>
+        <div class="quote-attr">Greg Smith, Cost Analyst<br>AMSOIL, Inc.</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-n"><span>99.7</span>%</div><div class="stat-l">Inventory Accuracy</div></div>
+      <div class="stat"><div class="stat-n"><span>76</span>%</div><div class="stat-l">Average Reduction in Reconciliation Time</div></div>
+      <div class="stat"><div class="stat-n"><span>3</span> Days</div><div class="stat-l">Operational Guarantee</div></div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- INTRO + KEY FEATURES -->
+    <div class="two-col">
+      <div>
+        <div class="sl">Overview</div>
+        <div class="st">Stop discovering what went wrong at period end</div>
+        <div class="sb">The standard approach -- comparing a Stock Status report to the trial balance -- has five well-documented failure points that produce mismatches requiring manual investigation every period.</div>
+        <ul class="fl" style="margin-top:10px;">
+          <li><strong>Timing</strong>Transactions after the report but before close appear in GL only</li>
+          <li><strong>Backdating</strong>Prior-period GL dates create discrepancies in both reports</li>
+          <li><strong>Report Definition</strong>Incorrect cost method or data selection produces totals that will never agree</li>
+          <li><strong>DMAAI Misconfiguration</strong>A single wrong AAI silently posts every transaction of that type to the wrong account</li>
+          <li><strong>GL Class Code Changes</strong>JDE allows changes without checking quantity on hand, stranding inventory value in the original account</li>
+        </ul>
+      </div>
+      <div>
+        <div class="kf-box">
+          <div class="kf-title">RapidReconciler&#174; Key Features</div>
+          <ul class="kf-list">
+            <li>3-Point Reconciliation across the entire supply chain</li>
+            <li>Integrity Reports identify DMAAI configuration issues</li>
+            <li>Flexible filtering by company, business unit, object and subsidiary</li>
+            <li>Transaction Detail drill-down with corrective action guidance</li>
+            <li>Export data to Excel, PDF, or Word</li>
+            <li>Historical As-Of reporting for inventory and in-transit</li>
+            <li>Addresses integrity, procedural, timing, system and manual errors</li>
+            <li>Multi-company / multi-currency support</li>
+            <li>Audit report and compliance support tools</li>
+            <li>Compatible with all JD Edwards EnterpriseOne releases</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- THREE MODULES -->
+    <div class="sl">The Three Modules</div>
+    <div class="st" style="margin-bottom:14px;">3-Point Reconciliation Across the Supply Chain</div>
+
+    <div class="mod-cols">
+      <div>
+        <div class="mod-head">01 &nbsp;·&nbsp; Inventory Reconciliation</div>
+        <div class="mod-body">
+          <p>Automatically compares F4111 perpetual balances to F0902 GL balances. Breaks total variance into six labeled sources so each can be addressed with the correct corrective action.</p>
+          <ul class="fl">
+            <li><strong>Valuation Section</strong>F4111 vs. F0902 -- no manual report run required</li>
+            <li><strong>Variance Calculation</strong>Carry Forward, GL Batches, End of Day, Transactions, Cardex, Manual JEs</li>
+            <li><strong>Cardex Integrity</strong>Automatic F4111 vs. F41021 per item -- quantity vs. dollar distinction</li>
+            <li><strong>As-Of Page</strong>Continuously maintained period-end position by item, branch, lot</li>
+            <li><strong>Audit Report</strong>Complete reconciliation document for audit and internal review</li>
+          </ul>
+        </div>
+      </div>
+      <div class="mod-right">
+        <div>
+          <div class="mod-head">02 &nbsp;·&nbsp; In Transit Reconciliation</div>
+          <div class="mod-body">
+            <p>Links shipments and receipts across ST/OT pairs. Balances in-transit quantities and amounts to the GL with variances categorized for easy resolution.</p>
+            <ul class="fl">
+              <li><strong>Orders Page</strong>Shipments minus Receipts per pair; reconciled orders removed automatically</li>
+              <li><strong>Exclusion Process</strong>Isolates closed-order residuals; surfaces exact journal entry needed</li>
+              <li><strong>Integrity Report 4</strong>ST cost vs. OT cost mismatches surfaced before they accumulate</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="mod-head">03 &nbsp;·&nbsp; PO Receipts (RNV)</div>
+          <div class="mod-body">
+            <p>Matches receipt table F43121 to GL F0911. Quickly finds problematic purchase orders with detailed receipt and voucher transaction listings.</p>
+            <ul class="fl">
+              <li><strong>Orders Page</strong>Open receipt variances only -- reconciled orders removed</li>
+              <li><strong>Aging Report</strong>RNV balance breakdown by period -- no separate report needed</li>
+              <li><strong>Line Analysis</strong>Side-by-side F43121 vs. GL at document level with audit notes</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- INTEGRITY REPORTS -->
+    <div class="sl">Proactive Monitoring</div>
+    <div class="st" style="margin-bottom:4px;">Six Integrity Reports</div>
+    <div class="sb">A single misconfigured AAI silently routes every transaction of that type to the wrong GL account. The Integrity Reports surface configuration issues before they compound into large period-end variances.</div>
+    <div class="ig">
+      <div class="ic"><div class="ic-n">Report 1</div><div class="ic-t">Model Table</div><div class="ic-d">Verifies DMAAI 4152 assigns a valid GL account to every GL class code. Missing entries mean items are silently excluded from reconciliation.</div></div>
+      <div class="ic"><div class="ic-n">Report 2</div><div class="ic-t">DMAAI Entry Integrity</div><div class="ic-d">Compares balance sheet DMAAI entries against the model table. Flags object, business unit, and subsidiary mismatches.</div></div>
+      <div class="ic"><div class="ic-n">Report 3</div><div class="ic-t">Excluded GL Classes</div><div class="ic-d">Lists GL class codes present in transactions but missing from the model table -- invisible to the reconciliation.</div></div>
+      <div class="ic"><div class="ic-n">Report 4</div><div class="ic-t">Transfer Cost Variances</div><div class="ic-d">Lists ST/OT order pairs where the sales cost and purchase order cost do not match.</div></div>
+      <div class="ic"><div class="ic-n">Report 5</div><div class="ic-t">GL Class Integrity</div><div class="ic-d">Compares GL class codes between Item Branch (F4102) and Item Location (F41021) records.</div></div>
+      <div class="ic"><div class="ic-n">Report 6</div><div class="ic-t">Frozen Cost Integrity</div><div class="ic-d">Identifies items where the frozen cost in F4105 does not match the cost in recent cardex transactions.</div></div>
+    </div>
+
+  </div><!-- /body -->
+
+  <!-- WHY DIFFERENT -->
+  <div class="why">
+    <div class="why-t">Why Rapid<span>Reconciler</span> is Different</div>
+    <div class="why-g">
+      <div class="wc"><span class="wc-icon">⏱</span><div class="wc-n"><span>94.3</span>%</div><div class="wc-l">Reduction in reconciliation time</div></div>
+      <div class="wc"><span class="wc-icon">📈</span><div class="wc-n"><span>99.7</span>%</div><div class="wc-l">Inventory accuracy improvement</div></div>
+      <div class="wc"><span class="wc-icon">✓</span><div class="wc-n"><span>100</span>%</div><div class="wc-l">Elimination of setup and process variances</div></div>
+      <div class="wc"><span class="wc-icon">🚀</span><div class="wc-n"><span>3</span> <span style="font-size:13px;">Days</span></div><div class="wc-l">Up and running -- guaranteed</div></div>
+      <div class="wc"><span class="wc-icon">📅</span><div class="wc-n" style="font-size:15px;">As-Of</div><div class="wc-l">Historical reporting for inventory and in-transit</div></div>
+      <div class="wc"><span class="wc-icon">📋</span><div class="wc-n" style="font-size:15px;">Audit</div><div class="wc-l">Comprehensive reporting addresses compliance requirements</div></div>
+    </div>
+  </div>
+
+  <!-- BEFORE / AFTER -->
+  <div class="body" style="padding-top:22px;padding-bottom:22px;">
+    <div class="sl">Impact</div>
+    <div class="st" style="margin-bottom:0;">Before and After</div>
+    <div class="ba">
+      <div class="bah b">Without RapidReconciler</div>
+      <div class="bah a">With RapidReconciler</div>
+      <div class="bac bc">Stock Status vs. trial balance compared manually in Excel every period</div>
+      <div class="bac">F4111 vs. F0902 comparison automated on every nightly import -- no manual report needed</div>
+      <div class="bac bc">No visibility into which DMAAI caused a mismatch without tracing each transaction</div>
+      <div class="bac">Transaction Detail drill-down identifies the specific AAI causing any account mismatch</div>
+      <div class="bac bc">GL class code issues detected only after a variance appears -- often months later</div>
+      <div class="bac">Integrity Reports 2, 3, and 5 proactively surface configuration issues monthly</div>
+      <div class="bac bc">RNV reconciliation requires manually matching F43121 to GL across hundreds of PO lines</div>
+      <div class="bac">PO Receipts module shows only unreconciled orders -- document-level investigation in seconds</div>
+      <div class="bac bc">Unresolved variances carried forward indefinitely -- root cause never identified</div>
+      <div class="bac">Every variance source labeled, quantified, and linked to the correct corrective action</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>
+      <div class="footer-l">GSI, Inc. &nbsp;·&nbsp; Tomorrow's Solutions. Today.</div>
+      <div class="footer-ds">Data Sheet: RapidReconciler&#174; Solution</div>
+    </div>
+    <div class="footer-r">
+      <a href="mailto:info@getgsi.com">info@getgsi.com</a> &nbsp;·&nbsp; (855) 474-4377<br>
+      <a href="https://rapidreconciler.getgsi.com">rapidreconciler.getgsi.com</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

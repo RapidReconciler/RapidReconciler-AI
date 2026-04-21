@@ -7,10 +7,10 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 ## Collateral Documents
 
-| Document | Description |
-|----------|-------------|
-| [How RapidReconciler Helps Web Site](/RapidReconciler-AI/Collateral/how-rr-helps.html) | Overview of the application's benefits and value proposition |
-| [How RapidReconciler Helps Document](/MDS/how-rr-helps.md) | Printable version of the application's benefits and value proposition |
+| Document                                                                                     | Description                                                  |
+| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| [How RapidReconciler Helps Web Site](/RapidReconciler-AI/Collateral/how-rr-helps.html)       | Overview of the application's benefits and value proposition |
+| [RapidReconciler Fact Sheet](/RapidReconciler-AI/Collateral/rapidreconciler-fact-sheet.html) | One-page summary of key features and benefits                |
 
 ---
 
@@ -30,7 +30,8 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 
 | Document | Description |
 |----------|-------------|
-| [Why RapidReconciler?](MDS/stock-status-trial-balance.md) | Timing, backdating, report definition |
+| [How RapidReconciler Helps Document](/MDS/how-rr-helps.md) | Printable version of the application's benefits and value proposition |
+| [Reconciliation Process](MDS/stock-status-trial-balance.md) | Timing, backdating, report definition |
 | [Getting Started with the Application](MDS/getting-started-with-rapidreconciler.md) | Logging in, navigating the interface, and system requirements |
 | [Complex Password](MDS/complex-password.md) | Password policy requirements and reset process |
 | [Administrator Responsibilities](MDS/admin-responsibilities.md) | Company management, user setup, general settings, and offset accounts |
