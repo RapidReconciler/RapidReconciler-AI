@@ -71,6 +71,8 @@ RapidReconciler replaces that point-in-time comparison with a continuous, automa
 | **JD Edwards access** | Required to investigate and correct issues identified in RapidReconciler |
 | **Permissions** | Confirm with your administrator which companies and accounts you have access to |
 
+ See [Getting Started with RapidReconciler](../MDS/getting-started-with-rapidreconciler.md)
+
 ### Understanding the Data Source
 
 RapidReconciler reads JD Edwards data in **read-only** mode. It does not modify JD Edwards in any way. All corrections are made in JD Edwards and are reflected in RapidReconciler after the next nightly refresh.
@@ -172,6 +174,7 @@ The Variance Calculation section lists every source of variance. The sum of all 
 - Work with the finance department to identify and post any unposted batches.
 - A **bell icon** on the GL Batches row indicates batches that have been unposted for more than 2 days — these require immediate attention.
 - If a batch header is missing, run the JD Edwards Missing Batch Header report, rebuild the header, and repost the batch.
+- Refer to [GL Batch Posting Reference Guide](../MDS/gl-batch-processing.md) for more details.
 
 > **Note:** GL Batches must be zero before performing closing activities. Do not proceed to Step 3 of the reconciliation workflow until this line is clear.
 
@@ -186,7 +189,8 @@ The Variance Calculation section lists every source of variance. The sum of all 
 - Confirm that these batch jobs are scheduled and completing successfully.
 - If orders have been stuck for an extended period, engage IT to investigate.
 
-> **Note:** End of Day must be zero before performing closing activities. For more on Sales Update, see the [Sales Order Reference Guide](../MDS/sales_order_reference.md).
+> **Note:** End of Day must be zero before performing closing activities. For more ,see the [Sales Order Reference Guide](../MDS/sales_order_reference.md) or [Manufacturing Reference Guide](../MDS/manufacturing_reference.md) for common issues that cause delays in Sales Update and Manufacturing Accounting.
+
 
 ### 3.4 Transactions
 
@@ -260,6 +264,8 @@ Produces an Excel report of GL and perpetual balances for the selected accounts 
 ### 4.5 Audit Report
 
 The Audit Report documents the complete reconciliation results for the period. **Produce and save this report at the end of every period** — detail data may be removed during a purge.
+
+![rr-inv-rec-auditrpt](../Images/rr-inv-rec-auditrpt.png)
 
 | Section | Contents |
 |---|---|

@@ -1,0 +1,558 @@
+﻿# End of Day Analysis Guide
+
+## RapidReconciler — End of Day Variance Report Reference
+
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Section 1: What Is an End of Day Transaction?](#section-1-what-is-an-end-of-day-transaction)
+- [Section 2: End of Day by Transaction Type](#section-2-end-of-day-by-transaction-type)
+- [Section 3: Report Structure and Field Reference](#section-3-report-structure-and-field-reference)
+- [Section 4: Type and Status Code Reference](#section-4-type-and-status-code-reference)
+- [Section 5: Common End of Day Patterns and Root Causes](#section-5-common-end-of-day-patterns-and-root-causes)
+- [Section 6: Step-by-Step Analysis Procedure](#section-6-step-by-step-analysis-procedure)
+- [Section 7: Period-End Requirements](#section-7-period-end-requirements)
+- [Section 8: Excel Output Formatting Rules](#section-8-excel-output-formatting-rules)
+- [Section 9: Using Claude for Automated Analysis](#section-9-using-claude-for-automated-analysis)
+- [Section 10: Related Documentation](#section-10-related-documentation)
+
+---
+
+## Overview
+
+Entries on the End Of Day report originate from the cardex (F4111) but have not yet been matched to a general ledger entry (F0911). It provides visibility into transactions that have occurred in the item ledger but do not have a batch number populated. This is typically because the batch program responsible for creating the GL entry has not yet run.
+
+End of Day is one of the four sources of variance on the RapidReconciler Reconciliation page. Until this variance reaches zero, the perpetual balance and the GL balance will not agree — and the GL balance in F0902 is understated relative to the item ledger.
+
+> **Who should use this guide:** JD Edwards cost accountants, inventory accountants, and operations staff responsible for investigating and resolving End of Day variances in RapidReconciler.
+
+> **Important:** All corrections are made in JD Edwards. RapidReconciler displays the End of Day variance for visibility but does not modify JD Edwards data.
+
+---
+
+## Section 1: What Is an End of Day Transaction?
+
+In JD Edwards EnterpriseOne, most inventory transactions update both the item ledger (F4111) and the general ledger (F0911) simultaneously. End of Day transactions are the exceptions — they update F4111 immediately but defer the GL update to a batch program that runs later, typically overnight.
+
+**Three transaction types are End of Day by nature:**
+
+| Transaction | What Defers the GL | Batch Program | Typical Schedule |
+|---|---|---|---|
+| **Sales shipment / invoice** | Ship confirmation (P4205) or Sales Order Entry updates F4111 immediately | Sales Update (R42800) | Nightly |
+| **Work order material issue and completion** | Inventory Issues (P31113) and Completions (P31114) update F4111 immediately | Manufacturing Accounting (R31802A) | Nightly |
+| **Voucher match** | The voucher match process creates an F4111 record that is not finalized until the match completes | Voucher Match (P4314 / P0411) | Interactive or nightly |
+
+Until the applicable batch program runs, RapidReconciler has a cardex amount but no GL amount for these transactions — this is reported as End of Day variance.
+
+**Key principle:** An End of Day variance is not an error. It is an expected gap between the real-time item ledger and the batch-updated GL. The question is always: *how old is it, and why hasn't the batch run?*
+
+---
+
+## Section 2: End of Day by Transaction Type
+
+### 2.1 Sales — R42800 (Sales Update)
+
+Sales Update (R42800) is the final step in the sales order process. It creates GL entries in F0911 and AR records in F0311, and advances the sales order to status 999.
+
+**End of Day behavior:**
+
+- Ship confirmation (P4205) writes the F4111 cardex record immediately
+- The GL entry (F0911) is not created until R42800 runs
+- The cardex entry carries no GL date or batch number until R42800 processes it
+
+**Key indicators in the End of Day report:**
+
+| Field | What to Look For |
+|---|---|
+| **Type** | `Sales` |
+| **OrderType** | SO (standard sales order), SI (intercompany sales), SF (freight) |
+| **DocType** | SO, SI, SF — document type matches order type for unprocessed orders |
+| **Status** | 580–620 is normal (awaiting Sales Update); 999 means fully closed — should not appear |
+| **TransactionDate** | Should be recent; dates older than 2 days require investigation |
+
+**What causes Sales End of Day to accumulate:**
+- R42800 did not run for a scheduled period
+- R42800 ran but encountered errors and stopped
+- Orders are on hold and cannot be invoiced
+- Multiple R42800 versions in use and one version's selection missed certain orders
+
+### 2.2 Manufacturing — R31802A (Manufacturing Accounting)
+
+Manufacturing Accounting (R31802A) creates GL entries for material issues (IM), labor (IH), completions (IC), and scrap (IS). Until R31802A runs in final mode for a work order, all of these transactions exist only in F4111.
+
+**End of Day behavior:**
+
+- P31113 (Issues) and P31114 (Completions) write F4111 records immediately
+- R31422 (Hours Update) writes IH records to F4111
+- None of these create F0911 entries — that is R31802A's job
+- R31802A can only be run once per work order in final mode
+
+**Key indicators in the End of Day report:**
+
+| Field | What to Look For |
+|---|---|
+| **Type** | `Mfg` |
+| **OrderType** | WO, WS, WD, WR, WT, WC — work order type codes |
+| **DocType** | IM (material issue), IC (completion), IH (labor), IS (scrap) |
+| **Status** | Work order status. 90/95 = ready for or processed by R31802A; 45/50 = still in process; ER = error |
+| **TransactionDate** | Should match recent manufacturing activity; dates in prior periods are critical |
+| **PeriodEnds** | If this differs from the current period, the transaction is from a prior period — escalate immediately |
+
+**Work order status codes relevant to End of Day:**
+
+| Status | Description | End of Day Implication |
+|---|---|---|
+| **45** | In process | Work order still active; normal to have IM entries pending |
+| **50** | Pending close | Work in progress; IM entries present, no IC yet |
+| **90** | Complete | All manufacturing done; R31802A has not yet run |
+| **95** | Manufacturing accounting complete | R31802A has run; entries should no longer be in End of Day |
+| **97** | Variance accounting complete | R31804 has run; should not appear in End of Day |
+| **ER** | Error | Work order is in an error state; R31802A cannot process until resolved |
+
+> **Prior period manufacturing:** If the PeriodEnds column shows a period other than the current reconciliation period, the work order was never processed by R31802A in its original period. These are the most critical End of Day items and will not self-resolve without direct intervention.
+
+### 2.3 Voucher Match — P4314 / P0411 (Error Type)
+
+Voucher match transactions appear in the End of Day report when a PV (payment voucher) document exists in F4111 but was not completed through the normal voucher match process. These are identified by the **Error** type in the report.
+
+**The 2000-01-01 date pattern:**
+
+A TransactionDate of **2000-01-01** is the JD Edwards flag for a voucher match transaction that was never fully processed. It always appears as a pair with a real-date row for the same document number:
+
+| Row | TransactionDate | Amount | Meaning |
+|---|---|---|---|
+| Row 1 | 2000-01-01 | Positive amount | Original unprocessed voucher entry |
+| Row 2 | Real date (e.g., Mar 25) | Negative amount | Reversal or correction attempt |
+
+These pairs net to zero per document, so they do not contribute a dollar variance — but they indicate unfinished voucher match activity that must be investigated and resolved.
+
+**Key indicators:**
+
+| Field | What to Look For |
+|---|---|
+| **Type** | `Error` |
+| **DocType** | PV (payment voucher) |
+| **OrderType** | OP (purchase order), OC (order change) |
+| **TransactionDate** | 2000-01-01 on one row; real date on the paired row |
+| **Amount** | Positive on the 2000-01-01 row; equal negative on the real-date row |
+
+---
+
+## Section 3: Report Structure and Field Reference
+
+### 3.1 Report Structure
+
+The End of Day report is a flat row-per-transaction export. Each row represents a single F4111 item ledger record that has no matching F0911 GL entry. The report is not grouped — Sales, Manufacturing, and Error rows are interleaved and must be separated during analysis.
+
+Key structural rules:
+
+- **One row per F4111 transaction** — unlike the GL Batches report, rows are not grouped by batch. Each individual item ledger record appears separately.
+- **All rows are unmatched** — every row in the report represents an item ledger entry with no corresponding GL entry.
+- **PeriodEnds may vary** — unlike the GL Batches report, the PeriodEnds column may differ across rows within the same export if prior-period items are present. Always check this column first.
+- **Amounts may carry floating-point artifacts** — amounts such as `-105493.48000000001` are IEEE 754 precision artifacts from the export. Round to two decimal places for analysis.
+
+### 3.2 Column Definitions
+
+| Column | Description |
+|---|---|
+| **PeriodEnds** | The RapidReconciler period the transaction belongs to. If this differs from the current period, the row is from a prior period — treat as critical. |
+| **TransactionDate** | The date the item ledger record was created. A date of **2000-01-01** is a JD Edwards flag for an unprocessed voucher match transaction. |
+| **CompanyNumber** | JD Edwards company number. Leading zeros included. |
+| **LongAccount** | The full GL account number in Business Unit.Object format (e.g., 73010.1421). |
+| **OffsetAccount** | The offset GL account, if populated. Blank for most End of Day rows — the GL entry does not yet exist. |
+| **Type** | RapidReconciler classification of the transaction source. See Section 4.1 for all codes. |
+| **OrderType** | The JD Edwards order type (e.g., SO, SI, WO, OP). Identifies the source business process. |
+| **DocType** | The JD Edwards document type (e.g., SO, IM, IC, PV). Combined with OrderType, uniquely identifies the transaction class. |
+| **DocNumber** | The JD Edwards document number. Use this to locate the transaction in JD Edwards for investigation. |
+| **BranchPlant** | The branch plant associated with the transaction. |
+| **Status** | The current status of the source order (sales order status, work order status). Critical for manufacturing — see Section 2.2. |
+| **TransactionAmount** | The item ledger amount. Positive = debit; negative = credit. |
+| **Currency** | Currency code. A mix of currencies (e.g., GBP and USD) in the same export indicates multi-company or multi-currency activity. |
+| **Rate** | Exchange rate. 1.0 = domestic or no conversion. |
+
+### 3.3 Derived Fields for Analysis
+
+| Derived Field | How to Calculate | Purpose |
+|---|---|---|
+| **Transaction Age (Days)** | Current date minus TransactionDate (use PeriodEnds as the reference for exports analyzed at period end) | Identifies stale items. Over 2 days warrants attention; over 7 days requires escalation; prior period is critical. |
+| **Total by Type** | Sum of TransactionAmount grouped by Type | Shows the dollar contribution of each transaction category to the overall End of Day variance. |
+| **Prior Period Flag** | PeriodEnds ≠ the current reconciliation period | Prior period End of Day items require immediate attention — they will not clear without direct intervention. |
+
+---
+
+## Section 4: Type and Status Code Reference
+
+### 4.1 Type Codes
+
+| Type | Description | Batch Program Needed | Key Concern |
+|---|---|---|---|
+| **Sales** | Sales shipment or invoice awaiting Sales Update | R42800 | R42800 not run; orders on hold; version selection gap |
+| **Mfg** | Manufacturing material issue, completion, or labor awaiting Manufacturing Accounting | R31802A | Work order status; prior period items; work orders in error state |
+| **Error** | Voucher match transaction with 2000-01-01 date — unprocessed voucher | P4314 / P0411 | Paired rows net to zero but indicate unfinished voucher match activity |
+| **Manufacturing** | Alternative label for Mfg in some configurations | R31802A | Same as Mfg |
+
+### 4.2 Work Order Status Codes (Manufacturing Type)
+
+See Section 2.2 for the full work order status reference. The most important statuses for End of Day diagnosis are:
+
+| Status | End of Day Implication |
+|---|---|
+| **45 / 50** | Work order is still active or pending close — IM entries are expected; no IC yet |
+| **90** | Ready for R31802A — should be processed immediately |
+| **95** | R31802A has run — should not appear in End of Day unless a prior-period issue exists |
+| **97** | Variance accounting complete — should not appear in End of Day |
+| **ER** | Work order error — must be resolved before R31802A can run |
+
+### 4.3 Sales Order Status Codes (Sales Type)
+
+| Status | Description | End of Day Implication |
+|---|---|---|
+| **580–599** | Awaiting Sales Update (older orders) | Should have been processed by previous R42800 runs — investigate if aged |
+| **600–620** | Awaiting Sales Update (normal) | Expected for same-day or recent orders; normal End of Day |
+| **999** | Fully closed | Should not appear in End of Day — investigate if present |
+
+---
+
+## Section 5: Common End of Day Patterns and Root Causes
+
+### 5.1 Sales Backlog — R42800 Not Run
+
+**Symptoms:**
+- Many Sales-type rows, same company, multiple transaction dates spanning several days
+- All status 620 (or similar awaiting Sales Update status)
+- Transaction dates cluster around the same period without gaps
+
+**What is happening:**
+
+R42800 did not run successfully for one or more scheduled periods. Every sales shipment confirmed during that time is waiting in the End of Day queue. The backlog may span multiple days if the job has been failing silently.
+
+**Resolution:**
+
+1. Confirm whether R42800 ran for the affected days by checking the job scheduler or output queue.
+2. Run R42800 in **proof mode** first — review the Invoice Journal for errors.
+3. Run in **final mode** to process the backlog.
+4. Verify the End of Day variance clears at the next RapidReconciler refresh.
+
+> **Older orders in the same backlog:** If the backlog contains orders with significantly older doc numbers or statuses below 600, investigate those separately. They may have been missed by earlier R42800 runs rather than being part of the current outage.
+
+### 5.2 Sales — Older SO Orders at Status 580
+
+**Symptoms:**
+- SO order type rows (not SI) with status 580
+- Doc numbers significantly lower than the bulk of the backlog
+- Transaction dates older than the surrounding Sales rows
+
+**What is happening:**
+
+Status 580 sales orders were not fully processed by Sales Update in a prior period. They remain in the End of Day list because R42800 did not select them, possibly due to version data selection criteria or a hold flag on the order.
+
+**Resolution:**
+
+1. Locate each SO document in Customer Service Inquiry (P4210).
+2. Check whether the order is on hold, has a missing invoice number, or has a data issue preventing Sales Update.
+3. Review the R42800 version data selection to confirm these order types are included.
+4. Resolve any holds or data issues, then rerun R42800.
+
+### 5.3 Manufacturing — Prior Period Work Orders
+
+**Symptoms:**
+- Mfg-type rows with a PeriodEnds date from a prior period (e.g., 2024-08-31 in a March 2026 report)
+- Multiple work orders, multiple doc types (IM and IC)
+- Some work orders at status 45/50 (never completed); others at status 90/95 (should have been processed)
+
+**What is happening:**
+
+R31802A never processed these work orders in their original period. The item ledger records were written in August 2024 (or whenever) but the corresponding GL entries were never created. These transactions will continue to appear in every End of Day report indefinitely until R31802A is run or the work orders are closed and removed.
+
+**Why it happens:**
+- Work orders were left open and never completed
+- R31802A was not scheduled or failed for that period
+- Work orders were in an error status preventing R31802A from running
+- Work orders were at too-early a status (45/50) when the period closed
+
+**Resolution by work order status:**
+
+| Status | Action |
+|---|---|
+| **45 / 50 (open)** | Determine whether the work order should be completed or cancelled. If completing: issue remaining material, record completions, advance to status 90, then run R31802A. If cancelling: close the work order and post a manual journal entry to clear the item ledger balance. |
+| **90 (ready)** | Run R31802A in proof mode, review, then final mode. Work order will advance to status 95. |
+| **95 (should be done)** | Investigate why the work order is still appearing. Query F4111 for the work order — there may be additional cardex rows written after R31802A ran. |
+| **97 (variance accounting done)** | Should not appear. Query F4111 and F0911 directly for the work order to identify the unmatched record. |
+| **ER (error)** | Resolve the error condition in JD Edwards first. Check the work order for missing routing steps, invalid accounts, or incomplete data. Then run R31802A. |
+
+> **These items will not self-resolve.** Every period-end close will show the same prior-period manufacturing rows until R31802A processes them or the work orders are formally closed. Escalate to manufacturing and IT immediately.
+
+### 5.4 Voucher Match Errors — 2000-01-01 Date Pattern
+
+**Symptoms:**
+- Error-type rows with TransactionDate = 2000-01-01 paired with real-date rows for the same document number
+- Doc type = PV; order type = OP or OC
+- Each pair nets to $0.00
+
+**What is happening:**
+
+A voucher match transaction (PV) was entered but not completed through the normal P4314 flow. The 2000-01-01 date is JD Edwards' internal flag for an item ledger record that was written during a voucher match attempt that was subsequently reversed or abandoned. The paired real-date row is the reversal.
+
+These pairs net to zero and do not contribute to the dollar variance, but they indicate that a voucher match was not completed as expected. Leaving them unresolved obscures the true End of Day picture and can cause confusion at period end.
+
+**Resolution:**
+
+1. Locate each PV document in JD Edwards (P4314 or P0411).
+2. Determine whether the voucher was intentionally reversed or needs to be completed.
+3. If intentionally reversed: the item ledger records will clear naturally once the process is fully resolved. Document for audit purposes.
+4. If incomplete: re-process the voucher match through P4314.
+
+### 5.5 Manufacturing — Work Order in Error Status
+
+**Symptoms:**
+- Mfg-type row with Status = ER (or similar error code)
+- IM entries present with no IC
+- May appear alongside normal-status work orders for the same company
+
+**What is happening:**
+
+The work order has been flagged with an error condition in JD Edwards that prevents R31802A from processing it. Common causes include invalid routing steps, missing standard costs, or data integrity issues on the work order header.
+
+**Resolution:**
+
+1. Navigate to the work order in Work Order Entry (P48013) or Work Order Processing (P31114).
+2. Review the error messages associated with the work order.
+3. Correct the underlying data issue (missing cost, invalid account, incomplete BOM).
+4. Run Work Order Processing (R31410) again if needed to refresh the frozen standard.
+5. Once the error is resolved, advance the work order to status 90 and run R31802A.
+
+---
+
+## Section 6: Step-by-Step Analysis Procedure
+
+Use this procedure for every End of Day report export:
+
+**Step 1 — Check the PeriodEnds Column First**
+
+Before any other analysis, scan the PeriodEnds column for rows that do not match the current period. Any row with a prior-period date is a critical finding and must be escalated immediately. Group these rows separately — they require a different resolution process than current-period items.
+
+**Step 2 — Separate by Type**
+
+Group all rows by the Type column:
+- **Error** — voucher match rows with 2000-01-01 dates
+- **Sales** — awaiting R42800
+- **Mfg** — awaiting R31802A
+
+Each group has a distinct root cause and resolution path.
+
+**Step 3 — Analyze Error-Type Rows**
+
+For each Error-type row, find its pair (same DocNumber, opposite amount). Confirm the pair nets to zero. Note the real transaction date for the paired row — this is the date the reversal occurred. Identify the document number and investigate in P4314.
+
+**Step 4 — Analyze Sales-Type Rows**
+
+Summarize by transaction date to understand the scope of the backlog:
+- How many days of orders are queued?
+- Are there any orders with significantly older doc numbers mixed in?
+- Are there any orders at status 580 or below (not normal End of Day status)?
+
+Determine whether the backlog is from a single missed R42800 run or a multi-day accumulation.
+
+**Step 5 — Analyze Manufacturing-Type Rows**
+
+For each work order (DocNumber), note:
+- The work order status (Status column)
+- Whether both IM and IC rows are present (status 90+ should have IC)
+- Whether the period is current or prior
+- Whether the status is ER (error)
+
+Group work orders by resolution category: run R31802A, complete and close, or resolve error first.
+
+**Step 6 — Assess Transaction Age**
+
+For each group, calculate the age relative to PeriodEnds:
+
+| Age | Action Level |
+|---|---|
+| 0–2 days | Normal — will resolve at next batch run |
+| 3–7 days | Investigate — confirm batch ran and identify why it missed these items |
+| 8–14 days | Escalate — identify owner and set a resolution deadline |
+| 15+ days | Critical — systematic failure or deliberate non-processing; prior period if different PeriodEnds |
+
+**Step 7 — Assign Priority and Actions**
+
+| Priority | Criteria | Action |
+|---|---|---|
+| **1 — Immediate** | Prior period PeriodEnds OR work order status ER OR age > 14 days | Escalate same day; involve manufacturing / IT |
+| **2 — High** | Error-type rows with 2000-01-01 dates OR Sales rows > 7 days old OR WO status 90 not processed | Investigate and resolve within 1 business day |
+| **3 — Normal** | Sales rows aged 0–2 days at status 620 OR active WOs at status 45/50 | Include in next R42800 or R31802A run |
+
+**Step 8 — Document Findings**
+
+Record the analysis on the EOD Analysis sheet following the formatting rules in Section 8.
+
+**Step 9 — Follow Up**
+
+After corrections are made, confirm the End of Day variance reaches $0 at the next RapidReconciler refresh. Prior-period manufacturing items may require multiple R31802A runs across different work orders before fully clearing.
+
+---
+
+## Section 7: Period-End Requirements
+
+The End of Day variance must equal **$0** before performing any period-end closing activities in RapidReconciler. Specifically:
+
+- All Sales-type rows must be cleared by R42800
+- All Mfg-type rows at status 90 must be cleared by R31802A
+- All Error-type (2000-01-01) rows must be investigated and resolved
+- No prior-period rows should remain outstanding
+
+> **Do not post closing journal entries or produce the Audit Report until the End of Day variance is zero.** An unresolved End of Day variance means the perpetual inventory balance includes transactions that are not yet reflected in the GL — any closing entry based on the current balance will be calculated on an incomplete picture.
+
+**Mfg rows at status 45/50 (active work orders):**
+
+Active work orders (status 45/50) are expected to appear in the End of Day report and do not need to be resolved before period close if the orders genuinely span the period boundary. Document these with a note in RapidReconciler and confirm the amounts are appropriate for the open work-in-process balance.
+
+**Prior-period manufacturing items:**
+
+These must be resolved — they cannot be accepted as an ongoing open item. If a work order cannot be completed (e.g., it has been physically scrapped or cancelled), close the work order formally in JD Edwards and post a manual journal entry to clear the item ledger balance. Document the decision for audit purposes.
+
+---
+
+## Section 8: Excel Output Formatting Rules
+
+### 8.1 File Naming
+
+```
+[OriginalFilename]_Analysis.xlsx
+```
+
+**Example:** `EndofDay_2026-03-31_20260422-0916_Analysis.xlsx`
+
+### 8.2 Sheet Structure
+
+| Sheet | Contents |
+|---|---|
+| **End of Day** | The original source data, unchanged except for row highlights |
+| **EOD Analysis** | The analysis sheet — see Section 8.4 for structure |
+
+Do not delete, rename, or reorder the source sheet. The only permitted modification is cell background color (highlights).
+
+### 8.3 Row Highlighting — Source Sheet
+
+Every data row must be highlighted based on its classification:
+
+| Color | Hex | Criteria |
+|---|---|---|
+| **Red** | `FFCCCC` | PeriodEnds is a prior period **OR** Type = Mfg with work order status ER **OR** transaction age > 14 days |
+| **Orange** | `FFE5CC` | Type = Error (2000-01-01 voucher match rows) **OR** Type = Mfg with status 90 (ready for R31802A) **OR** Sales rows aged > 7 days |
+| **Yellow** | `FFFACD` | Type = Sales at normal status (awaiting R42800) **OR** Type = Mfg at status 45/50 (active work orders, current period) |
+| **Green** | `D9EAD3` | Reserved for future use — items confirmed as resolved but not yet cleared from the export |
+
+**Rules:**
+- Apply the highlight to all columns in the row.
+- When multiple rows share the same DocNumber and Type, apply the same color to all rows for that document.
+- Red takes precedence over Orange; Orange takes precedence over Yellow.
+- The header row (row 2) and title row (row 1) are never highlighted.
+- For paired Error rows (2000-01-01 + real-date), highlight both rows Orange regardless of the real date's age.
+
+### 8.4 Analysis Sheet Structure
+
+| Section | Content |
+|---|---|
+| **Report Summary** | Period-end date, generation timestamp, total record count, companies present, transaction types present, note if prior-period rows exist |
+| **Variance Type Summary** | One row per Type showing row count, description, and total amount. Use the same highlight colors as the source sheet. |
+| **Findings by Priority** | One sub-section per priority level. Each sub-section lists items with document/work order detail, status, age, and amount. Followed by a note box with root cause and recommended resolution. |
+| **Recommended Actions** | Numbered action steps in execution order, with the specific documents or work orders they apply to and the responsible owner. |
+
+### 8.5 Analysis Sheet Formatting
+
+| Element | Specification |
+|---|---|
+| **Font** | Arial throughout |
+| **Section headers** | Dark blue fill (`1F3864`), white bold text, 11pt |
+| **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt |
+| **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
+| **Data rows** | Alternating white and light gray (`F2F2F2`) fill; 10pt Arial |
+| **Priority 1 rows** | Red fill (`FFCCCC`), dark red bold text (`C00000`) |
+| **Priority 2 rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
+| **Priority 3 rows** | Yellow fill (`FFFACD`), dark gold text (`5C4A00`) |
+| **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
+| **Column widths** | Column A: 30 characters; Column B: 66 characters; Column C: 22 characters |
+| **Row heights** | Section headers: 18pt; Data rows: 15–22pt (wrap as needed); Note boxes: sized to content (minimum 45pt) |
+
+### 8.6 Amounts
+
+All dollar amounts formatted with a dollar sign, comma thousands separator, and two decimal places (e.g., `$-740,130.45`). Negative amounts use a leading minus sign. Floating-point artifacts (e.g., `-105493.48000000001`) are rounded to two decimal places. For multi-currency exports, include the currency code alongside the amount (e.g., `$-161,175.39 GBP`).
+
+### 8.7 Prior Period Items
+
+Prior-period items (PeriodEnds ≠ current period) must be called out in both the Report Summary and as the first Priority 1 sub-section in Findings by Priority. Do not group prior-period items with current-period items of the same Type.
+
+### 8.8 What Not to Include
+
+- Do not include the OffsetAccount column in the analysis if it is blank for all rows.
+- Do not include the Currency or Rate columns unless a non-1.0 rate or a currency other than the primary company currency requires explanation.
+- Do not calculate or display totals as formulas. Write sums as static values.
+- Do not add conditional formatting, data validation, or pivot tables to either sheet.
+
+---
+
+## Section 9: Using Claude for Automated Analysis
+
+Claude can perform the full Section 6 analysis procedure automatically and return a single updated `.xlsx` file with the analysis sheet added and all source rows highlighted.
+
+### 9.1 What to Upload
+
+Upload **three files**:
+
+1. This guide (`.md`)
+2. The Manufacturing Work Order Reference Guide (`.md`) — needed for work order status interpretation
+3. The Sales Order Reference Guide (`.md`) — needed for Sales Update and sales order status interpretation
+4. The End of Day report (`.xlsx`)
+
+Then use the following prompt:
+
+> *"Analyze this End of Day file using the guides as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'EOD Analysis' and all source rows highlighted by priority."*
+
+### 9.2 Follow-On Requests in the Same Session
+
+Once the guides have been uploaded in a session, they remain in context. Subsequent End of Day exports do not require the guides to be re-uploaded. Use the shorter prompt:
+
+> *"Analyze this file and return it with the analysis sheet and highlights."*
+
+### 9.3 Output Specification
+
+**File naming:** The returned file appends `_Analysis` to the original filename.
+
+**Sheet 1 — End of Day (original sheet, highlights added)**
+
+| Highlight | Color | Criteria |
+|---|---|---|
+| Red | `FFCCCC` | Prior period PeriodEnds OR work order status ER OR age > 14 days |
+| Orange | `FFE5CC` | Error type (2000-01-01) OR Mfg status 90 OR Sales aged > 7 days |
+| Yellow | `FFFACD` | Normal Sales backlog OR active Mfg work orders (current period) |
+
+**Sheet 2 — EOD Analysis (new sheet)**
+
+Follows the structure defined in Section 8.4. Contains Report Summary, Variance Type Summary, Findings by Priority, and Recommended Actions.
+
+### 9.4 Notes and Limitations
+
+- Claude analyzes the data as exported. If the report was generated with account or company filters applied, the analysis reflects only the visible rows.
+- Prior-period items are identified by comparing PeriodEnds values within the export. Claude flags any PeriodEnds that differs from the most common value in the file.
+- Work order status interpretation uses the Manufacturing Work Order Reference Guide. Statuses not covered in the reference are flagged for manual investigation.
+- Floating-point precision artifacts in amounts are rounded to two decimal places throughout.
+- Claude cannot access JD Edwards to confirm work order details, check R42800 run history, or verify voucher match status. These are flagged as open investigation items in the Recommended Actions section.
+- For exports with more than 100 rows, consider noting the specific companies or date ranges of interest in the prompt to focus the analysis.
+
+---
+
+## Section 10: Related Documentation
+
+- [Manufacturing Work Order Reference Guide](../MDS/manufacturing-reference.md)
+- [Sales Order Reference Guide](../MDS/sales_order_reference.md)
+- [GL Batch Analysis Guide](../MDS/gl-batch-analysis-guide.md)
+- [Inventory: Using the Application](../MDS/inventory-using-application.md)
+- [Transaction Detail Analysis Guide](../MDS/transaction-detail-analysis-guide.md)
+- [DMAAI Reference Guide](../MDS/distribution-aais.md)
+
+---
+
+*For support, contact GSI at [rrsupport@getgsi.com](mailto:rrsupport@getgsi.com)*

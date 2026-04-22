@@ -19,8 +19,8 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | Document | Description |
 |----------|-------------|
 | [Technical Requirements](MDS/tech-requirements.md) | Installation and configuration requirements |
-| [Installing RapidReconciler-Prod](MDS/Installing_production_database.md) | Step-by-step database installation including skill sets, architecture overview, SSISDB catalog setup, SSIS package deployment, initial data load, and security requirements |
-| [Installing a Client in VALC (GSI Use Only)](MDS/installing-valc.md) | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
+| [Installing the Database](MDS/Installing_production_database.md) | Step-by-step database installation including skill sets, architecture overview, SSISDB catalog setup, SSIS package deployment, initial data load, and security requirements |
+| [Installing a Client in VALC](MDS/installing-valc.md) | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
 | [Server Migration Guide](MDS/server-migration.md) | Moving RapidReconciler to a new dedicated or separate server including prerequisites, database backup and restore, SSIS package migration, SQL Agent job setup, and VALC and Cloudflare updates |
 | [Certificate Management](MDS/certificate_management.md) | SSL certificate scope, DNS 'A' record configuration, certificate renewal process, responsibilities by role, and troubleshooting common connectivity issues |
 
@@ -31,11 +31,11 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | Document | Description |
 |----------|-------------|
 | [How RapidReconciler Helps Document](/MDS/how-rr-helps.md) | Printable version of the application's benefits and value proposition |
-| [JDE vs. RapidReconciler Process](MDS/stock-status-trial-balance.md) | Timing, backdating, report definition |
-| [Using the Application](MDS/getting-started-with-rapidreconciler.md) | Logging in, navigating the interface, and system requirements |
-| [Complex Password](MDS/complex-password.md) | Password policy requirements and reset process |
+| [JDE vs. RapidReconciler Comparison](MDS/stock-status-trial-balance.md) | Timing, backdating, report definition |
+| [Application Basics](MDS/getting-started-with-rapidreconciler.md) | Logging in, navigating the interface, and system requirements |
+| [Complex Password Option](MDS/complex-password.md) | Password policy requirements and reset process |
 | [Administrator Responsibilities](MDS/admin-responsibilities.md) | Company management, user setup, general settings, and offset accounts |
-| [Adding a New Company License](MDS/adding-company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
+| [Obtaining a New Company License](MDS/adding-company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
 
 ---
 
@@ -54,7 +54,6 @@ Welcome to the GSI RapidReconciler documentation library. Use the links below to
 | [Zero Balance Adjustments](MDS/zero-balance-adjustments.md) | Purpose, purchasing and inventory AAIs, journal entry examples |
 | [Handling Cardex Variance](MDS/cardex_variance.md) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
 | [Understanding Outside Operations](MDS/outside-operations.md) | Item master, work center, routing, receipt, and WIP journal entries |
-| [Sales Order Reference Guide](MDS/sales_order_reference.md) | Sales order types, processing flow, AAIs, journal entries, and common issues |
 
 ## In Transit
 
