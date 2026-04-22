@@ -145,6 +145,7 @@ The most important section for understanding what RapidReconciler sees and how i
 > - **Both non-zero but unequal, with one or more rows showing LedgerAmount = $0.00 for a specific batch** → Partial cardex-only entry. A single line item within an otherwise-posted batch has no GL counterpart. See Section 4.3.
 > - **Both non-zero but unequal, with one or more rows showing a GL amount larger than the corresponding cardex for a specific batch** → GL-excess entry. The GL entry for that account and batch exceeds the cardex. The net variance is positive. See Section 4.11.
 > - **Multiple rows with CardexAmount and LedgerAmount on separate rows** → Account or period mismatch. See Sections 4.4 and 4.5.
+> - **Both non-zero but unequal, and the document type is IM, and all individual account/batch pairs show a GL excess on one GL class while other GL classes reconcile cleanly** → R31802A cross-work-order GL summarization. The GL entry for the affected account may span multiple work orders processed in the same R31802A run. See Section 4.12.
 
 > **Floating-point display:** Amounts in the RR Summary and F4111 Data sections may display with extended decimal precision (e.g., $636.20000000000005 or -$16.579999999999998). These are IEEE 754 floating-point representation artifacts from the export process and do not indicate a data error in JD Edwards or RapidReconciler. Always round to two decimal places when reading amounts from this report. The document-level variance shown in the Doc Header is the authoritative figure for reconciliation purposes.
 
@@ -231,7 +232,7 @@ Common mismatch scenarios:
 | GL-only entry | CardexAmount = 0, LedgerAmount has a value | Manual journal entry to inventory account; payment or discount entry coded to inventory; voucher with no receipt |
 | Cardex-only entry | LedgerAmount = 0, CardexAmount has a value | Unposted batch; cardex written but GL not updated |
 | Partial cardex-only entry | Both totals are non-zero but unequal; one or more RR Summary rows show LedgerAmount = $0.00 for a specific batch/account | A single line item within an otherwise-posted batch has no GL counterpart -- see Section 4.3 |
-| GL-excess entry | Both totals are non-zero but unequal; the GL amount for a specific account and batch exceeds the corresponding cardex; net variance is positive | GL entry is a summarized manufacturing posting spanning multiple work orders; manual journal entry miscoded to inventory; cardex row excluded from report -- see Section 4.11 |
+| GL-excess entry | Both totals are non-zero but unequal; the GL amount for a specific account and batch exceeds the corresponding cardex; net variance is positive | GL entry is a summarized manufacturing posting spanning multiple work orders; manual journal entry miscoded to inventory; cardex row excluded from report -- see Sections 4.11 and 4.12 |
 
 ### Manufacturing Accounting GL Summarization (IC, IM, IH Transactions)
 
@@ -245,6 +246,10 @@ R31802A (Manufacturing Accounting) summarizes GL postings for work order transac
 1. Note the GL document number in the F0911 Inv Acct section.
 2. Query F0911 for that GL document number with no other filters.
 3. If the GL document number references multiple order numbers or subledgers, the entry is a summarized posting -- the variance is attributable to the combination of all work orders, and RapidReconciler will reflect the full variance across all affected transaction records.
+
+**Cross-work-order GL excess — specific pattern for IM transactions:**
+
+When an IM document shows a GL-excess pattern (F0911 exceeds F4111 for a specific GL class and batch) and all other GL class / batch combinations on the same document reconcile cleanly, this is a strong indicator that R31802A captured component costs from other work orders processed in the same run and posted them to the same GL account and batch as this document. The excess belongs to those other work orders — not to a posting error on this document. See Section 4.12 for the full investigation procedure.
 
 ---
 
@@ -481,7 +486,7 @@ Compare F0911 and F4111 totals by GL class and batch combination. For each combi
 
 | Cause | How to Identify | Resolution |
 |---|---|---|
-| GL entry is a summarized manufacturing posting spanning multiple work orders | Doc type is IC, IM, or IH; F0911 GL document number covers multiple order numbers when queried across all subledgers (see Section 3, Manufacturing Accounting GL Summarization) | Query F0911 for the GL document number across all order numbers. If multiple work orders are covered, the excess belongs to other orders and this document has no standalone variance. Suspend in RapidReconciler with a note explaining the GL summarization. |
+| GL entry is a summarized manufacturing posting spanning multiple work orders | Doc type is IC, IM, or IH; F0911 GL document number covers multiple order numbers when queried across all subledgers (see Section 3, Manufacturing Accounting GL Summarization) | Query F0911 for the GL document number across all order numbers. If multiple work orders are covered, the excess belongs to other orders and this document has no standalone variance. Suspend in RapidReconciler with a note explaining the GL summarization. See Section 4.12 for the IM-specific investigation procedure. |
 | Manual journal entry miscoded to inventory account referencing this document | Batch type JE or IH in F0911; GL entry amount does not correspond to any cardex row | Query F0911 for the period and account for batch type JE or IH entries. If found, post a reversing entry: debit the inventory account for the excess amount; credit the correct variance or expense account. |
 | Cardex row exists in JD Edwards but was excluded from this report | Report may have been generated with filters applied or for a subset of periods | Regenerate the Transaction Detail report without filters. If additional F4111 rows appear that close the gap, no journal entry is needed. |
 
@@ -492,6 +497,53 @@ Compare F0911 and F4111 totals by GL class and batch combination. For each combi
 3. **Check for manual journal entries.** If Steps 1 and 2 confirm the GL entry legitimately belongs only to this document, query F0911 for batch type JE or IH entries against the same account for the same period.
 
 Do not post a correcting entry until all three steps are complete.
+
+---
+
+### 4.12 IM GL-Excess -- R31802A Cross-Work-Order Summarization
+
+This section describes a specific and common variant of the GL-excess pattern (Section 4.11) that applies exclusively to IM (material issue) transactions processed by R31802A. It is distinguished from a general GL-excess by its signature: a GL excess on exactly one GL class, with all other GL classes on the same document reconciling cleanly, and with the excess occurring on a GL class that has only a small number of component rows in F4111.
+
+**Symptoms:**
+- Document type is **IM**
+- RR Summary net variance is positive (GL exceeds cardex)
+- For one specific GL class and batch combination, the F0911 GL amount is significantly larger than the corresponding F4111 cardex total for that GL class
+- All other GL class / batch combinations on the same document reconcile to zero
+- The F4111 rows for the affected GL class represent only a small number of component items
+- The DMAAs section shows no Comment flags -- DMAAI configuration is clean
+- A secondary finding may also be present: a small cardex-excess on a different GL class in the same batch, where a single component item's cardex amount does not appear in the F0911 total for that GL class
+
+**What is happening:**
+
+R31802A processes all material issues in its run and creates GL summary entries by GL account, not by individual work order or cardex document. When multiple work orders are processed in the same R31802A run, the GL entry for a given account and batch reflects the combined cost of components from all of those work orders -- not just the one shown in the current Transaction Detail report. RapidReconciler matches on batch number, which means it attributes the full GL summary amount to whichever work order it encounters first, producing a GL-excess on that document. The corresponding RapidReconciler records for the other work orders in the same batch will show a cardex-only pattern, since the GL amount has already been attributed elsewhere.
+
+**Critical diagnostic signal:** If all GL class / batch combinations reconcile cleanly except for one GL class and the excess on that GL class matches the document-level variance exactly, this is almost certainly a GL summarization issue rather than a posting error. The excess does not belong to this work order.
+
+**Secondary signal:** A small cardex-excess on a different GL class in the same batch (e.g., a BUYP component totaling -$141.57 in F4111 with only -$119.17 in F0911) may indicate that one component's cost was captured in the GL summary for the excess GL class rather than its own GL class -- typically because a component's GL class code in F41021 differs from what was expected.
+
+**Investigation procedure:**
+
+1. Note the GL document number from the F0911 Inv Acct section for the affected batch and GL class.
+2. Query F0911 in JD Edwards for that GL document number with no order number filter. If it references multiple work orders, the excess is attributable to other work orders and this document has no standalone variance.
+3. Sum the F4111 cardex amounts for all work orders appearing in Step 2 for the affected GL class. The sum should equal the F0911 GL total. If it does, no correcting entry is needed.
+4. If a secondary cardex-excess is also present on a different GL class: query F4111 for the specific component item(s) contributing to the excess across all document numbers in the same batch. Check whether the GL class code in F41021 matches the expected GL class for that item -- a mismatch would explain why the item's cost was captured in the wrong GL account.
+
+**Resolution:**
+
+If Step 2 confirms other work orders are included in the GL entry, suspend this record in RapidReconciler with a note identifying the GL document number and confirming the cross-work-order summarization. No journal entry is required. The corresponding cardex-only records on the other affected work orders will resolve when their own Transaction Detail reports are reviewed and documented.
+
+If Step 2 finds the GL entry belongs only to this work order and the excess cannot be attributed to other work orders, escalate to Section 4.11 and follow the standard GL-excess investigation procedure.
+
+**Processing options to review if the pattern is unexpected:**
+
+| Program | Option | What to Check |
+|---|---|---|
+| R31802A — PO 1 | GL Date Source | Whether the GL date is set to the work order date or the system run date. If set to the run date, all work orders processed on the same day share the same GL date and batch, increasing the likelihood of cross-work-order summarization. |
+| R31802A — PO 3 | Cost Method | Whether the cost method matches R31410 (Work Order Processing). A mismatch produces per-unit value differences between F4111 and the GL summary, which can look like a cross-work-order issue but is actually a valuation discrepancy. |
+| R31802A — PO 2 | Proof or Final Mode | Whether R31802A was run in final mode more than once for any work order in the batch. A double run creates a doubled GL entry with only one set of F4111 records, producing a permanent GL excess that cannot be resolved by simply querying other work orders. |
+| F41021 vs. F4102 | GL Class Code | Whether the GL class code in the Item Location table (F41021) matches the Item Branch table (F4102) for each component. Manufacturing journal entries use F41021. A mismatch causes a component's cost to post to an unexpected GL class account, producing both a GL excess on the unexpected account and a cardex excess on the expected one. |
+
+> **These are suggestions only.** Multiple R31802A versions may be in use, and multiple configurations can produce similar symptoms. Confirm version settings in JD Edwards before drawing conclusions about the cause.
 
 ---
 
@@ -527,6 +579,8 @@ Cross-reference the account shown in F0911 Inv Acct against the AAI entries in t
 
 Entries labeled "flex" in the Account column indicate Flexible Accounting is active for that AAI. The business unit or subsidiary was dynamically constructed from transaction fields. If the flex result is unexpected, review the flex accounting rules in P40296.
 
+> **For IM transactions:** When DMAAs shows no Comment flags and DMAAI configuration is clean, do not continue looking for an AAI explanation. A clean DMAAs section on an IM GL-excess means the excess is almost certainly a cross-work-order GL summarization issue (Section 4.12), not a configuration problem. Proceed directly to the F0911 query step.
+
 ---
 
 ## Section 6: Step-by-Step Analysis Procedure
@@ -552,6 +606,7 @@ Before reviewing anything else, scan the top of the report for an **Unassigned**
 - Are there multiple rows with CardexAmount and LedgerAmount on separate rows? → Account or period mismatch. See Sections 4.4 and 4.5.
 - Are both totals non-zero but unequal, with one or more rows showing LedgerAmount = $0.00 for a specific batch? → Partial cardex-only entry. A single line item within an otherwise-posted batch may be missing from the GL. See Section 4.3.
 - Are both totals non-zero but unequal, with the GL amount exceeding the cardex for a specific batch? → GL-excess entry. The GL entry for that account and batch is larger than the cardex. See Section 4.11.
+- Is the document type IM, the GL-excess isolated to one GL class with all others reconciling cleanly, and the DMAAs section flag-free? → Cross-work-order GL summarization by R31802A. See Section 4.12 before taking any corrective action.
 - Single row with matching amounts? → This should not appear as unreconciled. Investigate the tolerance setting.
 
 **Step 4 -- Review the F4111 Data**
@@ -563,6 +618,7 @@ Before reviewing anything else, scan the top of the report for an **Unassigned**
   - One row has zero quantity and a "Standard Cost Change" or "Inventory Cost Change" comment → See Sections 4.9 (Variant A) and 4.10.
   - Both rows have non-zero quantity, identical comments, and the same unit cost → See Section 4.9 (Variant B). The second row represents a second completion batch whose GL entry may be under a different document number.
 - When the RR Summary shows a partial cardex-only pattern, scan the F4111 unit costs for outliers. A single line with a unit cost that is a significant multiple of all others is a strong indicator of where the GL gap originates.
+- **For IM documents showing a GL-excess:** Count the F4111 rows for the affected GL class. A small number of component rows paired with a GL amount significantly larger than their combined value is the primary indicator of cross-work-order GL summarization. Compare this to the number of components you would expect to be issued to a single work order of this type.
 
 **Step 5 -- Review the F0911 Inv Acct**
 
@@ -571,8 +627,8 @@ Before reviewing anything else, scan the top of the report for an **Unassigned**
 - Note the batch number -- does it match the F4111 batch number?
 - Check the Comment field for supplier name or other context.
 - When the RR Summary shows a partial cardex-only pattern, compare the F0911 entries for each GL class and batch individually against the corresponding F4111 lines. A GL class total that is smaller than its F4111 counterpart points to the specific account and batch where the missing line item will be found. Before concluding the GL entry is absent, query F0911 across **all** accounts for the document and batch -- the entry may have posted to an unexpected account rather than being missing entirely.
-- **For IC, IM, and IH document types:** The GL document number in F0911 is almost always different from the cardex document number -- this is normal. Before concluding a GL entry is missing or erroneous, query F0911 for the GL document number across all order numbers to determine whether it is a summarized manufacturing posting covering multiple work orders. See Section 3 (Manufacturing Accounting GL Summarization).
-- When the RR Summary shows a GL-excess pattern, compare the F0911 and F4111 totals for each GL class and batch individually to isolate which combination is the source. See Section 4.11 for the investigation procedure.
+- **For IC, IM, and IH document types:** The GL document number in F0911 is almost always different from the cardex document number -- this is normal. Before concluding a GL entry is missing or erroneous, query F0911 for the GL document number across all order numbers to determine whether it is a summarized manufacturing posting covering multiple work orders. See Section 3 (Manufacturing Accounting GL Summarization) and Section 4.12.
+- When the RR Summary shows a GL-excess pattern, compare the F0911 and F4111 totals for each GL class and batch individually to isolate which combination is the source. See Sections 4.11 and 4.12 for the investigation procedure.
 
 **Step 6 -- Review the Receipts Section**
 
@@ -588,6 +644,7 @@ Before reviewing anything else, scan the top of the report for an **Unassigned**
 - Identify which AAI produced the GL account shown in F0911.
 - Compare to the model table account.
 - If the DMAAs show no flags and the DMAAI configuration is clean, the variance is not a configuration issue -- focus the investigation on the GL posting history for the specific document and batch (see Step 5 notes on partial cardex-only and GL-excess patterns).
+- **For IM documents:** A clean DMAAs section combined with a GL-excess on one GL class is a strong indicator of cross-work-order GL summarization (Section 4.12). Proceed to the F0911 query before considering any other cause.
 
 **Step 8 -- Determine Root Cause and Corrective Action**
 
@@ -596,7 +653,7 @@ Based on the analysis above, classify the variance using Section 4 of this guide
 - Post the unposted batch
 - Correct the DMAAI configuration and document the impact
 - Add missing GL class to model table 4152
-- Suspend the order in RapidReconciler if the variance is a known exception
+- Suspend the order in RapidReconciler if the variance is a known exception (e.g., confirmed cross-work-order GL summarization)
 
 **Step 9 -- Document in RapidReconciler**
 
@@ -629,7 +686,7 @@ Common document types appearing in the Transaction Detail report:
 | **OV** | Purchase order receipt (creates inventory debit and RNV credit) |
 | **PV** | Voucher match (clears RNV; creates A/P credit) |
 | **PD** | A/P payment. Should not normally appear in the inventory account. |
-| **IM** | Inventory issue (material issue to work order). GL entries are created by Manufacturing Accounting (R31802A) and are typically assigned a **different document number** than the cardex -- this is normal. A single F0911 entry for an IM document may represent costs from multiple material issues processed in the same R31802A run. Before concluding a GL entry is missing or excess, query F0911 for the GL document number across all order numbers. See Section 3 and Section 4.11. |
+| **IM** | Inventory issue (material issue to work order). GL entries are created by Manufacturing Accounting (R31802A) and are typically assigned a **different document number** than the cardex -- this is normal. A single F0911 entry for an IM document may represent costs from multiple material issues processed in the same R31802A run. Before concluding a GL entry is missing or excess, query F0911 for the GL document number across all order numbers. See Section 3 and Section 4.12. |
 | **IA** | Inventory adjustment |
 | **IT** | Inventory transfer |
 | **II** | Inventory issue (sales) |
@@ -657,6 +714,7 @@ Common document types appearing in the Transaction Detail report:
 - [Cardex Integrity Variance Guide](../MDS/cardex_variance.md)
 - [Purchase Order Reference Guide](../MDS/purchase_order_reference.md)
 - [Stock Status and Trial Balance Reconciliation](../MDS/stock-status-trial-balance.md)
+- [Inventory Programs — Processing Options & Variance Reference](../MDS/processing-options.md)
 
 ---
 
@@ -670,6 +728,8 @@ On the first request, upload **both files** together:
 
 1. This guide (`.md`)
 2. The Transaction Detail report (`.xlsx`)
+
+Optionally also upload the processing options reference (`.md`) to enable processing option suggestions in the analysis output.
 
 Then use the following prompt:
 
@@ -706,9 +766,10 @@ The analysis sheet will follow this structure:
 |---|---|
 | **Document** | Document number, type, order number, order type, company, period, variance amount |
 | **Unassigned Check** | Whether an Unassigned section is present; true cardex total if understated |
-| **RR Summary Findings** | CardexAmount, LedgerAmount, Variance; whether the pattern is full cardex-only, GL-only, partial, GL-excess, or account/period mismatch |
+| **RR Summary Findings** | CardexAmount, LedgerAmount, Variance; whether the pattern is full cardex-only, GL-only, partial, GL-excess, or account/period mismatch; account-level breakdown by GL class and batch showing which combinations reconcile and which do not |
 | **Root Cause** | Section 4 pattern classification; specific item, batch, GL class, and account involved |
 | **Evidence** | Row numbers from the Transaction Details sheet that support the finding |
+| **Processing Options — Suggested Causes** | For each program that could have produced the variance, the specific processing options or configuration settings to check, the variance sub-type each would produce, and why each is a plausible cause. Presented as suggestions only, with a note that multiple program versions may be in use and that settings must be confirmed in JD Edwards before drawing conclusions. |
 | **Recommended Action** | Corrective action from Section 4; journal entry details where applicable; any further investigation steps required before posting |
 
 ### 10.4 Notes and Limitations
@@ -718,3 +779,4 @@ The analysis sheet will follow this structure:
 - For very large Transaction Detail reports spanning many documents or periods, include a note in the prompt identifying the specific document number to focus on if only one transaction is under investigation.
 - Claude will note if a finding requires further investigation in JD Edwards (e.g., querying F0911 across all accounts for a specific batch or GL document number) that cannot be completed from the Excel file alone. These items will appear as open questions in the Recommended Action section of the analysis sheet.
 - Amounts in the exported file may display with floating-point precision artifacts (e.g., $636.20000000000005). Claude rounds all amounts to two decimal places for analysis and reporting purposes. These artifacts do not affect the accuracy of the analysis.
+- Processing option suggestions are derived from the processing options reference document. They are presented as candidates for investigation, not confirmed causes. The correct version settings must be verified in JD Edwards before any conclusions are drawn.
