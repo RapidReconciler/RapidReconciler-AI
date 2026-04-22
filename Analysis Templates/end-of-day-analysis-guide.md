@@ -62,6 +62,8 @@ Sales Update (R42800) is the final step in the sales order process. It creates G
 - The GL entry (F0911) is not created until R42800 runs
 - The cardex entry carries no GL date or batch number until R42800 processes it
 
+> **Ship confirmation vs. Sales Update:** Whether cardex is written at ship confirm or Sales Update depends on whether the order type is in UDC table **40/IU**. If it is, cardex is written at ship confirmation and the document number is later updated to the invoice number when R42800 runs. If it is not, cardex is written by Sales Update with the invoice number directly. Both paths produce the same End of Day gap — no GL entry until R42800 runs.
+
 **Key indicators in the End of Day report:**
 
 | Field | What to Look For |
@@ -74,9 +76,46 @@ Sales Update (R42800) is the final step in the sales order process. It creates G
 
 **What causes Sales End of Day to accumulate:**
 - R42800 did not run for a scheduled period
-- R42800 ran but encountered errors and stopped
-- Orders are on hold and cannot be invoiced
-- Multiple R42800 versions in use and one version's selection missed certain orders
+- R42800 ran but encountered errors and stopped mid-processing
+- Orders are on hold and cannot be invoiced (Hold Invoice flag in customer master)
+- Wrong R42800 version used — the version that assumes an invoice number exists was run against orders that have not yet been invoiced, or vice versa
+- GL Interface flag not set in the order line type or Branch/Plant Constants — R42800 ran but did not create GL entries
+
+**R42800 version selection:**
+
+| Version Type | When to Use | Data Selection |
+|---|---|---|
+| **Standard (invoice assigned)** | Order has been through Invoice Print (P42565) — a document number and type exist in F4211 | Invoice NE \*BLANKS |
+| **Assign Invoice No.** | Order has not been through Invoice Print — no invoice number yet | \*ALL except Invoice Date NE \*ZEROS |
+
+> **Important:** Running the wrong version produces multiple F0311 and F0911 records or none at all. Always confirm which version applies before running R42800 for a backlog.
+
+**Batch types created by R42800:**
+
+| Scenario | Batch Type(s) |
+|---|---|
+| Standard run | **I-batch** (all entries) |
+| Summarizing inventory/COGS to separate batch (PO 12 = 1) | **I-batch** (sales) + **G-batch** (inventory/COGS) |
+| Interbranch — no A/R and A/P batches | **I-batch** + **ST batch** |
+| Interbranch — creating A/R and A/P batches (PO 26 = 1) | **I-batch** + **V batch** |
+
+**Proof vs. final mode:**
+
+Always run R42800 in proof mode first when processing a backlog. Proof mode generates the Invoice Journal report and identifies errors without updating any files or advancing statuses. Final mode is irreversible — it advances orders to status 999 and posts records to F0311, F0911, and F4111.
+
+**Common R42800 error codes:**
+
+| Error | Cause | Resolution |
+|---|---|---|
+| **0028 / 0381** | AAI not configured, or account not in chart of accounts | Add the missing AAI; verify account exists and has correct posting edit code |
+| **1837** | Hold Invoice flag set to Y in Customer Master | Change Hold Invoice flag to N on the customer record |
+| **0002** | Line did not advance to status 999, or invoice already processed | Reset status to 999 or correct the duplicate pay item on the F0311 record |
+| **0272** | Tax Rate/Area not set up, or missing Tax Explanation Code | Verify Tax Rate/Area setup and effective dates |
+| **1829** | RT AAI not set up — validated even for exempt/non-taxable orders | Set up the RT AAI using the GL Class Code from the Tax Rate/Area GL Offset |
+| **0065** | Fiscal date pattern issue — GL date falls outside open period | Check fiscal date pattern; confirm prior period posting is allowed if needed |
+| **3490** | Address Book number valid but no Customer Master record | Add the Customer Master record |
+
+> **R42800 stopped mid-processing:** If R42800 stops mid-run, identify the problem F4211 record from the job log. Verify which records were fully processed before the stop — files updated before the stop may need to be reviewed for partial updates. Clean up the problem record and rerun.
 
 ### 2.2 Manufacturing — R31802A (Manufacturing Accounting)
 
@@ -89,6 +128,19 @@ Manufacturing Accounting (R31802A) creates GL entries for material issues (IM), 
 - None of these create F0911 entries — that is R31802A's job
 - R31802A can only be run once per work order in final mode
 
+**Manufacturing cost flow:**
+
+```
+Raw Material Inventory (AAI 3110)
+        ↓  Material Issues (IM) — credit component inventory, debit WIP
+Work In Process / WIP (AAI 3120)
+        ↑  Labor and Overhead (IH) — debit WIP, credit Payroll Accrual (3401)
+        ↓  Completions (IC) and Scrap (IS) — debit Finished Goods (3130), credit WIP
+Finished Goods Inventory (AAI 3130)
+        ↓  Sales Update (R42800)
+Cost of Goods Sold
+```
+
 **Key indicators in the End of Day report:**
 
 | Field | What to Look For |
@@ -100,16 +152,66 @@ Manufacturing Accounting (R31802A) creates GL entries for material issues (IM), 
 | **TransactionDate** | Should match recent manufacturing activity; dates in prior periods are critical |
 | **PeriodEnds** | If this differs from the current period, the transaction is from a prior period — escalate immediately |
 
+**Full work order status code reference:**
+
+| Status | Description | Set By | End of Day Implication |
+|---|---|---|---|
+| **00** | Entered | Work Order Entry (P48013) | Order exists; no material or cost data attached |
+| **10** | Frozen | Work Order Processing (R31410) | Frozen standard and planned cost locked to the order |
+| **20** | In Queue | Scheduling | Order waiting to begin |
+| **30** | In Process | Time Entry / Completions | Active manufacturing; issues and labor entries allowed |
+| **40** | Partially Completed | Completions (P31114) | Some quantity completed; work order still open |
+| **50** | Pending Close — Labor Complete | Manual | Labor complete; pending final review |
+| **60** | Pending Close — Material Reconciled | Manual | Material matches planned; pending final review |
+| **90** | Complete | Manual / Completion program | All manufacturing done; ready for R31802A |
+| **95** | Manufacturing Accounting Complete | R31802A | R31802A has run; GL entries exist for all IM, IH, IC transactions |
+| **97** | Variance Accounted | R31804 | Variance accounting complete; WIP cleared to zero |
+| **99 / 999** | Closed | R31804 or manual | Fully closed; no further processing allowed |
+
+> **Frozen standards are locked at status 10.** Changes to BOM, routing, or item costs after R31410 runs do not update the work order — they produce engineering and planned variances at R31804 (status 97).
+
+**GL class code rule — critical for diagnosis:**
+
+| Transaction | Side | GL Class Code Source |
+|---|---|---|
+| **IM — Material Issue** | Credit (reducing raw material) | GL class code of each **individual component** (from F41021) |
+| **IM — Material Issue** | Debit (adding to WIP) | GL class code of the **parent item** (from F41021) |
+| **IH — Labor** | Both sides | GL class code of the **parent item** |
+| **IC — Completion** | Both sides | GL class code of the **parent item** |
+| **IS — Scrap** | Both sides | GL class code of the **parent item** |
+
+> **F41021 vs. F4102:** GL class codes are sourced from the **Item Location table (F41021)**, not the Item Branch table (F4102). JD Edwards allows these to differ without warning. If they carry different values, manufacturing transactions post to a different account than expected. Run Integrity Report 5 in RapidReconciler to identify mismatches.
+
+**R31802A GL summarization:**
+
+R31802A summarizes GL entries by account within its run. A single F0911 entry for a given account and batch may reflect costs from **multiple work orders** processed in the same R31802A run. The GL document number in F0911 will differ from the cardex document number — this is normal. When investigating an apparent GL excess on an IM transaction, always query F0911 for the GL document number across all order numbers before concluding a variance exists. See Section 5.3 for the cross-work-order pattern.
+
+**Pre-close checks before running R31802A:**
+
+Before running R31802A for work orders at status 90, perform both checks. Skipping either can produce permanent variances that require manual journal entries to correct.
+
+| Check | Program | What to Verify |
+|---|---|---|
+| **Material reconciliation** | Inventory Issues (P31113) | Quantity Ordered should equal Quantity Issued. Document any valid variances (e.g., component scrap) in the Remarks field before proceeding. |
+| **Hours reconciliation** | Order Hour Status (P31121) | Actual machine, labor, and setup hours should be close to standard hours. Investigate differences before running R31802A. |
+
+**Manufacturing Constants settings that affect End of Day:**
+
+| Setting | Impact |
+|---|---|
+| **Work Center Efficiency** | If enabled, R31802A creates separate labor efficiency variance entries to AAI 3220. If AAI 3220 is not configured for all parent GL class codes in use, R31802A will error and the W batch will not be created — all IM, IH, IC entries remain in End of Day. |
+| **GL Date Source (R31802A PO 1)** | Controls whether F0911 entries use the work order completion date or the R31802A run date. If set to run date, all work orders processed on the same day share the same GL date and batch, increasing the likelihood of cross-work-order GL summarization. |
+| **Accounting Cost Quantity (ACQ)** | Determines setup cost per unit. Default of 1 overstates setup cost for all but single-unit work orders — producing systematic setup variances that can obscure genuine issues. |
+
 **Work order status codes relevant to End of Day:**
 
-| Status | Description | End of Day Implication |
-|---|---|---|
-| **45** | In process | Work order still active; normal to have IM entries pending |
-| **50** | Pending close | Work in progress; IM entries present, no IC yet |
-| **90** | Complete | All manufacturing done; R31802A has not yet run |
-| **95** | Manufacturing accounting complete | R31802A has run; entries should no longer be in End of Day |
-| **97** | Variance accounting complete | R31804 has run; should not appear in End of Day |
-| **ER** | Error | Work order is in an error state; R31802A cannot process until resolved |
+| Status | End of Day Implication |
+|---|---|
+| **45 / 50** | Work order is still active or pending close — IM entries are expected; no IC yet |
+| **90** | Ready for R31802A — should be processed immediately |
+| **95** | R31802A has run — should not appear in End of Day unless a prior-period issue exists |
+| **97** | Variance accounting complete — should not appear in End of Day |
+| **ER** | Work order error — must be resolved before R31802A can run |
 
 > **Prior period manufacturing:** If the PeriodEnds column shows a period other than the current reconciliation period, the work order was never processed by R31802A in its original period. These are the most critical End of Day items and will not self-resolve without direct intervention.
 
@@ -323,9 +425,33 @@ The work order has been flagged with an error condition in JD Edwards that preve
 4. Run Work Order Processing (R31410) again if needed to refresh the frozen standard.
 5. Once the error is resolved, advance the work order to status 90 and run R31802A.
 
----
+### 5.6 Manufacturing — R31802A Cross-Work-Order GL Summarization
 
-## Section 6: Step-by-Step Analysis Procedure
+**Symptoms:**
+- Mfg-type rows at status 95 (R31802A has run) still appearing in End of Day for one specific GL class
+- Other GL class rows for the same work order have cleared
+- The remaining rows have a small amount compared to the overall work order cost
+
+**What is happening:**
+
+R31802A summarizes GL entries by account within its run. A single F0911 entry for a given account and batch may cover multiple work orders. RapidReconciler matches on batch number — when it attributes the full GL summary amount to the first work order it encounters, the other work orders in the same batch show a residual cardex-only balance in End of Day until their own records are reviewed and documented.
+
+This is not a posting error. The GL entries exist and are correct in aggregate — the apparent End of Day variance is an artifact of the matching logic.
+
+**How to confirm:**
+
+1. Note the work order number (DocNumber) and GL class from the End of Day row.
+2. In JD Edwards, query F0911 for the GL document number associated with this batch and GL class.
+3. If multiple work order numbers appear in the F0911 results, the entry is a summarized posting.
+4. Sum the F4111 cardex amounts for all included work orders for the same GL class — the total should equal the F0911 amount.
+
+**Resolution:**
+
+If Step 3 confirms cross-work-order summarization, suspend the record in RapidReconciler with a note identifying the GL document number and confirming the summarization. No journal entry is required. The corresponding records on the other affected work orders will clear when their own analysis is documented.
+
+> **Do not post a correcting entry based solely on End of Day appearance.** The Transaction Detail report for the specific work order will show the GL-excess pattern that distinguishes this from a genuine missing GL entry. See the Transaction Detail Analysis Guide for the full investigation procedure.
+
+---
 
 Use this procedure for every End of Day report export:
 
@@ -412,6 +538,45 @@ Active work orders (status 45/50) are expected to appear in the End of Day repor
 **Prior-period manufacturing items:**
 
 These must be resolved — they cannot be accepted as an ongoing open item. If a work order cannot be completed (e.g., it has been physically scrapped or cancelled), close the work order formally in JD Edwards and post a manual journal entry to clear the item ledger balance. Document the decision for audit purposes.
+
+### 7.1 Manufacturing AAI Reference
+
+The following AAIs must be correctly configured for R31802A to process without errors. Missing or misconfigured AAIs cause R31802A to fail, leaving all work order transactions in End of Day.
+
+| AAI | Account | Used By | GL Class Code Source |
+|---|---|---|---|
+| **3110** | Raw Material / Sub-Assembly Inventory | IM — credit side | **Component** GL class code (one entry per component class) |
+| **3120** | Work In Process (WIP) | IM debit, IH debit, IC credit, IS credit, IV debit/credit | **Parent item** GL class code |
+| **3130** | Finished Goods / Scrap | IC debit, IS debit | **Parent item** — configure separately by doc type IC vs. IS to route scrap to a different account |
+| **3220** | Labor Variance | IV (only if Work Center Efficiency enabled) | **Parent item** |
+| **3240** | Material Variance | IV | **Parent item** |
+| **3260** | Planned Variance | IV | **Parent item** |
+| **3270** | Engineering Variance | IV | **Parent item** |
+| **3280** | Other Variance / WIP Clearance | IV | **Parent item** |
+| **3401** | Payroll Accrual | IH — credit side | **Parent item** |
+
+**Common AAI misconfigurations that cause End of Day to persist:**
+
+| Misconfiguration | Effect |
+|---|---|
+| AAI 3110 missing for a component GL class code | R31802A errors on IM credit side; W batch not posted; all transactions remain in End of Day |
+| AAI 3120 missing for parent GL class code | R31802A errors; batch fails; all transactions for that work order remain in End of Day |
+| AAI 3220 missing with Work Center Efficiency enabled | R31802A errors on every work order with labor; entire batch fails |
+| AAI 3130 not differentiated by doc type IC vs. IS | Scrap posts to finished goods account — account mismatch visible after R31802A runs |
+
+### 7.2 Period-End Checklist for Manufacturing
+
+Before closing a period that includes manufacturing activity, confirm:
+
+- [ ] All work orders at status 90 have been processed by R31802A (status advanced to 95)
+- [ ] All W batches from R31802A are posted (posting status = D in P0011)
+- [ ] Work orders requiring variance accounting have been processed by R31804 (status 97 or 99)
+- [ ] All W batches from R31804 are posted
+- [ ] GL Batches variance in RapidReconciler = $0 for all inventory accounts
+- [ ] End of Day variance in RapidReconciler = $0 (no IM, IH, IC, IS transactions awaiting R31802A)
+- [ ] Any Standard Cost Change rows on closed work orders have been resolved via manual journal entry
+- [ ] UDC 31/ER rates reconciled with payroll for the period
+- [ ] Integrity Report 5 reviewed for F41021 / F4102 GL class code mismatches
 
 ---
 
@@ -500,20 +665,20 @@ Claude can perform the full Section 6 analysis procedure automatically and retur
 
 ### 9.1 What to Upload
 
-Upload **three files**:
+Upload **two files**:
 
 1. This guide (`.md`)
-2. The Manufacturing Work Order Reference Guide (`.md`) — needed for work order status interpretation
-3. The Sales Order Reference Guide (`.md`) — needed for Sales Update and sales order status interpretation
-4. The End of Day report (`.xlsx`)
+2. The End of Day report (`.xlsx`)
 
 Then use the following prompt:
 
-> *"Analyze this End of Day file using the guides as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'EOD Analysis' and all source rows highlighted by priority."*
+> *"Analyze this End of Day file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'EOD Analysis' and all source rows highlighted by priority."*
+
+All reference information needed for a complete analysis — work order status codes, R42800 error codes, R31802A behavior, Manufacturing Constants, AAI reference, and pre-close checks — is contained within this guide.
 
 ### 9.2 Follow-On Requests in the Same Session
 
-Once the guides have been uploaded in a session, they remain in context. Subsequent End of Day exports do not require the guides to be re-uploaded. Use the shorter prompt:
+Once the guide has been uploaded in a session, it remains in context. Subsequent End of Day exports do not require the guide to be re-uploaded. Use the shorter prompt:
 
 > *"Analyze this file and return it with the analysis sheet and highlights."*
 
@@ -537,7 +702,7 @@ Follows the structure defined in Section 8.4. Contains Report Summary, Variance 
 
 - Claude analyzes the data as exported. If the report was generated with account or company filters applied, the analysis reflects only the visible rows.
 - Prior-period items are identified by comparing PeriodEnds values within the export. Claude flags any PeriodEnds that differs from the most common value in the file.
-- Work order status interpretation uses the Manufacturing Work Order Reference Guide. Statuses not covered in the reference are flagged for manual investigation.
+- Work order status interpretation uses the full status code table in Section 2.2 of this guide.
 - Floating-point precision artifacts in amounts are rounded to two decimal places throughout.
 - Claude cannot access JD Edwards to confirm work order details, check R42800 run history, or verify voucher match status. These are flagged as open investigation items in the Recommended Actions section.
 - For exports with more than 100 rows, consider noting the specific companies or date ranges of interest in the prompt to focus the analysis.
@@ -546,11 +711,9 @@ Follows the structure defined in Section 8.4. Contains Report Summary, Variance 
 
 ## Section 10: Related Documentation
 
-- [Manufacturing Work Order Reference Guide](../MDS/manufacturing-reference.md)
-- [Sales Order Reference Guide](../MDS/sales_order_reference.md)
 - [GL Batch Analysis Guide](../MDS/gl-batch-analysis-guide.md)
-- [Inventory: Using the Application](../MDS/inventory-using-application.md)
 - [Transaction Detail Analysis Guide](../MDS/transaction-detail-analysis-guide.md)
+- [Inventory: Using the Application](../MDS/inventory-using-application.md)
 - [DMAAI Reference Guide](../MDS/distribution-aais.md)
 
 ---

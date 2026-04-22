@@ -43,6 +43,8 @@ Clicking the Companies link displays a list of all licensed companies. To modify
 
 The Companies page displays all companies currently licensed for use in RapidReconciler. The following fields are shown for each company:
 
+![rr-admin-company-management](../Images/rr-admin-company-management.png)
+
 | **Field** | **Description** |
 |---|---|
 | **Number** | The company number as defined in JD Edwards. |
@@ -54,6 +56,7 @@ The Companies page displays all companies currently licensed for use in RapidRec
 | **AAI Doc** | The AAI document type used for the model DMAAI table. |
 | **Threshold** | The reconciliation threshold value. |
 | **Options** | Click to open the Company Options pop-up for editing. |
+| **Reroll** | Click to reroll the company, which recalculates the perpetual balance for the company from the baseline date forward. This is typically used if transactions have been backdated more than 1 period. |
 
 > **Important:** Only GSI can add or remove companies, as they are managed per license agreement. If additional company licenses are required, please contact GSI at [rrsupport@getgsi.com](mailto:rrsupport@getgsi.com).
 
