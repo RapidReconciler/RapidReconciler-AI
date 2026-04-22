@@ -56,6 +56,10 @@ RapidReconciler uses the DMAAI configuration directly to support the reconciliat
 
 ## Section 1: AAI Setup and Configuration
 
+![jde-dmaai-entry](../Images/jde-dmaai-entry.png)
+
+---
+
 ### 1.1 Key Structure
 
 An AAI must be established for any unique combination of the following three fields:
@@ -259,7 +263,7 @@ Set the General Ledger Explanation field in Branch/Plant Constants to **"2"** (P
 
 The GL class code used for journal entry creation is sourced from the **Item Branch Location table (F41021)** -- not from the Item Branch table (F4102), as is commonly assumed. JD Edwards allows different values in these two tables without generating a warning.
 
-> **Tip:** Create an exception report to identify mismatches between F41021 and F4102 before running a cost rollup. Undetected differences will produce unexpected journal entry results.
+> **Tip:** Create an exception report to identify mismatches between F41021 and F4102 before running a cost rollup. RapidReconciler Integrity Report 5 provides this information. Undetected differences may produce unexpected journal entry results.
 
 #### Bill of Material and Routing
 

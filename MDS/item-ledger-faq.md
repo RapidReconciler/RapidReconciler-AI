@@ -49,6 +49,8 @@ The balances displayed at the top of the item ledger screen are fetched from the
 | **F41021** | Item Location table -- quantity on hand |
 | **F4105** | Item Cost table -- unit cost |
 
+![JDE Item Ledger](../Images/jde-item-ledger.png)
+
 ### 1.2 Posting Codes (ILIPCD)
 
 The posting code in F4111 is stored in column **ILIPCD**. This field is not displayed by default on the item ledger grid but can be viewed using the JD Edwards **data browser** feature. There are four possible values:
@@ -106,6 +108,8 @@ The item ledger table does **not** store information about which DMAAI entries w
 
 > **Note:** The RapidReconciler Transaction Detail Report can provide DMAAI context by combining item ledger data with the applicable DMAAI configuration at the time of the transaction.
 
+ Refer to [DMAAI Reference Guide](../MDS/dmaai-reference-guide.md) for more information on how DMAAI entries are determined for inventory transactions.
+
 ---
 
 ## Section 2: Should the Item Ledger Sum Equal the Item Balance Table?
@@ -125,6 +129,7 @@ If any of these conditions are not met, a discrepancy between the item ledger su
 The **Item Balance / Ledger Integrity Report (R41544)** is the JD Edwards tool used to identify integrity variances between the Quantity On-Hand in the Item Location table (F41021) and the Item Ledger (F4111).
 
 In many cases, the cause of these variances can only be attributed to corrupted data in the Item Location Quantity On-Hand field (F41021.PQOH), which is a running balance of all transactions added to and subtracted from an inventory location and/or lot. Since all transaction details are written to the Item Ledger (F4111) while the Item Balance Quantity On-Hand is a running total of all transactions done to date, **the Item Ledger (F4111) is assumed to be the source of truth.**
+The RapidReconciler cardex variance report is built on this same principle -- the item ledger is the source of truth for quantity, and any variance with the general ledger is a reconciling item that requires investigation.
 
 Partial updates or corrupted data may occur because of an unpredictable event that terminates the application prematurely. In most cases it is not possible to explain how data was corrupted after the fact.
 

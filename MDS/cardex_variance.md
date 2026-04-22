@@ -97,6 +97,9 @@ The pop-up displays the following key fields for the item:
 
 ## Step 2 -- Validate the Variance in JD Edwards
 
+![JDE Item Ledger](../Images/jde-item-ledger.png)
+``
+
 Before making any correction, confirm the discrepancy by reviewing the item's transaction history directly in JD Edwards. Since JD Edwards is the system of record, this step determines the true source of the variance -- whether a correction needs to be made in JD Edwards, or whether RapidReconciler simply needs to be synchronized to match JD Edwards using the Re-Roll options.
 
 **2.1 Export the cardex for the item**

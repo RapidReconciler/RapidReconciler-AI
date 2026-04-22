@@ -111,6 +111,10 @@ Two status indicators appear at the top center of the screen. **Both must be gre
 
 > **Note:** A **flashing yellow** System Status light means the JD Edwards import is still in progress. Wait for it to complete before reviewing data.
 
+The Inventory Validation Report is accessed by clicking directly on the Inventory Validation status light. This report confirms that the carry-forward amount from the prior period is accurate. If it is red, this report is your starting point for investigation.
+
+![rr-inv-validation-report](../Images/rr-inv-validation-report.png)
+
 ### 1.3 Period Selector
 
 The period selector is located in the top right corner.
