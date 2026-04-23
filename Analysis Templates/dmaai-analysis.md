@@ -167,8 +167,8 @@ The business unit in the DMAAI entry does not match the business unit in the mod
 
 ### Net Zero Review
 
-> `Net zero review - 4122,4124`  
-> `Net zero review - 4126,4128`  
+> `Net zero review - 4122,4124`
+> `Net zero review - 4126,4128`
 > `Net zero review - 4134,4136`
 
 RapidReconciler has detected that the entries in a paired set of tables (debit and credit) may result in a net-zero posting — meaning the debit and credit sides of the inventory entry land on the same account, or that one side is missing.
@@ -402,8 +402,13 @@ Do not delete, rename, or reorder the source sheet.
 | **Priority 2 rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
 | **Priority 3 rows** | Yellow fill (`FFFACD`), dark gold text (`5C4A00`) |
 | **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
-| **Column widths** | Auto-size all column widths and row heights on the RR Analysis sheet to fit content |
-| **Wrap text** | Enabled on all data rows and header rows on the RR Analysis sheet |
+| **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. Typical widths: Col A 22, B 28, C 36, D 20, E 20. |
+| **Row heights** | Calculated from content length and column width — not a flat default. |
+| **Wrap text** | Enabled on all cells on the RR Analysis sheet. |
+| **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
+| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFF0DC` / text `6B3A00`; Priority 3 fill `FEFBD8` / text `4A3B00`. Use lighter fills and non-bold text so content remains easy to read. |
+| **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
+| **Colour key** | Include a colour key section at the top of the analysis sheet. |
 
 ---
 

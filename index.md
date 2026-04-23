@@ -10,16 +10,16 @@ The following examples demonstrate AI-powered analysis of RapidReconciler report
 Each workbook contains multiple sheets with the original report data on the left, AI-generated insights, and recommended action items. The analysis focuses on identifying variances, root causes, and prioritized next steps for resolution.
 
 | Report | Description |
-|--------|-------------|
+| --- | --- |
 | [End of Day Analysis](Analysis%20Examples/End-of-Day-Analysis.xlsx) | End of day reconciliation analysis. Identifies outstanding GL variances, flags unprocessed transactions, and provides prioritized action items for resolution before period close. |
 | [DMAAI Integrity](Analysis%20Examples/DMAAI-Analysis.xlsx) | DMAAI entry integrity analysis. Reviews automatic accounting instruction (AAI) configurations across companies, identifying account mismatches and entries flagged for net-zero review. |
 | [Account Roll Forward](Analysis%20Examples/Account-Roll-Forward-Analysis.xlsx) | Period-over-period account roll forward analysis reconciling beginning GL balances, period activity, and ending balances against the perpetual inventory ledger. Highlights accounts with GL variances, cardex discrepancies, and unposted batches across multiple periods. |
 | [Unposted GL Batches](Analysis%20Examples/Unposted-GL-Batch-Analysis.xlsx) | Analysis of unposted general ledger batches. Identifies batches across multiple companies and batch types that are pending approval or stuck in an "In Use" state, with prioritized resolution steps to clear the backlog before period close. |
 | [Cardex Item Analysis](Analysis%20Examples/Cardex-Variance-Item-Analysis.xlsx) | Item-level cardex roll forward analysis for a single item across a specific branch and location. Traces quantity and amount variances between the item ledger and on-hand balances back to their root cause transaction, using standard cost method. |
 | [Transaction Details Analysis](Analysis%20Examples/Transaction-Details-Analysis.xlsx) | Deep-dive transaction analysis for a specific document, reconciling F4111 item ledger entries against GL account F0911 postings. Includes DMAAI inventory account mapping validation and identifies misconfigured model table entries contributing to posting discrepancies. |
+| [GL Class Code Analysis](Analysis%20Examples/GL-Class-Analysis.xlsx) | GL class code integrity analysis comparing item branch records (F4102) against item location records (F41021). Identifies blank location GL class codes and branch-to-location mismatches that cause inventory transactions to post to incorrect accounts, with prioritized remediation steps. |
 
 ---
-
 
 ## Collateral Documents
 

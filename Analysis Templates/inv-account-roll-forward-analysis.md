@@ -656,10 +656,15 @@ Do not delete, rename, or reorder the source sheet. Permitted modifications to t
 | **GLOK/VarOK = "no" rows** | Red fill (`FFCCCC`), dark red bold text (`C00000`) |
 | **Unposted batch rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
 | **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
-| **Column widths** | Auto-size all column widths and row heights on the Roll Forward Analysis sheet to fit content |
-| **Wrap text** | Enabled on all data rows and header rows on the Roll Forward Analysis sheet |
-| **Source sheet — freeze panes** | Set at A3 so the title row (row 1) and header row (row 2) are always visible |
-| **Source sheet — number format** | Columns G, H, I, K, L, M, N, O, P, Q, R, S formatted as `#,##0.00` (comma separator, 2 decimal places). Columns J and T are text flags and are not formatted. |
+| **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. |
+| **Row heights** | Calculated from content length and column width — not a flat default. |
+| **Wrap text** | Enabled on all cells on the Roll Forward Analysis sheet. |
+| **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
+| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFF0DC` / text `6B3A00`; Priority 3 fill `FEFBD8` / text `4A3B00`. Lighter fills and non-bold text for readability. |
+| **Source sheet — freeze panes** | Set at A3 so the title row (row 1) and header row (row 2) are always visible. |
+| **Source sheet — AutoFilter** | Enabled on row 2 covering all columns. Row highlights match analysis priority colours. |
+| **Source sheet — number format** | Columns G, H, I, K, L, M, N, O, P, Q, R, S formatted as `#,##0.00`. Columns J and T are text flags and are not formatted. |
+| **Colour key** | Include a colour key section at the top of the analysis sheet. |
 
 ### 10.6 Amounts
 

@@ -708,7 +708,7 @@ The returned workbook will contain two sheets:
 | **Corrective Action** | Full JDE correction steps per Section 5; Re-Roll step per Section 6; "None required" if reconciled |
 | **Preventive Actions** | Follow-up items: cost review, BOM validation, WAC monitoring, negative quantity controls |
 
-Auto-size all column widths and row heights on the RR Analysis sheet to fit content. Enable wrap text on all data rows and header rows on the RR Analysis sheet.
+Set column widths to fixed widths sized for readability — do not auto-stretch to full sheet width. Enable wrap text on all cells. Calculate row heights from content length and column width, not a flat default. Resolution tables use a two-column layout: condition in cols A–B, action in cols C–E. Priority colours: P1 fill `FFE0E0` / text `8B0000`, P2 fill `FFF0DC` / text `6B3A00` — lighter fills and non-bold text for readability. Source sheet: AutoFilter on row 2, freeze panes at row 3, row highlights matching analysis priority colours. Include a colour key section at the top of the analysis sheet.
 
 ### 10.4 Notes and Limitations
 

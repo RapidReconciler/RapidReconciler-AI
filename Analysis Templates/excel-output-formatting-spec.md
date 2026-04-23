@@ -1,0 +1,211 @@
+# Excel Output Formatting Specification
+
+## RapidReconciler Analysis Workbooks — Shared Formatting Reference
+
+This document is the **change master** for Excel output formatting across all RapidReconciler analysis guides. Each guide is fully self-contained and can be used in a two-file session (guide + export) without this document. This document exists so that when formatting changes, they are made here first and then propagated to all guides in a single update session.
+
+**How to use this document:**
+- To change formatting across all guides, update this document first, then upload it with all seven guides and ask Claude to propagate the changes.
+- Individual guide sessions do not require this document — the guide alone contains everything Claude needs to produce a correctly formatted output.
+- When a detail in this document conflicts with a guide, this document is the intended standard and the guide should be updated to match.
+
+---
+
+## Section 1: File Naming
+
+All output files are named:
+
+```
+DMAAI Analysis.xlsx
+```
+
+---
+
+## Section 2: Workbook Structure
+
+Every output workbook contains exactly two sheets:
+
+| Sheet | Contents |
+|---|---|
+| **Source sheet** | The original export data, unchanged except for row highlights, AutoFilter, and freeze panes |
+| **Analysis sheet** | The structured analysis written by Claude |
+
+Do not delete, rename, or reorder the source sheet. Do not add columns, rows, or formulas to the source sheet. The only permitted modifications to the source sheet are cell background colour (highlights), AutoFilter, and freeze panes.
+
+---
+
+## Section 3: Source Sheet Formatting
+
+### 3.1 AutoFilter
+
+Enable AutoFilter on the header row (row 2 in most exports; row 4 in the Item Roll Forward export which has a multi-row header). The filter range covers all columns.
+
+### 3.2 Freeze Panes
+
+Set freeze panes so the header row stays visible while scrolling:
+
+| Export | Freeze At |
+|---|---|
+| All standard exports (header on row 2) | `A3` |
+| Item Roll Forward (header on row 4) | `A5` |
+
+### 3.3 Row Highlights
+
+Apply background colour to data rows based on priority classification. Apply the highlight to all columns in the row. When a row qualifies for multiple priorities, the higher priority (lower number) takes precedence.
+
+| Priority | Fill Colour | Hex | Criteria |
+|---|---|---|---|
+| **Priority 1** | Light red | `FFE0E0` | Highest severity — immediate action required |
+| **Priority 2** | Light orange | `FFF0DC` | High severity — resolve within 1 business day |
+| **Priority 3** | Light yellow | `FEFBD8` | Normal backlog — include in next scheduled run |
+
+The specific criteria that trigger each priority level are defined in each analysis guide.
+
+---
+
+## Section 4: Analysis Sheet Layout
+
+### 4.1 Column Structure
+
+The analysis sheet uses **5 columns** as the standard layout for most guides. Some guides use a different column count where the content requires it — the specific column count is noted in each guide.
+
+**Standard 5-column widths:**
+
+| Column | Width (chars) | Typical Content |
+|---|---|---|
+| A | 22 | Labels, section numbers, short identifiers |
+| B | 28 | Item details, descriptions |
+| C | 36 | Longer descriptions, findings |
+| D | 20 | Values, accounts, counts |
+| E | 20 | Notes, status, resolution |
+
+**Alternate layouts** (where noted in the guide):
+
+| Layout | Columns | Widths |
+|---|---|---|
+| 3-column | A, B, C | 28, 52, 26 |
+| 4-column | A, B, C, D | 28, 52, 20, 16 |
+| 6-column (DMAAI) | A, B, C, D, E, F | 28, 40, 14, 22, 20, 52 |
+
+These are starting widths. Do not auto-stretch columns to the full sheet width.
+
+### 4.2 Wrap Text and Row Heights
+
+- Enable wrap text on **all cells** on the analysis sheet.
+- Set row heights based on content length and column width — do not use a flat default height.
+- Estimate the number of lines needed: `ceil(len(line) / column_width)` per line of text, summed across newlines, multiplied by approximately 14pt per line.
+- Cap row height at 200pt to prevent excessively tall rows.
+- Minimum row height: 16pt.
+
+### 4.3 Grid Lines
+
+Disable grid lines on the analysis sheet (`showGridLines = False`).
+
+---
+
+## Section 5: Colour Palette
+
+### 5.1 Structure Colours (Section and Sub-Section Headers)
+
+| Element | Fill | Text | Size | Bold |
+|---|---|---|---|---|
+| Section header | `1F3864` (dark blue) | `FFFFFF` (white) | 11pt | Yes |
+| Sub-section header | `2E75B6` (medium blue) | `FFFFFF` (white) | 10pt | Yes |
+| Column header row | `D6E4F0` (light blue) | `1F3864` (dark blue) | 10pt | Yes |
+| Alternating data row | `F2F2F2` (light grey) | `000000` (black) | 10pt | No |
+| Standard data row | `FFFFFF` (white) | `000000` (black) | 10pt | No |
+
+### 5.2 Priority Colours
+
+Use **lighter fills** and **non-bold text** on priority rows so the content remains easy to read.
+
+| Priority | Fill | Text Colour | Bold |
+|---|---|---|---|
+| **Priority 1** | `FFE0E0` (light red) | `8B0000` (dark red) | No |
+| **Priority 2** | `FFF0DC` (light orange) | `6B3A00` (dark brown) | No |
+| **Priority 3** | `FEFBD8` (light yellow) | `4A3B00` (dark olive) | No |
+
+**Important:** Do not use saturated fills (`FFCCCC`, `FFE5CC`, `FFFACD`) or bright text colours (`C00000`, `FF0000`) on priority rows. These make content difficult to read.
+
+Priority sub-section header rows use the same fill as their priority level but with bold text.
+
+### 5.3 Note Boxes
+
+Note boxes (⚠ observations and warnings) use a distinct gold treatment:
+
+| Element | Specification |
+|---|---|
+| Fill | `FFF3CD` (light gold) |
+| Text colour | `7B4C00` (dark gold) |
+| Style | Italic |
+| Merge | Full width (all columns) |
+| Wrap text | Enabled |
+
+### 5.4 Font
+
+Arial throughout. Use 10pt for all data content. Section headers 11pt, sub-section headers 10pt.
+
+---
+
+## Section 6: Standard Section Types
+
+### 6.1 Report Summary
+
+Key-value layout: label in column A (bold), value spans columns B–E (or to the last column). Row height 16pt. Alternating white/grey fill.
+
+### 6.2 Colour Key
+
+Always include a colour key section near the top of the analysis sheet, after the Report Summary. One row per colour with the fill applied to the row so it is self-illustrating. Columns: Colour name, Meaning, Applies To.
+
+### 6.3 Data Tables
+
+Column headers use the `D6E4F0` / `1F3864` column header style. Data rows alternate white and light grey. Row height calculated from content.
+
+### 6.4 Resolution Tables
+
+Use a **two-column layout** — do not merge the full row width:
+
+| Columns | Content |
+|---|---|
+| A–B (merged) | Condition: "If…" |
+| C–E (merged) | Action: "Then…" |
+
+Header row uses the standard column header style with "If…" and "Then…" labels.
+
+### 6.5 Body Text Rows
+
+Long-form text (root cause explanations, what-was-found descriptions) spans all columns merged. Wrap text enabled. Row height calculated from content.
+
+### 6.6 Blank Separator Rows
+
+Use 6pt height blank rows between major sections for visual breathing room.
+
+---
+
+## Section 7: Applying Formatting to Existing Workbooks
+
+When reformatting an existing workbook (not building from scratch), apply the following changes only — do not alter the content:
+
+1. **Source sheet:** Add AutoFilter on the header row; set freeze panes per Section 3.2; remap existing highlight colours to the palette in Section 5.2.
+2. **Analysis sheet:** Set column widths per Section 4.1; enable wrap text on all cells; recalculate row heights per Section 4.2; remap existing fills to the palette in Section 5; remap existing text colours to the palette in Section 5; remove bold from priority-coloured rows.
+3. **Font colour remapping:**
+
+| Old Colour | New Colour | Context |
+|---|---|---|
+| `C00000` | `8B0000` | Priority 1 text |
+| `C55A11` | `6B3A00` | Priority 2 text |
+| `7B6000` | `4A3B00` | Priority 3 text |
+| `FF0000` | `8B0000` | Any bright red text |
+| `FFA500` | `6B3A00` | Any bright orange text |
+
+4. **Fill colour remapping:**
+
+| Old Fill | New Fill | Context |
+|---|---|---|
+| `FFCCCC` | `FFE0E0` | Priority 1 rows |
+| `FFE5CC` | `FFF0DC` | Priority 2 rows |
+| `FFFACD` | `FEFBD8` | Priority 3 rows |
+| `FF0000` | `FFE0E0` | Solid red (source sheet) |
+| `FFA500` | `FFF0DC` | Solid orange (source sheet) |
+
+**
