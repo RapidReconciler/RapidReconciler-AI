@@ -24,7 +24,7 @@ Here are some key collateral documents that provide an overview of RapidReconcil
 ## AI Analysis Examples
 
 The following examples demonstrate AI-powered analysis of JD Edwards data using RapidReconciler. Each example was sourced from RapidReconciler existing reports into Excel, uploaded to Claude, and analyzed using a functional template.
-The result produces AI-generated insights: root causes, recommended actions, and prioritized next steps for resolution. Clicking on each report name will allow you to reviewing source data and to see how AI arrived at its conclusions. These examples are intended to illustrate the potential of AI-assisted analysis in RapidReconciler and inspire new ways to leverage the application for faster, more effective reconciliations.
+The result produces AI-generated insights, root causes, recommended actions, and prioritized next steps for resolution. Clicking on each report name will allow you to reviewing source data and to see how AI arrived at its conclusions. These examples are intended to illustrate the potential of AI-assisted analysis in RapidReconciler and inspire new ways to leverage the application for faster, more effective reconciliations.
 
 | Report | RR Source | Description |
 | --- | --- | --- |
