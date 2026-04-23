@@ -1,27 +1,20 @@
-# RapidReconciler Document Library
+# GSI RapidReconciler Knowledge Base
 
-Welcome to the GSI RapidReconciler documentation library. Use the links below to navigate to individual documents by topic area.
+# Welcome to the GSI RapidReconciler Knowledge Base
 
----
+Stop chasing reconciliation discrepancies across spreadsheets and manual processes. 
+RapidReconciler gives JD Edwards teams a faster, smarter way to reconcile inventory and general 
+ledger accounts — and this library is your complete guide to getting the most out of it.
 
-## AI Analysis Examples
-
-The following examples demonstrate AI-powered analysis of RapidReconciler reports. Each report was exported from RapidReconciler into Excel, uploaded to Claude, and analyzed using the applicable template.
-Each workbook contains multiple sheets with the original report data on the left, AI-generated insights, and recommended action items. The analysis focuses on identifying variances, root causes, and prioritized next steps for resolution.
-| Report |RR Source | Description |
-| --- | --- | --- |
-| [End of Day Analysis](Analysis%20Examples/End-of-Day-Analysis.xlsx) | End of Day Preview Export | End of day reconciliation analysis. Identifies outstanding GL variances, flags unprocessed transactions, and provides prioritized action items for resolution before period close. |
-| [DMAAI Integrity](Analysis%20Examples/DMAAI-Analysis.xlsx) | Inventory Integrity Report 2 | DMAAI entry integrity analysis. Reviews automatic accounting instruction (AAI) configurations across companies, identifying account mismatches and entries flagged for net-zero review. |
-| [Account Roll Forward](Analysis%20Examples/Account-Roll-Forward-Analysis.xlsx) | Inventory Validation Status Light Export | Period-over-period account roll forward analysis reconciling beginning GL balances, period activity, and ending balances against the perpetual inventory ledger. Highlights accounts with GL variances, cardex discrepancies, and unposted batches across multiple periods. |
-| [Unposted GL Batches](Analysis%20Examples/Unposted-GL-Batch-Analysis.xlsx) | Batches Preview Export | Analysis of unposted general ledger batches. Identifies batches across multiple companies and batch types that are pending approval or stuck in an "In Use" state, with prioritized resolution steps to clear the backlog before period close. |
-| [Cardex Item Analysis](Analysis%20Examples/Cardex-Variance-Item-Analysis.xlsx) | Expanding an Item on the As Of page and exporting | Item-level cardex roll forward analysis for a single item across a specific branch and location. Traces quantity and amount variances between the item ledger and on-hand balances back to their root cause transaction, using standard cost method. |
-| [Transaction Details Analysis](Analysis%20Examples/Transaction-Details-Analysis.xlsx) | Expanding a line on the Transactions page and exporting  | Deep-dive transaction analysis for a specific document, reconciling F4111 item ledger entries against GL account F0911 postings. Includes DMAAI inventory account mapping validation and identifies misconfigured model table entries contributing to posting discrepancies. |
-| [GL Class Code Analysis](Analysis%20Examples/GL-Class-Analysis.xlsx) | Inventory Integrity Report 5 | GL class code integrity analysis comparing item branch records (F4102) against item location records (F41021). Identifies blank location GL class codes and branch-to-location mismatches that cause inventory transactions to post to incorrect accounts, with prioritized remediation steps. |
-| [Frozen Cost Integrity](Analysis%20Examples/Frozen-Cost-Analysis.xlsx) | Inventory Integrity Report 6 | Frozen cost integrity analysis comparing the frozen standard unit cost in F4105 (cost method 07) against the sum of cost components in F30026. Identifies zero-cost inventory, missing cost builds, and cost mismatches that cause manufacturing transactions to post at incorrect values, with GL understatement calculated per item. |
+Browse documentation covering everything from initial setup to advanced reconciliation workflows 
+for inventory, in-transit transfers, and PO receipts — plus worked examples of AI-powered 
+analysis that turn RapidReconciler exports into actionable insights in minutes.
 
 ---
 
-## Collateral Documents
+## Collateral Pages (Beta)
+
+Here are some key collateral documents that provide an overview of RapidReconciler's benefits and features. These resources are intended to help you understand the value proposition of the application and how it can assist your JD Edwards reconciliation processes. Click on each document name to view the full content.
 
 | Document                                                                                     | Description                                                  |
 | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
@@ -30,7 +23,27 @@ Each workbook contains multiple sheets with the original report data on the left
 
 ---
 
+## AI Analysis Examples
+
+The following examples demonstrate AI-powered analysis of JD Edwards data using RapidReconciler. Each example was sourced from RapidReconciler existing reports into Excel, uploaded to Claude, and analyzed using a functional template.
+The result produces AI-generated insights: root causes, recommended actions, and prioritized next steps for resolution. Clicking on each report name will allow you to reviewing source data and to see how AI arrived at its conclusions. These examples are intended to illustrate the potential of AI-assisted analysis in RapidReconciler and inspire new ways to leverage the application for faster, more effective reconciliations.
+
+| Report | RR Source | Description |
+| --- | --- | --- |
+| [End of Day Analysis](Analysis%20Examples/End-of-Day-Analysis.xlsx) | End of Day Preview Export | End of day reconciliation analysis. Identifies outstanding GL variances, flags unprocessed transactions, and provides prioritized action items for resolution before period close. |
+| [DMAAI Integrity](Analysis%20Examples/DMAAI-Analysis.xlsx) | Inventory Integrity Report 2 | DMAAI entry integrity analysis. Reviews automatic accounting instruction (AAI) configurations across companies, identifying account mismatches and entries flagged for net-zero review. |
+| [Account Roll Forward](Analysis%20Examples/Account-Roll-Forward-Analysis.xlsx) | Inventory Validation Status Light Export | Period-over-period account roll forward analysis reconciling beginning GL balances, period activity, and ending balances against the perpetual inventory ledger. Highlights accounts with GL variances, cardex discrepancies, and unposted batches across multiple periods. |
+| [Unposted GL Batches](Analysis%20Examples/Unposted-GL-Batch-Analysis.xlsx) | Batches Preview Export | Analysis of unposted general ledger batches. Identifies batches across multiple companies and batch types that are pending approval or stuck in an "In Use" state, with prioritized resolution steps to clear the backlog before period close. |
+| [Cardex Item Analysis](Analysis%20Examples/Cardex-Variance-Item-Analysis.xlsx) | Expanding an Item on the As Of page and exporting | Item-level cardex roll forward analysis for a single item across a specific branch and location. Traces quantity and amount variances between the item ledger and on-hand balances back to their root cause transaction, using standard cost method. |
+| [Transaction Details Analysis](Analysis%20Examples/Transaction-Details-Analysis.xlsx) | Expanding a line on the Transactions page and exporting | Deep-dive transaction analysis for a specific document, reconciling F4111 item ledger entries against GL account F0911 postings. Includes DMAAI inventory account mapping validation and identifies misconfigured model table entries contributing to posting discrepancies. |
+| [GL Class Code Analysis](Analysis%20Examples/GL-Class-Analysis.xlsx) | Inventory Integrity Report 5 | GL class code integrity analysis comparing item branch records (F4102) against item location records (F41021). Identifies blank location GL class codes and branch-to-location mismatches that cause inventory transactions to post to incorrect accounts, with prioritized remediation steps. |
+| [Frozen Cost Integrity](Analysis%20Examples/Frozen-Cost-Analysis.xlsx) | Inventory Integrity Report 6 | Frozen cost integrity analysis comparing the frozen standard unit cost in F4105 (cost method 07) against the sum of cost components in F30026. Identifies zero-cost inventory, missing cost builds, and cost mismatches that cause manufacturing transactions to post at incorrect values, with GL understatement calculated per item. |
+
+---
+
 ## Technical Documents
+
+These technical documents provide detailed guidance on the installation, configuration, and maintenance of RapidReconciler. They cover everything from initial setup requirements to server migration and certificate management. Whether you're a system administrator responsible for maintaining the application or an IT professional involved in the deployment process, these resources will help ensure a smooth and successful implementation of RapidReconciler in your JD Edwards environment.
 
 | Document | Description |
 |----------|-------------|
@@ -42,7 +55,9 @@ Each workbook contains multiple sheets with the original report data on the left
 
 ---
 
-## Getting Started
+## Getting Started with RapidReconciler
+
+These documents provide an introduction to RapidReconciler, including its benefits, how it compares to traditional reconciliation methods in JD Edwards, and the basics of using the application. Whether you're new to RapidReconciler or looking for a refresher on its core features, these resources will help you get up to speed quickly and start leveraging the application for more efficient reconciliations.
 
 | Document | Description |
 |----------|-------------|
@@ -56,6 +71,8 @@ Each workbook contains multiple sheets with the original report data on the left
 ---
 
 ## Inventory
+
+This section covers all aspects of inventory reconciliation using RapidReconciler, including key concepts, application usage, and specific topics like the item ledger, DMAAIs, GL class codes, units of measure, product costing, zero balance adjustments, cardex variance, and outside operations. Whether you're looking to understand the fundamentals of inventory reconciliation or seeking guidance on specific issues and scenarios, these documents provide comprehensive information to help you effectively manage your inventory accounts in JD Edwards with RapidReconciler.
 
 | Document | Description |
 |----------|-------------|
@@ -73,6 +90,8 @@ Each workbook contains multiple sheets with the original report data on the left
 
 ## In Transit
 
+This section focuses on the reconciliation of in-transit inventory using RapidReconciler. It covers key concepts related to the in-transit process, how to use the application, and a wealth of JD Edwards best practice knowledge.
+
 | Document                                                                   | Description                                                                        |
 | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | [In Transit Key Concepts](MDS/in-transit-key-concepts.md)                     | ST/OT process, accounting setup, order pairs, exclusions                           |
@@ -83,6 +102,8 @@ Each workbook contains multiple sheets with the original report data on the left
 ---
 
 ## PO Receipts
+
+This section provides comprehensive information on reconciling purchase order receipts, aka RNV or RNI,  using RapidReconciler. It includes key concepts related to the PO receipt process, how to use the application for PO receipt reconciliation, and a reference guide covering various aspects of purchase orders in JD Edwards.
 
 | Document | Description |
 |----------|-------------|
