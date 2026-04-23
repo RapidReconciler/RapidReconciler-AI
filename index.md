@@ -18,6 +18,7 @@ Each workbook contains multiple sheets with the original report data on the left
 | [Cardex Item Analysis](Analysis%20Examples/Cardex-Variance-Item-Analysis.xlsx) | Item-level cardex roll forward analysis for a single item across a specific branch and location. Traces quantity and amount variances between the item ledger and on-hand balances back to their root cause transaction, using standard cost method. |
 | [Transaction Details Analysis](Analysis%20Examples/Transaction-Details-Analysis.xlsx) | Deep-dive transaction analysis for a specific document, reconciling F4111 item ledger entries against GL account F0911 postings. Includes DMAAI inventory account mapping validation and identifies misconfigured model table entries contributing to posting discrepancies. |
 | [GL Class Code Analysis](Analysis%20Examples/GL-Class-Analysis.xlsx) | GL class code integrity analysis comparing item branch records (F4102) against item location records (F41021). Identifies blank location GL class codes and branch-to-location mismatches that cause inventory transactions to post to incorrect accounts, with prioritized remediation steps. |
+| [Frozen Cost Integrity](Analysis%20Examples/Frozen-Cost-Analysis.xlsx) | Frozen cost integrity analysis comparing the frozen standard unit cost in F4105 (cost method 07) against the sum of cost components in F30026. Identifies zero-cost inventory, missing cost builds, and cost mismatches that cause manufacturing transactions to post at incorrect values, with GL understatement calculated per item. |
 
 ---
 

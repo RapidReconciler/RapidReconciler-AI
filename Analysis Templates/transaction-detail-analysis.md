@@ -265,6 +265,8 @@ This means the **true variance is larger than what RapidReconciler is showing**.
 
 **Common causes:**
 
+> ⚠ **Before making any changes in JD Edwards:** Test all configuration changes in a non-production environment first. For any scenario where a GL journal entry may be required, review the Transactions page in RapidReconciler for the affected items to confirm exact amounts and accounts before posting.
+
 | Cause | How to Identify | Resolution |
 |---|---|---|
 | New GL class code added to items but not to model table | DMAAs shows "Missing model table entry" for the GL class; Integrity Report 3 also lists this class | Add the GL class code to DMAAI table 4152 in JD Edwards with the correct account. After the next refresh, unassigned rows move to F4111 Data. |

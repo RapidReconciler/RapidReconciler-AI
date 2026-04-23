@@ -197,6 +197,8 @@ If the oldest batch is significantly older than the newest (e.g., the oldest is 
 
 **Resolution:**
 
+> ⚠ **Before making any changes in JD Edwards:** Test all configuration changes in a non-production environment first. For any scenario where a GL journal entry may be required, review the Transactions page in RapidReconciler for the affected items to confirm exact amounts and accounts before posting.
+
 1. Open the **Batch Header Revisions screen (P0011)** in JD Edwards.
 2. Search for the batch by number.
 3. Manually set the **posting status to blank** (unposted).

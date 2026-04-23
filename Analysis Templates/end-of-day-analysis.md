@@ -316,6 +316,8 @@ R42800 did not run successfully for one or more scheduled periods. Every sales s
 
 **Resolution:**
 
+> ⚠ **Before making any changes in JD Edwards:** Test all configuration changes in a non-production environment first. For any scenario where a GL journal entry may be required, review the Transactions page in RapidReconciler for the affected items to confirm exact amounts and accounts before posting.
+
 1. Confirm whether R42800 ran for the affected days by checking the job scheduler or output queue.
 2. Run R42800 in **proof mode** first — review the Invoice Journal for errors.
 3. Run in **final mode** to process the backlog.

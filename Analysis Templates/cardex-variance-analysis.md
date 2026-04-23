@@ -458,6 +458,8 @@ If the quantity discrepancy cannot be traced to any F4111 transaction and appear
 
 ---
 
+> ⚠ **Before making any changes in JD Edwards:** Test all configuration changes in a non-production environment first. For any scenario where a GL journal entry may be required, review the Transactions page in RapidReconciler for the affected items to confirm exact amounts and accounts before posting.
+
 ## Section 6: RapidReconciler Resolution Using Re-Roll
 
 After completing the JD Edwards correction in Section 5 (or if Step 5.1 confirmed JDE is correct and the variance is in RapidReconciler only), use the **Re-Roll Item** dialog to synchronize RapidReconciler with JD Edwards.

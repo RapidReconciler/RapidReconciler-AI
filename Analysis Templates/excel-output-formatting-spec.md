@@ -92,10 +92,17 @@ These are starting widths. Do not auto-stretch columns to the full sheet width.
 ### 4.2 Wrap Text and Row Heights
 
 - Enable wrap text on **all cells** on the analysis sheet.
-- Set row heights based on content length and column width — do not use a flat default height.
-- Estimate the number of lines needed: `ceil(len(line) / column_width)` per line of text, summed across newlines, multiplied by approximately 14pt per line.
-- Cap row height at 200pt to prevent excessively tall rows.
-- Minimum row height: 16pt.
+- Set row heights based on content: `ceil(len(longest_line_in_cell) / col_width) × 13pt` per cell, take the max across all cells in the row.
+- Cap data row heights at **80pt**. Cap body text rows at **180pt**. Cap resolution rows at **100pt**.
+- Minimum row height: 16pt. Summary table rows: 42pt.
+
+### 4.3 Numeric Columns and Total Rows
+
+When a finding table includes a calculated monetary value (e.g., GL gap, inventory understatement), put it in its own numeric cell rather than embedding it in a text string:
+
+- The numeric cell should use `#,##0.00` number format and right-align.
+- A companion QOH column (integer, right-aligned) should appear immediately to the left.
+- Add a **total row** directly below the item list, spanning cols A–D merged as a label, with the sum in the numeric column. Use the column header fill (`D6E4F0`) on the total row to visually separate it from the data.
 
 ### 4.3 Grid Lines
 
@@ -171,6 +178,10 @@ Use a **two-column layout** — do not merge the full row width:
 | C–E (merged) | Action: "Then…" |
 
 Header row uses the standard column header style with "If…" and "Then…" labels.
+
+**Resolution warning:** Always include the following note block once, immediately before or after the first resolution table in the analysis:
+
+> ⚠ **Before making any changes in JD Edwards:** Test all configuration changes in a non-production environment first. For any scenario where a GL journal entry may be required, review the Transactions page in RapidReconciler for the affected items to confirm exact amounts and accounts before posting.
 
 ### 6.5 Body Text Rows
 

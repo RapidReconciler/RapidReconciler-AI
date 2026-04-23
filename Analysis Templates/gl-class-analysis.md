@@ -1,6 +1,6 @@
-# Integrity Report 5 Analysis Guide
+# GL Class Analysis Guide
 
-## RapidReconciler — GL Class Integrity (Item Branch to Location Mismatches)
+## RapidReconciler — GL Class Integrity (Item Branch to Location Mismatches) Integrity Report 5
 
 ---
 
@@ -148,6 +148,9 @@ Explain the most likely cause based on the data pattern. Common causes are liste
 Step-by-step instructions to locate and confirm the finding in JDE using Item Branch (P41026) and Item Location (P41024).
 
 **Resolution**
+
+
+> ⚠ **Before making any changes in JD Edwards:** Test all configuration changes in a non-production environment first. For any scenario where a GL journal entry may be required, review the Transactions page in RapidReconciler for the affected items to confirm exact amounts and accounts before posting.
 Decision table:
 
 | If… | Then… |

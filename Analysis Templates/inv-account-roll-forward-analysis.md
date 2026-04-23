@@ -130,7 +130,9 @@ Period N+1 opens:
   → GLOK(N+1) = "no"
 ```
 
-**Resolution:** Post the outstanding batches — approve in **P0011**, then post with **R09801**. GLOK self-corrects at the next RapidReconciler refresh. No journal entry or R099102 run is required.
+**Resolution:**
+
+> ⚠ **Before making any changes in JD Edwards:** Test all configuration changes in a non-production environment first. For any scenario where a GL journal entry may be required, review the Transactions page in RapidReconciler for the affected items to confirm exact amounts and accounts before posting. Post the outstanding batches — approve in **P0011**, then post with **R09801**. GLOK self-corrects at the next RapidReconciler refresh. No journal entry or R099102 run is required.
 
 **Cause 2 — F0902/F0911 misalignment (prior period UnpostBatch was zero)**
 

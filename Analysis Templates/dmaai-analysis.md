@@ -1,4 +1,4 @@
-﻿# Integrity Report 5 Analysis Guide
+﻿# DMAAI Analysis Guide
 
 ## RapidReconciler — DMAAI Entry Integrity (Integrity Report 2)
 
@@ -252,6 +252,9 @@ Explain the likely cause of the discrepancy based on JDE DMAAI design principles
 Step-by-step instructions to locate and confirm the finding in JDE DMAAI (fast path: `DMAAI`).
 
 **Resolution**
+
+
+> ⚠ **Before making any changes in JD Edwards:** Test all configuration changes in a non-production environment first. For any scenario where a GL journal entry may be required, review the Transactions page in RapidReconciler for the affected items to confirm exact amounts and accounts before posting.
 Present as a decision table:
 
 | If... | Then... |
