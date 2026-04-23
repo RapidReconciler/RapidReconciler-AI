@@ -1,27 +1,25 @@
-# RapidReconciler
-
-## AI Examples
-
-Here are some examples of how to use the MDS package for various analyses. 
-Reports were expotred from RapidReconciler into Excel, uploaded to Claude and analyzed using the MDS package.
-
-[EndofDay](Analysis%20Examples/EndofDay_2026-03-31_20260422-1812_Analysis.xlsx)
-
-[DMAAI Integrity](Analysis%20Examples/Integrity_2026-03-31_Analysis_1.xlsx)
-
-[RollForward](Analysis%20Examples/RollForward_20260422-1721_Analysis.xlsx)
-
-[Unposted GL Batches Analysis](Analysis%20Examples/UnpostedGLBatches_2026-03-31_20260422-0831_Analysis.xlsx)
-
-[Cardex Item Analysis](Analysis%20Examples/ItemRollForward_555_MLD_20260421_Analysis.xlsx)
-
-[Transaction Details Analysis](Analysis%20Examples/TransactionDetails_20260420-2005_1132669_RI.xlsx)
-
-## Document Library
+# RapidReconciler Document Library
 
 Welcome to the GSI RapidReconciler documentation library. Use the links below to navigate to individual documents by topic area.
 
 ---
+
+## AI Analysis Examples
+
+The following examples demonstrate AI-powered analysis of RapidReconciler reports. Each report was exported from RapidReconciler into Excel, uploaded to Claude, and analyzed using the applicable template.
+Each workbook contains multiple sheets with the original report data on the left, AI-generated insights, and recommended action items. The analysis focuses on identifying variances, root causes, and prioritized next steps for resolution.
+
+| Report | Description |
+|--------|-------------|
+| [End of Day Analysis](Analysis%20Examples/End-of-Day-Analysis.xlsx) | End of day reconciliation analysis. Identifies outstanding GL variances, flags unprocessed transactions, and provides prioritized action items for resolution before period close. |
+| [DMAAI Integrity](Analysis%20Examples/DMAAI-Analysis.xlsx) | DMAAI entry integrity analysis. Reviews automatic accounting instruction (AAI) configurations across companies, identifying account mismatches and entries flagged for net-zero review. |
+| [Account Roll Forward](Analysis%20Examples/Account-Roll-Forward-Analysis.xlsx) | Period-over-period account roll forward analysis reconciling beginning GL balances, period activity, and ending balances against the perpetual inventory ledger. Highlights accounts with GL variances, cardex discrepancies, and unposted batches across multiple periods. |
+| [Unposted GL Batches](Analysis%20Examples/Unposted-GL-Batch-Analysis.xlsx) | Analysis of unposted general ledger batches. Identifies batches across multiple companies and batch types that are pending approval or stuck in an "In Use" state, with prioritized resolution steps to clear the backlog before period close. |
+| [Cardex Item Analysis](Analysis%20Examples/Cardex-Variance-Item-Analysis.xlsx) | Item-level cardex roll forward analysis for a single item across a specific branch and location. Traces quantity and amount variances between the item ledger and on-hand balances back to their root cause transaction, using standard cost method. |
+| [Transaction Details Analysis](Analysis%20Examples/Transaction-Details-Analysis.xlsx) | Deep-dive transaction analysis for a specific document, reconciling F4111 item ledger entries against GL account F0911 postings. Includes DMAAI inventory account mapping validation and identifies misconfigured model table entries contributing to posting discrepancies. |
+
+---
+
 
 ## Collateral Documents
 
