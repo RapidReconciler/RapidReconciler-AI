@@ -10,7 +10,7 @@ analysis that turn RapidReconciler exports into actionable insights in minutes.
 
 ---
 
-## Collateral Pages (Beta)
+## Collateral Pages Beta
 
 Here are some key collateral documents that provide an overview of RapidReconciler's benefits and features. These resources are intended to help you understand the value proposition of the application and how it can assist your JD Edwards reconciliation processes. Click on each document name to view the full content.
 
