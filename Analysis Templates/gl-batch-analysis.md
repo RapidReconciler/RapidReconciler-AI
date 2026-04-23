@@ -1,8 +1,60 @@
-﻿# GL Batch Analysis Guide
+# GL Batch Analysis Guide
 
 ## RapidReconciler — Unposted GL Batches Report Reference
 
 ---
+
+## Section 1: Using Claude for Automated Analysis
+
+Claude can perform the full Section 12 analysis procedure automatically and return a single updated `.xlsx` file with the analysis sheet added and all source rows highlighted.
+
+### 1.1 What to Upload
+
+Upload **two files**:
+
+1. This guide (`.md`)
+2. The Unposted GL Batches export (`.xlsx`)
+
+Then use the following prompt:
+
+> *"Analyze this file using the guide as a template, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'GL Batch Analysis' and all source rows highlighted by priority."*
+
+Claude will work through the Section 12 procedure against the Excel data, apply highlights to the source sheet, and add the analysis sheet in the format specified in Section 13. The returned file is a drop-in replacement for the original.
+
+### 1.2 Follow-On Requests in the Same Session
+
+Once the guide has been uploaded in a session, Claude retains it in context for the remainder of the conversation. Subsequent GL batch exports do not require the guide to be uploaded again. Use the shorter prompt:
+
+> *"Analyze this file and return it with the analysis sheet and highlights."*
+
+Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost.
+
+### 1.3 Output Specification
+
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+
+**Sheet 1 — Unposted GL Batches (original sheet, highlights added)**
+
+| Highlight | Color | Criteria |
+|---|---|---|
+| Red | `FFCCCC` | In Use OR age ≥ 8 days OR posting error |
+| Orange | `FFE5CC` | Pending approval / Pending (needs approval) |
+| Yellow | `FFFACD` | Approved / Approved (needs posting run only) |
+
+**Sheet 2 — GL Batch Analysis (new sheet)**
+
+Follows the structure defined in Section 13.4. Contains Report Summary, Status Summary, Findings by Priority, and Recommended Actions.
+
+### 1.4 Notes and Limitations
+
+- Claude analyzes the data as exported. If the report was generated with account filters applied, the total variance reflects only the filtered accounts — not the full GL Batches variance for the period.
+- Batch age is calculated against the PeriodEnds date in the export. The analysis always uses PeriodEnds as the reference point, not the date the analysis is run.
+- Claude cannot access JD Edwards to verify batch details, confirm user identities, or look up invoice amounts. Findings that require JD Edwards investigation are flagged as open items in the Recommended Actions section.
+- For exports with more than 50 rows, include a note in the prompt identifying the period-end date to confirm the correct reference point for age calculations.
+- Amounts in the exported file may display with floating-point precision artifacts. Claude rounds all amounts to two decimal places for reporting purposes.
+
+---
+
 
 ## Overview
 
@@ -31,9 +83,9 @@ Until both steps are complete, transactions exist in F0911 but are not reflected
 
 ---
 
-## Section 1: Batch Processing Fundamentals
+## Section 2: Batch Processing Fundamentals
 
-### 1.1 Batch Processing Flow
+### 2.1 Batch Processing Flow
 
 ```
 Transaction entered in JD Edwards
@@ -55,7 +107,7 @@ Batch status: Approved = A, Posted = E (Error)
 
 A batch that has not been approved (Approved = blank) will not post even if the posting program is run. A batch in error status (Posted = E) requires investigation and correction before it can be reposted.
 
-### 1.2 Required Status Before Period-End Close
+### 2.2 Required Status Before Period-End Close
 
 The GL Batches variance must equal **$0** before performing any period-end closing activities in RapidReconciler. Specifically:
 
@@ -67,7 +119,7 @@ The GL Batches variance must equal **$0** before performing any period-end closi
 
 ---
 
-## Section 2: Batch Type Reference
+## Section 3: Batch Type Reference
 
 The batch type in F0011 identifies what kind of transactions the batch contains and determines which approval and posting rules apply.
 
@@ -87,13 +139,13 @@ The batch type in F0011 identifies what kind of transactions the batch contains 
 
 ---
 
-## Section 3: Approval Status Codes
+## Section 4: Approval Status Codes
 
 The approval status is stored in F0011 and controls whether the batch is eligible to be posted.
 
 | Code | Status | Description | Action Required |
 |---|---|---|---|
-| *(blank)* | **Pending** | Batch has been created but not yet approved. Will not post. | Approve manually via Batch Approval (P0011) or configure automatic approval — see Section 9. |
+| *(blank)* | **Pending** | Batch has been created but not yet approved. Will not post. | Approve manually via Batch Approval (P0011) or configure automatic approval — see Section 10. |
 | **A** | **Approved** | Batch has been approved and is eligible for posting. | None — batch is ready to post. |
 | **D** | **Approved (Auto)** | Batch was approved automatically based on company constants configuration. | None — batch is ready to post. |
 | **H** | **Hold** | Batch has been placed on hold and will not be approved or posted until released. | Investigate why the hold was applied. Release via P0011 once the issue is resolved. |
@@ -102,7 +154,7 @@ The approval status is stored in F0011 and controls whether the batch is eligibl
 
 ---
 
-## Section 4: Posting Status Codes
+## Section 5: Posting Status Codes
 
 The posting status is stored in F0011 and reflects the result of the most recent posting attempt.
 
@@ -110,15 +162,15 @@ The posting status is stored in F0011 and reflects the result of the most recent
 |---|---|---|---|
 | *(blank)* | **Unposted** | Batch has not yet been posted. May or may not be approved. | Approve if needed, then run the posting program (R09801). |
 | **D** | **Posted** | Batch has been fully posted. F0902 account balances have been updated. | None. |
-| **E** | **Error** | The posting program encountered an error and could not post the batch. F0902 has not been updated. | Investigate the error using P0011. See Section 8 for common errors and resolutions. |
+| **E** | **Error** | The posting program encountered an error and could not post the batch. F0902 has not been updated. | Investigate the error using P0011. See Section 9 for common errors and resolutions. |
 | **P** | **In Process** | The posting program is currently running for this batch. | Wait for the posting run to complete. If the status remains P for an extended time, investigate whether the posting job has stalled. |
 | **#** | **Held by System** | The system has placed the batch in a temporary hold during processing. | Usually resolves automatically. If the status persists, contact your system administrator. |
 
 ---
 
-## Section 5: Report Structure and Field Reference
+## Section 6: Report Structure and Field Reference
 
-### 5.1 Report Structure
+### 6.1 Report Structure
 
 The Unposted GL Batches report is a flat row-per-account export. Unlike the Transaction Detail report, it does not have named sections — every row is a data row with the same column structure.
 
@@ -129,7 +181,7 @@ Key structural rules:
 - **The report does not net by batch** — if a batch has entries to two accounts, both rows appear separately. The batch-level variance is the sum of all rows for that batch number.
 - **Period filter applies** — the period shown in the filename and report header reflects the RapidReconciler period filter in effect when the report was generated. Rows from prior periods that remain unposted may also appear if they fall within that filter.
 
-### 5.2 Column Definitions
+### 6.2 Column Definitions
 
 | Column | Description |
 |---|---|
@@ -139,14 +191,14 @@ Key structural rules:
 | **Username** | The JD Edwards user ID that created the batch. System schedulers appear as JDESCHED or similar. Use this field to identify the person or process responsible for the batch. |
 | **LongAccount** | The full GL account number in Business Unit.Object.Subsidiary format (e.g., 67010.1421). Use this to identify the inventory account affected and to cross-reference against the chart of accounts. |
 | **BatchNumber** | The JD Edwards batch number (F0011 key field). Multiple rows with the same batch number belong to the same batch — they must be resolved together. |
-| **Type** | Batch type code. Identifies the source of the transaction. See Section 2 for the full batch type reference. Common types: **G** (General Journal), **IB** (Inventory Balance), **N** (Inventory), **O** (PO Receipt), **V** (Voucher). |
+| **Type** | Batch type code. Identifies the source of the transaction. See Section 3 for the full batch type reference. Common types: **G** (General Journal), **IB** (Inventory Balance), **N** (Inventory), **O** (PO Receipt), **V** (Voucher). |
 | **Amount** | The net GL amount for this account row. Positive = debit; negative = credit. For a given batch, amounts across all rows should net to zero for a balanced batch. |
 | **Currency** | Currency code for the amount. USD is most common. Multi-currency batches require exchange rate verification before posting. |
 | **Rate** | Exchange rate applied. 1.0 indicates domestic currency or no conversion required. Rates other than 1.0 indicate a foreign currency transaction. |
-| **Approval_Status** | Current approval state of the batch in F0011. See Section 3 for all codes and actions. |
-| **Posting_Status** | Current posting state of the batch in F0011. See Section 4 for all codes and actions. |
+| **Approval_Status** | Current approval state of the batch in F0011. See Section 4 for all codes and actions. |
+| **Posting_Status** | Current posting state of the batch in F0011. See Section 5 for all codes and actions. |
 
-### 5.3 Derived Fields for Analysis
+### 6.3 Derived Fields for Analysis
 
 The following fields are not in the source report but should be calculated or noted during analysis:
 
@@ -158,7 +210,7 @@ The following fields are not in the source report but should be calculated or no
 
 ---
 
-## Section 6: Status Code Combinations and What They Mean
+## Section 7: Status Code Combinations and What They Mean
 
 Every row in the report carries both an Approval_Status and a Posting_Status. The combination determines the required action.
 
@@ -166,9 +218,9 @@ Every row in the report carries both an Approval_Status and a Posting_Status. Th
 |---|---|---|---|---|
 | **Pending approval** | **In Use** | The batch posting status needs to be manually reset in JD Edwards. Navigate to the Batch Header Revisions screen (P0011), locate the batch by number, and update the posting status to blank (unposted). The batch can then be approved and posted normally. | **Critical** | Open P0011, locate the batch, manually set the posting status to blank. Approve if needed, then run R09801. |
 | **Pending approval** | **Pending** | Batch header exists but has not been approved. Will not post until approved. | **High** | Approve in P0011, then run R09801. |
-| **Pending approval** | **Error** | Batch was approved, posted, encountered an error, and approval was reset. | **High** | Review the error in P0011. Resolve the underlying issue. Re-approve and repost. See Section 8. |
+| **Pending approval** | **Error** | Batch was approved, posted, encountered an error, and approval was reset. | **High** | Review the error in P0011. Resolve the underlying issue. Re-approve and repost. See Section 9. |
 | **Approved** | **Approved** | Batch is approved and ready to post but R09801 has not yet run for it. | **Normal** | Run R09801 for the applicable company and batch type. |
-| **Approved** | **Error** | Posting was attempted but failed. Batch is still approved. | **High** | Review the error in P0011. Resolve the issue. Repost with R09801. See Section 8. |
+| **Approved** | **Error** | Posting was attempted but failed. Batch is still approved. | **High** | Review the error in P0011. Resolve the issue. Repost with R09801. See Section 9. |
 | **Approved** | **In Process** | Posting is currently running. | **Monitor** | Wait for completion. If the status does not change within a reasonable time, investigate whether the job has stalled. |
 
 > **"In Use" posting status:** RapidReconciler displays "In Use" when the batch posting status in F0011 is in a state that prevents posting. The corrective action is to open the batch in the **Batch Header Revisions screen (P0011)** in JD Edwards and manually set the posting status back to blank (unposted). Once reset, the batch can be approved and posted through the normal process. It does not mean another user has the batch locked.
@@ -177,9 +229,9 @@ Every row in the report carries both an Approval_Status and a Posting_Status. Th
 
 ---
 
-## Section 7: Common Batch Patterns and Root Causes
+## Section 8: Common Batch Patterns and Root Causes
 
-### 7.1 "In Use" Posting Status — O-Type Batches from System Scheduler
+### 8.1 "In Use" Posting Status — O-Type Batches from System Scheduler
 
 **Symptoms:**
 - Multiple O-type batches from JDESCHED (or another scheduler user) with Posting_Status = "In Use"
@@ -206,7 +258,7 @@ If the oldest batch is significantly older than the newest (e.g., the oldest is 
 5. Run R09801 to post.
 6. Investigate the root cause of the scheduler failure with IT — configure alerting so future occurrences surface immediately rather than accumulating.
 
-### 7.2 Pending Approval — IB Batch Spanning Multiple Accounts
+### 8.2 Pending Approval — IB Batch Spanning Multiple Accounts
 
 **Symptoms:**
 - Multiple rows with the same BatchNumber and Type = IB
@@ -226,7 +278,7 @@ An inventory balance adjustment (IB) affected multiple inventory accounts — fo
 
 > **Note:** Do not approve the batch if the two account entries do not appear to offset each other or if the accounts are unexpected. Contact the user who created the batch (visible in the Username column) before approving.
 
-### 7.3 Pending Approval — G-Type Manual Journal Entry
+### 8.3 Pending Approval — G-Type Manual Journal Entry
 
 **Symptoms:**
 - Batch type = G
@@ -247,7 +299,7 @@ A user entered a manual journal entry (P0911) that has not been approved. G-type
 
 > **Escalation:** If the batch age exceeds 5 business days and the responsible user cannot be contacted, escalate to the finance manager. A manual journal entry sitting unposted across a period end can affect closing balances.
 
-### 7.4 Pending Approval — V-Type AP Voucher
+### 8.4 Pending Approval — V-Type AP Voucher
 
 **Symptoms:**
 - Batch type = V
@@ -267,7 +319,7 @@ An AP voucher was entered and is awaiting approval before it can post. AP vouche
 
 > **Important:** Do not approve an AP voucher without verifying the underlying invoice. An incorrectly entered voucher that posts to an inventory account will appear as a GL-only variance in RapidReconciler's Transactions page.
 
-### 7.5 Approved and Ready to Post — N-Type Inventory Batches
+### 8.5 Approved and Ready to Post — N-Type Inventory Batches
 
 **Symptoms:**
 - Batch type = N
@@ -288,11 +340,11 @@ Run R09801 for the applicable company. All approved N-type batches for that comp
 
 ---
 
-## Section 8: Resolving Common Posting Errors
+## Section 9: Resolving Common Posting Errors
 
 When a batch has a posting status of **E** (Error), navigate to the Batch Review program (P0011) and review the error message in the batch header. The most common errors and their resolutions are below.
 
-### 8.1 Invalid Object Account
+### 9.1 Invalid Object Account
 
 | Field | Detail |
 |---|---|
@@ -301,7 +353,7 @@ When a batch has a posting status of **E** (Error), navigate to the Batch Review
 | **Cause** | An AAI, manual journal entry, or program processing option references an account that does not exist or is marked as a header account |
 | **Resolution** | (1) Verify the account exists in the Chart of Accounts (P0901 off menu G09411). (2) If the account does not exist, add it or correct the AAI pointing to it. (3) If the account exists but is non-posting, change the posting code to "Y" or redirect the AAI to a valid posting account. (4) Correct the account directly in F0911 if required (IT involvement). |
 
-### 8.2 Invalid Business Unit
+### 9.2 Invalid Business Unit
 
 | Field | Detail |
 |---|---|
@@ -310,7 +362,7 @@ When a batch has a posting status of **E** (Error), navigate to the Batch Review
 | **Cause** | An AAI, manual entry, or program references a business unit that has not been set up, was deleted, or has a typo |
 | **Resolution** | (1) Verify the business unit exists in F0006 (P0006 off menu G09411). (2) If missing, add the business unit or correct the AAI. (3) If the business unit was recently deleted or renamed, update any AAIs or processing options referencing it. |
 
-### 8.3 Amounts Out of Balance
+### 9.3 Amounts Out of Balance
 
 | Field | Detail |
 |---|---|
@@ -319,7 +371,7 @@ When a batch has a posting status of **E** (Error), navigate to the Batch Review
 | **Cause** | A transaction was partially entered, a line was deleted after entry, a rounding difference was introduced, or a system interruption occurred during transaction creation |
 | **Resolution** | (1) Run the batch proof report to identify which document is out of balance. (2) Locate the document in F0911 and review all lines. (3) Add the missing offsetting entry or remove the orphaned line. (4) For system-generated batches, investigate the source program — do not rebalance by adding manual lines without understanding the root cause. |
 
-### 8.4 Invalid GL Date — Closed Period
+### 9.4 Invalid GL Date — Closed Period
 
 | Field | Detail |
 |---|---|
@@ -328,7 +380,7 @@ When a batch has a posting status of **E** (Error), navigate to the Batch Review
 | **Cause** | The batch was created with a GL date in a period that has since been closed, or the GL date was entered incorrectly |
 | **Resolution** | (1) Check the open period in Company Constants (P0010) for the applicable company. (2) If the period should still be open, re-open it temporarily, post the batch, then re-close. (3) If the transaction should post in the current period, change the GL date on the batch via P0011 or directly in F0911. Consult the finance team before re-opening closed periods. |
 
-### 8.5 Account in a Locked Company
+### 9.5 Account in a Locked Company
 
 | Field | Detail |
 |---|---|
@@ -339,11 +391,11 @@ When a batch has a posting status of **E** (Error), navigate to the Batch Review
 
 ---
 
-## Section 9: Setting Up Automatic Batch Approval
+## Section 10: Setting Up Automatic Batch Approval
 
 By default, JD Edwards requires batches to be manually approved before they can be posted. Automatic batch approval eliminates this step for routine transaction types. It is configured at the company and batch type level in **Company Constants (P0010)**.
 
-### 9.1 When to Use Automatic Approval
+### 10.1 When to Use Automatic Approval
 
 Automatic approval is appropriate when:
 
@@ -357,7 +409,7 @@ Manual approval should be retained for:
 - Adjusting entries and period-end accruals
 - Any batch type where segregation of duties is required by policy or audit
 
-### 9.2 Configuration in Company Constants (P0010)
+### 10.2 Configuration in Company Constants (P0010)
 
 1. Navigate to **Company Constants** via fast path **P0010**.
 2. Select the company to configure and click **Revise**.
@@ -373,7 +425,7 @@ Manual approval should be retained for:
 
 > **Note:** Changes take effect for new batches only. Existing pending batches are not affected retroactively. Each company must be configured independently.
 
-### 9.3 Typical Settings by Batch Type
+### 10.3 Typical Settings by Batch Type
 
 | Batch Type | Typical Setting | Rationale |
 |---|---|---|
@@ -386,7 +438,7 @@ Manual approval should be retained for:
 | **S** — Sales Update | Automatic (**N**) | System-generated by R42800; manual approval delays period-end close |
 | **D** — Payments | Manual (**Y**) | Payment batches require segregation of duties in most control environments |
 
-### 9.4 Important Considerations
+### 10.4 Important Considerations
 
 - **Audit trail:** Automatically approved batches carry a system code (D) rather than a named approver. If audit requirements mandate a named approver for specific transaction types, automatic approval cannot be used for those types.
 - **Error batches:** Automatic approval does not prevent posting errors. A batch that fails to post still requires manual investigation.
@@ -394,17 +446,17 @@ Manual approval should be retained for:
 
 ---
 
-## Section 10: Reposting Damaged Account Balances
+## Section 11: Reposting Damaged Account Balances
 
 If an account balance in F0902 becomes corrupted or misaligned with F0911 after all batches have been confirmed as posted, it can be regenerated using the **Account Balance Repost** program **R099102**.
 
-### 10.1 When to Use R099102
+### 11.1 When to Use R099102
 
 - F0902 balance differs from the F0911 sum for the same account and period after all batches are confirmed posted
 - The GL Batches variance in RapidReconciler persists as zero but the Valuation section still shows an out-of-balance amount
 - A year-end close or period close left F0902 in an inconsistent state
 
-### 10.2 How to Run R099102
+### 11.2 How to Run R099102
 
 1. Identify the affected company, fiscal year, and account numbers.
 2. Navigate to R099102 via the General Accounting reports menu or fast path.
@@ -417,7 +469,7 @@ If an account balance in F0902 becomes corrupted or misaligned with F0911 after 
 
 ---
 
-## Section 11: Step-by-Step Analysis Procedure
+## Section 12: Step-by-Step Analysis Procedure
 
 Use this procedure for every Unposted GL Batches export:
 
@@ -437,13 +489,13 @@ Identify all rows that share the same BatchNumber. These must be resolved togeth
 
 **Step 4 — Triage by Status Combination**
 
-Classify each batch using the status combination table in Section 6:
+Classify each batch using the status combination table in Section 7:
 
 | Status Combination | First Action |
 |---|---|
 | Pending approval / In Use | Open P0011, reset posting status to blank |
 | Pending approval / Pending | Approve in P0011 |
-| Any / Error | Review error in P0011 — see Section 8 |
+| Any / Error | Review error in P0011 — see Section 9 |
 | Approved / Approved | Run R09801 |
 
 **Step 5 — Assess Batch Age**
@@ -461,7 +513,7 @@ For each batch, calculate days between BatchDate and PeriodEnds:
 
 Look for patterns that suggest systemic problems rather than one-off incidents:
 - Same batch type, same company, same user, multiple batches all with "In Use" → recurring posting job interruption; consider configuring alerting with IT
-- Same user, multiple G-type batches across several days → approver bottleneck; consider configuring auto-approval per Section 9
+- Same user, multiple G-type batches across several days → approver bottleneck; consider configuring auto-approval per Section 10
 - All batches dated the same day → single missed R09801 posting run
 
 **Step 7 — Determine Actions by Priority**
@@ -476,34 +528,34 @@ Assign each batch a priority and action:
 
 **Step 8 — Document Findings**
 
-Record the analysis on the GL Batch Analysis sheet (see Section 12 for formatting rules). Note the root cause, responsible party, and recommended action for each batch group.
+Record the analysis on the GL Batch Analysis sheet (see Section 13 for formatting rules). Note the root cause, responsible party, and recommended action for each batch group.
 
 **Step 9 — Follow Up**
 
-After corrections are made, verify that the GL Batches variance in RapidReconciler returns to $0 at the next refresh. If any residual balance remains, re-run the export and repeat this procedure. If F0902 is still misaligned after all batches are posted, run R099102 — see Section 10.
+After corrections are made, verify that the GL Batches variance in RapidReconciler returns to $0 at the next refresh. If any residual balance remains, re-run the export and repeat this procedure. If F0902 is still misaligned after all batches are posted, run R099102 — see Section 11.
 
 ---
 
-## Section 12: Excel Output Formatting Rules
+## Section 13: Excel Output Formatting Rules
 
 The following rules govern the format of the Excel output produced when analyzing an Unposted GL Batches export.
 
-### 12.1 File Naming
+### 13.1 File Naming
 
 Output file name: `DMAAI Analysis.xlsx`
 
-### 12.2 Sheet Structure
+### 13.2 Sheet Structure
 
 The workbook must contain exactly two sheets:
 
 | Sheet | Contents |
 |---|---|
 | **Unposted GL Batches** | The original source data, unchanged except for row highlights |
-| **GL Batch Analysis** | The analysis sheet — see Section 12.4 for structure |
+| **GL Batch Analysis** | The analysis sheet — see Section 13.4 for structure |
 
 Do not delete, rename, or reorder the source sheet. Do not add columns, rows, or formulas to the source sheet. The only permitted modification to the source sheet is cell background color (highlights).
 
-### 12.3 Row Highlighting — Source Sheet
+### 13.3 Row Highlighting — Source Sheet
 
 Every data row in the source sheet must be highlighted based on its priority classification:
 
@@ -520,7 +572,7 @@ Every data row in the source sheet must be highlighted based on its priority cla
 - If a batch qualifies for both Red and Orange (e.g., pending approval and age > 8 days), Red takes precedence.
 - The header row (row 2) and title row (row 1) are never highlighted.
 
-### 12.4 Analysis Sheet Structure
+### 13.4 Analysis Sheet Structure
 
 The GL Batch Analysis sheet must contain the following sections in order, each separated by a blank row:
 
@@ -531,7 +583,7 @@ The GL Batch Analysis sheet must contain the following sections in order, each s
 | **Findings by Priority** | One sub-section per priority level (Priority 1, Priority 2, Priority 3). Each sub-section lists the individual batches with batch number, detail (company, type, date, user, age), and amount. Followed by a note box explaining the root cause pattern and recommended resolution. |
 | **Recommended Actions** | Numbered action steps in execution order. Each step includes the specific action, the batches or systems it applies to, and the responsible owner. |
 
-### 12.5 Analysis Sheet Formatting
+### 13.5 Analysis Sheet Formatting
 
 | Element | Specification |
 |---|---|
@@ -552,71 +604,20 @@ The GL Batch Analysis sheet must contain the following sections in order, each s
 | **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
 | **Colour key** | Include a colour key section at the top of the analysis sheet. |
 
-### 12.6 Amounts
+### 13.6 Amounts
 
 All dollar amounts must be formatted with a dollar sign, comma thousands separator, and two decimal places (e.g., `$13,354.12`). Negative amounts use a leading minus sign (e.g., `$-5,583.45`). Do not use parentheses for negative amounts.
 
-### 12.7 Batch Age Calculation
+### 13.7 Batch Age Calculation
 
 Batch age is calculated as the number of calendar days between the BatchDate and the PeriodEnds date. Write this as an integer followed by "days before period end" in the detail column of the findings section (e.g., "27 days before period end").
 
-### 12.8 What Not to Include
+### 13.8 What Not to Include
 
-- Do not include raw JD Edwards status codes (e.g., "D", "E", "P") in the analysis sheet. Use the descriptive labels from Section 6.
+- Do not include raw JD Edwards status codes (e.g., "D", "E", "P") in the analysis sheet. Use the descriptive labels from Section 7.
 - Do not include the Currency or Rate columns in the analysis sheet unless a non-1.0 exchange rate requires explanation.
 - Do not calculate or display batch totals as formulas. Write the sum as a static value.
 - Do not add conditional formatting, data validation, or pivot tables to either sheet.
-
----
-
-## Section 13: Using Claude for Automated Analysis
-
-Claude can perform the full Section 11 analysis procedure automatically and return a single updated `.xlsx` file with the analysis sheet added and all source rows highlighted.
-
-### 13.1 What to Upload
-
-Upload **two files**:
-
-1. This guide (`.md`)
-2. The Unposted GL Batches export (`.xlsx`)
-
-Then use the following prompt:
-
-> *"Analyze this file using the guide as a template, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'GL Batch Analysis' and all source rows highlighted by priority."*
-
-Claude will work through the Section 11 procedure against the Excel data, apply highlights to the source sheet, and add the analysis sheet in the format specified in Section 12. The returned file is a drop-in replacement for the original.
-
-### 13.2 Follow-On Requests in the Same Session
-
-Once the guide has been uploaded in a session, Claude retains it in context for the remainder of the conversation. Subsequent GL batch exports do not require the guide to be uploaded again. Use the shorter prompt:
-
-> *"Analyze this file and return it with the analysis sheet and highlights."*
-
-Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost.
-
-### 13.3 Output Specification
-
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
-
-**Sheet 1 — Unposted GL Batches (original sheet, highlights added)**
-
-| Highlight | Color | Criteria |
-|---|---|---|
-| Red | `FFCCCC` | In Use OR age ≥ 8 days OR posting error |
-| Orange | `FFE5CC` | Pending approval / Pending (needs approval) |
-| Yellow | `FFFACD` | Approved / Approved (needs posting run only) |
-
-**Sheet 2 — GL Batch Analysis (new sheet)**
-
-Follows the structure defined in Section 12.4. Contains Report Summary, Status Summary, Findings by Priority, and Recommended Actions.
-
-### 13.4 Notes and Limitations
-
-- Claude analyzes the data as exported. If the report was generated with account filters applied, the total variance reflects only the filtered accounts — not the full GL Batches variance for the period.
-- Batch age is calculated against the PeriodEnds date in the export. The analysis always uses PeriodEnds as the reference point, not the date the analysis is run.
-- Claude cannot access JD Edwards to verify batch details, confirm user identities, or look up invoice amounts. Findings that require JD Edwards investigation are flagged as open items in the Recommended Actions section.
-- For exports with more than 50 rows, include a note in the prompt identifying the period-end date to confirm the correct reference point for age calculations.
-- Amounts in the exported file may display with floating-point precision artifacts. Claude rounds all amounts to two decimal places for reporting purposes.
 
 ---
 

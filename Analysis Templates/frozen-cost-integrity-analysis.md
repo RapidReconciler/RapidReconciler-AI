@@ -4,6 +4,49 @@
 
 ---
 
+## Section 1: Using Claude for Automated Analysis
+
+Claude can perform the full analysis procedure automatically and return a single updated `.xlsx` file with the RR Analysis sheet added.
+
+### What to Upload
+
+Upload **two files:**
+
+1. This guide (`.md`)
+2. The Integrity Report 6 export (`.xlsx`)
+
+Then use the following prompt:
+
+> *"Analyze this Integrity Report 6 file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis'. Cost in F30026 only (UnitCost = 0, FrzCost > 0) is Priority 1. Cost in F4105 only and both-populated mismatches are Priority 2."*
+
+### Output Specification
+
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+
+**Sheet 1 — Integrity (original)**
+- Source data, unchanged except row highlights, AutoFilter on row 2, freeze panes at row 3.
+- Priority 1 rows (UnitCost = 0, FrzCost > 0): light red fill (`FFE0E0`)
+- Priority 2 rows (all other findings): light orange fill (`FFF0DC`)
+
+**Sheet 2 — RR Analysis (new)**
+- Report Summary
+- Colour Key
+- Issue Type Summary (color-coded by priority)
+- Row Count by Company / Branch
+- Findings by Priority (item detail, root cause, verification steps, and resolution for each)
+- Recommended Actions (numbered, in execution order)
+
+### Notes and Limitations
+
+- **Space-padded numeric cells:** Cost columns in this export may contain space-padded values rather than true zeros. Strip whitespace from UnitCost and FrzCost before classifying. A cell containing `'    '` (spaces) is treated as zero.
+- Cost interpretation (whether a zero UnitCost is a genuine setup error or an intentional non-costed item) requires JDE access to the item setup and cost history — Claude flags the pattern but cannot confirm intent without JDE access.
+- The QOH displayed in the Lot column is parsed from the string "QOH N" — Claude extracts this value to flag items with on-hand inventory at the zero-cost condition.
+- For exports with many rows (500+), Claude groups findings by pattern (branch, stocking type, cost difference magnitude) to make the summary workable rather than listing every row individually.
+- If the Prodplant and Prodcost columns are populated, note them in the analysis — cross-plant costing can produce expected differences that are not data errors.
+
+---
+
+
 ## Overview
 
 Integrity Report 6 — **Frozen Cost Integrity** — compares the frozen standard unit cost stored in the Item Cost table (F4105, cost method 07) against the sum of cost components in the Product Cost table (F30026). It identifies discrepancies between the two records that would cause material issues, work order completions, and WIP transactions to use an incorrect cost — producing inventory valuation errors and unexplained manufacturing variances.
@@ -16,7 +59,7 @@ This guide is a reusable template for analyzing any customer's Integrity Report 
 
 ---
 
-## Section 1: Why Frozen Cost Integrity Matters
+## Section 2: Why Frozen Cost Integrity Matters
 
 In JD Edwards EnterpriseOne, the frozen standard cost (cost method 07) is the cost used to value all manufacturing transactions — material issues, work order completions, labor accruals, and variance accounting. This cost is stored in two separate places:
 
@@ -46,7 +89,7 @@ The frozen cost from F30026 is the valuation basis for:
 
 ---
 
-## Section 2: Report Structure and Field Reference
+## Section 3: Report Structure and Field Reference
 
 ### Export Column Definitions
 
@@ -79,7 +122,7 @@ The frozen cost from F30026 is the valuation basis for:
 
 ---
 
-## Section 3: Issue Type Reference
+## Section 4: Issue Type Reference
 
 Integrity Report 6 produces three distinct issue types. Each has different financial implications and resolution paths.
 
@@ -134,7 +177,7 @@ Both F4105 and F30026 have values, but they do not match. The Variance column sh
 
 ---
 
-## Section 4: Report Summary — [Generated from Customer Export]
+## Section 5: Report Summary — [Generated from Customer Export]
 
 This section is populated by Claude based on the uploaded Integrity Report 6 export.
 
@@ -164,7 +207,7 @@ One row per issue type found in the export:
 | **Branches Affected** | Branch plants present for this issue type |
 | **Description** | Plain-language impact statement |
 
-Color-code rows: Priority 2 (orange) for Cost in F4105 only; Priority 1 (red) for Cost in F30026 only; Priority 2 (orange) for Both populated — mismatch. See Section 7 for priority definitions.
+Color-code rows: Priority 2 (orange) for Cost in F4105 only; Priority 1 (red) for Cost in F30026 only; Priority 2 (orange) for Both populated — mismatch. See Section 8 for priority definitions.
 
 ### Row Count by Company and Branch
 
@@ -172,7 +215,7 @@ Summarize total rows and each issue type count for each company/branch combinati
 
 ---
 
-## Section 5: Findings by Priority — [Generated from Customer Export]
+## Section 6: Findings by Priority — [Generated from Customer Export]
 
 This section is populated by Claude based on the uploaded export. One sub-section per issue type, ordered by priority.
 
@@ -209,7 +252,7 @@ Decision table:
 
 ---
 
-## Section 6: Common Root Causes
+## Section 7: Common Root Causes
 
 ### Cost in F4105 Only
 
@@ -241,7 +284,7 @@ Decision table:
 
 ---
 
-## Section 7: JDE Navigation Reference
+## Section 8: JDE Navigation Reference
 
 | Task | Program | Fast Path / Menu |
 |---|---|---|
@@ -254,7 +297,7 @@ Decision table:
 
 ---
 
-## Section 8: Step-by-Step Analysis Procedure
+## Section 9: Step-by-Step Analysis Procedure
 
 Use this procedure each time an Integrity Report 6 export is received.
 
@@ -294,7 +337,7 @@ For any items where the frozen standard cost was corrected, check whether there 
 
 ---
 
-## Section 9: Excel Output Specification
+## Section 10: Excel Output Specification
 
 ### File Naming
 
@@ -350,51 +393,9 @@ Follow the standard formatting specification:
 
 ---
 
-## Section 10: Using Claude for Automated Analysis
-
-Claude can perform the full analysis procedure automatically and return a single updated `.xlsx` file with the RR Analysis sheet added.
-
-### What to Upload
-
-Upload **two files:**
-
-1. This guide (`.md`)
-2. The Integrity Report 6 export (`.xlsx`)
-
-Then use the following prompt:
-
-> *"Analyze this Integrity Report 6 file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis'. Cost in F30026 only (UnitCost = 0, FrzCost > 0) is Priority 1. Cost in F4105 only and both-populated mismatches are Priority 2."*
-
-### Output Specification
-
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
-
-**Sheet 1 — Integrity (original)**
-- Source data, unchanged except row highlights, AutoFilter on row 2, freeze panes at row 3.
-- Priority 1 rows (UnitCost = 0, FrzCost > 0): light red fill (`FFE0E0`)
-- Priority 2 rows (all other findings): light orange fill (`FFF0DC`)
-
-**Sheet 2 — RR Analysis (new)**
-- Report Summary
-- Colour Key
-- Issue Type Summary (color-coded by priority)
-- Row Count by Company / Branch
-- Findings by Priority (item detail, root cause, verification steps, and resolution for each)
-- Recommended Actions (numbered, in execution order)
-
-### Notes and Limitations
-
-- **Space-padded numeric cells:** Cost columns in this export may contain space-padded values rather than true zeros. Strip whitespace from UnitCost and FrzCost before classifying. A cell containing `'    '` (spaces) is treated as zero.
-- Cost interpretation (whether a zero UnitCost is a genuine setup error or an intentional non-costed item) requires JDE access to the item setup and cost history — Claude flags the pattern but cannot confirm intent without JDE access.
-- The QOH displayed in the Lot column is parsed from the string "QOH N" — Claude extracts this value to flag items with on-hand inventory at the zero-cost condition.
-- For exports with many rows (500+), Claude groups findings by pattern (branch, stocking type, cost difference magnitude) to make the summary workable rather than listing every row individually.
-- If the Prodplant and Prodcost columns are populated, note them in the analysis — cross-plant costing can produce expected differences that are not data errors.
-
----
-
 ## Section 11: Related Documentation
 
-- [Integrity Report 5 Guide](integrity-report5-glclass-analysis.md) — GL class code integrity (F4102 vs F41021). Section 9 of the manufacturing reference notes that F41021/F4102 GL class code mismatches cause manufacturing transactions to post to unexpected accounts — IR5 and IR6 findings often co-occur on the same items.
+- [Integrity Report 5 Guide](integrity-report5-glclass-analysis.md) — GL class code integrity (F4102 vs F41021). Section 10 of the manufacturing reference notes that F41021/F4102 GL class code mismatches cause manufacturing transactions to post to unexpected accounts — IR5 and IR6 findings often co-occur on the same items.
 - [DMAAI Analysis Guide](inventory-integrity-report2-analysis.md) — If F30026 contains GL class codes that are missing from the DMAAI model table (4152 PI), manufacturing transactions will error when R31802A runs. IR2 and IR6 findings can be related.
 - [Cardex Variance Analysis Guide](cardex-variance-analysis.md) — Frozen cost errors directly cause cardex variances. A zero-cost F4105 record will produce a cardex variance equal to the full inventory value of every transaction for that item.
 - [End of Day Analysis Guide](end-of-day-analysis.md) — Missing R30835 runs and zero-cost records are common contributors to unexplained End of Day variances.

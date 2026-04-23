@@ -4,6 +4,53 @@
 
 ---
 
+## Section 1: Using Claude for Automated Analysis
+
+Claude can perform the full analysis procedure automatically and return a single updated `.xlsx` file with the RR Analysis sheet added.
+
+### What to Upload
+
+Upload **two files:**
+
+1. This guide (`.md`)
+2. The Integrity Report 5 export (`.xlsx`)
+
+Then use the following prompt:
+
+> *"Analyze this Integrity Report 5 file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis'. Blank location GL class codes on stock items are a red flag and should be Priority 1. GL class mismatches should be Priority 2. Group findings by pattern where possible."*
+
+### Follow-On Requests in the Same Session
+
+Once this guide has been uploaded, it remains in context. Use:
+
+> *"Analyze this Integrity Report 5 file and return it with the RR Analysis sheet."*
+
+### Output Specification
+
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+
+**Sheet 1 — Integrity (original)**
+- Source data, unchanged
+- No row highlighting required
+
+**Sheet 2 — RR Analysis (new)**
+- Report Summary
+- Issue Type Summary (color-coded by priority)
+- Row Count by Company
+- Findings by Priority (with item detail, root cause, verification steps, and resolution for each)
+- Recommended Actions (numbered, in execution order)
+
+### Notes and Limitations
+
+- **Blank LocationClass detection:** The LocationClass column in this export may contain space-padded values (e.g., four spaces) rather than true empty cells. Claude must strip whitespace from GL class fields before classifying rows — a cell containing only spaces is treated as blank, not as a GL class code. Always check for this before counting blank rows.
+- Claude analyzes the data as exported. The StockType column is used to determine whether a blank LocationClass is a red flag — blank location GL class on Stocking Type S is always Priority 1.
+- GL class code interpretation (whether a code is stock vs non-stock) requires JDE access to the chart of accounts and DMAAI setup — Claude flags codes that appear unusual based on the data pattern but cannot confirm their purpose without JDE access.
+- Mismatch resolution requires JDE access to confirm which GL class (branch or location) is correct for each item.
+- For exports with many mismatches following the same GL class pair pattern, Claude groups findings by pattern to make the summary workable.
+
+---
+
+
 ## Overview
 
 Integrity Report 5 — **GL Class Integrity** — compares the GL class code on every Item Branch record (F4102) against the GL class code on each corresponding Item Location record (F41021). It identifies discrepancies between the two records that would cause inventory transactions to post to incorrect GL accounts during reconciliation.
@@ -16,7 +63,7 @@ This guide is a reusable template for analyzing any customer's Integrity Report 
 
 ---
 
-## Section 1: Why GL Class Codes Matter
+## Section 2: Why GL Class Codes Matter
 
 In JD Edwards EnterpriseOne, the GL class code is the bridge between an inventory item and the GL account it posts to. RapidReconciler uses the GL class code from the item location record (F41021) to assign every item ledger transaction (F4111) to the correct inventory account during the nightly import.
 
@@ -43,7 +90,7 @@ A blank location GL class may be acceptable only for non-stock items (Stocking T
 
 ---
 
-## Section 2: Report Structure and Field Reference
+## Section 3: Report Structure and Field Reference
 
 ### Export Column Definitions
 
@@ -62,7 +109,7 @@ A blank location GL class may be acceptable only for non-stock items (Stocking T
 
 ---
 
-## Section 3: Issue Type Reference
+## Section 4: Issue Type Reference
 
 Integrity Report 5 produces two types of findings:
 
@@ -88,7 +135,7 @@ Integrity Report 5 produces two types of findings:
 
 ---
 
-## Section 4: Report Summary — [Generated from Customer Export]
+## Section 5: Report Summary — [Generated from Customer Export]
 
 This section is populated by Claude based on the uploaded Integrity Report 5 export.
 
@@ -123,7 +170,7 @@ Summarize total rows, blank LocationClass count, and GL class mismatch count for
 
 ---
 
-## Section 5: Findings by Priority — [Generated from Customer Export]
+## Section 6: Findings by Priority — [Generated from Customer Export]
 
 This section is populated by Claude based on the uploaded export. One sub-section per issue type, ordered by priority.
 
@@ -142,7 +189,7 @@ Each finding sub-section contains:
 List all affected items with company, branch, item number, description, location, branch class, and location class. Note any patterns (e.g., all blank items at locations with a common suffix, all mismatches in the same GL class pair).
 
 **Root Cause**
-Explain the most likely cause based on the data pattern. Common causes are listed in Section 6. Present possible explanations without assuming which is correct — determination requires JDE access and accounting team input.
+Explain the most likely cause based on the data pattern. Common causes are listed in Section 7. Present possible explanations without assuming which is correct — determination requires JDE access and accounting team input.
 
 **Verification Steps**
 Step-by-step instructions to locate and confirm the finding in JDE using Item Branch (P41026) and Item Location (P41024).
@@ -159,7 +206,7 @@ Decision table:
 
 ---
 
-## Section 6: Common Root Causes
+## Section 7: Common Root Causes
 
 ### Blank Location GL Class
 
@@ -181,7 +228,7 @@ Decision table:
 
 ---
 
-## Section 7: JDE Navigation Reference
+## Section 8: JDE Navigation Reference
 
 | Task | Program | Fast Path / Menu |
 |---|---|---|
@@ -193,7 +240,7 @@ Decision table:
 
 ---
 
-## Section 8: Step-by-Step Analysis Procedure
+## Section 9: Step-by-Step Analysis Procedure
 
 Use this procedure each time an Integrity Report 5 export is received.
 
@@ -228,7 +275,7 @@ Maintain a log of each finding, the determination (error vs intentional), the ac
 
 ---
 
-## Section 9: Excel Output Formatting Rules
+## Section 10: Excel Output Formatting Rules
 
 ### File Naming
 
@@ -272,52 +319,6 @@ Do not delete, rename, or reorder the source sheet.
 | **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFF0DC` / text `6B3A00`. Lighter fills and non-bold text for readability. |
 | **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
 | **Colour key** | Include a colour key section at the top of the analysis sheet. |
-
----
-
-## Section 10: Using Claude for Automated Analysis
-
-Claude can perform the full analysis procedure automatically and return a single updated `.xlsx` file with the RR Analysis sheet added.
-
-### What to Upload
-
-Upload **two files:**
-
-1. This guide (`.md`)
-2. The Integrity Report 5 export (`.xlsx`)
-
-Then use the following prompt:
-
-> *"Analyze this Integrity Report 5 file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis'. Blank location GL class codes on stock items are a red flag and should be Priority 1. GL class mismatches should be Priority 2. Group findings by pattern where possible."*
-
-### Follow-On Requests in the Same Session
-
-Once this guide has been uploaded, it remains in context. Use:
-
-> *"Analyze this Integrity Report 5 file and return it with the RR Analysis sheet."*
-
-### Output Specification
-
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
-
-**Sheet 1 — Integrity (original)**
-- Source data, unchanged
-- No row highlighting required
-
-**Sheet 2 — RR Analysis (new)**
-- Report Summary
-- Issue Type Summary (color-coded by priority)
-- Row Count by Company
-- Findings by Priority (with item detail, root cause, verification steps, and resolution for each)
-- Recommended Actions (numbered, in execution order)
-
-### Notes and Limitations
-
-- **Blank LocationClass detection:** The LocationClass column in this export may contain space-padded values (e.g., four spaces) rather than true empty cells. Claude must strip whitespace from GL class fields before classifying rows — a cell containing only spaces is treated as blank, not as a GL class code. Always check for this before counting blank rows.
-- Claude analyzes the data as exported. The StockType column is used to determine whether a blank LocationClass is a red flag — blank location GL class on Stocking Type S is always Priority 1.
-- GL class code interpretation (whether a code is stock vs non-stock) requires JDE access to the chart of accounts and DMAAI setup — Claude flags codes that appear unusual based on the data pattern but cannot confirm their purpose without JDE access.
-- Mismatch resolution requires JDE access to confirm which GL class (branch or location) is correct for each item.
-- For exports with many mismatches following the same GL class pair pattern, Claude groups findings by pattern to make the summary workable.
 
 ---
 

@@ -1,10 +1,90 @@
-﻿# Cardex Variance Analysis Guide
+# Cardex Variance Analysis Guide
 **Template for Item Roll Forward Amount Variance Investigations**
 *Integrates JD Edwards / RapidReconciler resolution procedure*
 
 ---
 
-## Section 1: What Is a Cardex Variance?
+## Section 1: Using Claude for Automated Analysis
+
+Claude can perform a full cardex variance analysis automatically and return a single updated `.xlsx` file with findings written directly into the workbook and all problem rows highlighted. This eliminates manual annotation and ensures consistent output across analysts.
+
+### 1.1 First Request in a Session
+
+On the first request, upload **both files** together:
+
+1. This guide (`.md`)
+2. The Item Roll Forward / Transaction Detail report (`.xlsx`)
+
+Then use the following prompt:
+
+> *"Analyze this file using the guide as a template, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis' and all problem rows highlighted."*
+
+Claude will read the guide to understand the report structure and variance patterns, work through the analysis procedure against the Excel data, highlight the relevant rows on the source sheet, and add the analysis as a new sheet in the same workbook. The returned file is a drop-in replacement for the original — the source sheet is unchanged except for the highlights.
+
+### 1.2 Follow-On Requests in the Same Session
+
+Once the guide has been uploaded in a session, Claude retains it in context for the remainder of the conversation. Subsequent reports **do not require the guide to be re-uploaded**. Simply upload the new `.xlsx` and use a shorter prompt:
+
+> *"Analyze this file and return it with the analysis sheet and highlights."*
+
+Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide again — Claude will use it and ignore the duplication.
+
+### 1.3 Output Specification
+
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+
+The returned workbook will contain two sheets:
+
+**Sheet 1 — Transaction Details (original sheet, highlights added)**
+
+**Column formatting requirements:**
+
+| Column | Field | Format |
+|---|---|---|
+| **A** | **`companynumber`** | **Text / character — format as `@`** |
+| **B** | **`longaccount`** | **Text / character — format as `@`** |
+| **C** | **`ukid`** | **Plain integer, no commas — format as `0`** |
+| **D** | **`branch`** | **Text / character — format as `@`** |
+| E–N, P–U | All other fields | Per field type: dates as date, quantities as `#,##0.000`, amounts as `#,##0.00`, text as text |
+| **O** | **`doc` (document number)** | **Plain integer, no commas — format as `0`** |
+
+`companynumber`, `longaccount`, and `branch` are JD Edwards identifiers and account codes that must be preserved exactly as exported — numeric formatting would strip leading zeros or alter the display. `ukid` and `doc` are system-generated record and document identifiers, not quantities or amounts; comma formatting misrepresents them and makes them harder to cross-reference in JD Edwards.
+
+| Highlight | Color | Rows |
+|---|---|---|
+| Root cause | Red | The specific transaction rows directly responsible for the variance |
+| Related | Orange | The Curr bal row; PI/PV revaluation rows that drove cost shifts; rows bracketing the cost inflection point |
+| Informational | Blue | Rows that are normal but contextually significant (e.g., OV/PV pairs on a reconciled WAC item) |
+
+**Sheet 2 — RR Analysis (new sheet)**
+
+| Section | Content |
+|---|---|
+| **Document** | Item number, lot, branch, location, GL account, GL class, UOM, analysis date, variance amounts |
+| **Cost Method** | Cost method code from `dt` on Curr bal row (`ukid = 999999999999`); method name; key implications for this item |
+| **Cost Level** | Cost level from `dt` on Beg bal row (`ukid = 0`); level name (1 = item/branch, 2 = item/branch with location/lot qty, 3 = item/branch/location/lot); reconciliation scope note |
+| **Beginning Balance** | Beg bal date, qty, amount, implied cost; internal consistency check result; note if gap may pre-date RR go-live |
+| **Transaction Summary** | Net qty and val by dt code; confirmation that net qty ties to Curr bal |
+| **Cost Evolution** | Chronological table of distinct cost values, dates, and transaction types; identification of inflection points (dollar-only items) |
+| **WAC Analysis** | OV/PV pair trace; IB row review; negative quantity check; opening vs current WAC comparison (WAC items only) |
+| **Root Cause** | Section 5 pattern classification; two-component breakdown where applicable; specific dates, costs, and quantities |
+| **Evidence** | Row numbers from the source sheet supporting the finding |
+| **Corrective Action** | Full JDE correction steps per Section 6; Re-Roll step per Section 7; "None required" if reconciled |
+| **Preventive Actions** | Follow-up items: cost review, BOM validation, WAC monitoring, negative quantity controls |
+
+Set column widths to fixed widths sized for readability — do not auto-stretch to full sheet width. Enable wrap text on all cells. Calculate row heights from content length and column width, not a flat default. Resolution tables use a two-column layout: condition in cols A–B, action in cols C–E. Priority colours: P1 fill `FFE0E0` / text `8B0000`, P2 fill `FFF0DC` / text `6B3A00` — lighter fills and non-bold text for readability. Source sheet: AutoFilter on row 2, freeze panes at row 3, row highlights matching analysis priority colours. Include a colour key section at the top of the analysis sheet.
+
+### 1.4 Notes and Limitations
+
+- Claude analyzes the data as exported. If the source report was generated with filters applied or sections suppressed, the analysis reflects only what is present in the file.
+- The highlight colors applied by Claude are standard fills. If the original file already uses cell fill colors for other purposes, advise Claude of the existing convention in the prompt so it can use different colors.
+- For very large Item Roll Forward files spanning many items or periods, include a note in the prompt identifying the specific item number and lot to focus on if only one item is under investigation.
+- Claude will note findings that require further investigation in JD Edwards (e.g., verifying a PI revaluation authorization, querying F0911 for a specific batch) that cannot be completed from the Excel file alone. These will appear as open questions in the Corrective Action section of the analysis sheet.
+- Amounts in the exported file may display with floating-point precision artifacts (e.g., `$139.50660000000001`). Claude rounds all amounts to two decimal places for analysis and reporting purposes. These artifacts do not affect the accuracy of the analysis.
+- The correction amounts and IA field values provided in the output are based on the exported data. Always verify the current JDE on-hand balance independently before posting any adjustment.
+
+
+## Section 2: What Is a Cardex Variance?
 
 A **Cardex** (also called an Item Roll Forward or Item Transaction History) records every inventory movement for an item — receipts, issues, transfers, and adjustments — along with running quantity (`runqty`) and running amount (`runamt`) balances. In JD Edwards, this data lives in the item ledger table **F4111**.
 
@@ -16,7 +96,7 @@ This means the item has been fully depleted in quantity, yet a residual dollar b
 
 **JD Edwards is the system of record.** RapidReconciler calculates its cardex variance only from the point when the program was first initiated or data was last reset — it does not have visibility into transaction history that predates that point. If a discrepancy exists between RapidReconciler and JD Edwards, the Re-Roll options synchronize RapidReconciler to match JD Edwards, not the other way around.
 
-### 1.1 How RapidReconciler Calculates the Beginning Balance
+### 2.1 How RapidReconciler Calculates the Beginning Balance
 
 JD Edwards does not provide reliable "as-of" inventory data, and loading decades of historical transactions into RapidReconciler at initial setup would be impractical. RapidReconciler therefore derives a **Balance Forward** internally to serve as the starting point for reconciliation. The process works as follows:
 
@@ -39,7 +119,7 @@ When a variance occurs in a prior period but is not resolved until a later perio
 
 To change the Cardex Accounting Method, submit a written request to rrsupport@getgsi.com.
 
-### 1.2 Where Cardex Variance Fits in the Reconciliation Framework
+### 2.2 Where Cardex Variance Fits in the Reconciliation Framework
 
 RapidReconciler identifies four sources of variance between the perpetual inventory system and the general ledger. Cardex variance is Source 4 — the integrity check between the item ledger transaction summary and the on-hand balance. If all four sources equal zero, perpetual and GL balances must be equal. Transactions must match in the same company, GL account, and fiscal period to be considered reconciled.
 
@@ -54,22 +134,22 @@ For **average cost items**, the summarization level depends on the cost level as
 
 In all cases, item ledger records with a posting code (`ILIPCD`) of **X** are memo transactions — work order scrap, lot releases, and certain warehousing movements — and must be excluded from the cardex calculation.
 
-### 1.3 Variance Types
+### 2.3 Variance Types
 
 | QtyVar | AmtVar | Interpretation | Approach |
 |---|---|---|---|
 | 0 | 0 | No variance | No action |
-| **Non-zero** | **Non-zero** | **Quantity and amount variance — F4111 ledger and F41021 on-hand have drifted apart** | **Proceed to Section 3; use the QtyVar branch at Step 2** |
+| **Non-zero** | **Non-zero** | **Quantity and amount variance — F4111 ledger and F41021 on-hand have drifted apart** | **Proceed to Section 4; use the QtyVar branch at Step 2** |
 | Non-zero | 0 | Quantity gap with no dollar impact — unusual; may indicate UOM issue | Investigate F41021 vs F4111 directly; coordinate with IT |
-| **0** | **Non-zero** | **Dollar-only variance — cost differential with no quantity gap** | **Proceed to Section 3; use the dollar-only branch at Step 2** |
+| **0** | **Non-zero** | **Dollar-only variance — cost differential with no quantity gap** | **Proceed to Section 4; use the dollar-only branch at Step 2** |
 
 > **Note on the QtyVar + AmtVar pattern:** When both are non-zero, the AmtVar is almost always partly explained by the QtyVar — the quantity gap valued at the prevailing WAC accounts for the majority of the dollar variance, with a small residual remaining. Decompose the AmtVar into these two components before investigating further (see Step 2a below).
 
 ---
 
-## Section 2: Key Fields Reference
+## Section 3: Key Fields Reference
 
-### 2.1 Item Roll Forward Columns
+### 3.1 Item Roll Forward Columns
 
 | Field | Description |
 |---|---|
@@ -85,7 +165,7 @@ In all cases, item ledger records with a posting code (`ILIPCD`) of **X** are me
 | `comm` | Comment flag — look for `Curr bal` (current balance) and `Beg bal` (beginning balance) |
 | `periodends` | Period end date for the transaction |
 
-### 2.2 Common Transaction Type Codes (`dt`)
+### 3.2 Common Transaction Type Codes (`dt`)
 
 | Code | Description | GL Impact |
 |---|---|---|
@@ -99,7 +179,7 @@ In all cases, item ledger records with a posting code (`ILIPCD`) of **X** are me
 | `IA` | Inventory Adjustment — quantity or dollars-only correction | Updates F4111 and F41021; high-volume items may have many small IA transactions across periods |
 | `IB` | Inventory Balance / Cost Change | Zero balance adjustments, Re-Roll entries, and P4105 manual cost revisions; created by manual P4105 changes but **not** by system-driven WAC recalculations |
 
-### 2.3 RapidReconciler Cardex Integrity Pop-Up Fields
+### 3.3 RapidReconciler Cardex Integrity Pop-Up Fields
 
 | Field | Description |
 |---|---|
@@ -111,7 +191,7 @@ In all cases, item ledger records with a posting code (`ILIPCD`) of **X** are me
 
 > **Note:** The pop-up reflects data as of the most recent nightly refresh cycle. Any transactions after the last import will not appear until the following night's refresh.
 
-### 2.4 Identifying the Item's Cost Method and Cost Level
+### 3.4 Identifying the Item's Cost Method and Cost Level
 
 The `dt` field carries two distinct pieces of item configuration data depending on which special row is being read. Both should be noted at the start of every analysis.
 
@@ -148,7 +228,7 @@ When the cost method is `02`, extend the standard workflow with the following ch
 
 ---
 
-## Section 3: Step-by-Step Analysis Workflow
+## Section 4: Step-by-Step Analysis Workflow
 
 ### Step 1 — Identify the Variance Row
 
@@ -158,8 +238,8 @@ If using RapidReconciler, open the Cardex Integrity pop-up by hovering over the 
 
 Also read the following two `dt` field values before proceeding — both are required for a complete analysis:
 
-- **Cost method** — `dt` on the **Curr bal row** (`ukid = 999999999999`): `02` = Weighted Average, `07` = Standard Cost, `09` = Actual Cost. Determines which additional checks apply (see Section 2.4).
-- **Cost level** — `dt` on the **Beg bal row** (`ukid = 0`): `1`, `2`, or `3`. Determines the correct aggregation scope for the F4111 vs F41021 comparison in Step 5.1 — Level 1 and 2 items are reconciled at branch/item level inclusive of all locations and lots; Level 3 items are reconciled per location and lot (see Section 2.4).
+- **Cost method** — `dt` on the **Curr bal row** (`ukid = 999999999999`): `02` = Weighted Average, `07` = Standard Cost, `09` = Actual Cost. Determines which additional checks apply (see Section 3.4).
+- **Cost level** — `dt` on the **Beg bal row** (`ukid = 0`): `1`, `2`, or `3`. Determines the correct aggregation scope for the F4111 vs F41021 comparison in Step 5.1 — Level 1 and 2 items are reconciled at branch/item level inclusive of all locations and lots; Level 3 items are reconciled per location and lot (see Section 3.4).
 
 ### Step 2 — Determine the Variance Type and Branch
 
@@ -176,14 +256,14 @@ Component A (qty-driven)  = QtyVar × prevailing WAC (cost field on Curr bal row
 Component B (dollar-only) = AmtVar – Component A
 ```
 
-If Component B is small or zero, the dollar variance is fully explained by the quantity gap. Investigate the quantity root cause (see Section 4h) before addressing any residual dollar amount. Proceed to Step 3 for the transaction-type segmentation, then jump to Section 4h for the quantity-specific root cause guidance.
+If Component B is small or zero, the dollar variance is fully explained by the quantity gap. Investigate the quantity root cause (see Section 5h) before addressing any residual dollar amount. Proceed to Step 3 for the transaction-type segmentation, then jump to Section 5h for the quantity-specific root cause guidance.
 
 ### Step 3 — Verify the Beginning Balance
 
 Before segmenting transactions, confirm the Beg bal row is consistent:
 
 - Note the Beg bal `runqty`, `runamt`, and implied unit cost (`runamt ÷ runqty`).
-- Confirm: Beg bal `runqty` + net transaction `qty` = Curr bal `runqty`. If this does not tie, the beginning balance itself may be the source of the discrepancy — see Section 1.1 for how RapidReconciler back-calculates this value.
+- Confirm: Beg bal `runqty` + net transaction `qty` = Curr bal `runqty`. If this does not tie, the beginning balance itself may be the source of the discrepancy — see Section 2.1 for how RapidReconciler back-calculates this value.
 - A small implied cost rounding difference (e.g., $0.0001/unit) between the Beg bal and the prevailing WAC is normal and immaterial.
 - If the beginning balance does not tie, consider whether the discrepancy pre-dates RR go-live — meaning it may have been embedded in the Balance Forward at initial setup.
 
@@ -231,7 +311,7 @@ Cost gap per unit = Effective issue – Avg receipt
 Total variance    = Cost gap × net qty
 ```
 
-Where a single driver is not obvious, decompose into sub-components (see Section 4a).
+Where a single driver is not obvious, decompose into sub-components (see Section 5a).
 
 ### Step 7 — Trace the Root Cause Event
 
@@ -248,11 +328,11 @@ Where a single driver is not obvious, decompose into sub-components (see Section
 
 ### Step 8 — Assess Materiality and Validate in JD Edwards
 
-Before posting any correction, validate the variance directly in JD Edwards (see Section 5). Determine whether the issue requires a quantity correction, a dollars-only IA, or documentation only.
+Before posting any correction, validate the variance directly in JD Edwards (see Section 6). Determine whether the issue requires a quantity correction, a dollars-only IA, or documentation only.
 
 ---
 
-## Section 4: Common Root Causes
+## Section 5: Common Root Causes
 
 ### 4a. Weighted Average Cost (WAC) Escalation After Kit Receipt
 
@@ -342,9 +422,9 @@ A secondary cause is an unauthorised manual cost change in P4105, which creates 
 
 ---
 
-## Section 5: JDE Validation and Correction Procedure
+## Section 6: JDE Validation and Correction Procedure
 
-### 5.1 Export and Validate the Cardex in JD Edwards
+### 6.1 Export and Validate the Cardex in JD Edwards
 
 1. Export all cardex transactions for the item from JD Edwards to Excel (F4111).
 2. **Exclude memo transactions:** Remove all rows where column `ILIPCD = "X"`. Memo transactions (work order scrap, lot releases, certain warehousing movements) do not impact the on-hand balance.
@@ -353,16 +433,16 @@ A secondary cause is an unauthorised manual cost change in P4105, which creates 
 
 | Result | Interpretation | Next Step |
 |---|---|---|
-| Qty and amount both match JDE | JDE is correct; variance is in RapidReconciler only | Use Re-Roll options (Section 6) |
+| Qty and amount both match JDE | JDE is correct; variance is in RapidReconciler only | Use Re-Roll options (Section 7) |
 | **Amount does not match JDE, qty matches** | **True dollar-only discrepancy in JD Edwards** | **Post a dollars-only IA (Steps 5.2–5.6)** |
 | **Quantity does not match JDE** | **F4111 and F41021 quantities diverge — quantity correction required** | **Proceed to Step 5.7** |
 
-### 5.2 Determine Cost Environment
+### 6.2 Determine Cost Environment
 
 - **Standard Cost (Method 07):** Proceed directly to Step 5.4.
 - **Average Cost (Method 02):** Complete Step 5.3 first.
 
-### 5.3 Average Cost Only: Disable Average Cost Update for P4114
+### 6.3 Average Cost Only: Disable Average Cost Update for P4114
 
 > **Skip this step for standard cost items.**
 
@@ -374,7 +454,7 @@ In an average cost environment, P4114 (Inventory Adjustments) typically recalcul
 
 > **Proceed immediately to Step 5.4.** This change takes effect at once — minimize the window during which it is active.
 
-### 5.4 Post the IA Transaction in P4114
+### 6.4 Post the IA Transaction in P4114
 
 Navigate to **Inventory Adjustments (P4114)** from the applicable inventory menu and complete the following:
 
@@ -397,13 +477,13 @@ Navigate to **Inventory Adjustments (P4114)** from the applicable inventory menu
 
 Review and post. The IA will appear in F4111 with the correct dollar amount and zero quantity.
 
-### 5.5 Verify the JDE Adjustment
+### 6.5 Verify the JDE Adjustment
 
 1. Open the item ledger (F4111) and confirm the IA transaction appears with the correct extended amount and a quantity of zero.
 2. Re-export the cardex to Excel, re-apply the ILIPCD = "X" exclusion, and re-summarize to confirm the extended amount ties to the JD Edwards balance.
 3. Verify that corresponding GL entries have been created and posted to the correct inventory account.
 
-### 5.6 Average Cost Only: Restore UDC Table 40/AV
+### 6.6 Average Cost Only: Restore UDC Table 40/AV
 
 > **Skip this step for standard cost items.**
 
@@ -415,7 +495,7 @@ Review and post. The IA will appear in F4111 with the correct dollar amount and 
 
 > **Warning:** Leaving P4114 set to "N" will prevent the average cost from updating on future legitimate transactions. Do not skip this step.
 
-### 5.7 Standard vs. Average Cost Summary
+### 6.7 Standard vs. Average Cost Summary
 
 | Step | Standard Cost | Average Cost |
 |---|---|---|
@@ -424,7 +504,7 @@ Review and post. The IA will appear in F4111 with the correct dollar amount and 
 | 5.5 — Verify adjustment | Required | Required |
 | 5.6 — Restore UDC 40/AV | Skip | **Required** |
 
-### 5.7 Quantity Variance — Correction Procedure
+### 6.7 Quantity Variance — Correction Procedure
 
 Use this procedure when Step 5.1 confirms that F4111 and F41021 quantities do not agree.
 
@@ -449,20 +529,20 @@ After the F41021 correction, re-run the RapidReconciler import and confirm QtyVa
 
 **5.7.3 — Pre-go-live gap embedded in the beginning balance**
 
-If the quantity discrepancy cannot be traced to any F4111 transaction and appears to have existed since RR was first initiated, the gap was likely embedded in the back-calculated beginning balance at setup (see Section 1.1). In this case:
+If the quantity discrepancy cannot be traced to any F4111 transaction and appears to have existed since RR was first initiated, the gap was likely embedded in the back-calculated beginning balance at setup (see Section 2.1). In this case:
 
 1. Determine which system was accurate at go-live — F41021 (physical snapshot) or F4111 (transaction ledger).
 2. If F41021 was correct at go-live and F4111 has since drifted: post an IA in JD Edwards to align F4111 to F41021 for the quantity difference.
 3. If F4111 was correct at go-live and F41021 was wrong: request an F41021 SQL correction from IT for the quantity difference.
-4. After the correction, use the **Zero Beginning Balance** Re-Roll option in RapidReconciler if the earliest period balance needs to be reset to reflect the correction (see Section 6, Option 2).
+4. After the correction, use the **Zero Beginning Balance** Re-Roll option in RapidReconciler if the earliest period balance needs to be reset to reflect the correction (see Section 7, Option 2).
 
 ---
 
 > ⚠ **Before making any changes in JD Edwards:** Test all configuration changes in a non-production environment first. For any scenario where a GL journal entry may be required, review the Transactions page in RapidReconciler for the affected items to confirm exact amounts and accounts before posting.
 
-## Section 6: RapidReconciler Resolution Using Re-Roll
+## Section 7: RapidReconciler Resolution Using Re-Roll
 
-After completing the JD Edwards correction in Section 5 (or if Step 5.1 confirmed JDE is correct and the variance is in RapidReconciler only), use the **Re-Roll Item** dialog to synchronize RapidReconciler with JD Edwards.
+After completing the JD Edwards correction in Section 6 (or if Step 5.1 confirmed JDE is correct and the variance is in RapidReconciler only), use the **Re-Roll Item** dialog to synchronize RapidReconciler with JD Edwards.
 
 > **Key principle:** The Re-Roll options do not change JD Edwards data. They recalculate or adjust RapidReconciler's internal balances to bring them into alignment with JD Edwards. **There is no Undo. Use with caution.**
 
@@ -486,7 +566,7 @@ After completing the JD Edwards correction in Section 5 (or if Step 5.1 confirme
 
 ### Option 3: Remove CX Var
 
-**When to use:** JD Edwards is confirmed correct but RapidReconciler is showing a cardex variance. Requires JDE validation (Section 5.1) to be completed first.
+**When to use:** JD Edwards is confirmed correct but RapidReconciler is showing a cardex variance. Requires JDE validation (Section 6.1) to be completed first.
 
 **What it does:** Removes the erroneous cardex variance displayed in RapidReconciler for the item.
 
@@ -502,13 +582,13 @@ After completing the JD Edwards correction in Section 5 (or if Step 5.1 confirme
 
 ### Confirming the Result
 
-Re-Roll changes are applied immediately in RapidReconciler's internal data, but the Cardex Integrity pop-up reflects data as of the most recent nightly import. Verify the variance has cleared by checking the item after the **next nightly refresh cycle** completes. Confirm both **QtyVar** and **AmtVar** show **0**. If a variance still appears, repeat the Section 5 validation before taking further action.
+Re-Roll changes are applied immediately in RapidReconciler's internal data, but the Cardex Integrity pop-up reflects data as of the most recent nightly import. Verify the variance has cleared by checking the item after the **next nightly refresh cycle** completes. Confirm both **QtyVar** and **AmtVar** show **0**. If a variance still appears, repeat the Section 6 validation before taking further action.
 
 ---
 
-## Section 7: Case Studies — [Generated from Customer Data]
+## Section 8: Case Studies — [Generated from Customer Data]
 
-Section 7 is populated by Claude based on the uploaded Item Roll Forward file. Each case study documents one item/lot/branch combination under investigation. The structure below defines what each case study must contain.
+Section 8 is populated by Claude based on the uploaded Item Roll Forward file. Each case study documents one item/lot/branch combination under investigation. The structure below defines what each case study must contain.
 
 ### Case Study Template
 
@@ -529,10 +609,10 @@ Beg bal date, runqty, runamt, and implied unit cost. Internal consistency check 
 Break AmtVar into Component A (QtyVar × prevailing WAC) and Component B (dollar-only residual). Identify the primary driver.
 
 **[N].4 Root Cause**
-Section 4 pattern classification. For dollar-only variances: identify the cost inflection point(s), the transactions that drove cost changes, and the mechanism by which the stranded balance accumulated. For quantity variances: identify the most likely source of the F4111 / F41021 gap.
+Section 5 pattern classification. For dollar-only variances: identify the cost inflection point(s), the transactions that drove cost changes, and the mechanism by which the stranded balance accumulated. For quantity variances: identify the most likely source of the F4111 / F41021 gap.
 
 **[N].5 RapidReconciler Classification**
-State the root cause code from Section 4, the variance type (QtyVar = 0 or ≠ 0, AmtVar value), and a one-sentence summary.
+State the root cause code from Section 5, the variance type (QtyVar = 0 or ≠ 0, AmtVar value), and a one-sentence summary.
 
 **[N].6 Corrective Action**
 Full step-by-step correction per Sections 5 and 6, with field-level values for the IA transaction and the Re-Roll option to use.
@@ -544,7 +624,7 @@ Follow-up items specific to this item's pattern: cost review, BOM validation, IA
 
 ---
 
-## Section 8: Analysis Checklist
+## Section 9: Analysis Checklist
 
 Use this checklist for each Cardex variance investigation:
 
@@ -574,7 +654,7 @@ Use this checklist for each Cardex variance investigation:
 - [ ] If quantity variance: identify IA volume and pattern; check for a gap consistent with a single failed F41021 update
 
 **Cost Method-Specific Checks (Method 02 — WAC)**
-- [ ] Scan `runqty` for any negative value at any row — negative qty corrupts WAC (Section 4i)
+- [ ] Scan `runqty` for any negative value at any row — negative qty corrupts WAC (Section 5i)
 - [ ] Trace OV/PV pairs: confirm PV voucher match cost adjustments are expected and match the invoice
 - [ ] Note opening WAC (Beg bal implied cost) vs current WAC — flag material increases even if reconciled
 - [ ] Confirm no unauthorised IB rows from manual P4105 overrides
@@ -584,7 +664,7 @@ Use this checklist for each Cardex variance investigation:
 - [ ] If standard cost was updated recently, confirm R30837 WIP Revaluation was run from R30835
 - [ ] Verify cost component sum in F30026 equals F4105 method 07 value for the item
 
-**JDE Validation (Section 5)**
+**JDE Validation (Section 6)**
 - [ ] Export F4111; exclude ILIPCD = "X" rows; summarize qty and extended amount
 - [ ] Compare to F41021 on-hand qty and value
 - [ ] If qty matches but amount doesn't: dollar-only IA path (Steps 5.2–5.6)
@@ -595,7 +675,7 @@ Use this checklist for each Cardex variance investigation:
 - [ ] For dollar-only IA in average cost environment: disable UDC 40/AV P4114 (Y→N) before posting; restore immediately after
 - [ ] Post dollars-only IA (qty blank, unit cost blank); verify in F4111; re-summarize to confirm tie
 
-**RapidReconciler Resolution (Section 6)**
+**RapidReconciler Resolution (Section 7)**
 - [ ] Select appropriate Re-Roll option (Re-Roll Item / Zero Beg Bal / Remove CX Var)
 - [ ] Verify item details in Re-Roll dialog before executing
 - [ ] Confirm QtyVar = 0 and AmtVar = 0 after next nightly refresh
@@ -607,7 +687,7 @@ Use this checklist for each Cardex variance investigation:
 
 ---
 
-## Section 9: Glossary
+## Section 10: Glossary
 
 | Term | Definition |
 |---|---|
@@ -642,85 +722,6 @@ Use this checklist for each Cardex variance investigation:
 
 ---
 
-## Section 10: Using Claude for Automated Analysis
-
-Claude can perform a full cardex variance analysis automatically and return a single updated `.xlsx` file with findings written directly into the workbook and all problem rows highlighted. This eliminates manual annotation and ensures consistent output across analysts.
-
-### 10.1 First Request in a Session
-
-On the first request, upload **both files** together:
-
-1. This guide (`.md`)
-2. The Item Roll Forward / Transaction Detail report (`.xlsx`)
-
-Then use the following prompt:
-
-> *"Analyze this file using the guide as a template, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis' and all problem rows highlighted."*
-
-Claude will read the guide to understand the report structure and variance patterns, work through the analysis procedure against the Excel data, highlight the relevant rows on the source sheet, and add the analysis as a new sheet in the same workbook. The returned file is a drop-in replacement for the original — the source sheet is unchanged except for the highlights.
-
-### 10.2 Follow-On Requests in the Same Session
-
-Once the guide has been uploaded in a session, Claude retains it in context for the remainder of the conversation. Subsequent reports **do not require the guide to be re-uploaded**. Simply upload the new `.xlsx` and use a shorter prompt:
-
-> *"Analyze this file and return it with the analysis sheet and highlights."*
-
-Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide again — Claude will use it and ignore the duplication.
-
-### 10.3 Output Specification
-
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
-
-The returned workbook will contain two sheets:
-
-**Sheet 1 — Transaction Details (original sheet, highlights added)**
-
-**Column formatting requirements:**
-
-| Column | Field | Format |
-|---|---|---|
-| **A** | **`companynumber`** | **Text / character — format as `@`** |
-| **B** | **`longaccount`** | **Text / character — format as `@`** |
-| **C** | **`ukid`** | **Plain integer, no commas — format as `0`** |
-| **D** | **`branch`** | **Text / character — format as `@`** |
-| E–N, P–U | All other fields | Per field type: dates as date, quantities as `#,##0.000`, amounts as `#,##0.00`, text as text |
-| **O** | **`doc` (document number)** | **Plain integer, no commas — format as `0`** |
-
-`companynumber`, `longaccount`, and `branch` are JD Edwards identifiers and account codes that must be preserved exactly as exported — numeric formatting would strip leading zeros or alter the display. `ukid` and `doc` are system-generated record and document identifiers, not quantities or amounts; comma formatting misrepresents them and makes them harder to cross-reference in JD Edwards.
-
-| Highlight | Color | Rows |
-|---|---|---|
-| Root cause | Red | The specific transaction rows directly responsible for the variance |
-| Related | Orange | The Curr bal row; PI/PV revaluation rows that drove cost shifts; rows bracketing the cost inflection point |
-| Informational | Blue | Rows that are normal but contextually significant (e.g., OV/PV pairs on a reconciled WAC item) |
-
-**Sheet 2 — RR Analysis (new sheet)**
-
-| Section | Content |
-|---|---|
-| **Document** | Item number, lot, branch, location, GL account, GL class, UOM, analysis date, variance amounts |
-| **Cost Method** | Cost method code from `dt` on Curr bal row (`ukid = 999999999999`); method name; key implications for this item |
-| **Cost Level** | Cost level from `dt` on Beg bal row (`ukid = 0`); level name (1 = item/branch, 2 = item/branch with location/lot qty, 3 = item/branch/location/lot); reconciliation scope note |
-| **Beginning Balance** | Beg bal date, qty, amount, implied cost; internal consistency check result; note if gap may pre-date RR go-live |
-| **Transaction Summary** | Net qty and val by dt code; confirmation that net qty ties to Curr bal |
-| **Cost Evolution** | Chronological table of distinct cost values, dates, and transaction types; identification of inflection points (dollar-only items) |
-| **WAC Analysis** | OV/PV pair trace; IB row review; negative quantity check; opening vs current WAC comparison (WAC items only) |
-| **Root Cause** | Section 4 pattern classification; two-component breakdown where applicable; specific dates, costs, and quantities |
-| **Evidence** | Row numbers from the source sheet supporting the finding |
-| **Corrective Action** | Full JDE correction steps per Section 5; Re-Roll step per Section 6; "None required" if reconciled |
-| **Preventive Actions** | Follow-up items: cost review, BOM validation, WAC monitoring, negative quantity controls |
-
-Set column widths to fixed widths sized for readability — do not auto-stretch to full sheet width. Enable wrap text on all cells. Calculate row heights from content length and column width, not a flat default. Resolution tables use a two-column layout: condition in cols A–B, action in cols C–E. Priority colours: P1 fill `FFE0E0` / text `8B0000`, P2 fill `FFF0DC` / text `6B3A00` — lighter fills and non-bold text for readability. Source sheet: AutoFilter on row 2, freeze panes at row 3, row highlights matching analysis priority colours. Include a colour key section at the top of the analysis sheet.
-
-### 10.4 Notes and Limitations
-
-- Claude analyzes the data as exported. If the source report was generated with filters applied or sections suppressed, the analysis reflects only what is present in the file.
-- The highlight colors applied by Claude are standard fills. If the original file already uses cell fill colors for other purposes, advise Claude of the existing convention in the prompt so it can use different colors.
-- For very large Item Roll Forward files spanning many items or periods, include a note in the prompt identifying the specific item number and lot to focus on if only one item is under investigation.
-- Claude will note findings that require further investigation in JD Edwards (e.g., verifying a PI revaluation authorization, querying F0911 for a specific batch) that cannot be completed from the Excel file alone. These will appear as open questions in the Corrective Action section of the analysis sheet.
-- Amounts in the exported file may display with floating-point precision artifacts (e.g., `$139.50660000000001`). Claude rounds all amounts to two decimal places for analysis and reporting purposes. These artifacts do not affect the accuracy of the analysis.
-- The correction amounts and IA field values provided in the output are based on the exported data. Always verify the current JDE on-hand balance independently before posting any adjustment.
-
 ---
 
-*Guide version: April 2026 (v3) | Integrates: cardex_variance.md (RapidReconciler/JDE resolution procedure), transaction-detail-analysis-guide.md Section 10 (Claude automated analysis specification), inventory-key-concepts.md (beginning balance calculation and reconciliation framework) | Maintain in shared finance repository for reuse across future Cardex reviews.*
+*Guide version: April 2026 (v3) | Integrates: cardex_variance.md (RapidReconciler/JDE resolution procedure), transaction-detail-analysis-guide.md Section 1 (Claude automated analysis specification), inventory-key-concepts.md (beginning balance calculation and reconciliation framework) | Maintain in shared finance repository for reuse across future Cardex reviews.*

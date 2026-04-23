@@ -1,8 +1,55 @@
-﻿# DMAAI Analysis Guide
+# DMAAI Analysis Guide
 
 ## RapidReconciler — DMAAI Entry Integrity (Integrity Report 2)
 
 ---
+
+## Section 1: Using Claude for Automated Analysis
+
+Claude can perform the full analysis procedure automatically and return a single updated `.xlsx` file with the RR Analysis sheet added.
+
+### What to Upload
+
+Upload **two files:**
+
+1. This guide (`.md`)
+2. The Integrity Report 2 export (`.xlsx`)
+
+Then use the following prompt:
+
+> *"Analyze this Integrity Report 2 file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis'. Any comment with net zero needs to be verified, not marked as a potential issue. Mismatches with the model table should be labeled as object account mismatches or business unit mismatches and prioritized by impact. Use the DMAAI table descriptions from the distribution-aais.md reference for the Variance Type Summary."*
+
+### Follow-On Requests in the Same Session
+
+Once this guide has been uploaded, it remains in context. Use:
+
+> *"Analyze this Integrity Report file and return it with the RR Analysis sheet."*
+
+### Output Specification
+
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+
+**Sheet 1 — Integrity (original)**
+- Source data, unchanged
+- No row highlighting required for Integrity Report 2 (unlike End of Day exports)
+
+**Sheet 2 — RR Analysis (new)**
+- Report Summary
+- Variance Type Summary (color-coded by priority)
+- Findings by Priority (with detail, root cause, and resolution for each)
+- Recommended Actions (numbered, in execution order)
+
+### Notes and Limitations
+
+- Claude analyzes the data as exported. Account numbers are interpreted from the export columns; the actual JDE DMAAI setup must be verified in JD Edwards.
+- Net zero findings are flagged for verification, not automatically classified as errors.
+- Mismatch resolution requires JDE access to confirm which account (DMAAI or model) is correct.
+- The analysis cannot determine the intended chart of accounts structure — that must be provided by the accounting team.
+- For exports with systematic mismatches across many GL class codes, the analysis groups findings by pattern (e.g., "all OUTG entries in tables 4122, 4126, 4240, 4310 for companies 2 and 22") to make the summary workable.
+- When table 4365 mismatches include doc type OO (Outside Operations), the analysis treats OO as a separate sub-finding. Outside Operations is a different transaction flow from direct ship and rental settlement doc types and may require a different GL account.
+
+---
+
 
 ## Overview
 
@@ -16,7 +63,7 @@ This guide is a reusable template for analyzing any customer's Integrity Report 
 
 ---
 
-## Section 1: What Is Integrity Report 2?
+## Section 2: What Is Integrity Report 2?
 
 RapidReconciler uses the DMAAI table (F4095) to assign GL accounts to every item ledger and location record during the nightly import from JD Edwards. The assignment logic works as follows:
 
@@ -29,7 +76,7 @@ RapidReconciler uses the DMAAI table (F4095) to assign GL accounts to every item
 
 ---
 
-## Section 2: The Model DMAAI Table — Foundation Concept
+## Section 3: The Model DMAAI Table — Foundation Concept
 
 ### What Is the Model DMAAI Table?
 
@@ -61,7 +108,7 @@ The **Model DMAAI Table** is DMAAI table **4152** with document type **PI** (Phy
 | **4240** | Cost of Goods Sold | Sales |
 | **4310** | Inventory — Purchase Order Receipt | Purchasing |
 
-> **Note:** DMAAI tables 4162 (Inventory Transfer), 4385 (Outbound Logistics), and 4400 (Intercompany/Advanced Pricing) also appear in this report, indicating those tables are also being validated.
+> **Note:** DMAAI tables 4162 (Inventory Transfer), 4365 (Supplier Direct Ship / Outside Operations Settlement), 4385 (Outbound Logistics), and 4400 (Intercompany/Advanced Pricing) also appear in this report, indicating those tables are also being validated.
 
 ### Vetting the Model Table
 
@@ -73,7 +120,7 @@ Before relying on Integrity Report 2 findings, the model table itself must be co
 
 ---
 
-## Section 3: Report Structure and Field Reference
+## Section 4: Report Structure and Field Reference
 
 ### Export Column Definitions
 
@@ -82,11 +129,11 @@ Before relying on Integrity Report 2 findings, the model table itself must be co
 | **CompanyNumber** | JD Edwards company number for which the DMAAI entry exists | Formatted as integer; leading zeros dropped in export |
 | **TransactionComp** | Transaction company — typically matches CompanyNumber | May differ for intercompany configurations |
 | **TableNumber** | DMAAI table number (e.g., 4122, 4134) | Corresponds to the transaction type being validated |
-| **DocType** | Document type on the DMAAI entry (e.g., IA, IB, IR, VV) | Specific to each table; see Section 4 |
+| **DocType** | Document type on the DMAAI entry (e.g., IA, IB, IR, VV) | Specific to each table; see Section 5 |
 | **GLClass** | GL class code on the DMAAI entry | Four-character code from item setup (e.g., OUTG, 6101, 1421) |
 | **AAIAccount** | Full account number in the DMAAI entry being reviewed | Format: BU.Object or Object only |
 | **ModelAccount** | Full account number from model table 4152 PI | NaN if no model entry exists for this company/GL class |
-| **Comment** | RapidReconciler classification of the discrepancy | See Section 5 |
+| **Comment** | RapidReconciler classification of the discrepancy | See Section 6 |
 | **FlexBu** | Whether Flexible Accounting is set up for the Business Unit component | Yes/No |
 | **FlexSub** | Whether Flexible Accounting is set up for the Subsidiary component | Yes/No |
 | **LongAccount** | Long-form account number as displayed in JDE | May include BU + Object + Subsidiary |
@@ -97,7 +144,7 @@ Account numbers in this report use the format **BU.Object** (e.g., `2.1421` = Bu
 
 ---
 
-## Section 4: DMAAI Tables in This Report
+## Section 5: DMAAI Tables in This Report
 
 ### Manufacturing Tables (3000 Series)
 
@@ -119,21 +166,27 @@ Account numbers in this report use the format **BU.Object** (e.g., `2.1421` = Bu
 
 ### Sales Tables (4200 Series)
 
-| Table | Document Type | Transaction Type | Description |
+| Table | Document Type(s) | Transaction Type | Description |
 |---|---|---|---|
-| **4240** | SO | Cost of Goods Sold | Debits COGS and credits inventory on sales shipment. Mismatch here causes COGS to post to wrong account. Present for companies 2 and 22. |
+| **4220** | SO, C1, C2, CO, SA, SF, SM, SR, SW, SX | Inventory Relief — COGS Credit | Credits inventory on sales shipment; the credit side of the 4240 COGS entry. Paired with 4240. If 4220 and 4240 point to the same account, the debit and credit net to zero. Must point to a different account than 4240 for proper GL separation between COGS and inventory. |
+| **4240** | SO, C1, C2, CO, SA, SF, SM, SR, SW, SX | Cost of Goods Sold | Debits COGS and credits inventory on sales shipment. Paired with 4220 (Inventory Relief). Mismatch here causes COGS to post to wrong account. |
 
-### Purchasing Tables (4300 Series)
+> **Net zero note:** The comment `Net zero review - 4240,4220` indicates that the 4240 and 4220 entries for a given company, doc type, and GL class code may point to the same account. See Section 6 and Section 9.
+
+### Purchasing / Order Settlement Tables (4300 Series)
 
 | Table | Document Type(s) | Transaction Type | Description |
 |---|---|---|---|
 | **4310** | OR | Inventory — Purchase Order Receipt | Debits inventory on PO receipt. Paired with a credit to the RNV account (4320). Mismatch causes PO receipts to post to wrong inventory account. |
+| **4365** | OA, OD, OO, OP | Supplier Direct Ship / Outside Operations Settlement | Used for order settlement in supplier direct ship, service and rental, and outside operations scenarios. **Doc type OO (Outside Operations)** posts subcontracted operation costs through this table and may require a different account than doc types OA, OD, and OP — confirm independently. Mismatch here causes settlement transactions to post to the wrong account. |
 | **4385** | OB, OC, OM, OP, OR, OW | Outbound Logistics / Order Settlement | Used for outbound logistics processing. Present for companies 2 and 22. |
 | **4400** | IV, OB, OC, OP | Intercompany / Advanced Pricing Settlement | Used for intercompany billing and advanced pricing adjustments. Present for companies 2, 3, and 22. |
 
+> **Table 4365 — doc type OO note:** Outside Operations (OO) transactions represent subcontracted work order processing routed through purchasing. This is a different transaction flow from direct ship (OA/OD) and purchase order (OP) settlements. When doc type OO appears in a 4365 mismatch finding, it must be verified independently — the correct account for OO may differ from the correct account for the other doc types in the same table. Do not assume a single correction applies to all doc types in a 4365 finding.
+
 ---
 
-## Section 5: Comment / Issue Type Reference
+## Section 6: Comment / Issue Type Reference
 
 Integrity Report 2 assigns one of the following comments to each row:
 
@@ -170,16 +223,17 @@ The business unit in the DMAAI entry does not match the business unit in the mod
 > `Net zero review - 4122,4124`
 > `Net zero review - 4126,4128`
 > `Net zero review - 4134,4136`
+> `Net zero review - 4240,4220`
 
 RapidReconciler has detected that the entries in a paired set of tables (debit and credit) may result in a net-zero posting — meaning the debit and credit sides of the inventory entry land on the same account, or that one side is missing.
 
 **This is a flag for verification, not a confirmed error.** Net zero may be intentional in some configurations (e.g., a clearing account that nets out by design). However, in inventory balance sheet tables, net zero almost always indicates a setup error.
 
-> **Critical:** Do not mark net zero findings as resolved without confirming the account structure in JDE. See Section 8 for the full verification protocol.
+> **Critical:** Do not mark net zero findings as resolved without confirming the account structure in JDE. See Section 9 for the full verification protocol.
 
 ---
 
-## Section 6: Report Summary — [Generated from Customer Export]
+## Section 7: Report Summary — [Generated from Customer Export]
 
 This section is populated by Claude based on the uploaded Integrity Report 2 export. The following fields and tables will be derived from the actual data and written to the RR Analysis sheet.
 
@@ -222,7 +276,7 @@ Summarize row counts by DMAAI table number, with the primary comment type and co
 
 ---
 
-## Section 7: Findings by Priority — [Generated from Customer Export]
+## Section 8: Findings by Priority — [Generated from Customer Export]
 
 This section is populated by Claude based on the uploaded export. One sub-section is written for each distinct finding, grouped and ordered by priority. The structure below defines what each finding sub-section must contain.
 
@@ -253,8 +307,8 @@ Step-by-step instructions to locate and confirm the finding in JDE DMAAI (fast p
 
 **Resolution**
 
-
 > ⚠ **Before making any changes in JD Edwards:** Test all configuration changes in a non-production environment first. For any scenario where a GL journal entry may be required, review the Transactions page in RapidReconciler for the affected items to confirm exact amounts and accounts before posting.
+
 Present as a decision table:
 
 | If... | Then... |
@@ -264,15 +318,25 @@ Present as a decision table:
 
 ---
 
-### Net Zero Findings
+### Doc Type OO in Table 4365 Findings
 
-Net zero findings follow the same sub-section structure but reference the verification protocol in Section 8. They are always labeled Priority 3 and must not be marked as resolved without completing the Section 8 protocol.
+When doc type **OO (Outside Operations)** appears in a table 4365 mismatch finding alongside other doc types (OA, OD, OP), it must be treated as a **separate sub-finding** with its own verification question. Do not group OO with the direct ship and purchase order settlement doc types and apply a single resolution.
 
-For the customer export, net zero findings are grouped by table pair (4122/4124, 4126/4128, 4134/4136) and summarized together unless a specific company or GL class shows a distinct pattern warranting separate treatment.
+For OO specifically, the verification question is: *"Should Outside Operations subcontract settlements post to the same account as direct ship and rental settlements for this company and GL class code, or to a different account?"*
+
+If the answer is a different account, the 4365 OO entry may be correctly set up (or the model table may not reflect the OO account at all). If the answer is the same account, then the OO mismatch follows the same resolution path as OA/OD/OP.
 
 ---
 
-## Section 8: Net Zero — Verification Protocol
+### Net Zero Findings
+
+Net zero findings follow the same sub-section structure but reference the verification protocol in Section 9. They are always labeled Priority 3 and must not be marked as resolved without completing the Section 9 protocol.
+
+For the customer export, net zero findings are grouped by table pair (4122/4124, 4126/4128, 4134/4136, 4240/4220) and summarized together unless a specific company or GL class shows a distinct pattern warranting separate treatment.
+
+---
+
+## Section 9: Net Zero — Verification Protocol
 
 ### Step 1: Access DMAAI in JDE
 
@@ -287,15 +351,16 @@ For each net zero flag, compare the account numbers in the two paired tables:
 | Net zero review — 4122,4124 | DMAAI 4122 | DMAAI 4124 |
 | Net zero review — 4126,4128 | DMAAI 4126 | DMAAI 4128 |
 | Net zero review — 4134,4136 | DMAAI 4134 | DMAAI 4136 |
+| Net zero review — 4240,4220 | DMAAI 4240 | DMAAI 4220 |
 
 For each combination of **Company**, **Doc Type**, and **GL Class Code**:
-1. Note the account number in the base table (4122, 4126, or 4134)
-2. Note the account number in the complement table (4124, 4128, or 4136)
+1. Note the account number in the base table (4122, 4126, 4134, or 4240)
+2. Note the account number in the complement table (4124, 4128, 4136, or 4220)
 3. If the accounts are the same → this is the net zero condition
 
 ### Step 3: Determine Intent
 
-Ask the accounting team: *Is it intentional that the [4122] and [4124] entries for [GL class] in [company] point to the same account?*
+Ask the accounting team: *Is it intentional that the [4240] and [4220] entries for [GL class] in [company] point to the same account?*
 
 Common reasons for intentional net zero (rare but possible):
 - A clearing account where the system self-offsets and a separate journal is used for the actual entry
@@ -303,7 +368,7 @@ Common reasons for intentional net zero (rare but possible):
 - Flexible Accounting is expected to override the DMAAI entry
 
 Reasons net zero is almost always an error:
-- The complement table (4124, 4128, or 4136) entry was never set up
+- The complement table (4124, 4128, 4136, or 4220) entry was never set up
 - The complement table entry was accidentally set to the same account as the base table
 - A DMAAI copy operation duplicated an entry without updating the account
 
@@ -311,7 +376,7 @@ Reasons net zero is almost always an error:
 
 If the net zero is confirmed as an error:
 1. Navigate to the complement table entry in DMAAI
-2. Update the account to the correct offsetting account (e.g., for 4124, this should be the credit-side of the inventory entry — typically a different object than 4122)
+2. Update the account to the correct offsetting account (e.g., for 4220, this should be the inventory balance sheet account — typically a different object than the COGS account in 4240)
 3. Verify the change is correct by reviewing the AAI design documentation
 4. Refresh RapidReconciler after all changes are saved
 
@@ -321,7 +386,7 @@ For entries confirmed as intentional: document the business reason and mark as r
 
 ---
 
-## Section 9: Step-by-Step Analysis Procedure
+## Section 10: Step-by-Step Analysis Procedure
 
 Use this procedure each time an Integrity Report 2 export is received.
 
@@ -333,11 +398,26 @@ Confirm the period-end date and generation timestamp in the first row of the exp
 
 Sort by the **Comment** column and count rows by comment type. Use this as the baseline to track resolution over subsequent exports.
 
-### Step 3: Address Mismatches Before Net Zero
+### Step 3: Compare to Prior Period
+
+Before beginning analysis, compare the current export row counts to the prior period:
+
+- **Row count increased for a known finding** — the issue has grown or new entries have been added with the same mismatch. Determine whether new doc types or GL class codes have been added.
+- **Row count unchanged for a known finding** — the issue has not been corrected since the last review. Escalate if the same finding has persisted for two or more consecutive exports.
+- **New finding not present in prior export** — treat as a new issue and analyze independently.
+- **Finding from prior export no longer present** — confirm the correction was intentional and not masked by a data change.
+
+Document the delta in the Report Summary section of the RR Analysis sheet.
+
+### Step 4: Inspect New Doc Types in Existing Findings
+
+When a mismatch finding includes a doc type not present in prior exports, analyze that doc type separately before grouping it with the existing finding. Different doc types within the same DMAAI table may represent different transaction flows (e.g., doc type OO = Outside Operations in table 4365 vs. OA/OD = direct ship). The correct account for the new doc type must be confirmed independently.
+
+### Step 5: Address Mismatches Before Net Zero
 
 Mismatch findings (object and business unit) represent confirmed discrepancies where the DMAAI and model table disagree. These should always be prioritized over net zero findings, which require verification before being classified as errors.
 
-### Step 4: Work Mismatches by Company and Table
+### Step 6: Work Mismatches by Company and Table
 
 For each mismatch finding:
 1. Identify the company, table, GL class, doc type, and account discrepancy
@@ -346,11 +426,11 @@ For each mismatch finding:
 4. Determine which account is correct (DMAAI or model)
 5. Make the correction in the appropriate location (DMAAI entry or model table)
 
-### Step 5: Work Net Zero by Table Pair
+### Step 7: Work Net Zero by Table Pair
 
-For each net zero flag, follow the verification protocol in Section 8. Do not skip verification — mark net zero items as verified (intentional) or corrected, not as automatically resolved.
+For each net zero flag, follow the verification protocol in Section 9. Do not skip verification — mark net zero items as verified (intentional) or corrected, not as automatically resolved.
 
-### Step 6: Verify Corrections
+### Step 8: Verify Corrections
 
 After making corrections in JDE:
 1. Trigger a data refresh in RapidReconciler
@@ -358,17 +438,18 @@ After making corrections in JDE:
 3. Confirm that corrected items no longer appear in the export
 4. Verify that corrections have not introduced new flags
 
-### Step 7: Document Findings
+### Step 9: Document Findings
 
 Maintain a running log of:
 - Each finding from the export (company, table, GL class, issue type)
 - Determination: error or intentional
 - Action taken: JDE DMAAI correction, model table update, or verified as intentional
 - Date and responsible party
+- Prior period row count and current period row count (for tracking)
 
 ---
 
-## Section 10: Excel Output Formatting Rules
+## Section 11: Excel Output Formatting Rules
 
 ### File Naming
 
@@ -389,7 +470,7 @@ Do not delete, rename, or reorder the source sheet.
 |---|---|
 | **Report Summary** | Period-end date, generation timestamp, total row count, companies present, tables present, issue type breakdown |
 | **Variance Type Summary** | One row per comment type with six columns: Comment / Issue Type, DMAAI Table Description (sourced from distribution-aais.md), Row Count, Companies Affected, Doc Types, and GL Class Codes Impacted. Color-coded by severity. |
-| **Findings by Priority** | One sub-section per priority finding. Each sub-section contains the detailed account analysis, root cause, and resolution path. Followed by a note box with key observations. |
+| **Findings by Priority** | One sub-section per priority finding. Each sub-section contains the detailed account analysis, root cause, and resolution path. Followed by a note box with key observations. When a finding contains doc type OO alongside other doc types for table 4365, OO is written as a separate sub-finding. |
 | **Recommended Actions** | Numbered action steps in execution order, with the specific tables, companies, and responsible owner for each. |
 
 ### Analysis Sheet Formatting
@@ -415,51 +496,6 @@ Do not delete, rename, or reorder the source sheet.
 
 ---
 
-## Section 11: Using Claude for Automated Analysis
-
-Claude can perform the full analysis procedure automatically and return a single updated `.xlsx` file with the RR Analysis sheet added.
-
-### What to Upload
-
-Upload **two files:**
-
-1. This guide (`.md`)
-2. The Integrity Report 2 export (`.xlsx`)
-
-Then use the following prompt:
-
-> *"Analyze this Integrity Report 2 file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis'. Any comment with net zero needs to be verified, not marked as a potential issue. Mismatches with the model table should be labeled as object account mismatches or business unit mismatches and prioritized by impact. Use the DMAAI table descriptions from the distribution-aais.md reference for the Variance Type Summary."*
-
-### Follow-On Requests in the Same Session
-
-Once this guide has been uploaded, it remains in context. Use:
-
-> *"Analyze this Integrity Report file and return it with the RR Analysis sheet."*
-
-### Output Specification
-
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
-
-**Sheet 1 — Integrity (original)**
-- Source data, unchanged
-- No row highlighting required for Integrity Report 2 (unlike End of Day exports)
-
-**Sheet 2 — RR Analysis (new)**
-- Report Summary
-- Variance Type Summary (color-coded by priority)
-- Findings by Priority (with detail, root cause, and resolution for each)
-- Recommended Actions (numbered, in execution order)
-
-### Notes and Limitations
-
-- Claude analyzes the data as exported. Account numbers are interpreted from the export columns; the actual JDE DMAAI setup must be verified in JD Edwards.
-- Net zero findings are flagged for verification, not automatically classified as errors.
-- Mismatch resolution requires JDE access to confirm which account (DMAAI or model) is correct.
-- The analysis cannot determine the intended chart of accounts structure — that must be provided by the accounting team.
-- For exports with systematic mismatches across many GL class codes, the analysis groups findings by pattern (e.g., "all OUTG entries in tables 4122, 4126, 4240, 4310 for companies 2 and 22") to make the summary workable.
-
----
-
 ## Section 12: AAI Quick Reference
 
 ### Balance Sheet DMAAI Tables Validated by Integrity Report 2
@@ -476,10 +512,18 @@ Once this guide has been uploaded, it remains in context. Use:
 | **4136** | Inventory | In-transit credit on receipt | IB | Credit In-Transit |
 | **4162** | Inventory | Cross-company inventory transfer | IX | Debit Inventory — Receiving |
 | **4172** | Inventory | Physical inventory adjustment | IJ | Debit/Credit Inventory |
-| **4240** | Sales | Cost of Goods Sold | SO | Debit COGS; Credit Inventory |
+| **4220** | Sales | Inventory relief — COGS credit (paired with 4240) | SO, C1, C2, CO, SA, SF, SM, SR, SW, SX | Credit Inventory |
+| **4240** | Sales | Cost of Goods Sold (paired with 4220) | SO, C1, C2, CO, SA, SF, SM, SR, SW, SX | Debit COGS; Credit Inventory |
 | **4310** | Purchasing | Inventory on PO receipt | OR | Debit Inventory |
+| **4365** | Purchasing / Manufacturing | Supplier Direct Ship, Service & Rental, Outside Operations settlement | OA, OD, OO, OP | Debit settlement account — see doc type note below |
 | **4385** | Purchasing | Outbound logistics | OB, OC, OM, OP, OR, OW | Varies |
 | **4400** | Sales | Intercompany / Advanced Pricing | IV, OB, OC, OP | Varies |
+
+> **Table 4365 doc type reference:**
+> - **OA** — Order Acknowledgment (direct ship)
+> - **OD** — Order Direct Ship
+> - **OO** — Outside Operations (subcontracted work order processing — different transaction flow; verify account independently)
+> - **OP** — Order Purchase
 
 ### AAI Key Structure
 

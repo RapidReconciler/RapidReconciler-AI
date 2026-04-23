@@ -1,8 +1,57 @@
-﻿# Inventory Roll Forward Analysis Guide
+# Inventory Roll Forward Analysis Guide
 
 ## RapidReconciler — Inventory Roll Forward Report Reference
 
 ---
+
+## Section 1: Using Claude for Automated Analysis
+
+Claude can perform the full Section 8 analysis procedure automatically and return a single updated `.xlsx` file with the analysis sheet added and all source rows highlighted.
+
+### 1.1 What to Upload
+
+Upload **two files**:
+
+1. This guide (`.md`)
+2. The Roll Forward report (`.xlsx`)
+
+Then use the following prompt:
+
+> *"Analyze this Roll Forward file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'Roll Forward Analysis' and all source rows highlighted."*
+
+### 1.2 Follow-On Requests in the Same Session
+
+Once the guide has been uploaded, it remains in context. Subsequent Roll Forward exports do not require the guide to be re-uploaded:
+
+> *"Analyze this file and return it with the analysis sheet and highlights."*
+
+### 1.3 Output Specification
+
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+
+**Sheet 1 — Roll Forward (original sheet, highlights added)**
+
+| Highlight | Color | Criteria |
+|---|---|---|
+| Red | `FFCCCC` | GLOK = "no" OR VarOK = "no" |
+| Orange | `FFE5CC` | End period with non-zero UnpostBatch |
+| Yellow | `FFFACD` | End period with zero UnpostBatch |
+| Blue | `DDEEFF` | Historical period with non-zero UnpostBatch |
+
+**Sheet 2 — Roll Forward Analysis (new sheet)**
+
+Follows the structure defined in Section 11.4. The Historical Unposted Batch Summary covers all periods except the current (end) period; the end-period UnpostBatch total is reported in the Report Summary instead. The Period Variance by Account section covers the prior 3 periods only, with rows included where OOB absolute value exceeds $100 or UnpostBatch is non-zero. JE amounts and CardexVar are excluded from that section. Column order: LongAccount, Period, then Variance / OOB / UnpostBatch.
+
+### 1.4 Notes and Limitations
+
+- Claude identifies GLOK = "no" and VarOK = "no" rows directly from column values. It then examines surrounding periods to determine the likely cause (prior period UnpostBatch, OOB amount, JE activity, or reset artifact).
+- The VarOK baseline timestamp is read from column T of the baseline rows. Claude uses this to contextualize historic VarOK = "no" rows that occurred before the most recent reset.
+- Floating-point precision artifacts are rounded to two decimal places throughout.
+- Claude cannot access JD Edwards to verify batch details, confirm OOB causes, or check R099102 results. Findings requiring JD Edwards investigation are flagged in the Recommended Actions section.
+- For exports with more than 200 accounts, consider specifying a company or account range in the prompt to focus the analysis.
+
+---
+
 
 ## Overview
 
@@ -20,9 +69,9 @@ The report serves two distinct purposes:
 
 ---
 
-## Section 1: Report Structure
+## Section 2: Report Structure
 
-### 1.1 How the Report Is Organized
+### 2.1 How the Report Is Organized
 
 The report is sorted by **CompanyNumber → PeriodEnds → LongAccount**. Each unique combination of company and account appears once per period, from the baseline period through the current (end) period.
 
@@ -32,7 +81,7 @@ The report is sorted by **CompanyNumber → PeriodEnds → LongAccount**. Each u
 |---|---|
 | **baseline** | The earliest period in the dataset. BegGL = 0; EndGL = the opening balance loaded at that point. |
 | **yes** | The GL rolled forward correctly from the prior period. BegGL(n) = EndGL(n−1). |
-| **no** | The GL did **not** roll forward correctly. BegGL(n) ≠ EndGL(n−1). See Section 3. |
+| **no** | The GL did **not** roll forward correctly. BegGL(n) ≠ EndGL(n−1). See Section 4. |
 | **end** | The most recent period in the dataset — the current snapshot. |
 
 **Period markers in VarOK (column T):**
@@ -41,10 +90,10 @@ The report is sorted by **CompanyNumber → PeriodEnds → LongAccount**. Each u
 |---|---|
 | **[timestamp]** | The baseline period for variance tracking. The timestamp shown is the date and time RapidReconciler was last reset. The BegVar for this period represents the starting reconciliation variance at the time of reset. |
 | **yes** | The variance rolled forward correctly. BegVar(n) = Variance(n−1). |
-| **no** | The variance did **not** roll forward correctly. BegVar(n) ≠ Variance(n−1). See Section 4. |
+| **no** | The variance did **not** roll forward correctly. BegVar(n) ≠ Variance(n−1). See Section 5. |
 | **end — [timestamp]** | The most recent period. The timestamp indicates when the current snapshot was generated. |
 
-### 1.2 Key Structural Rules
+### 2.2 Key Structural Rules
 
 - **One row per account per period** — each row is the aggregate of all transactions on that account in that period. There is no transaction-level detail in this report; use the Transaction Detail report for individual document investigation.
 - **The baseline period is not a "zero" period** — it represents the opening balance at the time RapidReconciler was first configured or last reset. The BegGL and BegVar on the baseline row may be non-zero.
@@ -53,9 +102,9 @@ The report is sorted by **CompanyNumber → PeriodEnds → LongAccount**. Each u
 
 ---
 
-## Section 2: Column Reference
+## Section 3: Column Reference
 
-### 2.1 GL Roll Forward Columns (A–K)
+### 3.1 GL Roll Forward Columns (A–K)
 
 | Column | Name | Description |
 |---|---|---|
@@ -73,7 +122,7 @@ The report is sorted by **CompanyNumber → PeriodEnds → LongAccount**. Each u
 
 > **EndGL formula:** `EndGL = BegGL + PerGL + UnpostBatch`. The UnpostBatch amount is included in EndGL because RapidReconciler shows the full balance including approved-but-unposted amounts. When these batches post, EndGL will not change, but the split between PerGL and UnpostBatch will shift.
 
-### 2.2 Variance Roll Forward Columns (L–T)
+### 3.2 Variance Roll Forward Columns (L–T)
 
 | Column | Name | Description |
 |---|---|---|
@@ -91,9 +140,9 @@ The report is sorted by **CompanyNumber → PeriodEnds → LongAccount**. Each u
 
 ---
 
-## Section 3: GLOK — GL Roll Forward Logic
+## Section 4: GLOK — GL Roll Forward Logic
 
-### 3.1 How GLOK Is Calculated
+### 4.1 How GLOK Is Calculated
 
 For each period after the baseline, RapidReconciler checks:
 
@@ -106,7 +155,7 @@ If no  → GLOK = `no`
 
 The baseline period always shows GLOK = `baseline`. The most recent period shows GLOK = `end`.
 
-### 3.2 What Causes GLOK = "no"
+### 4.2 What Causes GLOK = "no"
 
 GLOK = "no" means the GL balance did not carry forward cleanly between periods. There are two distinct causes, and they require different corrective actions.
 
@@ -167,7 +216,7 @@ The combination of zero PerGL (no GL activity) and a changing BegGL (the opening
 
 > **Important:** This is an uncommon condition that indicates a systemic data integrity problem in the RapidReconciler database, not in JD Edwards itself. Do not attempt to correct individual account balances — the entire F0911 dataset for the affected company must be reloaded.
 
-### 3.3 Reading a GLOK = "no" Row
+### 4.3 Reading a GLOK = "no" Row
 
 **Decision workflow:**
 
@@ -178,7 +227,7 @@ The combination of zero PerGL (no GL activity) and a changing BegGL (the opening
 5. **If the prior period UnpostBatch was zero** → Cause 2 (F0902/F0911 misalignment). Run R099102.
 6. If unclear, query F0902 and F0911 directly for the account and period to confirm whether the two tables agree.
 
-### 3.4 GLOK and UnpostBatch in the End Period
+### 4.4 GLOK and UnpostBatch in the End Period
 
 In the current (end) period, GLOK = `end` regardless of whether UnpostBatch is zero. The UnpostBatch column in the end period is critical: it shows how much of the current EndGL is not yet posted to F0902. These amounts will cause GLOK = "no" in the next period if the batches post after period-end.
 
@@ -186,9 +235,9 @@ In the current (end) period, GLOK = `end` regardless of whether UnpostBatch is z
 
 ---
 
-## Section 4: VarOK — Variance Roll Forward Logic
+## Section 5: VarOK — Variance Roll Forward Logic
 
-### 4.1 How VarOK Is Calculated
+### 5.1 How VarOK Is Calculated
 
 For each period after the VarOK baseline, RapidReconciler checks:
 
@@ -201,7 +250,7 @@ If no  → VarOK = `no`
 
 The baseline period always shows VarOK = the RapidReconciler reset timestamp. The most recent period shows VarOK = `end — [timestamp]`.
 
-### 4.2 What the VarOK Baseline Date Means
+### 5.2 What the VarOK Baseline Date Means
 
 The timestamp shown in column T of the baseline row is the **date and time RapidReconciler was last reset**. This is not the same as the GLOK baseline period (which is the earliest period in the dataset).
 
@@ -211,7 +260,7 @@ A reset clears the accumulated variance history and starts fresh from the curren
 - The VarOK roll forward chain starts from zero for the next period
 - Historical VarOK = "no" rows before a reset are expected — they reflect the state before the reset corrected things
 
-### 4.3 What Causes VarOK = "no"
+### 5.3 What Causes VarOK = "no"
 
 | Cause | What to Look For | Resolution |
 |---|---|---|
@@ -220,20 +269,20 @@ A reset clears the accumulated variance history and starts fresh from the curren
 | **Out of Balance (OOB)** | Non-zero OOB in column R in a **closed historical period** alongside VarOK = "no"; F0902 vs F0911 misalignment. OOB in the current (end) period is expected and not a cause for action. | Run R099102 (Account Balance Repost) for the affected account and period |
 | **Retroactive journal entry** | Non-zero JEs in column Q; GL-only entry posted to a prior period's inventory account | Investigate who posted the entry; recode if incorrect |
 | **Cardex integrity issue** | Non-zero CardexVar in column S | Run Cardex Variance report; investigate F4111 discrepancies |
-| **Aged VarOK = "no" (> 3 periods old)** | VarOK = "no" rows that are more than 3 periods older than the current (end) period | Use the Reroll function on the Companies page in RapidReconciler — see Section 4.5 |
+| **Aged VarOK = "no" (> 3 periods old)** | VarOK = "no" rows that are more than 3 periods older than the current (end) period | Use the Reroll function on the Companies page in RapidReconciler — see Section 5.5 |
 
-### 4.4 Reading a VarOK = "no" Row
+### 5.4 Reading a VarOK = "no" Row
 
 When you see VarOK = "no":
 
-1. **Is the "no" more than 3 periods older than the current (end) period?** → Use the Reroll function — see Section 4.5.
+1. **Is the "no" more than 3 periods older than the current (end) period?** → Use the Reroll function — see Section 5.5.
 2. Compare `BegVar(current)` to `Variance(prior period)`. Note the difference.
 3. Check column R (OOB) — a non-zero OOB in a **closed historical period** is the most serious cause and should be addressed first. OOB in the current (end) period is expected and does not require investigation.
 4. Check column Q (JEs) — significant JE activity may explain variance jumps but should be investigated.
 5. Check whether GLOK = "no" on the same row — if both fail, a late-posting batch is the most likely common cause.
 6. Check the next period's BegVar — if it equals zero rather than carrying this period's Variance, a RapidReconciler reset occurred between the two periods.
 
-### 4.5 Aged VarOK = "no" — Use Reroll
+### 5.5 Aged VarOK = "no" — Use Reroll
 
 When VarOK = "no" rows are more than 3 periods older than the current period, the variance roll forward has drifted too far from the current state to self-correct through normal batch posting or R099102 operations. The recommended resolution is to use the **Reroll** function in RapidReconciler, which recalculates the perpetual balance for the affected company from the baseline date forward.
 
@@ -256,11 +305,11 @@ When VarOK = "no" rows are more than 3 periods older than the current period, th
 
 ---
 
-## Section 5: Variance Component Reference
+## Section 6: Variance Component Reference
 
 The **Variance** column (P) represents the total reconciliation difference between the perpetual inventory (F4111) and the GL (F0902) for the period. It is composed of four distinct sources:
 
-### 5.1 End of Day (Column O)
+### 6.1 End of Day (Column O)
 
 Cardex transactions (F4111) that have no matching GL entry (F0911) because the batch program that creates the GL entry has not yet run. These are expected for sales (awaiting R42800) and manufacturing (awaiting R31802A) transactions.
 
@@ -268,7 +317,7 @@ Cardex transactions (F4111) that have no matching GL entry (F0911) because the b
 
 **What to investigate:** Run the End of Day Analysis report to identify which transactions are in queue and which batch programs need to run.
 
-### 5.2 Journal Entries (Column Q)
+### 6.2 Journal Entries (Column Q)
 
 GL entries that affect the inventory account balance but have no corresponding cardex (F4111) record. These are typically:
 - Manual journal entries posted directly to inventory accounts
@@ -277,9 +326,9 @@ GL entries that affect the inventory account balance but have no corresponding c
 
 **Normal behavior:** Small JE balances are common and may represent rounding, allocation, or cost adjustment activity. Large or unexpected JE balances require investigation.
 
-**What to investigate:** Use the Transaction Detail report for the affected account to identify which GL entries have no cardex counterpart (GL-only entries, Section 4.2 of the Transaction Detail Analysis Guide).
+**What to investigate:** Use the Transaction Detail report for the affected account to identify which GL entries have no cardex counterpart (GL-only entries, Section 5.2 of the Transaction Detail Analysis Guide).
 
-### 5.3 Out of Balance (Column R)
+### 6.3 Out of Balance (Column R)
 
 The difference between F0902 (account balance table) and F0911 (account ledger detail table) for the same account and period. In a healthy system, F0902 is the summarized result of all F0911 postings and should equal the sum of F0911 for that account and period.
 
@@ -287,7 +336,7 @@ The difference between F0902 (account balance table) and F0911 (account ledger d
 
 **A non-zero OOB in a closed (historical) period** typically indicates a failed database transaction, an aborted year-end close, or a direct update to F0902 that was not reflected in F0911. In this case: run **R099102 (Account Balance Repost)** in proof mode first to identify affected accounts and periods. Run in final mode to regenerate F0902 from F0911. Involve your JD Edwards administrator before running in final mode. Only act on historical OOB if it is accompanied by a VarOK = "no" flag or is otherwise causing a visible reconciliation break.
 
-### 5.4 Cardex Variance (Column S)
+### 6.4 Cardex Variance (Column S)
 
 Item ledger integrity variances — discrepancies within F4111 itself that cannot be attributed to End of Day, JEs, or OOB. These typically arise from:
 - Cost change revaluations (Standard Cost Change rows) without corresponding GL entries
@@ -298,9 +347,9 @@ Item ledger integrity variances — discrepancies within F4111 itself that canno
 
 ---
 
-## Section 6: Common Patterns and Root Causes
+## Section 7: Common Patterns and Root Causes
 
-### 6.1 GLOK = "no" Caused by Late-Posting Batch
+### 7.1 GLOK = "no" Caused by Late-Posting Batch
 
 **How to identify:**
 - GLOK = "no" on period N+1
@@ -317,9 +366,9 @@ Item ledger integrity variances — discrepancies within F4111 itself that canno
 5. Confirm posting status shows **D** (Done) in P0011.
 6. At the next RapidReconciler refresh, verify GLOK returns to "yes".
 
-Post all unposted batches before period-end to prevent recurrence. See Section 3.2 for the full decision workflow between late-batch and R099102 scenarios.
+Post all unposted batches before period-end to prevent recurrence. See Section 4.2 for the full decision workflow between late-batch and R099102 scenarios.
 
-### 6.2 GLOK = "no" With No Unposted Batch (F0902/F0911 Misalignment)
+### 7.2 GLOK = "no" With No Unposted Batch (F0902/F0911 Misalignment)
 
 **How to identify:**
 - GLOK = "no" on period N+1
@@ -340,7 +389,7 @@ Post all unposted batches before period-end to prevent recurrence. See Section 3
 
 > **Caution:** R099102 replaces F0902 balances entirely for selected accounts and periods. Use precise data selection. Involve your JD Edwards administrator before running in final mode.
 
-### 6.3 GLOK = "no" — Consecutive Periods with Zero PerGL and Changing BegGL (Data Load Issue)
+### 7.3 GLOK = "no" — Consecutive Periods with Zero PerGL and Changing BegGL (Data Load Issue)
 
 **How to identify:**
 - Two or more consecutive GLOK = "no" rows for the same account
@@ -359,7 +408,7 @@ Post all unposted batches before period-end to prevent recurrence. See Section 3
 
 > **Do not attempt to correct individual account balances manually.** The entire F0911 dataset for the affected company must be reloaded. Individual corrections will not address the underlying data integrity problem.
 
-### 6.4 VarOK = "no" With Large OOB
+### 7.4 VarOK = "no" With Large OOB
 
 **How to identify:**
 - VarOK = "no" in a closed historical period
@@ -376,7 +425,7 @@ Post all unposted batches before period-end to prevent recurrence. See Section 3
 3. Run R099102 in final mode to regenerate F0902 from F0911.
 4. Verify the OOB clears at the next RapidReconciler refresh.
 
-### 6.5 VarOK = "no" After a RapidReconciler Reset
+### 7.5 VarOK = "no" After a RapidReconciler Reset
 
 **How to identify:**
 - BegVar jumps discontinuously from the prior period's Variance
@@ -387,7 +436,7 @@ Post all unposted batches before period-end to prevent recurrence. See Section 3
 
 **Resolution:** No action required. Document the reset date for audit purposes. VarOK = "no" on reset-adjacent periods is expected and does not indicate a data error.
 
-### 6.6 Persistent End of Day Balance
+### 7.6 Persistent End of Day Balance
 
 **How to identify:**
 - End of Day (column O) is non-zero in the end period
@@ -397,7 +446,7 @@ Post all unposted batches before period-end to prevent recurrence. See Section 3
 
 **Resolution:** Run the End of Day Analysis report to identify which transactions are pending and why the batch programs did not clear them.
 
-### 6.7 Accounts with Persistent JE Balances
+### 7.7 Accounts with Persistent JE Balances
 
 **How to identify:**
 - Column Q (JEs) is consistently non-zero across multiple periods for the same account
@@ -407,7 +456,7 @@ Post all unposted batches before period-end to prevent recurrence. See Section 3
 
 **Resolution:** Use the Transaction Detail report to identify all GL-only entries on the affected account. Determine whether the entries are valid (intercompany allocations, legitimate adjustments) or erroneous (miscoded entries that should be on expense accounts). Post correcting journal entries for any erroneous amounts.
 
-### 6.8 VarOK = "no" — Aged (More Than 3 Periods Old)
+### 7.8 VarOK = "no" — Aged (More Than 3 Periods Old)
 
 **How to identify:**
 - VarOK = "no" rows exist in column T
@@ -427,7 +476,7 @@ Post all unposted batches before period-end to prevent recurrence. See Section 3
 
 ---
 
-## Section 7: Step-by-Step Analysis Procedure
+## Section 8: Step-by-Step Analysis Procedure
 
 Use this procedure for every Roll Forward export:
 
@@ -438,15 +487,15 @@ Identify the GLOK baseline period (earliest period in the dataset) and the VarOK
 **Step 2 — Scan for GLOK = "no" Rows**
 
 Filter column J for "no". For each occurrence:
-- Check whether consecutive "no" rows exist for the same account with PerGL = 0 in column H but a changing BegGL in column G — if so, this is a data load issue requiring F0911 truncation and reimport (see Section 6.3)
+- Check whether consecutive "no" rows exist for the same account with PerGL = 0 in column H but a changing BegGL in column G — if so, this is a data load issue requiring F0911 truncation and reimport (see Section 7.3)
 - Otherwise, check the prior period's UnpostBatch (column K) and calculate the gap between BegGL(current) and EndGL(prior)
-- If the gap matches the prior UnpostBatch → late-posting batch; post batches and GLOK self-corrects (Section 6.1)
-- If the prior UnpostBatch was zero → F0902/F0911 misalignment; run R099102 (Section 6.2)
+- If the gap matches the prior UnpostBatch → late-posting batch; post batches and GLOK self-corrects (Section 7.1)
+- If the prior UnpostBatch was zero → F0902/F0911 misalignment; run R099102 (Section 7.2)
 
 **Step 3 — Scan for VarOK = "no" Rows**
 
 Filter column T for "no". For each occurrence:
-- **First, check the period age:** if the "no" is more than 3 periods older than the current (end) period, use the Reroll function on the Companies page (Section 6.8 and Section 4.5)
+- **First, check the period age:** if the "no" is more than 3 periods older than the current (end) period, use the Reroll function on the Companies page (Section 7.8 and Section 5.5)
 - Otherwise: compare BegVar to prior period Variance; check OOB (column R) first — non-zero OOB is always the highest priority; check JEs (column Q) for unexpected manual entry activity; note whether GLOK is also "no" on the same row
 
 **Step 4 — Review the End Period (GLOK = "end")**
@@ -470,7 +519,7 @@ Sum the UnpostBatch column for all end-period rows. This total represents the am
 
 **Step 7 — Document Findings**
 
-Record findings on the Roll Forward Analysis sheet following the formatting rules in Section 10.
+Record findings on the Roll Forward Analysis sheet following the formatting rules in Section 11.
 
 **Step 8 — Follow Up**
 
@@ -482,11 +531,11 @@ After corrections are made (batches posted, R099102 run, cardex variances resolv
 
 ---
 
-## Section 8: GL Batch Posting Reference
+## Section 9: GL Batch Posting Reference
 
 When GLOK = "no" is caused by a late-posting batch, the resolution path runs through the JD Edwards GL batch system. This section provides the reference needed to identify, approve, and post outstanding batches without leaving the Roll Forward guide.
 
-### 8.1 Batch Processing Flow
+### 9.1 Batch Processing Flow
 
 Every GL transaction in JD Edwards is grouped into a batch before it updates account balances. A batch must pass through two sequential steps before F0902 is updated:
 
@@ -516,7 +565,7 @@ Batch status: Approved = A, Posted = E (Error)
 | **F0911** | Account Ledger — GL transaction detail; records exist here before and after posting |
 | **F0902** | Account Balances — period-end balances; only updated when a batch posts in final mode |
 
-### 8.2 Approval Status Codes
+### 9.2 Approval Status Codes
 
 | Code | Status | Description | Action Required |
 |---|---|---|---|
@@ -526,7 +575,7 @@ Batch status: Approved = A, Posted = E (Error)
 | **H** | **Hold** | On hold; will not post until released. | Investigate the hold. Release via P0011 once resolved. |
 | **R** | **Rejected** | Submitted for approval but rejected. | Review rejection reason. Correct and resubmit. |
 
-### 8.3 Posting Status Codes
+### 9.3 Posting Status Codes
 
 | Code | Status | Description | Action Required |
 |---|---|---|---|
@@ -535,7 +584,7 @@ Batch status: Approved = A, Posted = E (Error)
 | **E** | **Error** | Posting program ran but failed. F0902 not updated. | Review the error in P0011. Resolve then repost. |
 | **P** | **In Process** | Posting program currently running. | Wait for completion. Investigate if status does not change. |
 
-### 8.4 Steps to Post Outstanding Batches
+### 9.4 Steps to Post Outstanding Batches
 
 When the Roll Forward shows a non-zero UnpostBatch in column K:
 
@@ -546,7 +595,7 @@ When the Roll Forward shows a non-zero UnpostBatch in column K:
 5. Confirm posting status shows **D** (Done) in P0011.
 6. At the next RapidReconciler import, verify UnpostBatch clears to zero and GLOK returns to "yes" on the following period.
 
-### 8.5 Common Batch Posting Errors
+### 9.5 Common Batch Posting Errors
 
 If a batch has Posting Status = **E** (Error), navigate to P0011 and review the error message before attempting to repost.
 
@@ -558,7 +607,7 @@ If a batch has Posting Status = **E** (Error), navigate to P0011 and review the 
 | **Invalid GL Date — Closed Period** | Batch date falls in a closed fiscal period | Re-open the period temporarily, post, then re-close; or change the GL date on the batch |
 | **Locked Company** | Company is locked for posting | Confirm with finance team whether the lock is intentional; unlock in P0010 if authorized |
 
-### 8.6 When to Run R099102 Instead of Posting Batches
+### 9.6 When to Run R099102 Instead of Posting Batches
 
 R099102 (Account Balance Repost) regenerates F0902 from F0911 and is the correct resolution when **all batches are confirmed posted but GLOK is still "no"** — meaning F0902 and F0911 are out of sync for reasons other than an unposted batch.
 
@@ -584,7 +633,7 @@ R099102 (Account Balance Repost) regenerates F0902 from F0911 and is the correct
 
 ---
 
-## Section 9: Period-End Requirements
+## Section 10: Period-End Requirements
 
 Before closing a period using RapidReconciler:
 
@@ -597,28 +646,28 @@ Before closing a period using RapidReconciler:
 
 ---
 
-## Section 10: Excel Output Formatting Rules
+## Section 11: Excel Output Formatting Rules
 
-### 10.1 File Naming
+### 11.1 File Naming
 
 Output file name: `DMAAI Analysis.xlsx`
 
-### 10.2 Sheet Structure
+### 11.2 Sheet Structure
 
 | Sheet | Contents |
 |---|---|
 | **Roll Forward** | The original source data, with row highlights, columns U/V/W hidden, AutoFilter enabled on row 2, freeze panes after row 2, and number formatting on monetary columns |
-| **Roll Forward Analysis** | The analysis sheet — see Section 10.4 for structure |
+| **Roll Forward Analysis** | The analysis sheet — see Section 11.4 for structure |
 
 Do not delete, rename, or reorder the source sheet. Permitted modifications to the source sheet are:
 
-- **Cell background color** — row highlights per Section 10.3
+- **Cell background color** — row highlights per Section 11.3
 - **Hidden columns** — columns U/V/W (BusinessUnit, ObjectAccount, SubAccount) are hidden as they are redundant with LongAccount and reduce horizontal scrolling
 - **AutoFilter** — enabled on row 2 (covering columns A through W) so accounts, periods, companies, and flag values can be filtered interactively
 - **Freeze panes** — set at cell A3 so the title row (row 1) and column header row (row 2) remain visible while scrolling through data rows
 - **Number formatting** — columns G, H, I, K, L, M, N, O, P, Q, R, and S (all numeric monetary columns between G and T) are formatted as `#,##0.00` — comma thousands separator and two decimal places. Columns J (GLOK text flag) and T (VarOK text flag) are skipped as they contain text, not amounts.
 
-### 10.3 Row Highlighting — Source Sheet
+### 11.3 Row Highlighting — Source Sheet
 
 | Color | Hex | Criteria |
 |---|---|---|
@@ -634,7 +683,7 @@ Do not delete, rename, or reorder the source sheet. Permitted modifications to t
 - The header row (row 2) and title row (row 1) are never highlighted.
 - Baseline rows (GLOK = "baseline") are not highlighted unless they also have VarOK = "no".
 
-### 10.4 Analysis Sheet Structure
+### 11.4 Analysis Sheet Structure
 
 | Section | Content |
 |---|---|
@@ -646,7 +695,7 @@ Do not delete, rename, or reorder the source sheet. Permitted modifications to t
 | **Period Variance by Account** | Covers the prior 3 periods only (the three periods immediately before the current end period). The current (end) period and all older historical periods are excluded. Rows are shown only where OOB absolute value exceeds $100 or UnpostBatch is non-zero. JE amounts and CardexVar are excluded. Columns: LongAccount, Period, then Variance / OOB / UnpostBatch. Sorted by account then period. OOB in these periods is informational; escalate only if accompanied by a VarOK = "no" flag. |
 | **Recommended Actions** | Numbered action steps in priority order, with detail and responsible owner. |
 
-### 10.5 Analysis Sheet Formatting
+### 11.5 Analysis Sheet Formatting
 
 | Element | Specification |
 |---|---|
@@ -668,65 +717,17 @@ Do not delete, rename, or reorder the source sheet. Permitted modifications to t
 | **Source sheet — number format** | Columns G, H, I, K, L, M, N, O, P, Q, R, S formatted as `#,##0.00`. Columns J and T are text flags and are not formatted. |
 | **Colour key** | Include a colour key section at the top of the analysis sheet. |
 
-### 10.6 Amounts
+### 11.6 Amounts
 
 All dollar amounts formatted with a dollar sign, comma thousands separator, and two decimal places (e.g., `$1,816,387.59`). Negative amounts use a leading minus sign. Floating-point artifacts are rounded to two decimal places.
 
-### 10.7 What Not to Include
+### 11.7 What Not to Include
 
 - Do not include individual period rows for accounts that are all "yes" throughout — the analysis focuses on exceptions.
 - Do not include columns U (BusinessUnit), V (ObjectAccount), or W (SubAccount) in the analysis sheet — these are hidden in the source sheet and are redundant with LongAccount.
 - Do not include the ShortAccount, Currency, or Rate columns in the analysis sheet unless a non-1.0 exchange rate or a specific account format is directly relevant to a finding.
 - Do not add formulas or conditional formatting to either sheet.
 - In the Period Variance by Account section: do not include JE amounts or CardexVar. Do not include periods outside the prior 3 periods. Do not include OOB rows where the absolute value is $100 or less.
-
----
-
-## Section 11: Using Claude for Automated Analysis
-
-Claude can perform the full Section 7 analysis procedure automatically and return a single updated `.xlsx` file with the analysis sheet added and all source rows highlighted.
-
-### 11.1 What to Upload
-
-Upload **two files**:
-
-1. This guide (`.md`)
-2. The Roll Forward report (`.xlsx`)
-
-Then use the following prompt:
-
-> *"Analyze this Roll Forward file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'Roll Forward Analysis' and all source rows highlighted."*
-
-### 11.2 Follow-On Requests in the Same Session
-
-Once the guide has been uploaded, it remains in context. Subsequent Roll Forward exports do not require the guide to be re-uploaded:
-
-> *"Analyze this file and return it with the analysis sheet and highlights."*
-
-### 11.3 Output Specification
-
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
-
-**Sheet 1 — Roll Forward (original sheet, highlights added)**
-
-| Highlight | Color | Criteria |
-|---|---|---|
-| Red | `FFCCCC` | GLOK = "no" OR VarOK = "no" |
-| Orange | `FFE5CC` | End period with non-zero UnpostBatch |
-| Yellow | `FFFACD` | End period with zero UnpostBatch |
-| Blue | `DDEEFF` | Historical period with non-zero UnpostBatch |
-
-**Sheet 2 — Roll Forward Analysis (new sheet)**
-
-Follows the structure defined in Section 10.4. The Historical Unposted Batch Summary covers all periods except the current (end) period; the end-period UnpostBatch total is reported in the Report Summary instead. The Period Variance by Account section covers the prior 3 periods only, with rows included where OOB absolute value exceeds $100 or UnpostBatch is non-zero. JE amounts and CardexVar are excluded from that section. Column order: LongAccount, Period, then Variance / OOB / UnpostBatch.
-
-### 11.4 Notes and Limitations
-
-- Claude identifies GLOK = "no" and VarOK = "no" rows directly from column values. It then examines surrounding periods to determine the likely cause (prior period UnpostBatch, OOB amount, JE activity, or reset artifact).
-- The VarOK baseline timestamp is read from column T of the baseline rows. Claude uses this to contextualize historic VarOK = "no" rows that occurred before the most recent reset.
-- Floating-point precision artifacts are rounded to two decimal places throughout.
-- Claude cannot access JD Edwards to verify batch details, confirm OOB causes, or check R099102 results. Findings requiring JD Edwards investigation are flagged in the Recommended Actions section.
-- For exports with more than 200 accounts, consider specifying a company or account range in the prompt to focus the analysis.
 
 ---
 
