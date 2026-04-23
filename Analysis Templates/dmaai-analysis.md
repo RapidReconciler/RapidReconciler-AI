@@ -4,30 +4,11 @@
 
 ---
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Section 1: What Is Integrity Report 2?](#section-1-what-is-integrity-report-2)
-- [Section 2: The Model DMAAI Table — Foundation Concept](#section-2-the-model-dmaai-table--foundation-concept)
-- [Section 3: Report Structure and Field Reference](#section-3-report-structure-and-field-reference)
-- [Section 4: DMAAI Tables in This Report](#section-4-dmaai-tables-in-this-report)
-- [Section 5: Comment / Issue Type Reference](#section-5-comment--issue-type-reference)
-- [Section 6: Report Summary — March 31, 2026](#section-6-report-summary--march-31-2026)
-- [Section 7: Findings by Priority](#section-7-findings-by-priority)
-- [Section 8: Net Zero — Verification Protocol](#section-8-net-zero--verification-protocol)
-- [Section 9: Step-by-Step Analysis Procedure](#section-9-step-by-step-analysis-procedure)
-- [Section 10: Excel Output Formatting Rules](#section-10-excel-output-formatting-rules)
-- [Section 11: Using Claude for Automated Analysis](#section-11-using-claude-for-automated-analysis)
-- [Section 12: AAI Quick Reference](#section-12-aai-quick-reference)
-- [Section 13: Related Documentation](#section-13-related-documentation)
-
----
-
 ## Overview
 
 Integrity Report 2 — **DMAAI Entry Integrity** — compares every active entry in the JD Edwards Distribution/Manufacturing AAI Values table (F4095) against the **Model DMAAI Table** (table 4152, document type PI). It identifies discrepancies in business unit, object account, and subsidiary that would cause transactions to post to incorrect GL accounts during reconciliation.
 
-This guide covers the analysis of the Integrity Report 2 export dated **March 31, 2026**, containing **3,902 rows** across **9 companies** and **10 DMAAI table numbers**. It is the companion reference document for the **RR Analysis** sheet in the exported Excel file.
+This guide is a reusable template for analyzing any customer's Integrity Report 2 export. The JD Edwards functionality, report structure, comment types, and analysis procedure are consistent across all environments. The specific companies, GL class codes, account numbers, row counts, and findings described in the analysis output will reflect the customer data in the uploaded export.
 
 > **Who should use this guide:** JD Edwards cost accountants, inventory accountants, and RapidReconciler administrators responsible for investigating and resolving DMAAI integrity findings.
 
@@ -164,7 +145,7 @@ The object account in the DMAAI entry does not match the object account in the m
 
 **Impact:** Transactions using this DMAAI entry will post to the wrong object account in the GL. Reconciliation variances will accumulate for every transaction of this GL class and doc type.
 
-**Example:** Table 4122, GL class OUTG, company 2 — DMAAI has object 1421, model expects 1423. Every inventory adjustment for OUTG-class items in company 2 posts to object 1421 instead of 1423.
+**Example:** For a given DMAAI table and GL class code, the DMAAI entry may have object 1421 while the model table expects object 1423. Every transaction of that GL class and doc type will post to the wrong object account until corrected.
 
 ### Mismatch — Object Account (Work Order Cost Type A1)
 
@@ -182,7 +163,7 @@ The business unit in the DMAAI entry does not match the business unit in the mod
 
 **Impact:** Transactions post to the correct object account but under the wrong business unit — causing GL balances to appear in the wrong branch/plant, department, or division. This can affect all departmental reporting and branch-level reconciliation.
 
-**Example:** Company 67, all GL classes — DMAAI has BU 67010, model has no BU (expects BU from branch/plant). Every inventory transaction for company 67 posts to 67010.1421 regardless of which branch plant was used.
+**Example:** For a given company, all GL classes in tables 4122 and 4310 may have a hard-coded business unit in the DMAAI entry while the model table expects no BU (meaning the BU should be sourced from the transaction's branch/plant). Every inventory and purchasing transaction for that company will post to the hard-coded BU regardless of which branch plant was used.
 
 ### Net Zero Review
 
@@ -198,278 +179,93 @@ RapidReconciler has detected that the entries in a paired set of tables (debit a
 
 ---
 
-## Section 6: Report Summary — March 31, 2026
+## Section 6: Report Summary — [Generated from Customer Export]
+
+This section is populated by Claude based on the uploaded Integrity Report 2 export. The following fields and tables will be derived from the actual data and written to the RR Analysis sheet.
+
+### Report Header
 
 | Field | Value |
 |---|---|
 | **Report Type** | Integrity Report 2 — DMAAI Entry Integrity |
 | **Source Table** | F4095 — Distribution/Manufacturing AAI Values |
-| **Period End** | March 31, 2026 |
-| **Export Generated** | April 22, 2026  6:25 PM |
-| **Total Rows** | 3,902 |
-| **Companies** | 00002, 00003, 00009, 00012, 00022, 00041, 00043, 00067, 00073 |
-| **DMAAI Tables** | 3110, 3130, 4122, 4126, 4134, 4162, 4240, 4310, 4385, 4400 |
+| **Period End** | *[Derived from export]* |
+| **Export Generated** | *[Derived from export]* |
+| **Total Rows** | *[Derived from export]* |
+| **Companies** | *[Derived from export]* |
+| **DMAAI Tables** | *[Derived from export]* |
 | **Model Table** | 4152 / Document Type PI |
 
 ### Variance Type Summary
 
-| Comment / Issue Type | DMAAI Table Description | Row Count | % of Total | Companies | Doc Types | GL Class Codes Impacted |
-|---|---|---|---|---|---|---|
-| Net zero review — 4134 / 4136 | **4134:** In-Transit Inventory — records change to COGS when item cost changes. **4136:** Offsetting credit side. Used by Quantity Revisions (P41022), Item Branch/Plant (P41026), Batch Cost Maintenance (R41802). | 1,944 | 49.8% | All 9 | IB, VV | (blank), 1421, 6101, 6102, 6104–6115, 6152, 6161–6163, 6165–6167, 6169, 6171–6172, 6174–6178, 6180–6185, 6190–6192, 7352–7354, 7357–7358, 7360, 7398–7399, 7502, 7505, 7515, 7526–7527, 7529, 7531, 7533, 7542, 7549, 7553, 7558, 7560–7573, 7575, 7577, 7579, 7581, 7586, 7588, 7591, 7699, 7707, 7730, 7749, 7751, 7801, 7859, 7875, 7878, A101, A749, BLDM, CNSP, EMAP, IN10, IN99, MAJT, MNFS, MNMS, MNOL, MNPS, MNRS, MNVR, NS20, OUTG, PTSP, TIRE, VEND |
-| Net zero review — 4122 / 4124 | **4122:** Inventory / Expense or COGS — journal entry for issues, adjustments, and transfers. **4124:** Offsetting credit side. Used by Inventory Issues (P4112), Transfers (P4113), Adjustments (P4114), Reclassifications (P4116). | 1,296 | 33.2% | All 9 | IR, VV | Same GL class code set as 4134/4136 above |
-| Net zero review — 4126 / 4128 | **4126:** Inventory / Expense or COGS — zero balance adjustment, used when quantity equals zero but dollars remain. **4128:** Offsetting credit side. Used by Inventory Issues (P4112), Transfers (P4113), Adjustments (P4114), Reclassifications (P4116). | 324 | 8.3% | 2, 3, 22 | VV | Same GL class code set as 4134/4136 above |
-| Mismatch — Business Unit (Tables 4122 and 4310, Company 67) | **4122:** Inventory Debit — Inventory Issues, Adjustments, Transfers (P4112/P4113/P4114). **4310:** Inventory — Debit inventory at time of PO receipt (P4312). | 216 | 5.5% | 67 only | IA, II, IJ, IL, IM, IP, IR, IV (4122); OR (4310) | Same GL class code set as 4134/4136 above |
-| Mismatch — Object Account (Multiple tables, multiple companies) | **4122:** Inventory Debit. **4126:** RNV Debit. **4162:** Cross-company Transfer. **4240:** Inventory — Standard sales (R42800). **4310:** Inventory at PO receipt. **4385:** Inventory or Landed Cost / Landed Cost Temporary Liability (P4312). **4400:** Inventory / COGS or Expense — zero balance adjustment at receipt (P4312). | 118 | 3.0% | 2, 3, 9, 12, 22, 41, 43, 67, 73 | IA, II, IJ, IL, IM, IP, IR, IV, IX, OB, OC, OM, OP, OR, OW, SO | OUTG, 6101, 7563, 7564 |
-| Mismatch — Object Account (WO Cost Type A1) (Tables 3110 / 3130, Companies 2 and 22) | **3110:** Raw Material / Sub-Assembly Inventory — credit side of material issues, uses GL class codes of components (R31802A). **3130:** Finished Goods / Sub-Assembly Inventory — debit for completions; scrap account for IS transactions (R31802A). | 4 | 0.1% | 2, 22 | IC, IM | OUTG |
-| **TOTAL** | | **3,902** | **100%** | | | |
+One row per comment type found in the export, with the following columns:
+
+| Column | Description |
+|---|---|
+| **Comment / Issue Type** | The comment value from the RapidReconciler export |
+| **DMAAI Table Description** | Sourced from the DMAAI table reference in this guide and distribution-aais.md |
+| **Row Count** | Count of rows with this comment in the export |
+| **% of Total** | Row count as a percentage of total export rows |
+| **Companies** | Company numbers present for this comment type |
+| **Doc Types** | Document types present for this comment type |
+| **GL Class Codes Impacted** | Distinct GL class codes present for this comment type |
+
+Color-code rows by severity: Priority 1 (red), Priority 2 (orange), Priority 3 / net zero (yellow).
 
 ### Row Count by Company
 
-| Company | Total Rows | Net Zero | Mismatch — BU | Mismatch — Object Account |
-|---|---|---|---|---|
-| 00002 | 591 | 540 | — | 51 |
-| 00022 | 579 | 540 | — | 39 |
-| 00003 | 548 | 540 | — | 8 |
-| 00067 | 542 | 324 | 216 | 2 |
-| 00009 | 338 | 324 | — | 14 |
-| 00012 | 326 | 324 | — | 2 |
-| 00041 | 326 | 324 | — | 2 |
-| 00043 | 326 | 324 | — | 2 |
-| 00073 | 326 | 324 | — | 2 |
+Summarize total rows, net zero rows, BU mismatch rows, and object account mismatch rows for each company present in the export.
 
 ### Row Count by DMAAI Table
 
-| Table | Rows | Primary Comment | Companies Present |
-|---|---|---|---|
-| 4134 | 1,944 | Net zero — 4134/4136 | All 9 |
-| 4122 | 1,454 | Net zero — 4122/4124 + Mismatch — Object Account | All 9 |
-| 4126 | 340 | Net zero — 4126/4128 + Mismatch — Object Account | 2, 3, 22 |
-| 4310 | 113 | Mismatch — BU (Co 67) + Mismatch — Object Account | 2, 22, 67 |
-| 4400 | 32 | Mismatch — Object Account | 2, 3, 22 |
-| 4385 | 12 | Mismatch — Object Account | 2, 22 |
-| 3130 | 2 | Mismatch — Object Account (WO) | 2, 22 |
-| 3110 | 2 | Mismatch — Object Account (WO) | 2, 22 |
-| 4240 | 2 | Mismatch — Object Account | 2, 22 |
-| 4162 | 1 | Mismatch — Object Account | 2 |
+Summarize row counts by DMAAI table number, with the primary comment type and companies present for each table.
 
 ---
 
-## Section 7: Findings by Priority
+## Section 7: Findings by Priority — [Generated from Customer Export]
 
-### Priority 1 — Business Unit Mismatch: Company 67 (Tables 4122 and 4310)
+This section is populated by Claude based on the uploaded export. One sub-section is written for each distinct finding, grouped and ordered by priority. The structure below defines what each finding sub-section must contain.
 
-**Severity: HIGH — Systematic error affecting all GL class codes for company 67**
+### Priority Classification
+
+| Priority | Condition | Severity Label |
+|---|---|---|
+| **Priority 1** | Business unit mismatch — systematic error affecting all GL class codes for one or more companies | HIGH |
+| **Priority 2** | Object account mismatch — confirmed discrepancy between DMAAI entry and model table | HIGH / MEDIUM-HIGH |
+| **Priority 3** | Net zero review — requires verification before classification as error | REQUIRES VERIFICATION |
+
+### Finding Sub-Section Template
+
+Each finding is written as follows:
+
+**[Priority X] — [Issue Type]: [Brief Description] ([Tables Affected]) — [Companies Affected]**
+
+**Severity: [HIGH / MEDIUM-HIGH / MEDIUM / REQUIRES VERIFICATION] — [One-sentence summary]**
 
 **What Was Found**
-
-Company 67 has a business unit mismatch across **216 rows** in two DMAAI tables:
-
-- **Table 4122** (108 rows): All inventory adjustment, transfer, and receipt doc types (IA, II, IJ, IL, IM, IP, IR, IV) for all GL class codes
-- **Table 4310** (108 rows): All purchase order receipt (OR) doc types for all GL class codes
-
-In both tables, the AAI entries have account **67010.1421** (Business Unit 67010, Object 1421). The model table (4152 PI) shows account **1421** with no business unit prefix — meaning the model expects the business unit to come from the transaction's branch/plant, not to be hard-coded in the DMAAI.
-
-**GL Class Codes Affected**
-
-108 GL class codes are affected. These include numeric codes in the 6101–6192 range, 7352–7878 range, and alphabetic codes including: BLDM, CNSP, EMAP, IN10, IN99, MAJT, MNFS, MNMS, MNOL, MNPS, MNRS, MNVR, NS20, OUTG, PTSP, TIRE, VEND, and others.
+Describe the specific discrepancy: which tables, which companies, which GL class codes, which doc types, and what the AAI account shows versus what the model expects. Include a summary table if multiple tables or companies are involved.
 
 **Root Cause**
-
-The DMAAI entries for company 67 in tables 4122 and 4310 have business unit 67010 hard-coded. Per JDE DMAAI design, when a business unit is left blank in the DMAAI entry, the system pulls the BU from the branch/plant on the transaction. Hard-coding 67010 overrides this behavior — every inventory and purchasing transaction for company 67 posts to BU 67010 regardless of which branch plant was used.
-
-Either:
-- BU 67010 is the correct and intended inventory account for all of company 67's transactions (consolidated plant), or
-- BU 67010 was entered in error and should be removed so the branch/plant drives the account
+Explain the likely cause of the discrepancy based on JDE DMAAI design principles. Present both possible explanations (e.g., DMAAI is wrong vs. model is wrong) without assuming which is correct — this determination requires JDE access and accounting team input.
 
 **Verification Steps**
-
-1. Navigate to DMAAI in JDE (fast path: `DMAAI`)
-2. Inquire on table 4122, company 67, doc type IA
-3. Confirm whether BU 67010 is listed in the Business Unit field
-4. Check whether BU 67010 exists in the chart of accounts (P0901) and is set up as an inventory account
-5. Review recent GL postings for company 67 inventory transactions to determine which BU they posted to
-6. Cross-reference with model table 4152 — determine whether the model needs updating or the DMAAI does
+Step-by-step instructions to locate and confirm the finding in JDE DMAAI (fast path: `DMAAI`).
 
 **Resolution**
+Present as a decision table:
 
 | If... | Then... |
 |---|---|
-| BU 67010 is correct | Update model table 4152 PI for company 67 to include BU 67010 for all affected GL class codes. Refresh RapidReconciler. |
-| BU 67010 is incorrect | Remove the hard-coded BU from all 4122 and 4310 entries for company 67 in JDE DMAAI. Allow the transaction branch/plant to drive the BU. Refresh RapidReconciler. |
+| [Condition A — one account is correct] | [Action A — what to update in JDE] |
+| [Condition B — other account is correct] | [Action B — what to update in JDE] |
 
 ---
 
-### Priority 2A — Object Account Mismatch: GL Class OUTG, Companies 2 and 22 (Multiple Tables)
+### Net Zero Findings
 
-**Severity: HIGH — Systematic object account error across all balance sheet DMAAI tables for OUTG items**
+Net zero findings follow the same sub-section structure but reference the verification protocol in Section 8. They are always labeled Priority 3 and must not be marked as resolved without completing the Section 8 protocol.
 
-**What Was Found**
-
-GL class **OUTG** has an object account discrepancy across every validated DMAAI table for companies 2 and 22:
-
-| Table | Doc Types | Co 2 AAI | Co 2 Model | Co 22 AAI | Co 22 Model |
-|---|---|---|---|---|---|
-| 4122 | IJ, IL, IM, IP, IV | 1421 | 2.1423 | 1421 | 22.1423 |
-| 4126 | IA, II, IJ, IL, IM, IP, IR | 2.1421 | 2.1423 | 22.1421 | 22.1423 |
-| 4126 | IV | 1421 | 2.1423 | 1421 | 22.1423 |
-| 4162 | IX | 2.1421 | 2.1423 | — | — |
-| 4240 | SO | 1421 | 2.1423 | 1421 | 22.1423 |
-| 4310 | OR | 1421 | 2.1423 | 1421 | 22.1423 |
-| 4385 | OB, OC, OM, OP, OR, OW | 1421 | 2.1423 | 1421 | 22.1423 |
-| 4400 | IV, OB, OC, OP | 1421 | 2.1423 | 1421 | 22.1423 |
-
-**Pattern:** The DMAAI tables consistently have object **1421** (or BU.1421) for OUTG, while the model consistently expects object **1423** (or BU.1423) for OUTG in companies 2 and 22.
-
-**Root Cause**
-
-Either object 1421 or object 1423 is the correct inventory account for GL class OUTG. A discrepancy at the model level (4152) has propagated across all satellite tables, or the satellite tables were set up without being updated when the model changed. The mismatch is entirely in the **object account** component (1421 vs 1423); business units are consistent within each table.
-
-**Note on Table 4126 Entries with BU**
-
-For table 4126, some entries show `2.1421` (Co 2) or `22.1421` (Co 22) in the AAI field — meaning the BU is populated in 4126 but the object is still wrong (1421 vs model 1423). The BU component matches the model; only the object differs.
-
-**Resolution**
-
-1. Determine the correct object account for OUTG inventory: review the chart of accounts, item setup, and existing GL postings to confirm whether OUTG items should post to object 1421 or 1423.
-2. **If 1423 is correct:** Update all affected DMAAI table entries for OUTG GL class in companies 2 and 22 to use object 1423. Tables to update: 3110, 3130 (see Priority 2C), 4122, 4126, 4162, 4240, 4310, 4385, 4400.
-3. **If 1421 is correct:** Update model table 4152 PI for companies 2 and 22, GL class OUTG, to use object 1421.
-4. Do not correct 4122 in isolation — all satellite tables must be updated in the same pass.
-5. Refresh RapidReconciler after all changes.
-
----
-
-### Priority 2B — Object Account Mismatch: GL Class OUTG, IA/II Doc Types, Table 4122 (Multiple Companies)
-
-**Severity: MEDIUM-HIGH — Intercompany adjustment entries show inverse OUTG object account mismatch**
-
-**What Was Found**
-
-For **document types IA and II** in table 4122, the OUTG object mismatch is **inverted** compared to Priority 2A:
-
-| Company | Doc Types | AAI Account | Model Account |
-|---|---|---|---|
-| 2 | IA, II | 1423 | 3.1421, 9.1421, 12.1421, 41.1421, 43.1421, 1421 |
-| 3 | IA, II | 1423 | 3.1421 |
-| 9 | IA, II | 1423 | 3.1421, 9.1421, 12.1421, 41.1421, 43.1421, 1421 |
-| 12 | IA, II | 1423 | 12.1421 |
-| 41 | IA, II | 1423 | 41.1421 |
-| 43 | IA, II | 1423 | 43.1421 |
-| 67 | IA, II | 1423 | 1421 |
-| 73 | IA, II | 1423 | 1421 |
-
-The IA and II doc types have object **1423** in the DMAAI, while the model expects object **1421**. This is the inverse of the IJ/IL/IM/IP/IV object account pattern in Priority 2A.
-
-**Important Observation**
-
-The multi-company model account column (e.g., `3.1421, 9.1421, 12.1421`) indicates that these IA/II entries appear to be intercompany transactions where company 2 or company 9 is the source and the entry references multiple transaction companies. The intercompany inventory adjustment may intentionally use a different object account from standard inventory adjustments.
-
-**Resolution**
-
-Analyze in conjunction with Priority 2A. Before correcting:
-1. Confirm whether IA (Inventory Adjustment — In) and II (Internal/Intercompany Adjustment) transactions are intended to use the same object as other inventory adjustments or a different object.
-2. If IA/II should use object 1421 (same as model): update table 4122 IA and II entries for all listed companies to use 1421 for OUTG.
-3. If IA/II should use object 1423 (which is what they currently have): update the model table for the IA/II scenario.
-4. Document the design decision before making changes — the inverse pattern across all 8 companies suggests this may be a deliberate intercompany account.
-
----
-
-### Priority 2C — Object Account Mismatch: Work Order Cost Type A1 (Tables 3110 and 3130) — Companies 2 and 22
-
-**Severity: MEDIUM — Manufacturing WIP object accounts affected for actual-cost work orders**
-
-**What Was Found**
-
-Tables 3110 (Material Issues) and 3130 (WIP Completions) have the same OUTG object mismatch as Priority 2A, specifically for work orders with **Order Type WO, Cost Type A1** (actual cost):
-
-| Company | Table | Doc Type | AAI Account | Model Account |
-|---|---|---|---|---|
-| 2 | 3110 | IM | 1421 | 2.1423 |
-| 2 | 3130 | IC | 1421 | 2.1423 |
-| 22 | 3110 | IM | 1421 | 22.1423 |
-| 22 | 3130 | IC | 1421 | 22.1423 |
-
-**Root Cause**
-
-Same root cause as Priority 2A — the OUTG object account discrepancy (1421 vs 1423) propagates into the manufacturing WIP tables. Cost Type A1 entries are specifically flagged, meaning this affects actual-cost work orders for OUTG-class items in companies 2 and 22.
-
-**Manufacturing Accounting Context**
-
-- **Table 3110** feeds the raw material side of the WIP journal entry — debiting WIP and crediting raw material inventory when materials are issued to a work order
-- **Table 3130** feeds the completion side — debiting finished goods and crediting WIP when work orders are completed
-- Manufacturing accounting (R31802A) is the batch program that creates these GL entries; it runs once per work order in final mode and **cannot be rerun**
-
-If OUTG-class materials are being issued to actual-cost work orders and the DMAAI is wrong, the WIP account is off. Corrections to future transactions are straightforward, but past work orders already processed by R31802A cannot be reprocessed.
-
-**Resolution**
-
-Resolve in conjunction with Priority 2A — the correct object account (1421 or 1423) must be determined first. Once determined, update tables 3110 and 3130 for companies 2 and 22. Coordinate with manufacturing accounting to identify any work orders that have already been processed with the incorrect account.
-
----
-
-### Priority 2D — Object Account Mismatch: Table 4400 (Intercompany/Advanced Pricing) — Companies 2, 3, and 22
-
-**Severity: MEDIUM — Intercompany billing and advanced pricing object accounts may be incorrect**
-
-**What Was Found**
-
-Table 4400 (Intercompany/Advanced Pricing) has two distinct mismatch patterns:
-
-**Pattern 1 — OUTG GL Class — Object Account Mismatch (same as Priority 2A):**
-
-| Company | Doc Types | AAI Account | Model Account |
-|---|---|---|---|
-| 2 | IV, OB, OC, OP | 1421 | 2.1423 |
-| 22 | IV, OB, OC, OP | 1421 | 22.1423 |
-
-**Pattern 2 — GL Classes 6101, 7563, 7564 — Business Unit and Object Account Mismatch:**
-
-| Company | GL Class | Doc Types | AAI Account | Model Account |
-|---|---|---|---|---|
-| 2 | 6101, 7563, 7564 | OB, OC, OP | 2200.6101 / 2200.7563 / 2200.7564 | 2.1421 |
-| 22 | 6101, 7563, 7564 | OB, OC, OP | 22200.6101 / 22200.7563 / 22200.7564 | 22.1421 |
-| 3 | 7563, 7564 | OB, OC, OP | 3210.7563 / 3210.7564 | 3.1421 |
-
-**Analysis**
-
-For Pattern 1, the same OUTG object account mismatch from Priority 2A applies to the intercompany tables. These should be corrected as part of the same OUTG correction pass.
-
-For Pattern 2, the AAI uses business units 2200, 22200, and 3210 — which may be dedicated intercompany clearing business units, not inventory BUs. The object accounts differ from the model (6101/7563/7564 vs model object 1421). This could indicate:
-- The intercompany billing entries legitimately use different accounts than standard inventory
-- Or the 4400 entries were set up independently without reference to the model
-
-**Resolution**
-
-Do not correct Pattern 2 (GL classes 6101/7563/7564) without first confirming whether BU 2200, 22200, and 3210 are intentional intercompany clearing accounts. Correct Pattern 1 (OUTG) as part of the broader OUTG resolution in Action 2 of the Recommended Actions.
-
----
-
-### Priority 3 — Net Zero Review (All Tables) — All 9 Companies
-
-**Severity: REQUIRES VERIFICATION — Not a confirmed error; may be intentional**
-
-**What Was Found**
-
-3,564 rows carry a "Net zero review" comment across three table pairs:
-
-| Table Pair | DMAAI Table Description | Row Count | Companies | Doc Types |
-|---|---|---|---|---|
-| 4134 / 4136 (In-Transit) | **4134:** In-Transit Inventory — records change to COGS when item cost changes. **4136:** Offsetting credit side. Used by Quantity Revisions (P41022), Item Branch/Plant (P41026), Batch Cost Maintenance (R41802). | 1,944 | All 9 | IB, VV |
-| 4122 / 4124 (Inventory / Relief) | **4122:** Inventory / Expense or COGS — journal entry for issues, adjustments, and transfers. **4124:** Offsetting credit side. Used by Inventory Issues (P4112), Transfers (P4113), Adjustments (P4114), Reclassifications (P4116). | 1,296 | All 9 | IR, VV |
-| 4126 / 4128 (Zero Balance Adjustment) | **4126:** Inventory / Expense or COGS — zero balance adjustment, used when quantity equals zero but dollars remain. **4128:** Offsetting credit side. Used by Inventory Issues (P4112), Transfers (P4113), Adjustments (P4114), Reclassifications (P4116). | 324 | 2, 3, 22 | VV |
-
-**Key Observation**
-
-For all net zero rows, the **ModelAccount column is blank (NaN)**. This means RapidReconciler cannot compare these entries directly against the model table — the model table (4152 PI) does not have entries for the IR, VV, or IB doc types with the same GL class codes. The net zero flag is generated by comparing the table pair (e.g., 4122 vs 4124) rather than against the model.
-
-**What Net Zero Means in Practice**
-
-A net zero configuration occurs when the debit entry (e.g., 4122) and the credit entry (e.g., 4124) for the same GL class and doc type point to the same account. The journal entry created debits and credits the same account, resulting in no net movement. This is problematic for inventory because:
-
-- **4122 / 4124 pair:** The debit to inventory (4122) and the credit from inventory (4124) both hit the same account → no inventory balance change recorded in the GL → reconciliation cannot balance. These tables are used by Inventory Issues (P4112), Transfers (P4113), Adjustments (P4114), and Reclassifications (P4116).
-- **4134 / 4136 pair:** The in-transit debit (4134) and in-transit credit (4136) both hit the same account → in-transit inventory cannot be tracked separately from on-hand. These tables are used by Quantity Revisions (P41022), Item Branch/Plant (P41026), and Batch Cost Maintenance (R41802).
-- **4126 / 4128 pair:** The zero balance adjustment debit (4126) and its credit (4128) both hit the same account → the adjustment nets to zero and no correction is recorded. These tables are used by the same inventory programs as 4122/4124 (P4112, P4113, P4114, P4116).
-
-See Section 8 for the full verification protocol.
+For the customer export, net zero findings are grouped by table pair (4122/4124, 4126/4128, 4134/4136) and summarized together unless a specific company or GL class shows a distinct pattern warranting separate treatment.
 
 ---
 
@@ -573,11 +369,7 @@ Maintain a running log of:
 
 ### File Naming
 
-```
-Integrity_[Period-End-Date]_[Timestamp]_Analysis.xlsx
-```
-
-**Example:** `Integrity_2026-03-31_20260422-1825_Analysis.xlsx`
+Output file name: `DMAAI Analysis.xlsx`
 
 ### Sheet Structure
 
@@ -610,7 +402,8 @@ Do not delete, rename, or reorder the source sheet.
 | **Priority 2 rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
 | **Priority 3 rows** | Yellow fill (`FFFACD`), dark gold text (`5C4A00`) |
 | **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
-| **Column widths** | Column A: 35 characters; Column B: 40 characters; Column C: 12 characters; Column D: 20 characters; Column E: 18 characters; Column F: 110 characters (GL class codes) |
+| **Column widths** | Auto-size all column widths and row heights on the RR Analysis sheet to fit content |
+| **Wrap text** | Enabled on all data rows and header rows on the RR Analysis sheet |
 
 ---
 
@@ -637,7 +430,7 @@ Once this guide has been uploaded, it remains in context. Use:
 
 ### Output Specification
 
-**File naming:** Append `_Analysis` to the original filename.
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
 **Sheet 1 — Integrity (original)**
 - Source data, unchanged
@@ -721,7 +514,7 @@ Flexible Accounting (P40296) allows the business unit or subsidiary to be dynami
 - Flexible Accounting rules must be reviewed in P40296 to determine the actual account
 - Per AAI setup requirements, if Flexible Accounting populates the BU, the BU must be left **blank** in the DMAAI entry
 
-In this report, **FlexBu = Yes** for all rows in table 4122 and some rows in other tables for companies 2 and 22. This means the BU in the AAI account column may be overridden at posting time. The object account mismatch findings still apply (Flexible Accounting cannot flex the object account).
+In this report, **FlexBu = Yes** for rows where the business unit component of the account is dynamically constructed at posting time. The object account mismatch findings still apply — Flexible Accounting cannot flex the object account, only the business unit or subsidiary.
 
 ---
 

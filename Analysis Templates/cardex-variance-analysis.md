@@ -4,28 +4,6 @@
 
 ---
 
-## Table of Contents
-
-- [Section 1: What Is a Cardex Variance?](#section-1-what-is-a-cardex-variance)
-  - [1.1 How RapidReconciler Calculates the Beginning Balance](#11-how-rapidreconciler-calculates-the-beginning-balance)
-  - [1.2 Where Cardex Variance Fits in the Reconciliation Framework](#12-where-cardex-variance-fits-in-the-reconciliation-framework)
-  - [1.3 Variance Types](#13-variance-types)
-- [Section 2: Key Fields Reference](#section-2-key-fields-reference)
-  - [2.4 Identifying the Item's Cost Method](#24-identifying-the-items-cost-method)
-- [Section 3: Step-by-Step Analysis Workflow](#section-3-step-by-step-analysis-workflow)
-- [Section 4: Common Root Causes](#section-4-common-root-causes)
-- [Section 5: JDE Validation and Correction Procedure](#section-5-jde-validation-and-correction-procedure)
-- [Section 6: RapidReconciler Resolution Using Re-Roll](#section-6-rapidreconciler-resolution-using-re-roll)
-- [Section 7: Case Studies](#section-7-case-studies)
-  - [Case Study 1 — Item 12882 / Lot 515111 (Dollar-Only: WAC Escalation)](#case-study-1--item-12882--lot-515111-dollar-only-variance-wac-escalation)
-  - [Case Study 2 — Item 230 / Branch IDM (Quantity + Amount: F41021 Integrity Gap)](#case-study-2--item-230--branch-idm--location-mld-quantity--amount-variance-f41021-integrity-gap)
-  - [Case Study 3 — Item 633998-01-RBD (Reconciled WAC Item: Method 02 Review)](#case-study-3--item-633998-01-rbd-reconciled-wac-item-method-02-review)
-- [Section 8: Analysis Checklist](#section-8-analysis-checklist)
-- [Section 9: Glossary](#section-9-glossary)
-- [Section 10: Using Claude for Automated Analysis](#section-10-using-claude-for-automated-analysis)
-
----
-
 ## Section 1: What Is a Cardex Variance?
 
 A **Cardex** (also called an Item Roll Forward or Item Transaction History) records every inventory movement for an item — receipts, issues, transfers, and adjustments — along with running quantity (`runqty`) and running amount (`runamt`) balances. In JD Edwards, this data lives in the item ledger table **F4111**.
@@ -526,180 +504,41 @@ Re-Roll changes are applied immediately in RapidReconciler's internal data, but 
 
 ---
 
-## Section 7: Case Studies
+## Section 7: Case Studies — [Generated from Customer Data]
 
-### Case Study 1 — Item 12882 / Lot 515111 (Dollar-Only Variance: WAC Escalation)
+Section 7 is populated by Claude based on the uploaded Item Roll Forward file. Each case study documents one item/lot/branch combination under investigation. The structure below defines what each case study must contain.
 
-**File:** `ItemRollForward_20260421-1446.xlsx`  
-**Item:** 12882 | **Lot:** 515111 | **Branch:** 1310 | **Location:** WAREHOUSE  
-**GL Account:** 1310.1100 | **GL Class:** P10  
-**Variance:** –$20,417.34 (amtvar with runqty = 0.00)
+### Case Study Template
 
-### 7.1 Transaction Summary
+**Case Study [N] — Item [number] / Lot [lot or "none"] / Branch [branch] ([Variance Type]: [Root Cause Classification])**
 
-| dt | Count | Net Qty (KG) | Net Val ($) |
-|---|---|---|---|
-| IT | 168 | –70.000 | –27,391.16 |
-| PI | 74 | 0.000 | 0.00 |
-| IK | 14 | +70.000 | +6,973.82 |
-| **Total** | **256** | **0.000** | **–20,417.34** |
+**File:** `[filename]`
+**Item:** [item number] | **Lot:** [lot or none] | **Branch:** [branch] | **Location:** [location]
+**GL Account:** [account] | **GL Class:** [GL class] | **UOM:** [unit]
+**QtyVar:** [value] | **AmtVar:** [value]
 
-Net quantity = 0.000 KG — confirmed as a pure dollar variance. All 256 non-header rows account for the full history from October 2021 through July 2024.
+**[N].1 Transaction Summary**
+Net quantity and value by `dt` code. Confirm whether the F4111 ledger is internally consistent (Beg bal + net transactions = Curr bal runqty). State clearly whether the variance is dollar-only or quantity + amount.
 
-### 7.2 Cost Evolution
+**[N].2 Beginning Balance**
+Beg bal date, runqty, runamt, and implied unit cost. Internal consistency check result. Note if the gap may pre-date RR go-live.
 
-| Period | Cost ($/KG) | Driver |
-|---|---|---|
-| Jul 2023 – Jan 2024 | $43.15 | Stable base WAC |
-| Jan 2024 – Mar 2024 | $43.17 – $43.22 | Minor WAC drift |
-| **Mar 2024 (PI)** | **$94.01** | **~118% step-up revaluation via PI** |
-| Apr – May 2024 | $94.57 – $95.14 | WAC settling after March PI |
-| **Jun 18, 2024 (IK)** | **$99.63** | **IK receipt cost — 4.7% above prevailing PI** |
-| Jun 20, 2024 (PI) | $96.45 | PI revaluation after IK receipts |
-| **Jul 2024 (IT issues)** | **$138.17 – $139.51** | **~44% further escalation; all remaining stock depleted** |
+**[N].3 Variance Decomposition** *(quantity + amount variances only)*
+Break AmtVar into Component A (QtyVar × prevailing WAC) and Component B (dollar-only residual). Identify the primary driver.
 
-The March 2024 PI revaluation represents the most significant structural shift — a 118% cost increase with zero quantity flow, meaning the WAC was reset without any new purchase receipts to validate the new cost level. This elevated WAC pool then continued to rise through July 2024.
+**[N].4 Root Cause**
+Section 4 pattern classification. For dollar-only variances: identify the cost inflection point(s), the transactions that drove cost changes, and the mechanism by which the stranded balance accumulated. For quantity variances: identify the most likely source of the F4111 / F41021 gap.
 
-### 7.3 Root Cause: Two-Component Variance
+**[N].5 RapidReconciler Classification**
+State the root cause code from Section 4, the variance type (QtyVar = 0 or ≠ 0, AmtVar value), and a one-sentence summary.
 
-The $20,417.34 variance breaks down into two measurable components:
+**[N].6 Corrective Action**
+Full step-by-step correction per Sections 5 and 6, with field-level values for the IA transaction and the Re-Roll option to use.
 
-| Component | Calculation | Amount |
-|---|---|---|
-| **IK receipt premium** | ($99.63 – $95.14) × 70 KG | +$314.19 |
-| **WAC escalation on issue** | Residual after IK premium | –$20,103.15 |
-| **Total variance** | | **–$20,417.34** |
+**[N].7 Recommended Preventive Actions**
+Follow-up items specific to this item's pattern: cost review, BOM validation, IA processing controls, IB authorization confirmation, WAC monitoring, or IT coordination as applicable.
 
-**Component 1 — IK receipt premium ($314.19):**  
-The 14 IK transactions on 2024-06-18 brought 70 KG into inventory at $99.6263/KG. The prevailing PI cost on that same date was $95.1379/KG — a $4.49/KG premium. This $314.19 entered the WAC pool at a cost above the existing average, slightly elevating the pool cost from that point forward.
 
-**Component 2 — WAC escalation on issue ($20,103.15):**  
-Between June and July 2024, the WAC escalated from ~$96/KG to $138–139/KG (a further ~44% increase). When the IT transactions issued out all remaining inventory in late July 2024, those 70 KG were valued at the elevated WAC — not at the $99.63/KG at which the IK receipts had entered the pool. With no further purchase receipts to dilute the cost pool and no remaining on-hand quantity to absorb the differential, the accumulated cost difference left a stranded credit balance of $20,417.34 in the inventory GL account.
-
-### 7.4 Supporting Evidence
-
-- **IK transactions (14 rows, 2024-06-18):** Each posts 5.0 KG at $99.6263 = $498.13 per transaction; 14 × $498.13 = $6,973.82 total receipt value.
-- **IT net (168 rows):** Net –70.000 KG at an effective blended issue cost of $391.30/KG = $27,391.16 total issue value. The effective issue cost is not a single transaction cost — it is the weighted result of the WAC blending across all July 2024 issues.
-- **PI rows (74 rows, all zero qty):** Confirm that no purchase receipts entered the pool between the IK dates and the July depletion. The PIs are period snapshots and cost revaluations only.
-- **Curr bal row:** runqty = 0.0, runamt = –$20,417.34, cost = $139.5066/KG. The cost field on this row reflects the WAC at the time the last IT issue was processed — confirming that the final depletion occurred at the elevated July rate.
-
-### 7.5 RapidReconciler Classification
-
-This variance falls under **Root Cause 4a (WAC Escalation After Kit Receipt)** — a dollar-only amount variance (QtyVar = 0, AmtVar = –$20,417.34) caused by the IK receipt cost entering the WAC pool at a cost that was later significantly exceeded by the WAC prevailing at the time of issue, resulting in a stranded credit balance when quantity was fully depleted.
-
-### 7.6 Corrective Action
-
-**Step 1 — Validate in JD Edwards**  
-Export F4111 for Item 12882 / Branch 1310 / Lot 515111. Exclude rows where ILIPCD = "X". Summarize quantity and extended amount. Confirm the extended amount total equals –$20,417.34 and quantity equals 0.
-
-**Step 2 — Disable Average Cost Update (Average Cost environment)**  
-UDC → 40/AV → Locate P4114 → Change Description 02 from "Y" to "N".
-
-**Step 3 — Post Dollars-Only IA in P4114**
-
-| Field | Value |
-|---|---|
-| Item Number | 12882 |
-| Branch Plant | 1310 |
-| Location | WAREHOUSE |
-| Lot Number | 515111 |
-| Extended Amount | **+$20,417.34** (positive — increases value to clear the credit) |
-| Quantity | **BLANK** |
-| Unit Cost | **BLANK** |
-
-**Step 4 — Verify**  
-Confirm the IA appears in F4111 with qty = 0, amt = +$20,417.34. Re-summarize the cardex and confirm the net extended amount now equals $0.00.
-
-**Step 5 — Restore UDC 40/AV Immediately**  
-UDC → 40/AV → Locate P4114 → Change Description 02 from "N" back to "Y".
-
-**Step 6 — Re-Roll in RapidReconciler**  
-Open the Re-Roll Item dialog for Item 12882. Select **Re-Roll Item**. Verify item details. Click Re-Roll. Confirm after the next nightly refresh that QtyVar = 0 and AmtVar = 0.
-
-### 7.7 Recommended Preventive Actions
-
-- **Confirm the March 2024 PI revaluation:** The 118% cost step-up from $43.19 to $94.01 via a zero-quantity PI is the foundational event. Verify with Purchasing that this revaluation was authorized and reflects actual procurement costs.
-- **Review IK BOM cost:** Confirm that the $99.63/KG cost assigned to the IK assembly transactions reflects the current actual component cost, not a stale or manual BOM rate.
-- **Investigate the July 2024 cost jump:** The further escalation to $138–$139/KG drove the majority of the variance ($20,103 of $20,417). Verify the purchase orders or cost changes that caused this WAC movement.
-- **Monitor WAC volatility:** Flag items where WAC changes by more than 20% within a single period for additional review before the period closes.
-- **Review IK processing controls:** Assess whether IK receipts are being posted at a cost validated against the prevailing WAC, or whether BOM rates are diverging from market.
-
----
-
-### Case Study 2 — Item 230 / Branch IDM / Location MLD (Quantity + Amount Variance: F41021 Integrity Gap)
-
-**File:** `ItemRollForward_20260421-1518.xlsx`
-**Item:** 230 | **Lot:** (none) | **Branch:** IDM | **Location:** MLD
-**GL Account:** 1000000.141000.MM | **GL Class:** MOLD | **UOM:** LB
-**QtyVar:** +59.00 LB | **AmtVar:** +$146.27
-
-### 7a.1 Transaction Summary
-
-| dt | Count | Net Qty (LB) | Net Val ($) |
-|---|---|---|---|
-| IT | 361 | +682,955.28 | +1,662,915.41 |
-| IM | 6,101 | –653,978.20 | –1,593,002.42 |
-| IA | 2,534 | –29,993.23 | –73,330.31 |
-| IB | 2 | 0.00 | +928.82 |
-| PI | 1 | +0.05 | +0.12 |
-| **Total (transactions)** | **8,999** | **–1,016.10** | **–2,488.38** |
-
-Beg bal (4,403.18 LB) + net transactions (–1,016.10 LB) = Curr bal runqty (3,387.08 LB) — the F4111 ledger is internally consistent. The variance is entirely between F4111 and F41021.
-
-### 7a.2 Beginning Balance
-
-RapidReconciler back-calculated the beginning balance from the F41021 snapshot taken at go-live on **2015-08-30**: 4,403.18 LB valued at $10,791.25 (implied cost $2.4508/LB). The prevailing transaction cost throughout the entire history is $2.4507/LB — a $0.0001/LB rounding difference producing $0.44 over the opening quantity, which is immaterial and absorbed into running balances. The beginning balance itself is sound.
-
-Importantly: if the 59 LB gap existed in F41021 before RR go-live, the back-calculated beginning balance would have incorporated that gap from day one, meaning the variance has been present since initial setup.
-
-### 7a.3 Variance Decomposition
-
-| Component | Calculation | Amount |
-|---|---|---|
-| **Component A — Qty gap valued at WAC** | 59.0 LB × $2.4507/LB | $144.59 |
-| **Component B — Dollar-only residual** | $146.27 – $144.59 | $1.68 |
-| **Total AmtVar** | | **$146.27** |
-
-Component A is the primary driver and is resolved by correcting the quantity gap. Component B ($1.68) is attributable to the IB cost adjustment pair (see below) and is addressed separately with a dollars-only IA.
-
-### 7a.4 Root Cause: F41021 Integrity Gap (Section 4h)
-
-This is a **quantity variance**, not a WAC cost-escalation variance. The cost has been completely stable at $2.4507/LB across all 20 periods and 8,999 transactions — there is no cost differential to investigate.
-
-The 59 LB gap between F4111 (3,387.08 LB) and F41021 (3,328.08 LB) most likely originates from one of two causes:
-
-**Primary hypothesis — IA failed to update F41021:** With 2,534 IA transactions across 20 periods, one or more IA adjustment transactions totalling 59 LB recorded in F4111 but did not update F41021. The 59 LB gap represents less than 0.2% of total IA activity — consistent with a single failed F41021 update.
-
-**Secondary hypothesis — pre-RR go-live gap:** If no unposted or failed IA is found, the discrepancy may have existed in F41021 before RR was initiated and been embedded in the back-calculated beginning balance at setup.
-
-**IB pair:** Two zero-qty IB rows (doc 9191532: +$16,298.04 on 2015-08-17; doc 9174216: –$15,369.22 on 2015-08-13) net to +$928.82. These are dollars-only cost correction entries and are the source of the $1.68 Component B residual. Their authorization should be confirmed independently.
-
-### 7a.5 RapidReconciler Classification
-
-Root Cause 4h — F41021 vs F4111 Integrity Gap. Both QtyVar (+59 LB) and AmtVar (+$146.27) are non-zero. The AmtVar is 98.9% explained by the quantity gap valued at WAC. No WAC volatility is present.
-
-### 7a.6 Corrective Action
-
-**Step 1 — Query for unposted IA transactions**
-In JD Edwards, query F4111 for Item 230 / Branch IDM / Location MLD. Filter IA rows for ILIPCD ≠ "P".
-
-**Step 2a — If unposted IA found**
-Post the transaction in JD Edwards. Recheck F41021 quantity after posting. If QtyVar resolves, proceed to Step 4 for any residual AmtVar.
-
-**Step 2b — If all IA transactions are posted but gap remains**
-Request an F41021 SQL correction from IT for +59.00 LB. Confirm F4111 is the accurate record before proceeding. DBA support is required.
-
-**Step 3 — Address residual dollar amount ($1.68)**
-Once the quantity is resolved, if a dollar residual remains, post a dollars-only IA in P4114: Extended Amount = –$1.68, Quantity = BLANK, Unit Cost = BLANK. If average cost: disable UDC 40/AV P4114 (Y→N) first; restore immediately after.
-
-**Step 4 — Re-Roll in RapidReconciler**
-Open the Re-Roll Item dialog for Item 230. Select **Re-Roll Item**. Verify details. Click Re-Roll. Confirm QtyVar = 0 and AmtVar = 0 after next nightly refresh.
-
-### 7a.7 Recommended Preventive Actions
-
-- **Confirm IA transaction processing controls:** With 2,534 IA transactions, review whether any failed to update F41021. Confirm IA transactions are completing fully for the IDM branch.
-- **Confirm IB authorization:** Verify docs 9191532 and 9174216 were approved cost corrections, not errors.
-- **Assess pre-RR go-live gap:** Determine whether the 59 LB discrepancy existed before RR was initiated (2015-08-30) by comparing historical physical count records to the F41021 snapshot at go-live.
 
 ---
 
@@ -828,7 +667,7 @@ Start a new session when switching to a different guide version or when the conv
 
 ### 10.3 Output Specification
 
-**File naming:** The returned file will use the original filename as the base with the item number, lot, and analysis date appended, e.g. `ItemRollForward_12882_515111_20260421_Analysis.xlsx`. Claude will read the item number and lot from the data before saving. Note that item number is used — not the document number.
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
 The returned workbook will contain two sheets:
 
@@ -869,6 +708,8 @@ The returned workbook will contain two sheets:
 | **Corrective Action** | Full JDE correction steps per Section 5; Re-Roll step per Section 6; "None required" if reconciled |
 | **Preventive Actions** | Follow-up items: cost review, BOM validation, WAC monitoring, negative quantity controls |
 
+Auto-size all column widths and row heights on the RR Analysis sheet to fit content. Enable wrap text on all data rows and header rows on the RR Analysis sheet.
+
 ### 10.4 Notes and Limitations
 
 - Claude analyzes the data as exported. If the source report was generated with filters applied or sections suppressed, the analysis reflects only what is present in the file.
@@ -880,4 +721,4 @@ The returned workbook will contain two sheets:
 
 ---
 
-*Guide version: April 2026 (v3) | Integrates: cardex_variance.md (RapidReconciler/JDE resolution procedure), transaction-detail-analysis-guide.md Section 10 (Claude automated analysis specification), inventory-key-concepts.md (beginning balance calculation and reconciliation framework) | Case studies: Item 12882 (dollar-only WAC escalation), Item 230 (quantity + amount F41021 integrity gap) | Maintain in shared finance repository for reuse across future Cardex reviews.*
+*Guide version: April 2026 (v3) | Integrates: cardex_variance.md (RapidReconciler/JDE resolution procedure), transaction-detail-analysis-guide.md Section 10 (Claude automated analysis specification), inventory-key-concepts.md (beginning balance calculation and reconciliation framework) | Maintain in shared finance repository for reuse across future Cardex reviews.*

@@ -4,24 +4,6 @@
 
 ---
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Section 1: Report Structure](#section-1-report-structure)
-- [Section 2: Column Reference](#section-2-column-reference)
-- [Section 3: GLOK — GL Roll Forward Logic](#section-3-glok--gl-roll-forward-logic)
-- [Section 4: VarOK — Variance Roll Forward Logic](#section-4-varok--variance-roll-forward-logic)
-- [Section 5: Variance Component Reference](#section-5-variance-component-reference)
-- [Section 6: Common Patterns and Root Causes](#section-6-common-patterns-and-root-causes)
-- [Section 7: Step-by-Step Analysis Procedure](#section-7-step-by-step-analysis-procedure)
-- [Section 8: GL Batch Posting Reference](#section-8-gl-batch-posting-reference)
-- [Section 9: Period-End Requirements](#section-9-period-end-requirements)
-- [Section 10: Excel Output Formatting Rules](#section-10-excel-output-formatting-rules)
-- [Section 11: Using Claude for Automated Analysis](#section-11-using-claude-for-automated-analysis)
-- [Section 12: Related Documentation](#section-12-related-documentation)
-
----
-
 ## Overview
 
 The Inventory Roll Forward report in RapidReconciler provides a multi-period view of how GL account balances and inventory reconciliation variances move through time. Each row in the report represents the aggregated activity for a single GL account in a single period — the sum total of all transactions for that account in that month.
@@ -617,11 +599,7 @@ Before closing a period using RapidReconciler:
 
 ### 10.1 File Naming
 
-```
-[OriginalFilename]_Analysis.xlsx
-```
-
-**Example:** `RollForward_20251202-1449_Analysis.xlsx`
+Output file name: `DMAAI Analysis.xlsx`
 
 ### 10.2 Sheet Structure
 
@@ -678,8 +656,8 @@ Do not delete, rename, or reorder the source sheet. Permitted modifications to t
 | **GLOK/VarOK = "no" rows** | Red fill (`FFCCCC`), dark red bold text (`C00000`) |
 | **Unposted batch rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
 | **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
-| **Column widths** | Column A: 32 characters; Column B: 60 characters; Column C: 24 characters |
-| **Row heights** | Section headers: 18pt; Data rows: 15–22pt; Note boxes: sized to content (minimum 45pt) |
+| **Column widths** | Auto-size all column widths and row heights on the Roll Forward Analysis sheet to fit content |
+| **Wrap text** | Enabled on all data rows and header rows on the Roll Forward Analysis sheet |
 | **Source sheet — freeze panes** | Set at A3 so the title row (row 1) and header row (row 2) are always visible |
 | **Source sheet — number format** | Columns G, H, I, K, L, M, N, O, P, Q, R, S formatted as `#,##0.00` (comma separator, 2 decimal places). Columns J and T are text flags and are not formatted. |
 
@@ -720,7 +698,7 @@ Once the guide has been uploaded, it remains in context. Subsequent Roll Forward
 
 ### 11.3 Output Specification
 
-**File naming:** The returned file appends `_Analysis` to the original filename.
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
 **Sheet 1 — Roll Forward (original sheet, highlights added)**
 

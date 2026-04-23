@@ -4,22 +4,6 @@
 
 ---
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Section 1: Report Structure](#section-1-report-structure)
-- [Section 2: Section-by-Section Field Reference](#section-2-section-by-section-field-reference)
-- [Section 3: How RapidReconciler Matches Transactions](#section-3-how-rapidreconciler-matches-transactions)
-- [Section 4: Common Variance Patterns and Root Causes](#section-4-common-variance-patterns-and-root-causes)
-- [Section 5: DMAAI Analysis](#section-5-dmaai-analysis)
-- [Section 6: Step-by-Step Analysis Procedure](#section-6-step-by-step-analysis-procedure)
-- [Section 7: Sub Type and Quick Lookup Reference](#section-7-sub-type-and-quick-lookup-reference)
-- [Section 8: Document Type Reference](#section-8-document-type-reference)
-- [Section 9: Related Documentation](#section-9-related-documentation)
-- [Section 10: Using Claude for Automated Analysis](#section-10-using-claude-for-automated-analysis)
-
----
-
 ## Overview
 
 The Transaction Detail report in RapidReconciler is produced when drilling into an unreconciled transaction on the Transactions page. It provides a complete side-by-side view of what exists in the item ledger (F4111) versus what exists in the general ledger (F0911) for a specific company, document type, and document number.
@@ -840,7 +824,7 @@ Start a new session when switching to a different guide version or when the conv
 
 ### 10.3 Output Specification
 
-**File naming:** The returned file will use the original filename as the base with the document number and document type appended, e.g. `TransactionDetails_20260421-1103_1309532_IM.xlsx`. Claude will read the document number and type from the Doc Header row of the Transaction Details sheet before saving.
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
 The returned workbook will contain two sheets:
 
@@ -864,6 +848,8 @@ The analysis sheet will follow this structure:
 | **Evidence** | Row numbers from the Transaction Details sheet that support the finding |
 | **Processing Options — Suggested Causes** | For each program that could have produced the variance, the specific processing options or configuration settings to check, the variance sub-type each would produce, and why each is a plausible cause. Presented as suggestions only, with a note that multiple program versions may be in use and that settings must be confirmed in JD Edwards before drawing conclusions. |
 | **Recommended Action** | Corrective action from Section 4; journal entry details where applicable; any further investigation steps required before posting |
+
+Auto-size all column widths and row heights on the RR Analysis sheet to fit content. Enable wrap text on all data rows and header rows on the RR Analysis sheet.
 
 ### 10.4 Notes and Limitations
 

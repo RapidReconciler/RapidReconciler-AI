@@ -4,26 +4,6 @@
 
 ---
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Section 1: Batch Processing Fundamentals](#section-1-batch-processing-fundamentals)
-- [Section 2: Batch Type Reference](#section-2-batch-type-reference)
-- [Section 3: Approval Status Codes](#section-3-approval-status-codes)
-- [Section 4: Posting Status Codes](#section-4-posting-status-codes)
-- [Section 5: Report Structure and Field Reference](#section-5-report-structure-and-field-reference)
-- [Section 6: Status Code Combinations and What They Mean](#section-6-status-code-combinations-and-what-they-mean)
-- [Section 7: Common Batch Patterns and Root Causes](#section-7-common-batch-patterns-and-root-causes)
-- [Section 8: Resolving Common Posting Errors](#section-8-resolving-common-posting-errors)
-- [Section 9: Setting Up Automatic Batch Approval](#section-9-setting-up-automatic-batch-approval)
-- [Section 10: Reposting Damaged Account Balances](#section-10-reposting-damaged-account-balances)
-- [Section 11: Step-by-Step Analysis Procedure](#section-11-step-by-step-analysis-procedure)
-- [Section 12: Excel Output Formatting Rules](#section-12-excel-output-formatting-rules)
-- [Section 13: Using Claude for Automated Analysis](#section-13-using-claude-for-automated-analysis)
-- [Section 14: Related Documentation](#section-14-related-documentation)
-
----
-
 ## Overview
 
 The Unposted GL Batches report in RapidReconciler lists every batch that contributes to the GL Batches variance for the selected period and account filters. Each row represents a single F0911 record — a GL detail entry that has not yet been fully posted to account balances (F0902).
@@ -508,13 +488,7 @@ The following rules govern the format of the Excel output produced when analyzin
 
 ### 12.1 File Naming
 
-```
-[OriginalFilename]_Analysis.xlsx
-```
-
-**Example:** `UnpostedGLBatches_2026-03-31_20260422-0831_Analysis.xlsx`
-
-Do not rename the original filename base. The period-end date and generation timestamp are reference information for audit purposes.
+Output file name: `DMAAI Analysis.xlsx`
 
 ### 12.2 Sheet Structure
 
@@ -568,8 +542,8 @@ The GL Batch Analysis sheet must contain the following sections in order, each s
 | **Priority 2 rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
 | **Priority 3 rows** | Yellow fill (`FFFACD`), dark gold text (`5C4A00`) |
 | **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
-| **Column widths** | Column A: 28 characters; Column B: 68 characters; Column C: 22 characters |
-| **Row heights** | Section headers: 18pt; Data rows: 15pt; Note boxes: sized to content (minimum 30pt) |
+| **Column widths** | Auto-size all column widths and row heights on the GL Batch Analysis sheet to fit content |
+| **Wrap text** | Enabled on all data rows and header rows on the GL Batch Analysis sheet |
 
 ### 12.6 Amounts
 
@@ -615,7 +589,7 @@ Start a new session when switching to a different guide version or when the conv
 
 ### 13.3 Output Specification
 
-**File naming:** The returned file appends `_Analysis` to the original filename.
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
 **Sheet 1 — Unposted GL Batches (original sheet, highlights added)**
 

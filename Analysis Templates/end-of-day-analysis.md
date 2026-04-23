@@ -4,22 +4,6 @@
 
 ---
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Section 1: What Is an End of Day Transaction?](#section-1-what-is-an-end-of-day-transaction)
-- [Section 2: End of Day by Transaction Type](#section-2-end-of-day-by-transaction-type)
-- [Section 3: Report Structure and Field Reference](#section-3-report-structure-and-field-reference)
-- [Section 4: Type and Status Code Reference](#section-4-type-and-status-code-reference)
-- [Section 5: Common End of Day Patterns and Root Causes](#section-5-common-end-of-day-patterns-and-root-causes)
-- [Section 6: Step-by-Step Analysis Procedure](#section-6-step-by-step-analysis-procedure)
-- [Section 7: Period-End Requirements](#section-7-period-end-requirements)
-- [Section 8: Excel Output Formatting Rules](#section-8-excel-output-formatting-rules)
-- [Section 9: Using Claude for Automated Analysis](#section-9-using-claude-for-automated-analysis)
-- [Section 10: Related Documentation](#section-10-related-documentation)
-
----
-
 ## Overview
 
 Entries on the End Of Day report originate from the cardex (F4111) but have not yet been matched to a general ledger entry (F0911). It provides visibility into transactions that have occurred in the item ledger but do not have a batch number populated. This is typically because the batch program responsible for creating the GL entry has not yet run.
@@ -584,11 +568,7 @@ Before closing a period that includes manufacturing activity, confirm:
 
 ### 8.1 File Naming
 
-```
-[OriginalFilename]_Analysis.xlsx
-```
-
-**Example:** `EndofDay_2026-03-31_20260422-0916_Analysis.xlsx`
+Output file name: `DMAAI Analysis.xlsx`
 
 ### 8.2 Sheet Structure
 
@@ -639,8 +619,8 @@ Every data row must be highlighted based on its classification:
 | **Priority 2 rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
 | **Priority 3 rows** | Yellow fill (`FFFACD`), dark gold text (`5C4A00`) |
 | **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
-| **Column widths** | Column A: 30 characters; Column B: 66 characters; Column C: 22 characters |
-| **Row heights** | Section headers: 18pt; Data rows: 15–22pt (wrap as needed); Note boxes: sized to content (minimum 45pt) |
+| **Column widths** | Auto-size all column widths and row heights on the EOD Analysis sheet to fit content |
+| **Wrap text** | Enabled on all data rows and header rows on the EOD Analysis sheet |
 
 ### 8.6 Amounts
 
@@ -684,7 +664,7 @@ Once the guide has been uploaded in a session, it remains in context. Subsequent
 
 ### 9.3 Output Specification
 
-**File naming:** The returned file appends `_Analysis` to the original filename.
+**File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
 **Sheet 1 — End of Day (original sheet, highlights added)**
 
