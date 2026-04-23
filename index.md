@@ -16,9 +16,8 @@ Here are some key collateral documents that provide an overview of RapidReconcil
 
 | Document                                                                                     | Description                                                  |
 | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| [How RapidReconciler Helps](/RapidReconciler-AI/Collateral/how-rr-helps.html)       | Overview of the application's benefits and value proposition |
+| [How RapidReconciler Helps Web Site](/RapidReconciler-AI/Collateral/how-rr-helps.html)       | Overview of the application's benefits and value proposition |
 | [RapidReconciler Fact Sheet](/RapidReconciler-AI/Collateral/rr-fact-sheet.html) | One-page summary of key features and benefits                |
-| [Item Transaction Health Executive Overview](/RapidReconciler-AI/Collateral/item-trans-history.html) | Executive overview of item transaction health by company, including obsolescence risk, ABC concentration, and movement analytics |
 
 ---
 
