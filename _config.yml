@@ -1,0 +1,6 @@
+exclude:
+  - Docs/
+  - "Analysis Templates/"
+  - git
+  - LICENSE
+  - README.md
