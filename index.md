@@ -1,5 +1,3 @@
-# GSI RapidReconciler Knowledge Base
-
 # Welcome to the GSI RapidReconciler Knowledge Base
 
 Stop chasing reconciliation discrepancies across spreadsheets and manual processes. 
