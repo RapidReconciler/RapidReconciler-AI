@@ -118,4 +118,699 @@ body { background:var(--paper); color:var(--ink); font-family:'DM Sans',sans-ser
 .ti-tbl th:last-child { text-align:right; }
 .ti-tbl td { padding:8px 0; font-size:12px; border-bottom:1px solid var(--cream); vertical-align:middle; }
 .ti-tbl td:last-child { text-align:right; font-family:'DM Mono',monospace; font-size:11px; }
-.icod
+.icode { font-family:'DM Mono',monospace; font-size:11px; }
+
+.wl { border:1px solid var(--rule); }
+.wl-head { padding:18px 26px; border-bottom:1px solid var(--rule); background:var(--cream); }
+.wl-head-title { font-family:'Playfair Display',serif; font-size:17px; font-weight:700; }
+.wl-head-sub   { font-size:11px; color:var(--muted); margin-top:2px; }
+.wl-item { display:grid; grid-template-columns:1fr auto; gap:14px; padding:16px 26px; border-bottom:1px solid var(--cream); align-items:start; animation:fadeUp .5s ease both; }
+.wl-item:last-child { border-bottom:none; }
+.wl-num   { font-family:'DM Mono',monospace; font-size:9px; color:var(--rule); margin-bottom:3px; }
+.wl-title { font-weight:500; font-size:13px; margin-bottom:3px; }
+.wl-desc  { font-size:11px; color:var(--muted); line-height:1.5; }
+.tag { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:.1em; text-transform:uppercase; padding:4px 9px; border-radius:2px; white-space:nowrap; }
+.tag-c { background:var(--accent); color:white; }
+.tag-m { background:var(--gold); color:white; }
+.tag-r { background:var(--cream); color:var(--muted); border:1px solid var(--rule); }
+
+.dq { display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--rule); margin-top:16px; }
+.dq-cell { padding:18px 22px; border-right:1px solid var(--rule); }
+.dq-cell:last-child { border-right:none; }
+.dq-val { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--gold); }
+.dq-lbl { font-size:11px; color:var(--muted); margin-top:4px; line-height:1.4; }
+
+/* ── TURNOVER BUCKETS ── */
+.turn-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--rule); margin-top:4px; }
+.turn-cell { padding:16px 20px; border-right:1px solid var(--rule); border-bottom:1px solid var(--rule); }
+.turn-cell:nth-child(3n) { border-right:none; }
+.turn-cell:nth-child(n+4) { border-bottom:none; }
+.turn-bucket-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.turn-bucket-val { font-family:'Playfair Display',serif; font-size:24px; font-weight:700; line-height:1; }
+.turn-bucket-sub { font-size:10px; color:var(--muted); margin-top:4px; }
+
+/* ── CV BARS ── */
+.cv-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:0; border:1px solid var(--rule); margin-top:4px; }
+.cv-cell { padding:16px 20px; border-right:1px solid var(--rule); text-align:center; }
+.cv-cell:last-child { border-right:none; }
+.cv-cell-val { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; }
+.cv-cell-label { font-size:11px; color:var(--muted); margin-top:4px; }
+.cv-cell-sub { font-family:'DM Mono',monospace; font-size:9px; color:var(--rule); margin-top:2px; }
+
+/* ── RISK TABLE ── */
+.risk-tbl { width:100%; border-collapse:collapse; margin-top:4px; }
+.risk-tbl th { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); padding:0 0 8px; text-align:left; border-bottom:1px solid var(--rule); }
+.risk-tbl th:last-child { text-align:right; }
+.risk-tbl td { padding:8px 0; font-size:12px; border-bottom:1px solid var(--cream); vertical-align:middle; }
+.risk-tbl td:not(:first-child) { font-family:'DM Mono',monospace; font-size:11px; }
+.risk-tbl td:last-child { text-align:right; }
+.cv-pill { display:inline-block; font-size:9px; font-family:'DM Mono',monospace; font-weight:500; padding:2px 7px; border-radius:10px; }
+.cv-stable   { background:var(--gbp-lt); color:var(--gbp); }
+.cv-variable { background:var(--gold-lt); color:var(--gold); }
+.cv-erratic  { background:var(--accent-lt); color:var(--accent); }
+
+/* ── PORTFOLIO STAT BAR ── */
+.port-stat { display:flex; gap:0; border:1px solid var(--rule); margin-top:4px; }
+.port-stat-item { flex:1; padding:16px 20px; border-right:1px solid var(--rule); }
+.port-stat-item:last-child { border-right:none; }
+.port-stat-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.port-stat-val { font-family:'Playfair Display',serif; font-size:26px; font-weight:700; }
+.port-stat-sub { font-size:11px; color:var(--muted); margin-top:4px; }
+
+.company-panel { display:none; }
+.company-panel.active { display:block; }
+
+.footer { background:var(--ink); color:var(--muted); padding:20px 60px; display:flex; justify-content:space-between; align-items:center; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.04em; }
+.footer span { color:var(--paper); }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+@media(max-width:860px){
+  .masthead,.page,.alert,.footer { padding-left:24px; padding-right:24px; }
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .kpi:nth-child(n+5) { border-bottom:1px solid var(--rule); }
+  .kpi:nth-child(4n) { border-right:1px solid var(--rule); }
+  .kpi:nth-child(2n) { border-right:none; }
+  .kpi:nth-child(n+7) { border-bottom:none; }
+  .two-col { grid-template-columns:1fr; }
+  .col-l { border-right:none; border-bottom:1px solid var(--rule); }
+  .dq { grid-template-columns:1fr; }
+  .dq-cell { border-right:none; border-bottom:1px solid var(--rule); }
+  .dq-cell:last-child { border-bottom:none; }
+  .tab { padding:12px 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="eyebrow">Inventory Analytics &mdash; Executive Overview</div>
+  <h1>Item Transaction<br><em>Health Report</em></h1>
+  <div class="masthead-meta">
+    <div class="meta-item"><span class="meta-label">Period</span><span class="meta-value">Jan 2015 – Aug 2016</span></div>
+    <div class="meta-item"><span class="meta-label">Total Transactions</span><span class="meta-value">362,064</span></div>
+    <div class="meta-item"><span class="meta-label">Total Unique Items</span><span class="meta-value">45,582</span></div>
+    <div class="meta-item"><span class="meta-label">Co. 00010</span><span class="meta-value">USD &mdash; 7 Branches</span></div>
+    <div class="meta-item"><span class="meta-label">Co. 00050</span><span class="meta-value">GBP &mdash; 5 Branches</span></div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active-usd" onclick="switchTab('usd')"><span class="tab-dot dot-usd"></span>Company 00010 &mdash; USD</button>
+  <button class="tab" onclick="switchTab('gbp')"><span class="tab-dot dot-gbp"></span>Company 00050 &mdash; GBP</button>
+</div>
+
+<!-- ══ COMPANY 00010 USD ══ -->
+<div id="panel-usd" class="company-panel active">
+  <div class="alert alert-usd">
+    <span>⚠</span>
+    <span><strong>45.5% of the USD item master has never moved</strong> — 20,305 items carry zero unit activity across the full 19-month window. Immediate master data review recommended.</span>
+  </div>
+  <div class="page">
+
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">Unique Items</div>
+        <div class="kpi-val v-usd">44,646</div>
+        <div class="kpi-sub">CBT, CEP, IDM, ZBANK &amp; others</div>
+        <div class="kpi-stripe s-usd" data-w="100"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Never Moved</div>
+        <div class="kpi-val v-alert">20,305</div>
+        <div class="kpi-sub">45.5% of item master — zero unit activity</div>
+        <div class="kpi-stripe s-alert" data-w="45.5"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Obsolete Risk Items</div>
+        <div class="kpi-val v-alert">1,927</div>
+        <div class="kpi-sub">No unit activity in 12+ months</div>
+        <div class="kpi-stripe s-alert" data-w="22"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">USD at Obsolescence Risk</div>
+        <div class="kpi-val v-alert">$991,923</div>
+        <div class="kpi-sub">Historical dollar movement, now dormant</div>
+        <div class="kpi-stripe s-alert" data-w="62"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Fast Movers</div>
+        <div class="kpi-val v-usd">7,295</div>
+        <div class="kpi-sub">Active in 15+ of 20 periods</div>
+        <div class="kpi-stripe s-usd" data-w="55"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Slow Movers</div>
+        <div class="kpi-val v-gold">2,406</div>
+        <div class="kpi-sub">Active in ≤ 2 periods only</div>
+        <div class="kpi-stripe s-gold" data-w="30"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Gross Units Moved</div>
+        <div class="kpi-val v-usd">1.07B</div>
+        <div class="kpi-sub">Absolute unit movement, all periods</div>
+        <div class="kpi-stripe s-usd" data-w="85"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Gross $ Activity</div>
+        <div class="kpi-val v-usd">$118.6M</div>
+        <div class="kpi-sub">Absolute dollar movement across all periods</div>
+        <div class="kpi-stripe s-usd" data-w="90"></div>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Item Classification &amp; Value Concentration</div>
+    <div class="two-col">
+      <div class="col-l">
+        <div class="col-h">Item Classification</div>
+        <div class="col-sub">44,646 unique items — 19-month window</div>
+        <div class="cbars">
+          <div class="cbar-row"><div class="cbar-hdr"><span class="cbar-name v-alert">Never Moved</span><span class="cbar-count">20,305 — 45.5%</span></div><div class="track"><div class="fill" style="width:45.5%;background:var(--accent)"></div></div></div>
+          <div class="cbar-row"><div class="cbar-hdr"><span class="cbar-name">Normal</span><span class="cbar-count">12,713 — 28.5%</span></div><div class="track"><div class="fill" style="width:28.5%;background:var(--ink)"></div></div></div>
+          <div class="cbar-row"><div class="cbar-hdr"><span class="cbar-name v-usd">Fast Mover</span><span class="cbar-count">7,295 — 16.3%</span></div><div class="track"><div class="fill" style="width:16.3%;background:var(--usd)"></div></div></div>
+          <div class="cbar-row"><div class="cbar-hdr"><span class="cbar-name v-gold">Slow Mover</span><span class="cbar-count">2,406 — 5.4%</span></div><div class="track"><div class="fill" style="width:5.4%;background:var(--gold)"></div></div></div>
+          <div class="cbar-row"><div class="cbar-hdr"><span class="cbar-name v-alert">Obsolete Risk</span><span class="cbar-count">1,927 — 4.3%</span></div><div class="track"><div class="fill" style="width:4.3%;background:var(--accent)"></div></div></div>
+        </div>
+      </div>
+      <div class="col-r">
+        <div class="col-h">ABC Dollar Concentration</div>
+        <div class="col-sub">10.1% of active items drive 80% of USD value — classic Pareto</div>
+        <table class="abc-tbl">
+          <thead><tr><th>Class</th><th>Items</th><th>% of Active</th><th>Value Band</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-a">A</span></td><td>2,487</td><td>10.1%</td><td>Top 80% of $</td></tr>
+            <tr><td><span class="badge badge-b">B</span></td><td>4,317</td><td>17.5%</td><td>Next 15% of $</td></tr>
+            <tr><td><span class="badge badge-c">C</span></td><td>17,930</td><td>72.5%</td><td>Bottom 5% of $</td></tr>
+          </tbody>
+        </table>
+        <div class="note">
+          <div class="note-title">Top Value Item — L0288</div>
+          <div class="note-body"><strong>$1.30M</strong> gross USD — single largest driver. Recurring single-period spikes of $100K+ (peak $207K Apr 2016). Dedicated monitoring recommended.</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Obsolescence by Branch &amp; Movement Anomalies</div>
+    <div class="two-col">
+      <div class="col-l">
+        <div class="col-h">Obsolescence Exposure by Branch</div>
+        <div class="col-sub">Items inactive 12+ months — USD historical movement</div>
+        <table class="btbl">
+          <thead><tr><th>Branch</th><th>Items</th><th>Hist. $ Exposure</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bname">IDM</span></td><td>1,598 <span class="obs-pill">83%</span></td><td>$565,724</td></tr>
+            <tr><td><span class="bname">CBT</span></td><td>193</td><td>$265,211</td></tr>
+            <tr><td><span class="bname">CEP</span></td><td>247</td><td>$158,534</td></tr>
+            <tr><td><span class="bname">ZBANK</span></td><td>7</td><td>$2,455</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-r">
+        <div class="col-h">Movement Direction Anomalies</div>
+        <div class="col-sub">Items with one-directional or high-churn unit flow</div>
+        <div class="mov-block">
+          <div class="mov-row"><div><div class="mov-label">Only Outbound</div><div class="mov-sub">Consumed / adjusted out — never replenished</div></div><div class="mov-val v-alert">3,203</div></div>
+          <div class="mov-row"><div><div class="mov-label">Only Inbound</div><div class="mov-sub">Received but never issued or consumed</div></div><div class="mov-val v-gold">1,227</div></div>
+          <div class="mov-row"><div><div class="mov-label">High Churn / Netting</div><div class="mov-sub">Net units &lt;5% of gross — constant in/out cycling</div></div><div class="mov-val v-muted">11,216</div></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Top Items — By Dollar Value &amp; Unit Volume</div>
+    <div class="two-col">
+      <div class="col-l">
+        <div class="col-h">Top 5 by Gross Dollar Value</div>
+        <div class="col-sub">Absolute USD movement — all periods</div>
+        <table class="ti-tbl">
+          <thead><tr><th>Item</th><th>Units</th><th>Periods</th><th>Gross $</th></tr></thead>
+          <tbody>
+            <tr><td><span class="icode">L0288</span></td><td>15,396</td><td>20</td><td>$1,301,395</td></tr>
+            <tr><td><span class="icode">2655</span></td><td>31,655</td><td>20</td><td>$608,840</td></tr>
+            <tr><td><span class="icode">611-11116E0NXSS</span></td><td>501,100</td><td>19</td><td>$580,865</td></tr>
+            <tr><td><span class="icode">921-00429-001</span></td><td>29,795</td><td>20</td><td>$486,583</td></tr>
+            <tr><td><span class="icode">230</span></td><td>185,338</td><td>20</td><td>$454,208</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-r">
+        <div class="col-h">Top 5 by Gross Unit Volume</div>
+        <div class="col-sub">Absolute unit movement — all periods</div>
+        <table class="ti-tbl">
+          <thead><tr><th>Item</th><th>Units</th><th>Periods</th><th>Gross $</th></tr></thead>
+          <tbody>
+            <tr><td><span class="icode">624-13647</span></td><td>17,158,748</td><td>20</td><td>$148,600</td></tr>
+            <tr><td><span class="icode">728-15888-001</span></td><td>14,260,612</td><td>20</td><td>$106,924</td></tr>
+            <tr><td><span class="icode">428-09255</span></td><td>11,039,563</td><td>20</td><td>$185,478</td></tr>
+            <tr><td><span class="icode">560-12886-002</span></td><td>10,964,422</td><td>20</td><td>$109,644</td></tr>
+            <tr><td><span class="icode">428-09344</span></td><td>10,254,124</td><td>20</td><td>$55,372</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Inventory Turnover &amp; Days on Hand — Company 00010</div>
+    <div class="port-stat">
+      <div class="port-stat-item"><div class="port-stat-label">Portfolio Turnover (Ann.)</div><div class="port-stat-val v-usd">4.4x</div><div class="port-stat-sub">Annualized across all active USD items</div></div>
+      <div class="port-stat-item"><div class="port-stat-label">Portfolio Days on Hand</div><div class="port-stat-val v-usd">82 days</div><div class="port-stat-sub">Average days of supply carried</div></div>
+      <div class="port-stat-item"><div class="port-stat-label">Items Analyzed</div><div class="port-stat-val v-muted">23,364</div><div class="port-stat-sub">Items with calculable turnover</div></div>
+      <div class="port-stat-item"><div class="port-stat-label">Median Item Turnover</div><div class="port-stat-val v-usd">2.9x</div><div class="port-stat-sub">Half of items turn slower than this</div></div>
+    </div>
+    <div class="two-col" style="margin-top:16px;">
+      <div class="col-l">
+        <div class="col-h">Turnover Distribution</div>
+        <div class="col-sub">Annualized turns — 23,364 active USD items</div>
+        <div class="turn-grid">
+          <div class="turn-cell"><div class="turn-bucket-label">&lt; 1x — Very Slow</div><div class="turn-bucket-val v-alert">4,570</div><div class="turn-bucket-sub">19.6% of items</div></div>
+          <div class="turn-cell"><div class="turn-bucket-label">1–2x — Slow</div><div class="turn-bucket-val v-gold">4,689</div><div class="turn-bucket-sub">20.1% of items</div></div>
+          <div class="turn-cell"><div class="turn-bucket-label">2–4x — Normal</div><div class="turn-bucket-val">5,305</div><div class="turn-bucket-sub">22.7% of items</div></div>
+          <div class="turn-cell"><div class="turn-bucket-label">4–6x — Good</div><div class="turn-bucket-val v-usd">4,483</div><div class="turn-bucket-sub">19.2% of items</div></div>
+          <div class="turn-cell"><div class="turn-bucket-label">6–12x — Fast</div><div class="turn-bucket-val v-usd">4,238</div><div class="turn-bucket-sub">18.1% of items</div></div>
+          <div class="turn-cell"><div class="turn-bucket-label">12x+ — Very Fast</div><div class="turn-bucket-val v-usd">79</div><div class="turn-bucket-sub">0.3% of items</div></div>
+        </div>
+      </div>
+      <div class="col-r">
+        <div class="col-h">Fastest &amp; Slowest Turning Items</div>
+        <div class="col-sub">Top 5 each by annualized turnover rate</div>
+        <table class="risk-tbl">
+          <thead><tr><th>Item</th><th>Turns</th><th>DOH</th></tr></thead>
+          <tbody>
+            <tr><td colspan="3" style="font-size:10px;color:var(--muted);padding:8px 0 4px;font-family:'DM Mono',monospace;letter-spacing:.1em;text-transform:uppercase;">Fastest</td></tr>
+            <tr><td><span class="icode">036-34938-001</span></td><td>12.7x</td><td>29d</td></tr>
+            <tr><td><span class="icode">212-06390</span></td><td>12.7x</td><td>29d</td></tr>
+            <tr><td><span class="icode">336-06548-002</span></td><td>12.7x</td><td>29d</td></tr>
+            <tr><td><span class="icode">422-06715-001</span></td><td>12.7x</td><td>29d</td></tr>
+            <tr><td><span class="icode">428-32868-001</span></td><td>12.7x</td><td>29d</td></tr>
+            <tr><td colspan="3" style="font-size:10px;color:var(--muted);padding:12px 0 4px;font-family:'DM Mono',monospace;letter-spacing:.1em;text-transform:uppercase;">Slowest (with activity)</td></tr>
+            <tr><td><span class="icode">048-00956</span></td><td>0.01x</td><td>36,500d</td></tr>
+            <tr><td><span class="icode">108-01886</span></td><td>0.01x</td><td>36,500d</td></tr>
+            <tr><td><span class="icode">148-16706-002</span></td><td>0.01x</td><td>36,500d</td></tr>
+            <tr><td><span class="icode">190-17508-006</span></td><td>0.01x</td><td>36,500d</td></tr>
+            <tr><td><span class="icode">260-34696-001</span></td><td>0.01x</td><td>36,500d</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Demand Variability — Company 00010</div>
+    <div class="two-col">
+      <div class="col-l">
+        <div class="col-h">Coefficient of Variation (CV) Summary</div>
+        <div class="col-sub">11,553 items with 3+ outbound periods analyzed — CV = std dev ÷ mean demand</div>
+        <div class="cv-summary">
+          <div class="cv-cell"><div class="cv-cell-val v-usd">2,460</div><div class="cv-cell-label">Stable</div><div class="cv-cell-sub">CV &lt; 0.5 — 21.3%</div></div>
+          <div class="cv-cell"><div class="cv-cell-val v-gold">5,869</div><div class="cv-cell-label">Variable</div><div class="cv-cell-sub">CV 0.5–1.0 — 50.8%</div></div>
+          <div class="cv-cell"><div class="cv-cell-val v-alert">3,224</div><div class="cv-cell-label">Highly Erratic</div><div class="cv-cell-sub">CV &gt; 1.0 — 27.9%</div></div>
+        </div>
+        <div class="note" style="margin-top:12px;">
+          <div class="note-title">Portfolio CV Average: 0.836</div>
+          <div class="note-body">The median CV of 0.753 means the typical item's demand swings by 75% of its average each period. Nearly 28% of items are highly erratic — a key driver of excess safety stock and stockout risk.</div>
+        </div>
+      </div>
+      <div class="col-r">
+        <div class="col-h">Most Erratic Items (Highest CV)</div>
+        <div class="col-sub">Items where demand variability is most extreme</div>
+        <table class="risk-tbl">
+          <thead><tr><th>Item</th><th>Avg Demand</th><th>CV</th></tr></thead>
+          <tbody>
+            <tr><td><span class="icode">560-12095-001</span></td><td>12,976</td><td><span class="cv-pill cv-erratic">4.09</span></td></tr>
+            <tr><td><span class="icode">846-71325-002</span></td><td>1,605</td><td><span class="cv-pill cv-erratic">3.89</span></td></tr>
+            <tr><td><span class="icode">927-00199-001</span></td><td>1,403</td><td><span class="cv-pill cv-erratic">3.75</span></td></tr>
+            <tr><td><span class="icode">846-71135-001</span></td><td>2,139</td><td><span class="cv-pill cv-erratic">3.72</span></td></tr>
+            <tr><td><span class="icode">338-31023-006</span></td><td>618</td><td><span class="cv-pill cv-erratic">3.65</span></td></tr>
+            <tr><td><span class="icode">846-71324-001</span></td><td>1,057</td><td><span class="cv-pill cv-erratic">3.58</span></td></tr>
+            <tr><td><span class="icode">506-32488-001</span></td><td>724</td><td><span class="cv-pill cv-erratic">3.58</span></td></tr>
+            <tr><td><span class="icode">506-35491-001</span></td><td>11,289</td><td><span class="cv-pill cv-erratic">3.56</span></td></tr>
+            <tr><td><span class="icode">871-72113-002</span></td><td>2,866</td><td><span class="cv-pill cv-erratic">3.54</span></td></tr>
+            <tr><td><span class="icode">999-16843-001</span></td><td>420</td><td><span class="cv-pill cv-erratic">3.52</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">High Risk Items — Low Turnover &amp; High Variability — Company 00010</div>
+    <div class="two-col">
+      <div class="col-l">
+        <div class="col-h">Combined Risk Flag</div>
+        <div class="col-sub">Items with turnover &lt; 2x AND CV &gt; 1.0 — slow moving with erratic demand</div>
+        <div class="port-stat" style="border:none;gap:0;margin-top:4px;">
+          <div class="port-stat-item" style="border:1px solid var(--rule);border-right:none;"><div class="port-stat-label">High Risk Items</div><div class="port-stat-val v-alert">410</div><div class="port-stat-sub">Slow turn + erratic demand</div></div>
+          <div class="port-stat-item" style="border:1px solid var(--rule);"><div class="port-stat-label">Worst DOH</div><div class="port-stat-val v-alert">12,167d</div><div class="port-stat-sub">Item 192-36336-001</div></div>
+        </div>
+        <div class="note" style="margin-top:12px;">
+          <div class="note-title">What this means</div>
+          <div class="note-body">These 410 items are the most difficult to manage — they move slowly enough to tie up capital but unpredictably enough to cause stockouts when demand spikes. They warrant individual replenishment policy review.</div>
+        </div>
+      </div>
+      <div class="col-r">
+        <div class="col-h">Top 10 Highest Risk (by DOH)</div>
+        <div class="col-sub">Slowest moving with most erratic demand patterns</div>
+        <table class="risk-tbl">
+          <thead><tr><th>Item</th><th>Turns</th><th>DOH</th><th>CV</th></tr></thead>
+          <tbody>
+            <tr><td><span class="icode">192-36336-001</span></td><td>0.03x</td><td>12,167d</td><td><span class="cv-pill cv-erratic">1.62</span></td></tr>
+            <tr><td><span class="icode">942-10027-001</span></td><td>0.07x</td><td>5,214d</td><td><span class="cv-pill cv-erratic">1.30</span></td></tr>
+            <tr><td><span class="icode">466-05000-051</span></td><td>0.08x</td><td>4,563d</td><td><span class="cv-pill cv-erratic">1.03</span></td></tr>
+            <tr><td><span class="icode">612-37263-002</span></td><td>0.09x</td><td>4,056d</td><td><span class="cv-pill cv-erratic">1.25</span></td></tr>
+            <tr><td><span class="icode">440-09664</span></td><td>0.12x</td><td>3,042d</td><td><span class="cv-pill cv-erratic">1.03</span></td></tr>
+            <tr><td><span class="icode">846-71315-001</span></td><td>0.12x</td><td>3,042d</td><td><span class="cv-pill cv-erratic">1.50</span></td></tr>
+            <tr><td><span class="icode">468-31831-004</span></td><td>0.18x</td><td>2,028d</td><td><span class="cv-pill cv-erratic">1.12</span></td></tr>
+            <tr><td><span class="icode">048-00540-002</span></td><td>0.19x</td><td>1,921d</td><td><span class="cv-pill cv-erratic">1.04</span></td></tr>
+            <tr><td><span class="icode">536-30828-030</span></td><td>0.19x</td><td>1,921d</td><td><span class="cv-pill cv-erratic">1.42</span></td></tr>
+            <tr><td><span class="icode">464-11060-018</span></td><td>0.21x</td><td>1,738d</td><td><span class="cv-pill cv-erratic">1.81</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Priority Actions — Company 00010 (USD)</div>
+    <div class="wl">
+      <div class="wl-head"><div class="wl-head-title">Recommended Actions</div><div class="wl-head-sub">Ranked by financial and operational impact</div></div>
+      <div class="wl-item"><div><div class="wl-num">01</div><div class="wl-title">Item Master Rationalization — 20,305 Never-Moved Items</div><div class="wl-desc">45.5% of the item master carries zero unit activity across 19 months. Evaluate for discontinuation, duplicate cleanup, or archival. Highest-leverage single action available.</div></div><span class="tag tag-c">Critical</span></div>
+      <div class="wl-item"><div><div class="wl-num">02</div><div class="wl-title">Write-Down Review — $992K at Obsolescence Risk</div><div class="wl-desc">1,927 items inactive 12+ months with $991,923 in historical USD exposure. IDM carries 83% of the count ($566K). Formal assessment recommended before next period close.</div></div><span class="tag tag-c">Critical</span></div>
+      <div class="wl-item"><div><div class="wl-num">03</div><div class="wl-title">Investigate L0288 — Recurring Spike Activity</div><div class="wl-desc">$1.30M gross USD, top item by a wide margin. Recurring $100K+ single-period spikes (peak $207K Apr 2016). Transaction-level drill-down recommended.</div></div><span class="tag tag-c">Critical</span></div>
+      <div class="wl-item"><div><div class="wl-num">04</div><div class="wl-title">Tighten Controls on 2,487 A-Class Items</div><div class="wl-desc">Only 10.1% of active items drive 80% of USD value. Increase cycle count frequency and replenishment monitoring for this group.</div></div><span class="tag tag-m">Monitor</span></div>
+      <div class="wl-item"><div><div class="wl-num">05</div><div class="wl-title">Resolve Data Quality — 11,334 Zero-Unit / Non-Zero-$ Rows</div><div class="wl-desc">Likely cost adjustments or revaluations — confirm by transaction type. Also 3,157 rows with unit movement but zero dollar value (possible zero-cost setup gaps).</div></div><span class="tag tag-r">Review</span></div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Data Quality Indicators</div>
+    <div class="dq">
+      <div class="dq-cell"><div class="dq-val">114,613</div><div class="dq-lbl">Rows with qty = 0 and amt = 0<br><span style="color:var(--rule)">36.5% of company transactions</span></div></div>
+      <div class="dq-cell"><div class="dq-val">11,334</div><div class="dq-lbl">Dollar value with zero units<br><span style="color:var(--rule)">Cost adjustments / revaluations — confirm by type</span></div></div>
+      <div class="dq-cell"><div class="dq-val">3,157</div><div class="dq-lbl">Unit movement with zero dollars<br><span style="color:var(--rule)">Possible zero-cost item or missing cost setup</span></div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ COMPANY 00050 GBP ══ -->
+<div id="panel-gbp" class="company-panel">
+  <div class="alert alert-gbp">
+    <span>⚠</span>
+    <span><strong>37.8% of the GBP item master has never moved</strong> — 3,059 items carry zero unit activity across the full 19-month window. Master data review recommended.</span>
+  </div>
+  <div class="page">
+
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">Unique Items</div>
+        <div class="kpi-val v-gbp">8,099</div>
+        <div class="kpi-sub">LTD, LTD1–3, LTDBANK</div>
+        <div class="kpi-stripe s-gbp" data-w="100"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Never Moved</div>
+        <div class="kpi-val v-alert">3,059</div>
+        <div class="kpi-sub">37.8% of item master — zero unit activity</div>
+        <div class="kpi-stripe s-alert" data-w="37.8"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Obsolete Risk Items</div>
+        <div class="kpi-val v-alert">464</div>
+        <div class="kpi-sub">No unit activity in 12+ months</div>
+        <div class="kpi-stripe s-alert" data-w="18"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">GBP at Obsolescence Risk</div>
+        <div class="kpi-val v-alert">£97,192</div>
+        <div class="kpi-sub">Historical GBP movement, now dormant</div>
+        <div class="kpi-stripe s-alert" data-w="40"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Fast Movers</div>
+        <div class="kpi-val v-gbp">982</div>
+        <div class="kpi-sub">Active in 15+ of 20 periods</div>
+        <div class="kpi-stripe s-gbp" data-w="50"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Slow Movers</div>
+        <div class="kpi-val v-gold">532</div>
+        <div class="kpi-sub">Active in ≤ 2 periods only</div>
+        <div class="kpi-stripe s-gold" data-w="28"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Gross Units Moved</div>
+        <div class="kpi-val v-gbp">9.31M</div>
+        <div class="kpi-sub">Absolute unit movement, all periods</div>
+        <div class="kpi-stripe s-gbp" data-w="72"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Gross £ Activity</div>
+        <div class="kpi-val v-gbp">£9.56M</div>
+        <div class="kpi-sub">Absolute GBP movement across all periods</div>
+        <div class="kpi-stripe s-gbp" data-w="80"></div>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Item Classification &amp; Value Concentration</div>
+    <div class="two-col">
+      <div class="col-l">
+        <div class="col-h">Item Classification</div>
+        <div class="col-sub">8,099 unique items — 19-month window</div>
+        <div class="cbars">
+          <div class="cbar-row"><div class="cbar-hdr"><span class="cbar-name">Normal</span><span class="cbar-count">3,062 — 37.8%</span></div><div class="track"><div class="fill" style="width:37.8%;background:var(--ink)"></div></div></div>
+          <div class="cbar-row"><div class="cbar-hdr"><span class="cbar-name v-alert">Never Moved</span><span class="cbar-count">3,059 — 37.8%</span></div><div class="track"><div class="fill" style="width:37.8%;background:var(--accent)"></div></div></div>
+          <div class="cbar-row"><div class="cbar-hdr"><span class="cbar-name v-gbp">Fast Mover</span><span class="cbar-count">982 — 12.1%</span></div><div class="track"><div class="fill" style="width:12.1%;background:var(--gbp)"></div></div></div>
+          <div class="cbar-row"><div class="cbar-hdr"><span class="cbar-name v-gold">Slow Mover</span><span class="cbar-count">532 — 6.6%</span></div><div class="track"><div class="fill" style="width:6.6%;background:var(--gold)"></div></div></div>
+          <div class="cbar-row"><div class="cbar-hdr"><span class="cbar-name v-alert">Obsolete Risk</span><span class="cbar-count">464 — 5.7%</span></div><div class="track"><div class="fill" style="width:5.7%;background:var(--accent)"></div></div></div>
+        </div>
+      </div>
+      <div class="col-r">
+        <div class="col-h">ABC GBP Concentration</div>
+        <div class="col-sub">8.4% of active items drive 80% of GBP value — classic Pareto</div>
+        <table class="abc-tbl">
+          <thead><tr><th>Class</th><th>Items</th><th>% of Active</th><th>Value Band</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-a">A</span></td><td>493</td><td>8.4%</td><td>Top 80% of £</td></tr>
+            <tr><td><span class="badge badge-b">B</span></td><td>1,087</td><td>18.6%</td><td>Next 15% of £</td></tr>
+            <tr><td><span class="badge badge-c">C</span></td><td>4,275</td><td>73.0%</td><td>Bottom 5% of £</td></tr>
+          </tbody>
+        </table>
+        <div class="note">
+          <div class="note-title">Top Value Item — MPU-10000001</div>
+          <div class="note-body"><strong>£260,797</strong> gross GBP across 19 periods. Single-period peak of <strong>£84,353</strong> in Aug 2016 — the highest individual period spike in the GBP portfolio. Trend is accelerating.</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Obsolescence by Branch &amp; Movement Anomalies</div>
+    <div class="two-col">
+      <div class="col-l">
+        <div class="col-h">Obsolescence Exposure by Branch</div>
+        <div class="col-sub">Items inactive 12+ months — GBP historical movement</div>
+        <table class="btbl">
+          <thead><tr><th>Branch</th><th>Items</th><th>Hist. £ Exposure</th></tr></thead>
+          <tbody>
+            <tr><td><span class="bname">LTD</span></td><td>463 <span class="obs-pill">99.8%</span></td><td>£87,609</td></tr>
+            <tr><td><span class="bname">LTDBANK</span></td><td>1</td><td>£9,538</td></tr>
+            <tr><td><span class="bname">LTD1</span></td><td>2</td><td>£45</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-r">
+        <div class="col-h">Movement Direction Anomalies</div>
+        <div class="col-sub">Items with one-directional or high-churn unit flow</div>
+        <div class="mov-block">
+          <div class="mov-row"><div><div class="mov-label">Only Outbound</div><div class="mov-sub">Consumed / adjusted out — never replenished</div></div><div class="mov-val v-alert">799</div></div>
+          <div class="mov-row"><div><div class="mov-label">Only Inbound</div><div class="mov-sub">Received but never issued or consumed</div></div><div class="mov-val v-gold">223</div></div>
+          <div class="mov-row"><div><div class="mov-label">High Churn / Netting</div><div class="mov-sub">Net units &lt;5% of gross — constant in/out cycling</div></div><div class="mov-val v-muted">2,618</div></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Top Items — By GBP Value &amp; Unit Volume</div>
+    <div class="two-col">
+      <div class="col-l">
+        <div class="col-h">Top 5 by Gross GBP Value</div>
+        <div class="col-sub">Absolute GBP movement — all periods</div>
+        <table class="ti-tbl">
+          <thead><tr><th>Item</th><th>Units</th><th>Periods</th><th>Gross £</th></tr></thead>
+          <tbody>
+            <tr><td><span class="icode">MPU-10000001</span></td><td>1,092</td><td>19</td><td>£260,797</td></tr>
+            <tr><td><span class="icode">RCS-00000291</span></td><td>74,233</td><td>20</td><td>£162,870</td></tr>
+            <tr><td><span class="icode">RCV-37127151</span></td><td>81,863</td><td>20</td><td>£143,776</td></tr>
+            <tr><td><span class="icode">L32X020714H4BC3</span></td><td>22,000</td><td>13</td><td>£131,099</td></tr>
+            <tr><td><span class="icode">RCS-00000322</span></td><td>52,591</td><td>20</td><td>£126,187</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-r">
+        <div class="col-h">Top 5 by Gross Unit Volume</div>
+        <div class="col-sub">Absolute unit movement — all periods</div>
+        <table class="ti-tbl">
+          <thead><tr><th>Item</th><th>Units</th><th>Periods</th><th>Gross £</th></tr></thead>
+          <tbody>
+            <tr><td><span class="icode">RCV-19000016</span></td><td>527,000</td><td>20</td><td>£51,072</td></tr>
+            <tr><td><span class="icode">390-09005-001</span></td><td>416,782</td><td>20</td><td>£59,531</td></tr>
+            <tr><td><span class="icode">RCS-39000009</span></td><td>304,896</td><td>20</td><td>£62,422</td></tr>
+            <tr><td><span class="icode">390-09005-007</span></td><td>246,992</td><td>16</td><td>£35,001</td></tr>
+            <tr><td><span class="icode">RCS-39000010</span></td><td>211,910</td><td>20</td><td>£43,140</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Inventory Turnover &amp; Days on Hand — Company 00050</div>
+    <div class="port-stat">
+      <div class="port-stat-item"><div class="port-stat-label">Portfolio Turnover (Ann.)</div><div class="port-stat-val v-gbp">4.1x</div><div class="port-stat-sub">Annualized across all active GBP items</div></div>
+      <div class="port-stat-item"><div class="port-stat-label">Portfolio Days on Hand</div><div class="port-stat-val v-gbp">89 days</div><div class="port-stat-sub">Average days of supply carried</div></div>
+      <div class="port-stat-item"><div class="port-stat-label">Items Analyzed</div><div class="port-stat-val v-muted">5,014</div><div class="port-stat-sub">Items with calculable turnover</div></div>
+      <div class="port-stat-item"><div class="port-stat-label">Median Item Turnover</div><div class="port-stat-val v-gbp">2.4x</div><div class="port-stat-sub">Half of items turn slower than this</div></div>
+    </div>
+    <div class="two-col" style="margin-top:16px;">
+      <div class="col-l">
+        <div class="col-h">Turnover Distribution</div>
+        <div class="col-sub">Annualized turns — 5,014 active GBP items</div>
+        <div class="turn-grid">
+          <div class="turn-cell"><div class="turn-bucket-label">&lt; 1x — Very Slow</div><div class="turn-bucket-val v-alert">1,021</div><div class="turn-bucket-sub">20.4% of items</div></div>
+          <div class="turn-cell"><div class="turn-bucket-label">1–2x — Slow</div><div class="turn-bucket-val v-gold">1,216</div><div class="turn-bucket-sub">24.3% of items</div></div>
+          <div class="turn-cell"><div class="turn-bucket-label">2–4x — Normal</div><div class="turn-bucket-val">1,472</div><div class="turn-bucket-sub">29.4% of items</div></div>
+          <div class="turn-cell"><div class="turn-bucket-label">4–6x — Good</div><div class="turn-bucket-val v-gbp">854</div><div class="turn-bucket-sub">17.0% of items</div></div>
+          <div class="turn-cell"><div class="turn-bucket-label">6–12x — Fast</div><div class="turn-bucket-val v-gbp">451</div><div class="turn-bucket-sub">9.0% of items</div></div>
+          <div class="turn-cell"><div class="turn-bucket-label">12x+ — Very Fast</div><div class="turn-bucket-val v-gbp">0</div><div class="turn-bucket-sub">0% of items</div></div>
+        </div>
+      </div>
+      <div class="col-r">
+        <div class="col-h">Fastest &amp; Slowest Turning Items</div>
+        <div class="col-sub">Top 5 each by annualized turnover rate</div>
+        <table class="risk-tbl">
+          <thead><tr><th>Item</th><th>Turns</th><th>DOH</th></tr></thead>
+          <tbody>
+            <tr><td colspan="3" style="font-size:10px;color:var(--muted);padding:8px 0 4px;font-family:'DM Mono',monospace;letter-spacing:.1em;text-transform:uppercase;">Fastest</td></tr>
+            <tr><td><span class="icode">RLD-00000065</span></td><td>11.4x</td><td>32d</td></tr>
+            <tr><td><span class="icode">468-34259-001</span></td><td>10.8x</td><td>34d</td></tr>
+            <tr><td><span class="icode">RCV-37125815</span></td><td>10.2x</td><td>36d</td></tr>
+            <tr><td><span class="icode">468-34331-001</span></td><td>10.1x</td><td>36d</td></tr>
+            <tr><td><span class="icode">468-31005-001</span></td><td>9.8x</td><td>37d</td></tr>
+            <tr><td colspan="3" style="font-size:10px;color:var(--muted);padding:12px 0 4px;font-family:'DM Mono',monospace;letter-spacing:.1em;text-transform:uppercase;">Slowest (with activity)</td></tr>
+            <tr><td><span class="icode">2M1-00000322</span></td><td>0.01x</td><td>36,500d</td></tr>
+            <tr><td><span class="icode">RCV-00017078</span></td><td>0.01x</td><td>36,500d</td></tr>
+            <tr><td><span class="icode">RCV-37123777</span></td><td>0.01x</td><td>36,500d</td></tr>
+            <tr><td><span class="icode">VLP-34100728</span></td><td>0.01x</td><td>36,500d</td></tr>
+            <tr><td><span class="icode">468-10425-001</span></td><td>0.02x</td><td>18,250d</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Demand Variability — Company 00050</div>
+    <div class="two-col">
+      <div class="col-l">
+        <div class="col-h">Coefficient of Variation (CV) Summary</div>
+        <div class="col-sub">1,849 items with 3+ outbound periods analyzed — CV = std dev ÷ mean demand</div>
+        <div class="cv-summary">
+          <div class="cv-cell"><div class="cv-cell-val v-gbp">892</div><div class="cv-cell-label">Stable</div><div class="cv-cell-sub">CV &lt; 0.5 — 48.2%</div></div>
+          <div class="cv-cell"><div class="cv-cell-val v-gold">808</div><div class="cv-cell-label">Variable</div><div class="cv-cell-sub">CV 0.5–1.0 — 43.7%</div></div>
+          <div class="cv-cell"><div class="cv-cell-val v-alert">149</div><div class="cv-cell-label">Highly Erratic</div><div class="cv-cell-sub">CV &gt; 1.0 — 8.1%</div></div>
+        </div>
+        <div class="note" style="margin-top:12px;">
+          <div class="note-title">Portfolio CV Average: 0.522</div>
+          <div class="note-body">GBP demand is significantly more stable than USD (avg CV 0.52 vs 0.84). Nearly half of items have stable demand patterns, and only 8.1% are highly erratic — a much healthier demand profile overall.</div>
+        </div>
+      </div>
+      <div class="col-r">
+        <div class="col-h">Most Erratic Items (Highest CV)</div>
+        <div class="col-sub">Items where demand variability is most extreme</div>
+        <table class="risk-tbl">
+          <thead><tr><th>Item</th><th>Avg Demand</th><th>CV</th></tr></thead>
+          <tbody>
+            <tr><td><span class="icode">CVV-00001329</span></td><td>110</td><td><span class="cv-pill cv-erratic">2.07</span></td></tr>
+            <tr><td><span class="icode">AB2B0346165D2C</span></td><td>571</td><td><span class="cv-pill cv-erratic">1.87</span></td></tr>
+            <tr><td><span class="icode">RCS-00000299</span></td><td>54</td><td><span class="cv-pill cv-erratic">1.72</span></td></tr>
+            <tr><td><span class="icode">RCV-37127243</span></td><td>385</td><td><span class="cv-pill cv-erratic">1.69</span></td></tr>
+            <tr><td><span class="icode">RCV-37129305</span></td><td>9</td><td><span class="cv-pill cv-erratic">1.69</span></td></tr>
+            <tr><td><span class="icode">RCV-37100685</span></td><td>152</td><td><span class="cv-pill cv-erratic">1.69</span></td></tr>
+            <tr><td><span class="icode">RCV-19000012</span></td><td>1,026</td><td><span class="cv-pill cv-erratic">1.68</span></td></tr>
+            <tr><td><span class="icode">468-34253-001</span></td><td>34</td><td><span class="cv-pill cv-erratic">1.66</span></td></tr>
+            <tr><td><span class="icode">RCV-37127397</span></td><td>21</td><td><span class="cv-pill cv-erratic">1.65</span></td></tr>
+            <tr><td><span class="icode">468-10424-001</span></td><td>35</td><td><span class="cv-pill cv-erratic">1.63</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">High Risk Items — Low Turnover &amp; High Variability — Company 00050</div>
+    <div class="two-col">
+      <div class="col-l">
+        <div class="col-h">Combined Risk Flag</div>
+        <div class="col-sub">Items with turnover &lt; 2x AND CV &gt; 1.0 — slow moving with erratic demand</div>
+        <div class="port-stat" style="border:none;gap:0;margin-top:4px;">
+          <div class="port-stat-item" style="border:1px solid var(--rule);border-right:none;"><div class="port-stat-label">High Risk Items</div><div class="port-stat-val v-alert">10</div><div class="port-stat-sub">Slow turn + erratic demand</div></div>
+          <div class="port-stat-item" style="border:1px solid var(--rule);"><div class="port-stat-label">Worst DOH</div><div class="port-stat-val v-alert">7,300d</div><div class="port-stat-sub">Item RCV-37134298</div></div>
+        </div>
+        <div class="note" style="margin-top:12px;">
+          <div class="note-title">Much lower risk than USD</div>
+          <div class="note-body">Only 10 GBP items fall into the combined high-risk category versus 410 for USD. This reflects the more stable demand profile of the GBP portfolio overall. Each of these 10 items still warrants individual review.</div>
+        </div>
+      </div>
+      <div class="col-r">
+        <div class="col-h">All 10 High Risk Items</div>
+        <div class="col-sub">Slowest moving with most erratic demand patterns</div>
+        <table class="risk-tbl">
+          <thead><tr><th>Item</th><th>Turns</th><th>DOH</th><th>CV</th></tr></thead>
+          <tbody>
+            <tr><td><span class="icode">RCV-37134298</span></td><td>0.05x</td><td>7,300d</td><td><span class="cv-pill cv-erratic">1.38</span></td></tr>
+            <tr><td><span class="icode">VAL-00000175</span></td><td>0.57x</td><td>640d</td><td><span class="cv-pill cv-erratic">1.25</span></td></tr>
+            <tr><td><span class="icode">RCV-46800082</span></td><td>1.04x</td><td>351d</td><td><span class="cv-pill cv-erratic">1.09</span></td></tr>
+            <tr><td><span class="icode">VLP-34100756</span></td><td>1.34x</td><td>272d</td><td><span class="cv-pill cv-erratic">1.06</span></td></tr>
+            <tr><td><span class="icode">VLP-34000149</span></td><td>1.45x</td><td>252d</td><td><span class="cv-pill cv-erratic">1.08</span></td></tr>
+            <tr><td><span class="icode">RCV-00014168</span></td><td>1.59x</td><td>230d</td><td><span class="cv-pill cv-erratic">1.10</span></td></tr>
+            <tr><td><span class="icode">SRS-00000005</span></td><td>1.66x</td><td>220d</td><td><span class="cv-pill cv-erratic">1.22</span></td></tr>
+            <tr><td><span class="icode">RCV-37120740</span></td><td>1.72x</td><td>212d</td><td><span class="cv-pill cv-erratic">1.55</span></td></tr>
+            <tr><td><span class="icode">CA2B034410522I</span></td><td>1.91x</td><td>191d</td><td><span class="cv-pill cv-erratic">1.13</span></td></tr>
+            <tr><td><span class="icode">CA2B034430522I</span></td><td>1.91x</td><td>191d</td><td><span class="cv-pill cv-erratic">1.46</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Priority Actions — Company 00050 (GBP)</div>
+    <div class="wl">
+      <div class="wl-head"><div class="wl-head-title">Recommended Actions</div><div class="wl-head-sub">Ranked by financial and operational impact</div></div>
+      <div class="wl-item"><div><div class="wl-num">01</div><div class="wl-title">Item Master Rationalization — 3,059 Never-Moved Items</div><div class="wl-desc">37.8% of the GBP item master carries zero unit activity across 19 months. Review for discontinuation, duplicate cleanup, or archival.</div></div><span class="tag tag-c">Critical</span></div>
+      <div class="wl-item"><div><div class="wl-num">02</div><div class="wl-title">Write-Down Review — £97K at Obsolescence Risk</div><div class="wl-desc">464 items inactive 12+ months, £97,192 in historical GBP exposure. LTD branch carries 99.8% of the count. Formal assessment before next period close.</div></div><span class="tag tag-c">Critical</span></div>
+      <div class="wl-item"><div><div class="wl-num">03</div><div class="wl-title">Monitor MPU-10000001 — Accelerating Value Concentration</div><div class="wl-desc">Top GBP item at £260,797 gross. Aug 2016 spike of £84,353 is the largest single-period value in the GBP dataset. Review demand and sourcing plan given the acceleration.</div></div><span class="tag tag-c">Critical</span></div>
+      <div class="wl-item"><div><div class="wl-num">04</div><div class="wl-title">Review L32X020714H4BC3 — Intermittent Demand Pattern</div><div class="wl-desc">£131K gross GBP but active in only 13 of 20 periods. Assess whether stock levels and replenishment terms are calibrated for intermittent demand.</div></div><span class="tag tag-m">Monitor</span></div>
+      <div class="wl-item"><div><div class="wl-num">05</div><div class="wl-title">Resolve Data Quality — 5,823 Zero-Unit / Non-Zero-£ Rows</div><div class="wl-desc">12.1% of GBP transactions carry a pound value with no unit movement. Confirm by transaction type — likely cost adjustments but should be verified.</div></div><span class="tag tag-r">Review</span></div>
+    </div>
+
+    <hr class="srule"><div class="slabel">Data Quality Indicators</div>
+    <div class="dq">
+      <div class="dq-cell"><div class="dq-val">13,085</div><div class="dq-lbl">Rows with qty = 0 and amt = 0<br><span style="color:var(--rule)">27.2% of company transactions</span></div></div>
+      <div class="dq-cell"><div class="dq-val">5,823</div><div class="dq-lbl">GBP value with zero units<br><span style="color:var(--rule)">Cost adjustments / revaluations — confirm by type</span></div></div>
+      <div class="dq-cell"><div class="dq-val">1,150</div><div class="dq-lbl">Unit movement with zero GBP<br><span style="color:var(--rule)">Possible zero-cost item or missing cost setup</span></div></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  <div>Inventory Executive Overview</div>
+  <div>Source: <span>362,064 rows</span> &bull; Period: <span>Jan 2015 – Aug 2016</span> &bull; Co. 00010 <span>USD</span> / Co. 00050 <span>GBP</span></div>
+</div>
+
+<script>
+function switchTab(co) {
+  document.querySelectorAll('.company-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => { t.className = 'tab'; });
+  document.getElementById('panel-' + co).classList.add('active');
+  document.querySelector('[onclick="switchTab(\'' + co + '\')"]').classList.add('active-' + co);
+  animateBars();
+}
+function animateBars() {
+  document.querySelectorAll('#panel-' + currentPanel() + ' .kpi-stripe').forEach(bar => {
+    const target = bar.dataset.w + '%';
+    bar.style.transition = 'none';
+    bar.style.width = '0';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      bar.style.transition = 'width 1.1s cubic-bezier(.4,0,.2,1)';
+      bar.style.width = target;
+    }));
+  });
+}
+function currentPanel() {
+  return document.querySelector('.company-panel.active').id.replace('panel-','');
+}
+animateBars();
+</script>
+</body>
+</html>
