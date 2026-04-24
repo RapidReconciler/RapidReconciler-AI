@@ -33,15 +33,15 @@ Start a new session when switching to a different guide version or when the conv
 
 **File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
-**Sheet 1 — Unposted GL Batches (original sheet, highlights added)**
+**Sheet 1 (left, opens first) — GL Batch Analysis (new sheet)**
 
-| Highlight | Color | Criteria |
-|---|---|---|
-| Red | `FFCCCC` | In Use OR age ≥ 8 days OR posting error |
-| Orange | `FFE5CC` | Pending approval / Pending (needs approval) |
-| Yellow | `FFFACD` | Approved / Approved (needs posting run only) |
+**Sheet 2 — Unposted GL Batches (original sheet, highlights added)**
 
-**Sheet 2 — GL Batch Analysis (new sheet)**
+| Highlight | Color | Hex | Criteria |
+|---|---|---|---|
+| Red | `FFE0E0` | `FFE0E0` | In Use OR age ≥ 8 days OR posting error |
+| Amber | `FFD966` | `FFD966` | Pending approval / Pending (needs approval) |
+| Light Yellow | `FFF2CC` | `FFF2CC` | Approved / Approved (needs posting run only) |
 
 Follows the structure defined in Section 13.4. Contains Report Summary, Status Summary, Findings by Priority, and Recommended Actions.
 
@@ -550,8 +550,8 @@ The workbook must contain exactly two sheets:
 
 | Sheet | Contents |
 |---|---|
+| **GL Batch Analysis** | The analysis sheet — see Section 13.4 for structure. This is the first (leftmost) tab and the active sheet when the workbook opens. |
 | **Unposted GL Batches** | The original source data, unchanged except for row highlights |
-| **GL Batch Analysis** | The analysis sheet — see Section 13.4 for structure |
 
 Do not delete, rename, or reorder the source sheet. Do not add columns, rows, or formulas to the source sheet. The only permitted modification to the source sheet is cell background color (highlights).
 
@@ -561,10 +561,9 @@ Every data row in the source sheet must be highlighted based on its priority cla
 
 | Color | Hex | Criteria |
 |---|---|---|
-| **Red** | `FFCCCC` | Posting_Status = "In Use" (requires manual status reset in P0011) **OR** batch age ≥ 8 days **OR** Posting_Status = "Error" |
-| **Orange** | `FFE5CC` | Approval_Status = "Pending approval" AND Posting_Status = "Pending" (batch header exists, needs approval) |
-| **Yellow** | `FFFACD` | Approval_Status = "Approved" AND Posting_Status = "Approved" (approved, needs posting run only) |
-| **Green** | `D9EAD3` | Reserved for future use — batches confirmed as resolved but not yet cleared from the export |
+| **Red** | `FFE0E0` | Posting_Status = "In Use" (requires manual status reset in P0011) **OR** batch age ≥ 8 days **OR** Posting_Status = "Error" |
+| **Amber** | `FFD966` | Approval_Status = "Pending approval" AND Posting_Status = "Pending" (batch header exists, needs approval) |
+| **Light Yellow** | `FFF2CC` | Approval_Status = "Approved" AND Posting_Status = "Approved" (approved, needs posting run only) |
 
 **Rules:**
 - Apply the highlight to all columns in the row, not just the status columns.
@@ -592,15 +591,15 @@ The GL Batch Analysis sheet must contain the following sections in order, each s
 | **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt |
 | **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
 | **Data rows** | Alternating white and light gray (`F2F2F2`) fill; 10pt Arial |
-| **Priority 1 rows** | Red fill (`FFCCCC`), dark red bold text (`C00000`) |
-| **Priority 2 rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
-| **Priority 3 rows** | Yellow fill (`FFFACD`), dark gold text (`5C4A00`) |
-| **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
-| **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. |
+| **Priority 1 rows** | Red fill (`FFE0E0`), dark red text (`8B0000`) |
+| **Priority 2 rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`) |
+| **Priority 3 rows** | Light yellow fill (`FFF2CC`), dark olive text (`4A3B00`) |
+| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
+| **Column widths** | A: 22, B: 80, C: 30 — fixed, not auto-stretched. |
 | **Row heights** | Calculated from content length and column width — not a flat default. |
 | **Wrap text** | Enabled on all cells on the GL Batch Analysis sheet. |
 | **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
-| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFF0DC` / text `6B3A00`; Priority 3 fill `FEFBD8` / text `4A3B00`. Lighter fills and non-bold text for readability. |
+| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`; Priority 3 fill `FFF2CC` / text `4A3B00`. Lighter fills and non-bold text for readability. |
 | **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
 | **Colour key** | Include a colour key section at the top of the analysis sheet. |
 

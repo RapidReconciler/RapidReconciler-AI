@@ -23,12 +23,12 @@ Then use the following prompt:
 
 **File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
-**Sheet 1 — Integrity (original)**
+**Sheet 1 (left, opens first) — RR Analysis (new)**
 - Source data, unchanged except row highlights, AutoFilter on row 2, freeze panes at row 3.
 - Priority 1 rows (UnitCost = 0, FrzCost > 0): light red fill (`FFE0E0`)
-- Priority 2 rows (all other findings): light orange fill (`FFF0DC`)
+- Priority 2 rows (all other findings): amber fill (`FFD966`)
 
-**Sheet 2 — RR Analysis (new)**
+**Sheet 2 — Integrity (original)**
 - Report Summary
 - Colour Key
 - Issue Type Summary (color-coded by priority)
@@ -355,8 +355,8 @@ Output file name: `DMAAI Analysis.xlsx`
 | Highlight | Issue Type | Criteria |
 |---|---|---|
 | Priority 1 — light red (`FFE0E0`) | Cost in F30026 only | UnitCost = 0 and FrzCost > 0 |
-| Priority 2 — light orange (`FFF0DC`) | Cost in F4105 only | UnitCost > 0 and FrzCost = 0 |
-| Priority 2 — light orange (`FFF0DC`) | Both populated — mismatch | Both > 0 and UnitCost ≠ FrzCost |
+| Priority 2 — amber (`FFD966`) | Cost in F4105 only | UnitCost > 0 and FrzCost = 0 |
+| Priority 2 — amber (`FFD966`) | Both populated — mismatch | Both > 0 and UnitCost ≠ FrzCost |
 
 > **Space-padded blanks:** Cost value columns in this export may contain space-padded cells rather than true zeros. Strip whitespace from numeric fields before classifying rows — a cell containing only spaces is treated as zero, not as a valid cost.
 
@@ -382,8 +382,8 @@ Follow the standard formatting specification:
 | **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt; priority sub-headers use priority fill with bold text |
 | **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
 | **Priority 1 rows** | Light red fill (`FFE0E0`), dark red text (`8B0000`), non-bold |
-| **Priority 2 rows** | Light orange fill (`FFF0DC`), dark brown text (`6B3A00`), non-bold |
-| **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`), full-width merged cell |
+| **Priority 2 rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`), non-bold |
+| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
 | **Column widths** | 6-column layout: A=20, B=28, C=36, D=16, E=14, F=16. Do not auto-stretch to full sheet width. |
 | **Row heights** | Calculated from content: data rows use `ceil(longest_line / col_width) × 13pt`, capped at 80pt. Minimum 16pt. |
 | **P1 items table** | Uses all 6 columns. Col E = QOH (integer, right-aligned). Col F = GL Gap in dollars (numeric, `#,##0.00` format, right-aligned). A total row immediately below the item list sums col F to show the total GL understatement for displayed items. |

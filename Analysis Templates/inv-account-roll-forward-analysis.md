@@ -29,16 +29,16 @@ Once the guide has been uploaded, it remains in context. Subsequent Roll Forward
 
 **File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
-**Sheet 1 — Roll Forward (original sheet, highlights added)**
+**Sheet 1 (left, opens first) — Roll Forward Analysis (new sheet)**
 
 | Highlight | Color | Criteria |
 |---|---|---|
-| Red | `FFCCCC` | GLOK = "no" OR VarOK = "no" |
-| Orange | `FFE5CC` | End period with non-zero UnpostBatch |
-| Yellow | `FFFACD` | End period with zero UnpostBatch |
-| Blue | `DDEEFF` | Historical period with non-zero UnpostBatch |
+| Red | `FFE0E0` | GLOK = "no" OR VarOK = "no" |
+| Amber | `FFD966` | End period with non-zero UnpostBatch |
+| Green | `E2EFDA` | End period with zero UnpostBatch |
+| Light Yellow | `FFF2CC` | Historical period with non-zero UnpostBatch |
 
-**Sheet 2 — Roll Forward Analysis (new sheet)**
+**Sheet 2 — Roll Forward (original sheet, highlights added)**
 
 Follows the structure defined in Section 11.4. The Historical Unposted Batch Summary covers all periods except the current (end) period; the end-period UnpostBatch total is reported in the Report Summary instead. The Period Variance by Account section covers the prior 3 periods only, with rows included where OOB absolute value exceeds $100 or UnpostBatch is non-zero. JE amounts and CardexVar are excluded from that section. Column order: LongAccount, Period, then Variance / OOB / UnpostBatch.
 
@@ -63,7 +63,7 @@ The report serves two distinct purposes:
 
 2. **Variance Roll Forward (columns L–T):** Verifies that the net reconciliation variance (perpetual vs. GL) also rolls forward correctly, and accounts for all components that explain why the perpetual inventory differs from the GL.
 
-> **Who should use this guide:** JD Edwards cost accountants and inventory accountants responsible for investigating and resolving multi-period GL and variance continuity issues in RapidReconciler.
+> **Who should use this guide:** JD Edwards cost accountantts and inventory accountantts responsible for investigating and resolving multi-period GL and variance continuity issues in RapidReconciler.
 
 > **Important:** All corrections are made in JD Edwards. RapidReconciler displays the roll forward data for visibility but does not modify JD Edwards data.
 
@@ -656,8 +656,8 @@ Output file name: `DMAAI Analysis.xlsx`
 
 | Sheet | Contents |
 |---|---|
+| **Roll Forward Analysis** | The analysis sheet — see Section 11.4 for structure. This is the first (leftmost) tab and the active sheet when the workbook opens. |
 | **Roll Forward** | The original source data, with row highlights, columns U/V/W hidden, AutoFilter enabled on row 2, freeze panes after row 2, and number formatting on monetary columns |
-| **Roll Forward Analysis** | The analysis sheet — see Section 11.4 for structure |
 
 Do not delete, rename, or reorder the source sheet. Permitted modifications to the source sheet are:
 
@@ -671,10 +671,10 @@ Do not delete, rename, or reorder the source sheet. Permitted modifications to t
 
 | Color | Hex | Criteria |
 |---|---|---|
-| **Red** | `FFCCCC` | GLOK = "no" **OR** VarOK = "no" — roll forward break or variance integrity failure |
-| **Orange** | `FFE5CC` | GLOK = "end" with non-zero UnpostBatch — current period has unposted GL batches |
-| **Yellow** | `FFFACD` | GLOK = "end" with zero UnpostBatch — current period, GL rolls forward cleanly |
-| **Blue** | `DDEEFF` | GLOK = "yes" with non-zero UnpostBatch — historical period where unposted batches existed (subsequently cleared or still pending) |
+| **Red** | `FFE0E0` | GLOK = "no" **OR** VarOK = "no" — roll forward break or variance integrity failure |
+| **Amber** | `FFD966` | GLOK = "end" with non-zero UnpostBatch — current period has unposted GL batches |
+| **Green** | `E2EFDA` | GLOK = "end" with zero UnpostBatch — current period, GL rolls forward cleanly |
+| **Light Yellow** | `FFF2CC` | GLOK = "yes" with non-zero UnpostBatch — historical period where unposted batches existed (subsequently cleared or still pending) |
 
 **Rules:**
 - Apply the highlight to all columns in the row.
@@ -704,14 +704,14 @@ Do not delete, rename, or reorder the source sheet. Permitted modifications to t
 | **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt |
 | **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
 | **Data rows** | Alternating white and light gray (`F2F2F2`) fill; 10pt Arial |
-| **GLOK/VarOK = "no" rows** | Red fill (`FFCCCC`), dark red bold text (`C00000`) |
-| **Unposted batch rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
-| **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
+| **GLOK/VarOK = "no" rows** | Red fill (`FFE0E0`), dark red text (`8B0000`) |
+| **Unposted batch rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`) |
+| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
 | **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. |
 | **Row heights** | Calculated from content length and column width — not a flat default. |
 | **Wrap text** | Enabled on all cells on the Roll Forward Analysis sheet. |
 | **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
-| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFF0DC` / text `6B3A00`; Priority 3 fill `FEFBD8` / text `4A3B00`. Lighter fills and non-bold text for readability. |
+| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`; Priority 3 fill `FFF2CC` / text `4A3B00`; Priority 4 fill `E2EFDA` / text `1E4620`. Lighter fills and non-bold text for readability. |
 | **Source sheet — freeze panes** | Set at A3 so the title row (row 1) and header row (row 2) are always visible. |
 | **Source sheet — AutoFilter** | Enabled on row 2 covering all columns. Row highlights match analysis priority colours. |
 | **Source sheet — number format** | Columns G, H, I, K, L, M, N, O, P, Q, R, S formatted as `#,##0.00`. Columns J and T are text flags and are not formatted. |

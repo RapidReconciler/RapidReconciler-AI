@@ -31,15 +31,16 @@ Once the guide has been uploaded in a session, it remains in context. Subsequent
 
 **File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
-**Sheet 1 — End of Day (original sheet, highlights added)**
+**Sheet 1 (left, opens first) — EOD Analysis (new sheet)**
 
 | Highlight | Color | Criteria |
 |---|---|---|
-| Red | `FFCCCC` | Prior period PeriodEnds OR work order status ER OR age > 14 days |
-| Orange | `FFE5CC` | Error type (2000-01-01) OR Mfg status 90 OR Sales aged > 7 days |
-| Yellow | `FFFACD` | Normal Sales backlog OR active Mfg work orders (current period) |
+| Red | `FFE0E0` | Prior period PeriodEnds OR work order status ER OR age > 14 days |
+| Amber | `FFD966` | Error type (2000-01-01) with non-zero net amount OR Mfg status 90 OR Sales aged > 7 days |
+| Light Yellow | `FFF2CC` | Normal Sales backlog OR active Mfg work orders (current period) |
+| Green | `E2EFDA` | Error type (2000-01-01) where paired rows net to zero — informational only |
 
-**Sheet 2 — EOD Analysis (new sheet)**
+**Sheet 2 — End of Day (original sheet, highlights added)**
 
 Follows the structure defined in Section 9.4. Contains Report Summary, Variance Type Summary, Findings by Priority, and Recommended Actions.
 
@@ -627,8 +628,8 @@ Output file name: `DMAAI Analysis.xlsx`
 
 | Sheet | Contents |
 |---|---|
+| **EOD Analysis** | The analysis sheet — see Section 9.4 for structure. This is the first (leftmost) tab and the active sheet when the workbook opens. |
 | **End of Day** | The original source data, unchanged except for row highlights |
-| **EOD Analysis** | The analysis sheet — see Section 9.4 for structure |
 
 Do not delete, rename, or reorder the source sheet. The only permitted modification is cell background color (highlights).
 
@@ -638,24 +639,25 @@ Every data row must be highlighted based on its classification:
 
 | Color | Hex | Criteria |
 |---|---|---|
-| **Red** | `FFCCCC` | PeriodEnds is a prior period **OR** Type = Mfg with work order status ER **OR** transaction age > 14 days |
-| **Orange** | `FFE5CC` | Type = Error (2000-01-01 voucher match rows) **OR** Type = Mfg with status 90 (ready for R31802A) **OR** Sales rows aged > 7 days |
-| **Yellow** | `FFFACD` | Type = Sales at normal status (awaiting R42800) **OR** Type = Mfg at status 45/50 (active work orders, current period) |
-| **Green** | `D9EAD3` | Reserved for future use — items confirmed as resolved but not yet cleared from the export |
+| **Red** | `FFE0E0` | PeriodEnds is a prior period **OR** Type = Mfg with work order status ER **OR** transaction age > 14 days |
+| **Amber** | `FFD966` | Type = Error (2000-01-01) with non-zero net amount **OR** Type = Mfg with status 90 (ready for R31802A) **OR** Sales rows aged > 7 days |
+| **Light Yellow** | `FFF2CC` | Type = Sales at normal status (awaiting R42800) **OR** Type = Mfg at status 45/50 (active work orders, current period) |
+| **Green** | `E2EFDA` | Type = Error (2000-01-01) where the paired rows net to zero — informational, no action required |
 
 **Rules:**
 - Apply the highlight to all columns in the row.
 - When multiple rows share the same DocNumber and Type, apply the same color to all rows for that document.
-- Red takes precedence over Orange; Orange takes precedence over Yellow.
+- Red takes precedence over Amber; Amber takes precedence over Light Yellow; Light Yellow takes precedence over Green.
 - The header row (row 2) and title row (row 1) are never highlighted.
-- For paired Error rows (2000-01-01 + real-date), highlight both rows Orange regardless of the real date's age.
+- For paired Error rows (2000-01-01 + real-date): if the pair nets to zero, highlight both rows Green. If the pair does not net to zero, highlight both rows Amber.
+- Net-zero Error pairs must still appear in the Variance Type Summary but are classified as informational — they are not listed in the Findings by Priority sections.
 
 ### 9.4 Analysis Sheet Structure
 
 | Section | Content |
 |---|---|
 | **Report Summary** | Period-end date, generation timestamp, total record count, companies present, transaction types present, note if prior-period rows exist |
-| **Variance Type Summary** | One row per Type showing row count, description, and total amount. Use the same highlight colors as the source sheet. |
+| **Variance Type Summary** | One row per Type showing row count, description, and total amount. Use the same highlight colors as the source sheet. Net-zero Error pairs are shown with a green row and marked as informational — they are not escalated to Findings by Priority. |
 | **Findings by Priority** | One sub-section per priority level. Each sub-section lists items with document/work order detail, status, age, and amount. Followed by a note box with root cause and recommended resolution. |
 | **Recommended Actions** | Numbered action steps in execution order, with the specific documents or work orders they apply to and the responsible owner. |
 
@@ -668,15 +670,16 @@ Every data row must be highlighted based on its classification:
 | **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt |
 | **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
 | **Data rows** | Alternating white and light gray (`F2F2F2`) fill; 10pt Arial |
-| **Priority 1 rows** | Red fill (`FFCCCC`), dark red bold text (`C00000`) |
-| **Priority 2 rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
-| **Priority 3 rows** | Yellow fill (`FFFACD`), dark gold text (`5C4A00`) |
-| **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
+| **Priority 1 rows** | Red fill (`FFE0E0`), dark red text (`8B0000`) |
+| **Priority 2 rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`) |
+| **Priority 3 rows** | Light yellow fill (`FFF2CC`), dark olive text (`4A3B00`) |
+| **Informational rows** | Light green fill (`E2EFDA`), black text (`000000`) |
+| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
 | **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. |
 | **Row heights** | Calculated from content length and column width — not a flat default. |
 | **Wrap text** | Enabled on all cells on the EOD Analysis sheet. |
 | **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
-| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFF0DC` / text `6B3A00`; Priority 3 fill `FEFBD8` / text `4A3B00`. Lighter fills and non-bold text for readability. |
+| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`; Priority 3 fill `FFF2CC` / text `4A3B00`; Informational fill `E2EFDA` / text `000000`. Lighter fills and non-bold text for readability. |
 | **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
 | **Colour key** | Include a colour key section at the top of the analysis sheet. |
 
