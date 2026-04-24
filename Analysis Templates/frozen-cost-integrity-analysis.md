@@ -24,7 +24,7 @@ Then use the following prompt:
 **File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
 **Sheet 1 (left, opens first) — RR Analysis (new)**
-- Source data, unchanged except row highlights, AutoFilter on row 2, freeze panes at row 3.
+- Source data, unchanged except row highlights, AutoFilter on row 2, freeze panes at row 3. No freeze panes on the analysis sheet.
 - Priority 1 rows (UnitCost = 0, FrzCost > 0): light red fill (`FFE0E0`)
 - Priority 2 rows (all other findings): amber fill (`FFD966`)
 
@@ -348,6 +348,8 @@ Output file name: `DMAAI Analysis.xlsx`
 | Sheet | Contents |
 |---|---|
 | **Integrity** | The original source data, unchanged except row highlights, AutoFilter on row 2, and freeze panes at row 3 |
+
+No freeze panes on the RR Analysis sheet. Grid lines disabled on the RR Analysis sheet (`showGridLines = False`). Include a floating text box (col F → col R, rows 1–18, no fill, no border) with sections: title 16pt bold, What is Frozen Cost Integrity? / Why does it matter? / What does this workbook show? / About this workbook — headings 13pt bold, body 12pt. See formatting spec Section 6.7.
 | **RR Analysis** | The analysis sheet |
 
 ### Source Sheet Row Highlights
