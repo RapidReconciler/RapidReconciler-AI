@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technical Requirements — RapidReconciler</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* GSI RAPIDRECONCILER — DOCUMENT TEMPLATE v1.0 */
+:root {
+  --navy:      #1e3a5f;
+  --blue:      #1a56a0;
+  --blue-mid:  #2b5ea7;
+  --blue-lt:   #dce8f7;
+  --blue-pale: #f0f5ff;
+  --orange:    #f07820;
+  --orange-lt: #fef0e0;
+  --rule:      #d0e4f7;
+  --text:      #1e3a5f;
+  --muted:     #5a7a9a;
+  --white:     #ffffff;
+  --amber-lt:  #fffbeb;
+  --amber:     #d97706;
+  --red-lt:    #fff5f5;
+  --red:       #c0392b;
+  --green-lt:  #f0faf4;
+  --green:     #1a7a4a;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; font-weight:300; background:#e8edf5; color:var(--text); padding:48px 24px 80px; min-height:100vh; line-height:1.7; }
+.page { max-width:860px; margin:0 auto; background:var(--white); box-shadow:0 8px 48px rgba(30,58,95,0.12); }
+
+/* MASTHEAD */
+.masthead { background:var(--navy); padding:32px 48px 0; position:relative; overflow:hidden; }
+.masthead::after { content:''; position:absolute; top:-80px; right:-80px; width:300px; height:300px; border-radius:50%; background:rgba(255,255,255,0.03); pointer-events:none; }
+.masthead-logo { display:flex; align-items:center; gap:10px; margin-bottom:28px; position:relative; z-index:1; }
+.logo-gsi { font-family:'DM Sans',sans-serif; font-weight:600; font-size:20px; color:#fff; letter-spacing:0.02em; }
+.logo-pipe { width:1px; height:28px; background:rgba(255,255,255,0.2); }
+.logo-rr { display:flex; flex-direction:column; gap:1px; }
+.logo-rr-name { font-family:'DM Sans',sans-serif; font-weight:600; font-size:16px; color:#fff; letter-spacing:0.01em; line-height:1; }
+.logo-rr-tag { font-size:9px; font-weight:400; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.4); line-height:1; }
+.logo-orange-line { width:52px; height:2px; background:var(--orange); border-radius:1px; margin-top:4px; }
+.masthead-meta { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; position:relative; z-index:1; }
+.masthead-title-block { flex:1; }
+.doc-type { font-size:10px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+.masthead h1 { font-family:'Instrument Serif',serif; font-size:28px; font-weight:400; color:#fff; line-height:1.2; margin-bottom:10px; }
+.masthead-summary { font-size:12.5px; color:rgba(255,255,255,0.65); line-height:1.65; max-width:480px; padding-bottom:28px; }
+.masthead-attrs { display:flex; flex-direction:column; gap:10px; flex-shrink:0; padding-bottom:28px; }
+.attr { text-align:right; }
+.attr-label { font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.35); display:block; margin-bottom:1px; }
+.attr-value { font-family:'DM Mono',monospace; font-size:11px; color:rgba(255,255,255,0.75); }
+
+/* TOC STRIP */
+.toc-strip { background:var(--blue-mid); padding:0 48px; display:flex; gap:0; overflow-x:auto; border-top:1px solid rgba(255,255,255,0.08); }
+.toc-item { font-size:10px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.55); padding:10px 16px 10px 0; text-decoration:none; white-space:nowrap; border-bottom:2px solid transparent; transition:color 0.15s,border-color 0.15s; }
+.toc-item:hover { color:rgba(255,255,255,0.9); border-bottom-color:var(--orange); }
+
+/* CONTENT */
+.content { padding:0 48px 48px; }
+.section { padding-top:40px; }
+.section-label { font-size:9px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--orange); margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+.section-label::after { content:''; flex:1; height:1px; background:var(--rule); }
+h2 { font-family:'Instrument Serif',serif; font-size:22px; font-weight:400; color:var(--navy); margin-bottom:14px; line-height:1.2; }
+h3 { font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:var(--navy); margin:22px 0 8px; letter-spacing:0.01em; }
+p { font-size:13px; color:var(--muted); line-height:1.75; margin-bottom:12px; }
+
+/* TABLES */
+.tbl-wrap { overflow-x:auto; margin:10px 0 4px; }
+table { width:100%; border-collapse:collapse; font-size:12px; }
+thead tr { background:var(--navy); }
+thead th { font-family:'DM Mono',monospace; font-size:9px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.7); padding:9px 14px; text-align:left; }
+tbody tr { border-bottom:1px solid var(--rule); }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:var(--blue-pale); }
+tbody td { padding:10px 14px; font-size:12px; color:var(--muted); vertical-align:top; line-height:1.5; }
+tbody td:first-child { font-family:'DM Mono',monospace; font-size:11px; color:var(--navy); font-weight:500; }
+table.plain-first tbody td:first-child { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; }
+
+/* CALLOUTS */
+.callout { padding:14px 16px 14px 20px; border-radius:0 4px 4px 0; margin:16px 0; font-size:12.5px; line-height:1.65; position:relative; }
+.callout::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
+.callout-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; margin-bottom:4px; display:block; }
+.callout p { margin:0; font-size:12.5px; }
+.callout-note      { background:var(--amber-lt); border:1px solid #fde68a; color:#92400e; }
+.callout-note::before { background:var(--amber); }
+.callout-note .callout-label { color:var(--amber); }
+.callout-important { background:var(--red-lt); border:1px solid #fecaca; color:#7f1d1d; }
+.callout-important::before { background:var(--red); }
+.callout-important .callout-label { color:var(--red); }
+.callout-info      { background:var(--blue-pale); border:1px solid var(--rule); color:var(--navy); }
+.callout-info::before { background:var(--blue); }
+.callout-info .callout-label { color:var(--blue); }
+
+/* NUMBERED PROCESS LIST */
+ol.process-list { list-style:none; counter-reset:step-counter; margin:10px 0; }
+ol.process-list li { counter-increment:step-counter; display:flex; gap:12px; align-items:flex-start; padding:7px 0; border-bottom:1px solid var(--rule); font-size:12.5px; color:var(--muted); line-height:1.55; }
+ol.process-list li:last-child { border-bottom:none; }
+ol.process-list li::before { content:counter(step-counter); width:22px; height:22px; border-radius:50%; background:var(--blue-lt); color:var(--blue); font-family:'DM Mono',monospace; font-size:10px; font-weight:500; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+
+/* DARK EXAMPLE BOX */
+.example-box { background:var(--navy); border-radius:4px; padding:14px 16px; margin:10px 0; }
+.example-label { font-size:8.5px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:8px; }
+.example-box table thead th { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.5); font-size:8.5px; padding:6px 12px; }
+.example-box table tbody tr { border-bottom:1px solid rgba(255,255,255,0.07); }
+.example-box table tbody tr:hover { background:rgba(255,255,255,0.04); }
+.example-box table tbody td { padding:7px 12px; color:rgba(255,255,255,0.75); font-family:'DM Mono',monospace; font-size:11px; }
+.example-box table tbody td:first-child { color:#93c5fd; }
+
+/* RELATED DOCS */
+.related-list { list-style:none; display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+.related-list li a { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--blue); text-decoration:none; padding:8px 12px; border:1px solid var(--rule); border-radius:4px; transition:background 0.15s,border-color 0.15s; }
+.related-list li a:hover { background:var(--blue-pale); border-color:var(--blue); }
+.related-list li a::before { content:'↗'; font-size:12px; color:var(--muted); }
+
+/* INLINE CODE */
+code { font-family:'DM Mono',monospace; font-size:11px; background:var(--blue-pale); color:var(--blue); padding:1px 5px; border-radius:3px; border:1px solid var(--rule); }
+
+/* ── EXTENDED COMPONENTS (specific to this document) ── */
+
+/* Spec row — key/value pair for quick-scan requirement lists */
+.spec-list { list-style:none; margin:8px 0 14px; border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+.spec-row { display:flex; border-bottom:1px solid var(--rule); font-size:12px; }
+.spec-row:last-child { border-bottom:none; }
+.spec-key { font-family:'DM Mono',monospace; font-size:11px; font-weight:500; color:var(--navy); background:var(--blue-pale); padding:8px 14px; width:200px; flex-shrink:0; display:flex; align-items:center; }
+.spec-val { padding:8px 14px; color:var(--muted); flex:1; display:flex; align-items:center; line-height:1.4; }
+
+/* Network access two-column panel */
+.net-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:10px 0; }
+.net-panel { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
+.net-head { background:var(--navy); padding:8px 14px; font-family:'DM Mono',monospace; font-size:9px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.7); }
+.net-body { padding:12px 14px; display:flex; flex-direction:column; gap:8px; }
+.net-item { font-size:11.5px; }
+.net-url  { font-family:'DM Mono',monospace; font-size:11px; color:var(--blue); display:block; margin-bottom:1px; }
+.net-ip   { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+.net-note { font-size:10px; color:var(--muted); font-style:italic; }
+.net-range { font-family:'DM Mono',monospace; font-size:12px; color:var(--navy); font-weight:500; }
+
+/* Storage estimate callout */
+.storage-card { background:var(--navy); border-radius:4px; padding:16px 20px; margin:12px 0; display:flex; gap:24px; align-items:flex-start; }
+.storage-stat { flex-shrink:0; text-align:center; }
+.storage-num  { font-family:'Instrument Serif',serif; font-size:36px; color:var(--orange); line-height:1; }
+.storage-unit { font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.45); margin-top:2px; }
+.storage-divider { width:1px; background:rgba(255,255,255,0.1); align-self:stretch; flex-shrink:0; }
+.storage-detail { font-size:12px; color:rgba(255,255,255,0.7); line-height:1.65; }
+.storage-detail strong { color:rgba(255,255,255,0.9); font-weight:500; }
+
+/* Appendix sub-section label */
+.appendix-tag { display:inline-block; font-family:'DM Mono',monospace; font-size:9px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; background:var(--blue-lt); color:var(--blue); padding:3px 8px; border-radius:2px; margin-bottom:10px; }
+
+/* FOOTER */
+.doc-footer { background:var(--navy); padding:16px 48px; display:flex; align-items:center; justify-content:space-between; }
+.footer-brand { display:flex; align-items:center; gap:8px; }
+.footer-name { font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:rgba(255,255,255,0.8); }
+.footer-dot { color:var(--orange); }
+.footer-right { font-size:10px; color:rgba(255,255,255,0.35); text-align:right; line-height:1.7; }
+.footer-right a { color:#93c5fd; text-decoration:none; }
+
+@media print { body{background:white;padding:0;} .page{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-logo">
+    <svg viewBox="0 0 40 40" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+      <path d="M32,31 H10 a10,10 0 0,1 -2,-19 a13,13 0 0,1 25,-2 a8,8 0 0,1 -1,17 Z" fill="#2b5ea7"/>
+      <path d="M33,26 H13 a8,8 0 0,1 -1,-15 a10,10 0 0,1 20,-2 a6,6 0 0,1 -1,13 Z" fill="#4a90d9" opacity="0.85"/>
+      <circle cx="20" cy="19" r="3.5" fill="white" opacity="0.95"/>
+      <circle cx="20" cy="19" r="2"   fill="#1e3a5f"/>
+      <circle cx="11" cy="26" r="2.5" fill="white" opacity="0.9"/>
+      <circle cx="11" cy="26" r="1.4" fill="#4a90d9"/>
+      <circle cx="29" cy="26" r="2.5" fill="white" opacity="0.9"/>
+      <circle cx="29" cy="26" r="1.4" fill="#4a90d9"/>
+      <circle cx="20" cy="11" r="2"   fill="white" opacity="0.85"/>
+      <line x1="20" y1="19" x2="11" y2="26" stroke="white" stroke-width="1.3" opacity="0.9"/>
+      <line x1="20" y1="19" x2="29" y2="26" stroke="white" stroke-width="1.3" opacity="0.9"/>
+      <line x1="20" y1="19" x2="20" y2="11" stroke="white" stroke-width="1.1" opacity="0.8"/>
+    </svg>
+    <span class="logo-gsi">GSI</span>
+    <div class="logo-pipe"></div>
+    <div class="logo-rr">
+      <span class="logo-rr-name">RapidReconciler</span>
+      <span class="logo-rr-tag">Inventory Intelligence</span>
+      <span class="logo-orange-line"></span>
+    </div>
+  </div>
+  <div class="masthead-meta">
+    <div class="masthead-title-block">
+      <div class="doc-type">Installation Guide</div>
+      <h1>Technical Requirements</h1>
+      <div class="masthead-summary">Server, network, and software prerequisites for RapidReconciler deployments. Covers the database server, Integration Services, application server, end-user workstations, and JD Edwards connection details.</div>
+    </div>
+    <div class="masthead-attrs">
+      <div class="attr">
+        <span class="attr-label">Owner</span>
+        <span class="attr-value">GSI Operations</span>
+      </div>
+      <div class="attr">
+        <span class="attr-label">Audience</span>
+        <span class="attr-value">GSI Staff / I/T</span>
+      </div>
+      <div class="attr">
+        <span class="attr-label">Min SQL Server</span>
+        <span class="attr-value">2019</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOC STRIP -->
+<div class="toc-strip">
+  <a class="toc-item" href="#db-server">Database Server</a>
+  <a class="toc-item" href="#int-services">Integration Services</a>
+  <a class="toc-item" href="#app-server">App Server</a>
+  <a class="toc-item" href="#end-user">End User PC</a>
+  <a class="toc-item" href="#jde">JD Edwards</a>
+  <a class="toc-item" href="#tables">Table Listing</a>
+  <a class="toc-item" href="#appendix-a">Appendix A</a>
+  <a class="toc-item" href="#appendix-b">Appendix B</a>
+</div>
+
+<div class="content">
+
+  <!-- ── DATABASE SERVER ──────────────────────────────────── -->
+  <div class="section" id="db-server">
+    <div class="section-label">Database Server</div>
+    <h2>RR Database Server</h2>
+    <p>In most cases, existing servers running Microsoft SQL Server will meet the minimum requirements. If a new server needs to be built, use the guidelines below.</p>
+
+    <ul class="spec-list">
+      <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2019 or later</span></li>
+      <li class="spec-row"><span class="spec-key">Processor</span><span class="spec-val">Quad-core minimum</span></li>
+    </ul>
+
+    <h3>Microsoft SQL Server</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Requirement</th><th>Specification</th></tr></thead>
+        <tbody>
+          <tr><td>Version</td><td>2019 or later</td></tr>
+          <tr><td>RAM</td><td>16 GB minimum</td></tr>
+          <tr><td>Edition</td><td>Standard or higher</td></tr>
+          <tr><td>Authentication</td><td>Mixed mode</td></tr>
+          <tr><td>Initial data file size</td><td>20 GB</td></tr>
+          <tr><td>Initial log file size</td><td>10 GB</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="callout-label">Additional Requirements</span>
+      <p>SQL administrative access to the server instance is required. A SQL-based login and role will be created during installation for user connectivity. SQL Server 2019 and later requires creating an Integration Services Catalog — see <a href="#appendix-a" style="color:var(--blue);">Appendix A</a>.</p>
+    </div>
+
+    <h3>Storage Estimates</h3>
+    <div class="storage-card">
+      <div class="storage-stat">
+        <div class="storage-num">100</div>
+        <div class="storage-unit">GB per 1M<br>records/month</div>
+      </div>
+      <div class="storage-divider"></div>
+      <div class="storage-detail">
+        Estimate covers <strong>1 year of cardex (F4111) data</strong>. Records may be purged after year-end close to reclaim space.<br><br>
+        <strong>Example:</strong> 2,000,000 cardex records per month requires <strong>200 GB</strong> of allocated disk space.
+      </div>
+    </div>
+
+    <h3>Network Information to Note</h3>
+    <ul class="spec-list">
+      <li class="spec-row"><span class="spec-key">Database Server IP</span><span class="spec-val">Record the IP address of the database server</span></li>
+      <li class="spec-row"><span class="spec-key">Named Instance Port</span><span class="spec-val">If using a named instance, note the listening port number</span></li>
+    </ul>
+  </div>
+
+
+  <!-- ── INTEGRATION SERVICES ─────────────────────────────── -->
+  <div class="section" id="int-services">
+    <div class="section-label">Integration Services</div>
+    <h2>Integration Services</h2>
+    <p>Integration Services is typically installed and run on the database server. In certain cases it may be preferable to run on an alternate server. The OLE DB provider must be installed on the server running the services.</p>
+
+    <h3>Alternate Server Requirements</h3>
+    <ul class="spec-list">
+      <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2012 or later</span></li>
+      <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">16 GB minimum</span></li>
+    </ul>
+
+    <h3>SQL Server Management Tools</h3>
+    <ul class="spec-list">
+      <li class="spec-row"><span class="spec-key">SSMS</span><span class="spec-val">SQL Server Management Studio</span></li>
+      <li class="spec-row"><span class="spec-key">Visual Studio</span><span class="spec-val">Community 2019 or later</span></li>
+    </ul>
+
+    <h3>OLE DB Provider Configuration</h3>
+
+    <div class="tbl-wrap">
+      <table class="plain-first">
+        <thead><tr><th>Data Source</th><th>Configuration Required</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>AS/400 (I-Series)</td>
+            <td>Install I-Series Access (Client Access). Ensure the OLE DB component is installed. Verify OLE DB drivers are selected — this is not enabled by default.</td>
+          </tr>
+          <tr>
+            <td>Oracle</td>
+            <td>Install Oracle 32-bit client using the <strong>Administrator</strong> option. Make applicable <code>tnsnames.ora</code> entries. Both versions must reside in the same Oracle home.</td>
+          </tr>
+          <tr>
+            <td>SQL Server</td>
+            <td>No additional configuration required.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ── APPLICATION SERVER ───────────────────────────────── -->
+  <div class="section" id="app-server">
+    <div class="section-label">Application Server</div>
+    <h2>RR Application Server</h2>
+
+    <div class="callout callout-note">
+      <span class="callout-label">Recommendation</span>
+      <p>It is highly recommended to use a dedicated server for the RapidReconciler application.</p>
+    </div>
+
+    <ul class="spec-list">
+      <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2019 or later</span></li>
+      <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">16 GB minimum</span></li>
+      <li class="spec-row"><span class="spec-key">Browser</span><span class="spec-val">Microsoft Edge or Google Chrome</span></li>
+      <li class="spec-row"><span class="spec-key">IP Address</span><span class="spec-val">Static</span></li>
+      <li class="spec-row"><span class="spec-key">Credentials</span><span class="spec-val">Local administrative credentials required for configuration</span></li>
+    </ul>
+
+    <h3>Network Access</h3>
+    <div class="net-grid">
+      <div class="net-panel">
+        <div class="net-head">Internal Access</div>
+        <div class="net-body">
+          <div class="net-item">
+            <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Port Range</div>
+            <span class="net-range">32145 – 49152</span>
+          </div>
+          <div class="net-item">
+            <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">URL Pattern</div>
+            <span class="net-url">rrprod-[companyname].getgsi.com</span>
+            <span class="net-note">Provide internal IP of the app server</span>
+          </div>
+        </div>
+      </div>
+      <div class="net-panel">
+        <div class="net-head">External Access (Port 443)</div>
+        <div class="net-body">
+          <div class="net-item">
+            <span class="net-url">rapidreconciler.getgsi.com</span>
+            <span class="net-ip">191.237.24.89</span>
+          </div>
+          <div class="net-item">
+            <span class="net-url">rr-valc-spa.cloudapp.net</span>
+            <span class="net-ip">23.96.83.121</span>
+            <span class="net-note">rr-valc-spa.cloudapp.net/check-ip returns external IP</span>
+          </div>
+          <div class="net-item">
+            <span class="net-url">rr-spa.cloudapp.net</span>
+            <span class="net-ip">52.170.255.174</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── END USER PC ──────────────────────────────────────── -->
+  <div class="section" id="end-user">
+    <div class="section-label">End User</div>
+    <h2>End User PC</h2>
+
+    <ul class="spec-list">
+      <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows XP or later &nbsp;/&nbsp; macOS 10.9 or later</span></li>
+      <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">8 GB minimum</span></li>
+      <li class="spec-row"><span class="spec-key">Screen Resolution</span><span class="spec-val">1280 × 800 minimum recommended</span></li>
+      <li class="spec-row"><span class="spec-key">Browsers</span><span class="spec-val">Microsoft Edge, Chrome, Firefox, Safari</span></li>
+      <li class="spec-row"><span class="spec-key">Internet Access</span><span class="spec-val"><code>https://rapidreconciler.getgsi.com</code></span></li>
+      <li class="spec-row"><span class="spec-key">Network</span><span class="spec-val">Access to application server required</span></li>
+    </ul>
+  </div>
+
+
+  <!-- ── JD EDWARDS ──────────────────────────────────────── -->
+  <div class="section" id="jde">
+    <div class="section-label">JD Edwards</div>
+    <h2>JD Edwards Information</h2>
+
+    <h3>Data Dictionary Variables</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Variable</th><th>Description</th><th>Typical Value</th></tr></thead>
+        <tbody>
+          <tr><td>ECST</td><td>Decimal places for extended cost</td><td>2</td></tr>
+          <tr><td>UNCS</td><td>Decimal places for unit cost</td><td>4</td></tr>
+          <tr><td>PQOH</td><td>Decimal places for quantity on hand</td><td>—</td></tr>
+          <tr><td>TRQT</td><td>Decimal places for transaction quantities in cardex</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Connection Details to Collect</h3>
+    <ul class="spec-list">
+      <li class="spec-row"><span class="spec-key">JDE Data Server</span><span class="spec-val">Name or IP address of the JDE data server or data warehouse</span></li>
+      <li class="spec-row"><span class="spec-key">Database Credentials</span><span class="spec-val">Use <code>rapidrec / rapidrec</code> if possible</span></li>
+      <li class="spec-row"><span class="spec-key">Server Type</span><span class="spec-val">I-Series, Oracle, or Microsoft SQL Server</span></li>
+      <li class="spec-row"><span class="spec-key">Table Qualifier</span><span class="spec-val">e.g. <code>proddta</code></span></li>
+    </ul>
+  </div>
+
+
+  <!-- ── TABLE LISTING ───────────────────────────────────── -->
+  <div class="section" id="tables">
+    <div class="section-label">Table Listing</div>
+    <h2>JD Edwards Tables</h2>
+    <p>All tables below are accessed by RapidReconciler in <strong style="color:var(--navy);">read-only</strong> mode.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Table</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>F0006</td><td>Business Unit Master</td></tr>
+          <tr><td>F0008</td><td>Date Patterns</td></tr>
+          <tr><td>F0010</td><td>Company Master</td></tr>
+          <tr><td>F0011</td><td>Batch Headers</td></tr>
+          <tr><td>F0013</td><td>Currency Codes</td></tr>
+          <tr><td>F0015</td><td>Exchange Rates</td></tr>
+          <tr><td>F0101</td><td>Address Book (Vendor Names Only)</td></tr>
+          <tr><td>F0901</td><td>Account Master</td></tr>
+          <tr><td>F0902</td><td>Account Balances</td></tr>
+          <tr><td>F0911</td><td>Account Ledger</td></tr>
+          <tr><td>F1113</td><td>Currency Restatement</td></tr>
+          <tr><td>F30026</td><td>Cost Components</td></tr>
+          <tr><td>F3106</td><td>Work Order Cross Ref</td></tr>
+          <tr><td>F4095</td><td>D/M Accounting Instructions</td></tr>
+          <tr><td>F4096</td><td>Flex Accounting Rules</td></tr>
+          <tr><td>F41001</td><td>Inventory Constants</td></tr>
+          <tr><td>F41002</td><td>UOM Conversions</td></tr>
+          <tr><td>F41003</td><td>Standard Conversions</td></tr>
+          <tr><td>F4101</td><td>Item Master</td></tr>
+          <tr><td>F4102</td><td>Item Branch</td></tr>
+          <tr><td>F41021</td><td>Item Location</td></tr>
+          <tr><td>F4105</td><td>Cost Ledger</td></tr>
+          <tr><td>F4108</td><td>Lot Master</td></tr>
+          <tr><td>F4111</td><td>Item Ledger</td></tr>
+          <tr><td>F4211</td><td>Sales Order Details</td></tr>
+          <tr><td>F42119</td><td>Sales Order History</td></tr>
+          <tr><td>F4311</td><td>Purchase Order Details</td></tr>
+          <tr><td>F43121</td><td>Purchase Receipts</td></tr>
+          <tr><td>F4801</td><td>Work Order Headers</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ── APPENDIX A ───────────────────────────────────────── -->
+  <div class="section" id="appendix-a">
+    <div class="section-label">Appendix A</div>
+    <div class="appendix-tag">Appendix A</div>
+    <h2>Creating the Integration Services Catalog</h2>
+
+    <h3>Create the Catalog</h3>
+    <ol class="process-list">
+      <li>Open <strong>SQL Server Management Studio (SSMS)</strong> and connect to the target SQL Server instance.</li>
+      <li>In the Object Explorer, right-click the <strong>Integration Services</strong> node and select <strong>Create Catalog</strong>.</li>
+      <li>The catalog name defaults to <code>SSISDB</code> and cannot be changed.</li>
+      <li>Provide a strong password for the database master key used for encryption.</li>
+      <li>After creation, back up the database master key.</li>
+    </ol>
+
+    <div class="callout callout-note">
+      <span class="callout-label">Note</span>
+      <p>Integration Services uses CLR-based stored procedures. CLR is not enabled by default on a SQL Server instance. Ensure <strong>Enable CLR Integration</strong> is checked before creating the catalog.</p>
+    </div>
+
+    <h3>Create the Project Folder</h3>
+    <ol class="process-list">
+      <li>In SSMS, right-click the <code>SSISDB</code> catalog under the Integration Services node.</li>
+      <li>Select <strong>Create Folder</strong>.</li>
+      <li>Name the folder <code>RapidReconciler</code> and provide an optional description.</li>
+      <li>The RapidReconciler SSIS package may now be deployed to the server and scheduled.</li>
+    </ol>
+  </div>
+
+
+  <!-- ── APPENDIX B ───────────────────────────────────────── -->
+  <div class="section" id="appendix-b">
+    <div class="section-label">Appendix B</div>
+    <div class="appendix-tag">Appendix B</div>
+    <h2>Proof of Concept Requirements</h2>
+    <p>To provide data to GSI for a proof of concept, follow the steps below.</p>
+
+    <ol class="process-list">
+      <li>Create an empty database in Microsoft SQL Server 2012 or later.</li>
+      <li>Using the ETL tool of your choice, run each of the select statements in the table below.</li>
+      <li>Destination tables must use the same naming conventions as the original JDE tables.</li>
+      <li>Once complete, create a compressed backup of the database.</li>
+      <li>Email <a href="mailto:rrsupport@getgsi.com" style="color:var(--blue);">rrsupport@getgsi.com</a> for data transfer instructions.</li>
+      <li>The GSI sales team will contact you to schedule a results presentation.</li>
+    </ol>
+
+    <div class="callout callout-important">
+      <span class="callout-label">Important</span>
+      <p>Extract tables <code>F41021</code> and <code>F4111</code> as close together in time as possible, when system activity is at a minimum.</p>
+    </div>
+
+    <h3>Table Extract Statements</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Table</th><th>Description</th><th>Select Statement</th></tr></thead>
+        <tbody>
+          <tr><td>F0006</td><td>Business Unit Master</td><td><code>SELECT * FROM F0006</code></td></tr>
+          <tr><td>F0008</td><td>Fiscal Date Patterns</td><td><code>SELECT * FROM F0008</code></td></tr>
+          <tr><td>F0010</td><td>Company Master</td><td><code>SELECT * FROM F0010</code></td></tr>
+          <tr><td>F0011</td><td>Batch Headers</td><td><code>SELECT * FROM F0011 WHERE ICDICJ >= 125001</code></td></tr>
+          <tr><td>F0013</td><td>Currency Codes</td><td><code>SELECT * FROM F0013</code></td></tr>
+          <tr><td>F0901</td><td>Account Master</td><td><code>SELECT * FROM F0901</code></td></tr>
+          <tr><td>F0902</td><td>Account Balances</td><td><code>SELECT GBAID, GBCO, GBFY, GBLT, SUM(GBAPYC), SUM(GBAN01–GBAN14) FROM F0902 WHERE GBFY BETWEEN 11 AND 40 AND GBLT = 'AA' GROUP BY GBAID, GBCO, GBFY, GBLT</code></td></tr>
+          <tr><td>F0911</td><td>Account Ledger</td><td><code>SELECT * FROM F0911 WHERE GLLT = 'AA' AND GLDGJ >= 125001</code></td></tr>
+          <tr><td>F3106</td><td>Work Order Cross Ref</td><td><code>SELECT * FROM F3106 WHERE SDDICJ >= 125001</code></td></tr>
+          <tr><td>F30026</td><td>Cost Components</td><td><code>SELECT * FROM F30026 WHERE IELEDG = '07'</code></td></tr>
+          <tr><td>F4095</td><td>D/M Accounting Instructions</td><td><code>SELECT * FROM F4095</code></td></tr>
+          <tr><td>F4096</td><td>Flex Accounting Instructions</td><td><code>SELECT * FROM F4096</code></td></tr>
+          <tr><td>F41001</td><td>Inventory Constants</td><td><code>SELECT * FROM F41001</code></td></tr>
+          <tr><td>F41002</td><td>UOM Conversions</td><td><code>SELECT * FROM F41002</code></td></tr>
+          <tr><td>F41003</td><td>UOM Conversions</td><td><code>SELECT * FROM F41003</code></td></tr>
+          <tr><td>F4101</td><td>Item Master</td><td><code>SELECT * FROM F4101</code></td></tr>
+          <tr><td>F41021</td><td>Item Balances</td><td><code>SELECT * FROM F41021</code></td></tr>
+          <tr><td>F4111</td><td>Item Ledger</td><td><code>SELECT * FROM F4111 WHERE ILCRDJ >= 124350</code></td></tr>
+          <tr><td>F4105</td><td>Cost Ledger</td><td><code>SELECT * FROM F4105 WHERE COCSIN = 'I'</code></td></tr>
+          <tr><td>F4211</td><td>Sales Order Details</td><td><code>SELECT * FROM F4211 WHERE SDUPMJ >= 124350</code></td></tr>
+          <tr><td>F42119</td><td>Sales History</td><td><code>SELECT * FROM F42119 WHERE SDUPMJ >= 124350</code></td></tr>
+          <tr><td>F4311</td><td>Purchase Order Details</td><td><code>SELECT * FROM F4311 WHERE PDTRDJ >= 124350</code></td></tr>
+          <tr><td>F4801</td><td>Work Order Headers</td><td><code>SELECT * FROM F4801 WHERE WAUPMJ >= 125001</code></td></tr>
+          <tr><td>F4102</td><td>Item Branch Plant</td><td><code>SELECT * FROM F4102</code></td></tr>
+          <tr><td>F0015</td><td>Currency Exchange Rates</td><td><code>SELECT * FROM F0015 WHERE CXEFT >= 125001</code></td></tr>
+          <tr><td>F1113</td><td>Restatement Rates</td><td><code>SELECT * FROM F1113 WHERE C1EFT >= 125001</code></td></tr>
+          <tr><td>F43121</td><td>Purchase Order Receipts</td><td><code>SELECT * FROM F43121</code></td></tr>
+          <tr><td>F0101</td><td>Address Book</td><td><code>SELECT ABAN8, ABALPH FROM F0101</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  <div class="footer-brand">
+    <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22,22 H7 a7,7 0 0,1 -1,-13 a9,9 0 0,1 17,-2 a5,5 0 0,1 -1,11 Z" fill="#2b5ea7"/>
+      <path d="M23,18 H9 a5,5 0 0,1 -1,-10 a7,7 0 0,1 14,-1 a4,4 0 0,1 0,9 Z" fill="#4a90d9" opacity="0.85"/>
+      <circle cx="14" cy="13" r="2.5" fill="white" opacity="0.95"/>
+      <circle cx="14" cy="13" r="1.4" fill="#1e3a5f"/>
+      <circle cx="8"  cy="17" r="1.8" fill="white" opacity="0.9"/>
+      <circle cx="20" cy="17" r="1.8" fill="white" opacity="0.9"/>
+      <line x1="14" y1="13" x2="8"  y2="17" stroke="white" stroke-width="1" opacity="0.9"/>
+      <line x1="14" y1="13" x2="20" y2="17" stroke="white" stroke-width="1" opacity="0.9"/>
+    </svg>
+    <span class="footer-name">GSI <span class="footer-dot">·</span> RapidReconciler</span>
+  </div>
+  <div class="footer-right">
+    <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> &nbsp;·&nbsp; (855) 474-4377<br>
+    <a href="https://rapidreconciler.getgsi.com">rapidreconciler.getgsi.com</a>
+  </div>
+</div>
+
+</div><!-- /page -->
+</body>
+</html>

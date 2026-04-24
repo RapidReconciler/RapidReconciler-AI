@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[DOCUMENT TITLE] — RapidReconciler</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   GSI RAPIDRECONCILER — DOCUMENT TEMPLATE
+   Version 1.0  ·  GSI Operations
+   ============================================================
+
+   HOW TO USE THIS TEMPLATE
+   ------------------------
+   1. Copy this file and rename it (e.g. my-topic.html)
+   2. Replace all [PLACEHOLDER] text with your content
+   3. Delete any sections you don't need
+   4. Duplicate sections as needed
+   5. See the COMPONENT REFERENCE at the bottom of this CSS
+      for a list of all available building blocks
+
+   BRAND COLORS (do not change these)
+   ------------------------------------
+   Navy:       #1e3a5f   (headers, headings, dark surfaces)
+   Blue:       #1a56a0   (links, accents)
+   Blue Mid:   #2b5ea7   (secondary panels, TOC strip)
+   Blue Light: #dce8f7   (table rows, callout backgrounds)
+   Orange:     #f07820   (labels, highlights, CTAs)
+   ============================================================ */
+
+:root {
+  --navy:      #1e3a5f;
+  --blue:      #1a56a0;
+  --blue-mid:  #2b5ea7;
+  --blue-lt:   #dce8f7;
+  --blue-pale: #f0f5ff;
+  --orange:    #f07820;
+  --orange-lt: #fef0e0;
+  --rule:      #d0e4f7;
+  --text:      #1e3a5f;
+  --muted:     #5a7a9a;
+  --white:     #ffffff;
+  --amber-lt:  #fffbeb;
+  --amber:     #d97706;
+  --red-lt:    #fff5f5;
+  --red:       #c0392b;
+  --green-lt:  #f0faf4;
+  --green:     #1a7a4a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  background: #e8edf5;
+  color: var(--text);
+  padding: 48px 24px 80px;
+  min-height: 100vh;
+  line-height: 1.7;
+}
+
+/* PAGE WRAPPER — do not change width */
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--white);
+  box-shadow: 0 8px 48px rgba(30,58,95,0.12);
+}
+
+/* ── MASTHEAD ────────────────────────────────────────────── */
+.masthead {
+  background: var(--navy);
+  padding: 32px 48px 0;
+  position: relative;
+  overflow: hidden;
+}
+.masthead::after {
+  content: ''; position: absolute; top: -80px; right: -80px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: rgba(255,255,255,0.03); pointer-events: none;
+}
+
+/* Logo — DO NOT MODIFY */
+.masthead-logo { display:flex; align-items:center; gap:10px; margin-bottom:28px; position:relative; z-index:1; }
+.logo-gsi { font-family:'DM Sans',sans-serif; font-weight:600; font-size:20px; color:#fff; letter-spacing:0.02em; }
+.logo-pipe { width:1px; height:28px; background:rgba(255,255,255,0.2); }
+.logo-rr { display:flex; flex-direction:column; gap:1px; }
+.logo-rr-name { font-family:'DM Sans',sans-serif; font-weight:600; font-size:16px; color:#fff; letter-spacing:0.01em; line-height:1; }
+.logo-rr-tag { font-size:9px; font-weight:400; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.4); line-height:1; }
+.logo-orange-line { width:52px; height:2px; background:var(--orange); border-radius:1px; margin-top:4px; }
+
+.masthead-meta { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; position:relative; z-index:1; }
+.masthead-title-block { flex:1; }
+
+/* doc-type: short category label shown above the title
+   Examples: "Technical Operations", "Installation Guide",
+             "User Guide", "Reference", "Process Guide"    */
+.doc-type { font-size:10px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
+
+.masthead h1 { font-family:'Instrument Serif',serif; font-size:28px; font-weight:400; color:#fff; line-height:1.2; margin-bottom:10px; }
+
+/* One or two sentence summary of the document */
+.masthead-summary { font-size:12.5px; color:rgba(255,255,255,0.65); line-height:1.65; max-width:480px; padding-bottom:28px; }
+
+/* Right-side metadata labels — add/remove as needed */
+.masthead-attrs { display:flex; flex-direction:column; gap:10px; flex-shrink:0; padding-bottom:28px; }
+.attr { text-align:right; }
+.attr-label { font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.35); display:block; margin-bottom:1px; }
+.attr-value { font-family:'DM Mono',monospace; font-size:11px; color:rgba(255,255,255,0.75); }
+
+/* ── TOC STRIP ───────────────────────────────────────────── */
+/* Add one .toc-item per section. href matches section id.   */
+.toc-strip { background:var(--blue-mid); padding:0 48px; display:flex; gap:0; overflow-x:auto; border-top:1px solid rgba(255,255,255,0.08); }
+.toc-item { font-size:10px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.55); padding:10px 16px 10px 0; text-decoration:none; white-space:nowrap; border-bottom:2px solid transparent; transition:color 0.15s,border-color 0.15s; }
+.toc-item:hover { color:rgba(255,255,255,0.9); border-bottom-color:var(--orange); }
+
+/* ── CONTENT AREA ────────────────────────────────────────── */
+.content { padding: 0 48px 48px; }
+
+/* SECTION: each major section needs a unique id and a .section wrapper */
+.section { padding-top: 40px; }
+
+/* Section label — shows above the h2. Use the section name. */
+.section-label { font-size:9px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--orange); margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+.section-label::after { content:''; flex:1; height:1px; background:var(--rule); }
+
+/* Headings */
+h2 { font-family:'Instrument Serif',serif; font-size:22px; font-weight:400; color:var(--navy); margin-bottom:14px; line-height:1.2; }
+h3 { font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:var(--navy); margin:20px 0 8px; letter-spacing:0.01em; }
+
+p { font-size:13px; color:var(--muted); line-height:1.75; margin-bottom:12px; }
+
+/* ── TABLES ──────────────────────────────────────────────── */
+.tbl-wrap { overflow-x:auto; margin:12px 0 4px; }
+table { width:100%; border-collapse:collapse; font-size:12px; }
+thead tr { background:var(--navy); }
+thead th { font-family:'DM Mono',monospace; font-size:9px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.7); padding:9px 14px; text-align:left; }
+tbody tr { border-bottom:1px solid var(--rule); }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:var(--blue-pale); }
+tbody td { padding:10px 14px; font-size:12px; color:var(--muted); vertical-align:top; line-height:1.5; }
+tbody td:first-child { font-family:'DM Mono',monospace; font-size:11px; color:var(--navy); font-weight:500; }
+/* Use .plain-first on <table> to suppress mono styling on first column */
+table.plain-first tbody td:first-child { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; }
+
+/* ── CALLOUTS ────────────────────────────────────────────── */
+/*
+   THREE VARIANTS:
+   .callout-note      → amber  — general notes, tips, reminders
+   .callout-important → red    — warnings, things that break if missed
+   .callout-info      → blue   — context, background information
+*/
+.callout { padding:14px 16px 14px 20px; border-radius:0 4px 4px 0; margin:16px 0; font-size:12.5px; line-height:1.65; position:relative; }
+.callout::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
+.callout-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; margin-bottom:4px; display:block; }
+.callout p { margin:0; font-size:12.5px; }
+.callout-note      { background:var(--amber-lt); border:1px solid #fde68a; color:#92400e; }
+.callout-note::before { background:var(--amber); }
+.callout-note .callout-label { color:var(--amber); }
+.callout-important { background:var(--red-lt); border:1px solid #fecaca; color:#7f1d1d; }
+.callout-important::before { background:var(--red); }
+.callout-important .callout-label { color:var(--red); }
+.callout-info      { background:var(--blue-pale); border:1px solid var(--rule); color:var(--navy); }
+.callout-info::before { background:var(--blue); }
+.callout-info .callout-label { color:var(--blue); }
+
+/* ── NUMBERED PROCESS LIST ───────────────────────────────── */
+/* Use for sequential steps where order matters */
+ol.process-list { list-style:none; counter-reset:step-counter; margin:10px 0; }
+ol.process-list li { counter-increment:step-counter; display:flex; gap:12px; align-items:flex-start; padding:7px 0; border-bottom:1px solid var(--rule); font-size:12.5px; color:var(--muted); line-height:1.55; }
+ol.process-list li:last-child { border-bottom:none; }
+ol.process-list li::before { content:counter(step-counter); width:22px; height:22px; border-radius:50%; background:var(--blue-lt); color:var(--blue); font-family:'DM Mono',monospace; font-size:10px; font-weight:500; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+
+/* ── VISUAL PROCESS STRIP ────────────────────────────────── */
+/* Use for 3–5 step flows where you want a visual overview
+   before diving into step details below                     */
+.process-strip { display:flex; gap:0; margin:20px 0; position:relative; }
+.process-strip::before { content:''; position:absolute; top:24px; left:24px; right:24px; height:2px; background:var(--rule); z-index:0; }
+.step { flex:1; display:flex; flex-direction:column; align-items:center; text-align:center; position:relative; z-index:1; padding:0 8px; }
+.step-num { width:48px; height:48px; border-radius:50%; background:var(--navy); color:white; font-family:'DM Mono',monospace; font-size:16px; font-weight:500; display:flex; align-items:center; justify-content:center; margin-bottom:10px; flex-shrink:0; box-shadow:0 0 0 4px var(--white),0 0 0 5px var(--rule); }
+.step-num.orange { background:var(--orange); }
+.step-title { font-size:11px; font-weight:600; color:var(--navy); margin-bottom:4px; line-height:1.3; }
+.step-desc  { font-size:10.5px; color:var(--muted); line-height:1.5; }
+
+/* Step detail card — pairs with process strip */
+.step-detail { background:var(--blue-pale); border:1px solid var(--rule); border-radius:4px; padding:14px 16px; margin:8px 0 16px; font-size:12.5px; color:var(--muted); line-height:1.65; }
+.step-detail strong { color:var(--navy); font-weight:600; }
+.step-header { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.step-badge { width:24px; height:24px; border-radius:50%; background:var(--navy); color:white; font-family:'DM Mono',monospace; font-size:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.step-badge-title { font-size:11px; font-weight:600; color:var(--navy); text-transform:uppercase; letter-spacing:0.06em; }
+
+/* ── RESPONSIBILITY GRID ─────────────────────────────────── */
+/* 2-column grid of cards, one per responsible party         */
+.resp-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0; }
+.resp-card { background:var(--blue-pale); border:1px solid var(--rule); border-radius:4px; padding:12px 14px; }
+.resp-party { font-size:9px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--orange); margin-bottom:6px; }
+.resp-card ul { list-style:none; display:flex; flex-direction:column; gap:4px; }
+.resp-card ul li { font-size:11.5px; color:var(--muted); padding-left:12px; position:relative; line-height:1.4; }
+.resp-card ul li::before { content:'·'; position:absolute; left:0; color:var(--orange); font-weight:700; }
+
+/* ── DARK EXAMPLE BOX ────────────────────────────────────── */
+/* Use for code samples, terminal output, example values     */
+.example-box { background:var(--navy); border-radius:4px; padding:14px 16px; margin:10px 0; }
+.example-label { font-size:8.5px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:8px; }
+.example-box table { font-size:11.5px; }
+.example-box thead th { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.5); font-size:8.5px; padding:6px 12px; }
+.example-box tbody tr { border-bottom:1px solid rgba(255,255,255,0.07); }
+.example-box tbody tr:hover { background:rgba(255,255,255,0.04); }
+.example-box tbody td { padding:7px 12px; color:rgba(255,255,255,0.75); font-family:'DM Mono',monospace; font-size:11px; }
+.example-box tbody td:first-child { color:#93c5fd; }
+
+/* ── RELATED DOCS LIST ───────────────────────────────────── */
+.related-list { list-style:none; display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+.related-list li a { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--blue); text-decoration:none; padding:8px 12px; border:1px solid var(--rule); border-radius:4px; transition:background 0.15s,border-color 0.15s; }
+.related-list li a:hover { background:var(--blue-pale); border-color:var(--blue); }
+.related-list li a::before { content:'↗'; font-size:12px; color:var(--muted); }
+
+/* ── INLINE CODE ─────────────────────────────────────────── */
+code { font-family:'DM Mono',monospace; font-size:11px; background:var(--blue-pale); color:var(--blue); padding:1px 5px; border-radius:3px; border:1px solid var(--rule); }
+
+/* ── FOOTER — DO NOT MODIFY ──────────────────────────────── */
+.doc-footer { background:var(--navy); padding:16px 48px; display:flex; align-items:center; justify-content:space-between; }
+.footer-brand { display:flex; align-items:center; gap:8px; }
+.footer-name { font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:rgba(255,255,255,0.8); }
+.footer-dot { color:var(--orange); }
+.footer-right { font-size:10px; color:rgba(255,255,255,0.35); text-align:right; line-height:1.7; }
+.footer-right a { color:#93c5fd; text-decoration:none; }
+
+@media print { body { background:white; padding:0; } .page { box-shadow:none; } }
+
+/*
+   ============================================================
+   COMPONENT QUICK REFERENCE
+   ============================================================
+
+   CALLOUTS
+   --------
+   <div class="callout callout-note">
+     <span class="callout-label">Note</span>
+     <p>Text here.</p>
+   </div>
+
+   Replace callout-note with:
+     callout-important   → red warning
+     callout-info        → blue informational
+
+   NUMBERED STEPS (simple)
+   -----------------------
+   <ol class="process-list">
+     <li>First step text</li>
+     <li>Second step text</li>
+   </ol>
+
+   VISUAL PROCESS FLOW (3–5 steps)
+   --------------------------------
+   <div class="process-strip">
+     <div class="step">
+       <div class="step-num orange">1</div>
+       <div class="step-title">Step Title</div>
+       <div class="step-desc">Short description</div>
+     </div>
+     ... repeat for each step ...
+   </div>
+
+   STEP DETAIL CARD (follows process-strip)
+   -----------------------------------------
+   <div class="step-detail">
+     <div class="step-header">
+       <div class="step-badge">1</div>
+       <span class="step-badge-title">Step Title — Role</span>
+     </div>
+     Detail text here.
+   </div>
+
+   TABLE (standard)
+   ----------------
+   <div class="tbl-wrap">
+     <table>
+       <thead><tr><th>Col 1</th><th>Col 2</th></tr></thead>
+       <tbody>
+         <tr><td>Value</td><td>Description</td></tr>
+       </tbody>
+     </table>
+   </div>
+
+   Add class="plain-first" to <table> to suppress mono
+   styling on the first column.
+
+   DARK EXAMPLE BOX
+   ----------------
+   <div class="example-box">
+     <div class="example-label">Example</div>
+     <table>...</table>
+   </div>
+
+   RESPONSIBILITY GRID
+   -------------------
+   <div class="resp-grid">
+     <div class="resp-card">
+       <div class="resp-party">Party Name</div>
+       <ul><li>Task one</li><li>Task two</li></ul>
+     </div>
+   </div>
+
+   INLINE CODE
+   -----------
+   <code>*.getgsi.com</code>
+
+   RELATED DOCS
+   ------------
+   <ul class="related-list">
+     <li><a href="path/to/doc.html">Document Title</a></li>
+   </ul>
+
+   SECTION PATTERN
+   ---------------
+   <div class="section" id="my-section">
+     <div class="section-label">Section Name</div>
+     <h2>Section Title</h2>
+     ... content ...
+   </div>
+
+   Also add a matching TOC item:
+   <a class="toc-item" href="#my-section">Section Name</a>
+   ============================================================
+*/
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ============================================================
+     MASTHEAD
+     - doc-type: category of document
+     - h1: document title (can be two lines)
+     - masthead-summary: one or two sentence description
+     - masthead-attrs: 2–4 metadata items (Owner, Audience, etc.)
+     ============================================================ -->
+<div class="masthead">
+  <!-- LOGO — do not modify -->
+  <div class="masthead-logo">
+    <svg viewBox="0 0 40 40" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+      <path d="M32,31 H10 a10,10 0 0,1 -2,-19 a13,13 0 0,1 25,-2 a8,8 0 0,1 -1,17 Z" fill="#2b5ea7"/>
+      <path d="M33,26 H13 a8,8 0 0,1 -1,-15 a10,10 0 0,1 20,-2 a6,6 0 0,1 -1,13 Z" fill="#4a90d9" opacity="0.85"/>
+      <circle cx="20" cy="19" r="3.5" fill="white" opacity="0.95"/>
+      <circle cx="20" cy="19" r="2"   fill="#1e3a5f"/>
+      <circle cx="11" cy="26" r="2.5" fill="white" opacity="0.9"/>
+      <circle cx="11" cy="26" r="1.4" fill="#4a90d9"/>
+      <circle cx="29" cy="26" r="2.5" fill="white" opacity="0.9"/>
+      <circle cx="29" cy="26" r="1.4" fill="#4a90d9"/>
+      <circle cx="20" cy="11" r="2"   fill="white" opacity="0.85"/>
+      <line x1="20" y1="19" x2="11" y2="26" stroke="white" stroke-width="1.3" opacity="0.9"/>
+      <line x1="20" y1="19" x2="29" y2="26" stroke="white" stroke-width="1.3" opacity="0.9"/>
+      <line x1="20" y1="19" x2="20" y2="11" stroke="white" stroke-width="1.1" opacity="0.8"/>
+    </svg>
+    <span class="logo-gsi">GSI</span>
+    <div class="logo-pipe"></div>
+    <div class="logo-rr">
+      <span class="logo-rr-name">RapidReconciler</span>
+      <span class="logo-rr-tag">Inventory Intelligence</span>
+      <span class="logo-orange-line"></span>
+    </div>
+  </div>
+
+  <div class="masthead-meta">
+    <div class="masthead-title-block">
+      <div class="doc-type">[Document Category]</div>
+      <h1>[Document Title]</h1>
+      <div class="masthead-summary">[One or two sentence summary of what this document covers and who it is for.]</div>
+    </div>
+    <div class="masthead-attrs">
+      <div class="attr">
+        <span class="attr-label">Owner</span>
+        <span class="attr-value">[Owner]</span>
+      </div>
+      <div class="attr">
+        <span class="attr-label">Audience</span>
+        <span class="attr-value">[Audience]</span>
+      </div>
+      <!-- Add or remove .attr blocks as needed -->
+      <div class="attr">
+        <span class="attr-label">[Label]</span>
+        <span class="attr-value">[Value]</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TOC STRIP — one .toc-item per section, href = #section-id
+     ============================================================ -->
+<div class="toc-strip">
+  <a class="toc-item" href="#overview">Overview</a>
+  <a class="toc-item" href="#section-2">[Section 2]</a>
+  <a class="toc-item" href="#section-3">[Section 3]</a>
+  <a class="toc-item" href="#section-4">[Section 4]</a>
+  <a class="toc-item" href="#related">Related Docs</a>
+</div>
+
+<!-- ============================================================
+     CONTENT
+     ============================================================ -->
+<div class="content">
+
+  <!-- ── OVERVIEW SECTION ─────────────────────────────────── -->
+  <!-- Always start with an Overview to orient the reader     -->
+  <div class="section" id="overview">
+    <div class="section-label">Overview</div>
+    <h2>[Overview Heading]</h2>
+    <p>[Introductory paragraph. Explain the context, what this document covers, and why it matters. Keep it to 2–3 sentences.]</p>
+    <p>[Optional second paragraph with additional context.]</p>
+  </div>
+
+
+  <!-- ── SECTION WITH TABLE ───────────────────────────────── -->
+  <div class="section" id="section-2">
+    <div class="section-label">[Section 2 Label]</div>
+    <h2>[Section 2 Heading]</h2>
+    <p>[Section introduction text.]</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>[Column 1]</th>
+            <th>[Column 2]</th>
+            <th>[Column 3]</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>[value]</td>
+            <td>[Owner / party]</td>
+            <td>[Description of this row]</td>
+          </tr>
+          <tr>
+            <td>[value]</td>
+            <td>[Owner / party]</td>
+            <td>[Description of this row]</td>
+          </tr>
+          <tr>
+            <td>[value]</td>
+            <td>[Owner / party]</td>
+            <td>[Description of this row]</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CALLOUT — pick one type, delete the others -->
+    <div class="callout callout-note">
+      <span class="callout-label">Note</span>
+      <p>[Supporting note, tip, or reminder related to this section.]</p>
+    </div>
+
+    <!-- <div class="callout callout-important">
+      <span class="callout-label">Important</span>
+      <p>[Warning — something that will break or cause problems if missed.]</p>
+    </div> -->
+
+    <!-- <div class="callout callout-info">
+      <span class="callout-label">Info</span>
+      <p>[Background context or informational note.]</p>
+    </div> -->
+  </div>
+
+
+  <!-- ── SECTION WITH PROCESS STEPS ──────────────────────── -->
+  <div class="section" id="section-3">
+    <div class="section-label">[Section 3 Label]</div>
+    <h2>[Section 3 Heading]</h2>
+    <p>[Brief intro to the process described in this section.]</p>
+
+    <!-- OPTION A: Simple numbered list (for 4+ steps or prose-heavy steps) -->
+    <h3>[Process Name]</h3>
+    <ol class="process-list">
+      <li>[First step description. Include any relevant details inline.]</li>
+      <li>[Second step. Reference <strong>specific tools or screens</strong> by name.]</li>
+      <li>[Third step.]</li>
+      <li>[Fourth step.]</li>
+    </ol>
+
+    <!-- OPTION B: Visual flow + detail cards (for 3–5 steps with distinct phases) -->
+    <!-- DELETE OPTION A or B depending on which you use -->
+
+    <!-- Visual strip -->
+    <div class="process-strip">
+      <div class="step">
+        <div class="step-num orange">1</div>
+        <div class="step-title">[Step 1 Title]</div>
+        <div class="step-desc">[Short phrase]</div>
+      </div>
+      <div class="step">
+        <div class="step-num orange">2</div>
+        <div class="step-title">[Step 2 Title]</div>
+        <div class="step-desc">[Short phrase]</div>
+      </div>
+      <div class="step">
+        <div class="step-num orange">3</div>
+        <div class="step-title">[Step 3 Title]</div>
+        <div class="step-desc">[Short phrase]</div>
+      </div>
+    </div>
+
+    <!-- Step detail cards -->
+    <div class="step-detail">
+      <div class="step-header">
+        <div class="step-badge">1</div>
+        <span class="step-badge-title">[Step 1 Title] — [Responsible Role]</span>
+      </div>
+      [Full description of step 1. What to do, where, and how to confirm it worked.]
+    </div>
+
+    <div class="step-detail">
+      <div class="step-header">
+        <div class="step-badge">2</div>
+        <span class="step-badge-title">[Step 2 Title] — [Responsible Role]</span>
+      </div>
+      [Full description of step 2.]
+    </div>
+
+    <div class="step-detail">
+      <div class="step-header">
+        <div class="step-badge">3</div>
+        <span class="step-badge-title">[Step 3 Title] — [Responsible Role]</span>
+      </div>
+      [Full description of step 3.]
+    </div>
+
+    <div class="callout callout-important">
+      <span class="callout-label">Important</span>
+      <p>[Any critical warning related to this process.]</p>
+    </div>
+  </div>
+
+
+  <!-- ── SECTION WITH RESPONSIBILITIES ────────────────────── -->
+  <div class="section" id="section-4">
+    <div class="section-label">[Section 4 Label]</div>
+    <h2>[Section 4 Heading]</h2>
+
+    <div class="resp-grid">
+      <div class="resp-card">
+        <div class="resp-party">[Party Name]</div>
+        <ul>
+          <li>[Responsibility one]</li>
+          <li>[Responsibility two]</li>
+          <li>[Responsibility three]</li>
+        </ul>
+      </div>
+      <div class="resp-card">
+        <div class="resp-party">[Party Name]</div>
+        <ul>
+          <li>[Responsibility one]</li>
+          <li>[Responsibility two]</li>
+        </ul>
+      </div>
+      <!-- Add more .resp-card blocks as needed (grid auto-flows) -->
+    </div>
+  </div>
+
+
+  <!-- ── RELATED DOCS ──────────────────────────────────────── -->
+  <!-- Always include if there are related documents           -->
+  <div class="section" id="related">
+    <div class="section-label">Related Documentation</div>
+    <h2>Related Documents</h2>
+    <ul class="related-list">
+      <li><a href="[path/to/doc.html]">[Document Title]</a></li>
+      <li><a href="[path/to/doc.html]">[Document Title]</a></li>
+      <li><a href="[path/to/doc.html]">[Document Title]</a></li>
+    </ul>
+  </div>
+
+</div><!-- /content -->
+
+
+<!-- FOOTER — do not modify -->
+<div class="doc-footer">
+  <div class="footer-brand">
+    <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22,22 H7 a7,7 0 0,1 -1,-13 a9,9 0 0,1 17,-2 a5,5 0 0,1 -1,11 Z" fill="#2b5ea7"/>
+      <path d="M23,18 H9 a5,5 0 0,1 -1,-10 a7,7 0 0,1 14,-1 a4,4 0 0,1 0,9 Z" fill="#4a90d9" opacity="0.85"/>
+      <circle cx="14" cy="13" r="2.5" fill="white" opacity="0.95"/>
+      <circle cx="14" cy="13" r="1.4" fill="#1e3a5f"/>
+      <circle cx="8"  cy="17" r="1.8" fill="white" opacity="0.9"/>
+      <circle cx="20" cy="17" r="1.8" fill="white" opacity="0.9"/>
+      <line x1="14" y1="13" x2="8"  y2="17" stroke="white" stroke-width="1" opacity="0.9"/>
+      <line x1="14" y1="13" x2="20" y2="17" stroke="white" stroke-width="1" opacity="0.9"/>
+    </svg>
+    <span class="footer-name">GSI <span class="footer-dot">·</span> RapidReconciler</span>
+  </div>
+  <div class="footer-right">
+    <a href="mailto:info@getgsi.com">info@getgsi.com</a> &nbsp;·&nbsp; (855) 474-4377<br>
+    <a href="https://rapidreconciler.getgsi.com">rapidreconciler.getgsi.com</a>
+  </div>
+</div>
+
+</div><!-- /page -->
+</body>
+</html>
