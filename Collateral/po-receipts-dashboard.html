@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PO Receipts — RapidReconciler</title>
+<title>PO Receipts — GSI RapidReconciler</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#1a2233;--paper:#f7f5f0;--cream:#edeae2;--rule:#d0ccc3;--muted:#7a7268;--blue:#2b5ea7;--blue-lt:#dce8f7;--blue-dk:#1e4278;--gold:#c08c1e;--gold-lt:#f5edda;--red:#b5341a;--red-lt:#f0ddd9;--green:#2a6840;--green-lt:#d8eade;}
+:root{--ink:#1e3a5f;--paper:#ffffff;--cream:#f0f5ff;--rule:#d0e4f7;--muted:#5a7a9a;--blue:#1a56a0;--blue-lt:#dce8f7;--blue-dk:#1e3a5f;--gold:#f07820;--gold-lt:#fef0e0;--red:#c0392b;--red-lt:#fde8e8;--green:#1a7a4a;--green-lt:#e0f2ea;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;}
 .mh{background:var(--blue-dk);color:var(--paper);padding:44px 60px 36px;position:relative;overflow:hidden;}
-.mh::after{content:'';position:absolute;top:0;right:0;bottom:0;width:40%;background:repeating-linear-gradient(-50deg,transparent,transparent 22px,rgba(255,255,255,.03) 22px,rgba(255,255,255,.03) 23px);pointer-events:none;}
+.mh::after{content:none;}
 .ey{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:12px;}
 .mh h1{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,50px);font-weight:900;line-height:1.06;letter-spacing:-.02em;}
 .mh h1 em{font-style:italic;color:#f5c84a;}
@@ -93,7 +93,96 @@ body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;f
 </head>
 <body>
 <div class="mh">
-  <div class="ey">RapidReconciler &mdash; Accounts Payable Intelligence</div>
+  <!-- Hexagon decoration pattern matching GSI website -->
+  <svg style="position:absolute;top:0;right:0;bottom:0;width:45%;opacity:0.15;pointer-events:none;" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="80,20 110,37 110,70 80,87 50,70 50,37" stroke="#4a90d9" stroke-width="1.5" fill="none"/>
+    <polygon points="160,60 190,77 190,110 160,127 130,110 130,77" stroke="#4a90d9" stroke-width="1.5" fill="none"/>
+    <polygon points="240,20 270,37 270,70 240,87 210,70 210,37" stroke="#4a90d9" stroke-width="1.5" fill="none"/>
+    <polygon points="320,60 350,77 350,110 320,127 290,110 290,77" stroke="#4a90d9" stroke-width="1.5" fill="none"/>
+    <polygon points="80,120 110,137 110,170 80,187 50,170 50,137" stroke="#4a90d9" stroke-width="1" fill="none" opacity="0.6"/>
+    <polygon points="200,130 230,147 230,180 200,197 170,180 170,147" stroke="#4a90d9" stroke-width="1" fill="none" opacity="0.6"/>
+    <polygon points="360,20 390,37 390,70 360,87 330,70 330,37" stroke="#4a90d9" stroke-width="1" fill="none" opacity="0.4"/>
+    <circle cx="120" cy="200" r="3" fill="#4a90d9"/>
+    <circle cx="200" cy="50" r="2" fill="#4a90d9"/>
+    <circle cx="300" cy="200" r="3" fill="#4a90d9"/>
+    <line x1="120" y1="200" x2="200" y2="50" stroke="#4a90d9" stroke-width="0.5"/>
+    <line x1="200" y1="50" x2="300" y2="200" stroke="#4a90d9" stroke-width="0.5"/>
+  </svg>
+  <div style="margin-bottom:20px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 200" width="550" height="119">
+      <defs>
+        <linearGradient id="cB2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#4a90d9"/>
+          <stop offset="100%" stop-color="#2e6db5"/>
+        </linearGradient>
+        <linearGradient id="cO2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#7ab8f0"/>
+          <stop offset="100%" stop-color="#4a90d9"/>
+        </linearGradient>
+        <linearGradient id="dG2" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f07820" stop-opacity="0"/>
+          <stop offset="25%" stop-color="#f07820"/>
+          <stop offset="75%" stop-color="#f07820"/>
+          <stop offset="100%" stop-color="#f07820" stop-opacity="0"/>
+        </linearGradient>
+        <filter id="sh2">
+          <feDropShadow dx="0" dy="3" stdDeviation="8" flood-color="#000" flood-opacity="0.4"/>
+        </filter>
+      </defs>
+
+      <!-- Back cloud -->
+      <g filter="url(#sh2)">
+        <path d="M145,152 H58 a36,36 0 0,1 -6,-71 a2,2 0 0,1 1,-1 a48,48 0 0,1 93,-9 a2,2 0 0,1 1,0 a28,28 0 0,1 -2,57 Z"
+              fill="url(#cB2)"/>
+      </g>
+      <!-- Front cloud -->
+      <path d="M155,132 H84 a28,28 0 0,1 -5,-55 a1.5,1.5 0 0,1 1,-1 a38,38 0 0,1 74,-7 a1.5,1.5 0 0,1 1,0 a22,22 0 0,1 -2,45 Z"
+            fill="url(#cO2)" opacity="0.8"/>
+
+      <!-- Network icon -->
+      <circle cx="103" cy="114" r="9"   fill="white" opacity="0.95"/>
+      <circle cx="103" cy="114" r="5"   fill="#1e3a5f"/>
+      <circle cx="70"  cy="136" r="6.5" fill="white" opacity="0.9"/>
+      <circle cx="70"  cy="136" r="3.5" fill="#4a90d9"/>
+      <circle cx="138" cy="136" r="6.5" fill="white" opacity="0.9"/>
+      <circle cx="138" cy="136" r="3.5" fill="#4a90d9"/>
+      <circle cx="103" cy="86"  r="5"   fill="white" opacity="0.85"/>
+      <circle cx="103" cy="86"  r="3"   fill="#7ab8f0"/>
+      <line x1="103" y1="114" x2="70"  y2="136" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+      <line x1="103" y1="114" x2="138" y2="136" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+      <line x1="103" y1="114" x2="103" y2="86"  stroke="white" stroke-width="2"   stroke-linecap="round" opacity="0.8"/>
+      <line x1="70"  y1="136" x2="138" y2="136" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+
+      <!-- GSI wordmark - white -->
+      <text x="175" y="150"
+            font-family="'Arial Black', Arial, sans-serif"
+            font-weight="900" font-size="84" letter-spacing="-2"
+            fill="white">GSI</text>
+
+      <!-- Orange divider -->
+      <rect x="368" y="24" width="3.5" height="152" rx="2" fill="url(#dG2)"/>
+
+      <!-- RapidReconciler - white -->
+      <text x="392" y="106"
+            font-family="Arial, Helvetica, sans-serif"
+            font-weight="800" font-size="52" letter-spacing="-0.5"
+            fill="white">RapidReconciler</text>
+
+      <!-- Tagline - light blue -->
+      <text x="394" y="138"
+            font-family="Arial, Helvetica, sans-serif"
+            font-weight="400" font-size="18" letter-spacing="4"
+            fill="#7ab8f0">INVENTORY INTELLIGENCE</text>
+
+      <!-- Orange underline -->
+      <rect x="394" y="150" width="326" height="3" rx="1.5" fill="#f07820"/>
+
+      <!-- Powered by - muted white -->
+      <text x="394" y="176"
+            font-family="Arial, Helvetica, sans-serif"
+            font-weight="400" font-size="13" letter-spacing="1.2"
+            fill="rgba(255,255,255,0.45)">AI-Enhanced JD Edwards Reconciliation · Powered by GSI</text>
+    </svg></div>
+<div class="ey">RapidReconciler &mdash; Accounts Payable Intelligence</div>
   <h1>PO Receipts &mdash; <em>Voucher Match</em></h1>
   <div class="mm">
     <div class="mi"><span class="ml-s">Period End</span><span class="mv">2016-08-27</span></div>
@@ -196,6 +285,73 @@ body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;f
   </div>
   <div class="nt"><div class="nt-t">About This Report</div><div class="nt-b">PO Receipts tracks inventory and service purchases where the receipt has been posted but the supplier invoice (voucher) has not yet been matched. The gap between Received Not Vouchered (RNV) and the GL must reach zero before period close. The $54K Rec vs GL variance shown here represents this accumulated RNV balance across 228 active suppliers. Supplier names anonymized for display.</div></div>
 </div>
-<div class="ft"><span>RapidReconciler</span><div>Period End: <span>2016-08-27</span> &bull; Co. 10 USD &bull; <span>794</span> active lines &bull; <span>228</span> suppliers &bull; Supplier names anonymized</div></div>
+<div class="ft"><div style="display:flex;align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 140" width="400" height="76">
+      <defs>
+        <linearGradient id="cB3" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#1e3a5f"/>
+          <stop offset="100%" stop-color="#163050"/>
+        </linearGradient>
+        <linearGradient id="cO3" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#4a90d9"/>
+          <stop offset="100%" stop-color="#2e6db5"/>
+        </linearGradient>
+        <linearGradient id="dG3" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f07820" stop-opacity="0"/>
+          <stop offset="25%" stop-color="#f07820"/>
+          <stop offset="75%" stop-color="#f07820"/>
+          <stop offset="100%" stop-color="#f07820" stop-opacity="0"/>
+        </linearGradient>
+        <filter id="sh3">
+          <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#1e3a5f" flood-opacity="0.2"/>
+        </filter>
+      </defs>
+
+      <!-- Back cloud -->
+      <g filter="url(#sh3)">
+        <path d="M102,108 H40 a26,26 0 0,1 -4,-51 a1.5,1.5 0 0,1 1,-1 a34,34 0 0,1 66,-7 a1.5,1.5 0 0,1 1,0 a20,20 0 0,1 -2,41 Z"
+              fill="url(#cB3)"/>
+      </g>
+      <!-- Front cloud -->
+      <path d="M110,94 H60 a20,20 0 0,1 -4,-39 a1,1 0 0,1 1,-1 a27,27 0 0,1 53,-5 a1,1 0 0,1 0,0 a16,16 0 0,1 -1,32 Z"
+            fill="url(#cO3)" opacity="0.85"/>
+
+      <!-- Network icon: scaled down -->
+      <circle cx="73"  cy="82"  r="6.5" fill="white" opacity="0.95"/>
+      <circle cx="73"  cy="82"  r="3.8" fill="#1e3a5f"/>
+      <circle cx="50"  cy="98"  r="4.5" fill="white" opacity="0.9"/>
+      <circle cx="50"  cy="98"  r="2.5" fill="#4a90d9"/>
+      <circle cx="98"  cy="98"  r="4.5" fill="white" opacity="0.9"/>
+      <circle cx="98"  cy="98"  r="2.5" fill="#4a90d9"/>
+      <circle cx="73"  cy="62"  r="3.5" fill="white" opacity="0.85"/>
+      <circle cx="73"  cy="62"  r="2"   fill="#3a7bc8"/>
+      <line x1="73" y1="82" x2="50" y2="98" stroke="white" stroke-width="1.8" stroke-linecap="round" opacity="0.9"/>
+      <line x1="73" y1="82" x2="98" y2="98" stroke="white" stroke-width="1.8" stroke-linecap="round" opacity="0.9"/>
+      <line x1="73" y1="82" x2="73" y2="62" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+      <line x1="50" y1="98" x2="98" y2="98" stroke="white" stroke-width="1"   stroke-linecap="round" opacity="0.4"/>
+
+      <!-- GSI text -->
+      <text x="122" y="106"
+            font-family="'Arial Black', Arial, sans-serif"
+            font-weight="900" font-size="60" letter-spacing="-1"
+            fill="#1e3a5f">GSI</text>
+
+      <!-- Orange divider -->
+      <rect x="258" y="16" width="3" height="108" rx="1.5" fill="url(#dG3)"/>
+
+      <!-- RapidReconciler -->
+      <text x="278" y="86"
+            font-family="Arial, Helvetica, sans-serif"
+            font-weight="800" font-size="44" letter-spacing="-0.5"
+            fill="#1e3a5f">RapidReconciler</text>
+
+      <!-- Subtitle -->
+      <text x="280" y="112"
+            font-family="Arial, Helvetica, sans-serif"
+            font-weight="400" font-size="14" letter-spacing="3.5"
+            fill="#1a56a0">INVENTORY INTELLIGENCE · GSI</text>
+
+      <!-- Orange underline -->
+      <rect x="280" y="122" width="232" height="2.5" rx="1.25" fill="#f07820"/>
+    </svg></div><div>Period End: <span>2016-08-27</span> &bull; Co. 10 USD &bull; <span>794</span> active lines &bull; <span>228</span> suppliers &bull; Supplier names anonymized</div></div>
 </body>
 </html>
