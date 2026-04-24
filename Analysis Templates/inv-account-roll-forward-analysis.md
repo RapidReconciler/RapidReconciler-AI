@@ -710,6 +710,8 @@ Do not delete, rename, or reorder the source sheet. Permitted modifications to t
 | **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. |
 | **Row heights** | Calculated from content length and column width — not a flat default. |
 | **Wrap text** | Enabled on all cells on the Roll Forward Analysis sheet. |
+| **Grid lines** | Disabled on the Roll Forward Analysis sheet (`showGridLines = False`). |
+| **Text box note** | Floating text box anchored col F → col R, rows 1–18; no fill; no border. Sections: title (16pt bold), What is a Roll Forward? (13pt bold heading + 12pt body), Why does it matter?, What does this workbook show?, About this workbook. See formatting spec Section 6.7. |
 | **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
 | **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`; Priority 3 fill `FFF2CC` / text `4A3B00`; Priority 4 fill `E2EFDA` / text `1E4620`. Lighter fills and non-bold text for readability. |
 | **Source sheet — freeze panes** | Set at A3 so the title row (row 1) and header row (row 2) are always visible. |

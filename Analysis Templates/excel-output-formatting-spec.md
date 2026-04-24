@@ -194,6 +194,31 @@ Long-form text (root cause explanations, what-was-found descriptions) spans colu
 
 Use 6pt height blank rows between major sections for visual breathing room.
 
+
+### 6.7 Trade Show / Public Display Text Box
+
+Every analysis sheet must include a floating text box anchored to column F, spanning to column R, rows 1–18. The text box is positioned to the right of the analysis content so it does not overlap any data rows.
+
+| Element | Specification |
+|---|---|
+| Position | Anchored col F → col R, rows 1–18, floating (does not affect row heights) |
+| Fill | None |
+| Border | None |
+| Font | Arial throughout |
+| Title | Workbook name, 16pt bold |
+| Section headings | 13pt bold; 3pt space after each heading |
+| Body text | 12pt, not bold |
+| Spacers | Small spacer paragraphs between sections |
+
+**Required sections in order:**
+1. Title (workbook name)
+2. What is [report name]? — definition of the report type, including the key JD Edwards tables it compares
+3. Why does it matter? — business impact of the variance or integrity issue
+4. What does this workbook show? — specific findings structure
+5. About this workbook — one-line sheet guide (Analysis sheet = findings; Source sheet = export data)
+
+**No gridlines** on the analysis sheet (`showGridLines = False`).
+
 ---
 
 ## Section 7: Applying Formatting to Existing Workbooks

@@ -601,6 +601,8 @@ The GL Batch Analysis sheet must contain the following sections in order, each s
 | **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
 | **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`; Priority 3 fill `FFF2CC` / text `4A3B00`. Lighter fills and non-bold text for readability. |
 | **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
+| **Grid lines** | Disabled on the GL Batch Analysis sheet (`showGridLines = False`). |
+| **Text box note** | Floating text box anchored col F → col R, rows 1–18; no fill; no border. Sections: title (16pt bold), What is an Unposted GL Batch? (13pt bold heading + 12pt body), Why does it matter?, What does this workbook show?, About this workbook. See formatting spec Section 6.7. |
 | **Colour key** | Include a colour key section at the top of the analysis sheet. |
 
 ### 13.6 Amounts
