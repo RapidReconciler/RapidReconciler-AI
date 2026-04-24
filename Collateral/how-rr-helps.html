@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,20 +7,20 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #0d1f3c;
-    --navy-light: #162d56;
-    --blue: #1a56db;
-    --blue-mid: #1e40af;
-    --sky: #dbeafe;
-    --sky-pale: #eff6ff;
-    --gold: #f59e0b;
-    --gold-light: #fef3c7;
+    --navy: #1e3a5f;
+    --navy-light: #2b5ea7;
+    --blue: #1a56a0;
+    --blue-mid: #1e3a5f;
+    --sky: #dce8f7;
+    --sky-pale: #f0f5ff;
+    --gold: #f07820;
+    --gold-light: #fef0e0;
     --slate: #475569;
     --slate-light: #94a3b8;
     --white: #ffffff;
     --off-white: #f8fafc;
-    --border: #e2e8f0;
-    --text: #1e293b;
+    --border: #d0e4f7;
+    --text: #1e3a5f;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -538,7 +538,81 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-inner">
-    <p class="eyebrow">GSI — RapidReconciler</p>
+    <div style="margin-bottom:28px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 200" width="380" height="82">
+      <defs>
+        <linearGradient id="cB2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#4a90d9"/>
+          <stop offset="100%" stop-color="#2e6db5"/>
+        </linearGradient>
+        <linearGradient id="cO2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#7ab8f0"/>
+          <stop offset="100%" stop-color="#4a90d9"/>
+        </linearGradient>
+        <linearGradient id="dG2" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f07820" stop-opacity="0"/>
+          <stop offset="25%" stop-color="#f07820"/>
+          <stop offset="75%" stop-color="#f07820"/>
+          <stop offset="100%" stop-color="#f07820" stop-opacity="0"/>
+        </linearGradient>
+        <filter id="sh2">
+          <feDropShadow dx="0" dy="3" stdDeviation="8" flood-color="#000" flood-opacity="0.4"/>
+        </filter>
+      </defs>
+
+      <!-- Back cloud -->
+      <g filter="url(#sh2)">
+        <path d="M145,152 H58 a36,36 0 0,1 -6,-71 a2,2 0 0,1 1,-1 a48,48 0 0,1 93,-9 a2,2 0 0,1 1,0 a28,28 0 0,1 -2,57 Z"
+              fill="url(#cB2)"/>
+      </g>
+      <!-- Front cloud -->
+      <path d="M155,132 H84 a28,28 0 0,1 -5,-55 a1.5,1.5 0 0,1 1,-1 a38,38 0 0,1 74,-7 a1.5,1.5 0 0,1 1,0 a22,22 0 0,1 -2,45 Z"
+            fill="url(#cO2)" opacity="0.8"/>
+
+      <!-- Network icon -->
+      <circle cx="103" cy="114" r="9"   fill="white" opacity="0.95"/>
+      <circle cx="103" cy="114" r="5"   fill="#1e3a5f"/>
+      <circle cx="70"  cy="136" r="6.5" fill="white" opacity="0.9"/>
+      <circle cx="70"  cy="136" r="3.5" fill="#4a90d9"/>
+      <circle cx="138" cy="136" r="6.5" fill="white" opacity="0.9"/>
+      <circle cx="138" cy="136" r="3.5" fill="#4a90d9"/>
+      <circle cx="103" cy="86"  r="5"   fill="white" opacity="0.85"/>
+      <circle cx="103" cy="86"  r="3"   fill="#7ab8f0"/>
+      <line x1="103" y1="114" x2="70"  y2="136" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+      <line x1="103" y1="114" x2="138" y2="136" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+      <line x1="103" y1="114" x2="103" y2="86"  stroke="white" stroke-width="2"   stroke-linecap="round" opacity="0.8"/>
+      <line x1="70"  y1="136" x2="138" y2="136" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+
+      <!-- GSI wordmark - white -->
+      <text x="175" y="150"
+            font-family="'Arial Black', Arial, sans-serif"
+            font-weight="900" font-size="84" letter-spacing="-2"
+            fill="white">GSI</text>
+
+      <!-- Orange divider -->
+      <rect x="368" y="24" width="3.5" height="152" rx="2" fill="url(#dG2)"/>
+
+      <!-- RapidReconciler - white -->
+      <text x="392" y="106"
+            font-family="Arial, Helvetica, sans-serif"
+            font-weight="800" font-size="52" letter-spacing="-0.5"
+            fill="white">RapidReconciler</text>
+
+      <!-- Tagline - light blue -->
+      <text x="394" y="138"
+            font-family="Arial, Helvetica, sans-serif"
+            font-weight="400" font-size="18" letter-spacing="4"
+            fill="#7ab8f0">INVENTORY INTELLIGENCE</text>
+
+      <!-- Orange underline -->
+      <rect x="394" y="150" width="326" height="3" rx="1.5" fill="#f07820"/>
+
+      <!-- Powered by - muted white -->
+      <text x="394" y="176"
+            font-family="Arial, Helvetica, sans-serif"
+            font-weight="400" font-size="13" letter-spacing="1.2"
+            fill="rgba(255,255,255,0.45)">AI-Enhanced JD Edwards Reconciliation · Powered by GSI</text>
+    </svg></div>
+    
     <h1>Inventory Reconciliation<br>that <em>actually works</em><br>for JD Edwards.</h1>
     <p class="hero-sub">Stop spending days every period chasing variances across spreadsheets, JD Edwards reports, and manual data extracts. RapidReconciler automates the comparison, surfaces what matters, and tells you exactly what to fix.</p>
     <div class="hero-stats">
@@ -874,7 +948,80 @@
 
 <!-- FOOTER -->
 <footer>
-  <span>© GSI — RapidReconciler. All rights reserved.</span>
+  <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 200" width="280" height="61">
+      <defs>
+        <linearGradient id="cB2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#4a90d9"/>
+          <stop offset="100%" stop-color="#2e6db5"/>
+        </linearGradient>
+        <linearGradient id="cO2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#7ab8f0"/>
+          <stop offset="100%" stop-color="#4a90d9"/>
+        </linearGradient>
+        <linearGradient id="dG2" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#f07820" stop-opacity="0"/>
+          <stop offset="25%" stop-color="#f07820"/>
+          <stop offset="75%" stop-color="#f07820"/>
+          <stop offset="100%" stop-color="#f07820" stop-opacity="0"/>
+        </linearGradient>
+        <filter id="sh2">
+          <feDropShadow dx="0" dy="3" stdDeviation="8" flood-color="#000" flood-opacity="0.4"/>
+        </filter>
+      </defs>
+
+      <!-- Back cloud -->
+      <g filter="url(#sh2)">
+        <path d="M145,152 H58 a36,36 0 0,1 -6,-71 a2,2 0 0,1 1,-1 a48,48 0 0,1 93,-9 a2,2 0 0,1 1,0 a28,28 0 0,1 -2,57 Z"
+              fill="url(#cB2)"/>
+      </g>
+      <!-- Front cloud -->
+      <path d="M155,132 H84 a28,28 0 0,1 -5,-55 a1.5,1.5 0 0,1 1,-1 a38,38 0 0,1 74,-7 a1.5,1.5 0 0,1 1,0 a22,22 0 0,1 -2,45 Z"
+            fill="url(#cO2)" opacity="0.8"/>
+
+      <!-- Network icon -->
+      <circle cx="103" cy="114" r="9"   fill="white" opacity="0.95"/>
+      <circle cx="103" cy="114" r="5"   fill="#1e3a5f"/>
+      <circle cx="70"  cy="136" r="6.5" fill="white" opacity="0.9"/>
+      <circle cx="70"  cy="136" r="3.5" fill="#4a90d9"/>
+      <circle cx="138" cy="136" r="6.5" fill="white" opacity="0.9"/>
+      <circle cx="138" cy="136" r="3.5" fill="#4a90d9"/>
+      <circle cx="103" cy="86"  r="5"   fill="white" opacity="0.85"/>
+      <circle cx="103" cy="86"  r="3"   fill="#7ab8f0"/>
+      <line x1="103" y1="114" x2="70"  y2="136" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+      <line x1="103" y1="114" x2="138" y2="136" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+      <line x1="103" y1="114" x2="103" y2="86"  stroke="white" stroke-width="2"   stroke-linecap="round" opacity="0.8"/>
+      <line x1="70"  y1="136" x2="138" y2="136" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+
+      <!-- GSI wordmark - white -->
+      <text x="175" y="150"
+            font-family="'Arial Black', Arial, sans-serif"
+            font-weight="900" font-size="84" letter-spacing="-2"
+            fill="white">GSI</text>
+
+      <!-- Orange divider -->
+      <rect x="368" y="24" width="3.5" height="152" rx="2" fill="url(#dG2)"/>
+
+      <!-- RapidReconciler - white -->
+      <text x="392" y="106"
+            font-family="Arial, Helvetica, sans-serif"
+            font-weight="800" font-size="52" letter-spacing="-0.5"
+            fill="white">RapidReconciler</text>
+
+      <!-- Tagline - light blue -->
+      <text x="394" y="138"
+            font-family="Arial, Helvetica, sans-serif"
+            font-weight="400" font-size="18" letter-spacing="4"
+            fill="#7ab8f0">INVENTORY INTELLIGENCE</text>
+
+      <!-- Orange underline -->
+      <rect x="394" y="150" width="326" height="3" rx="1.5" fill="#f07820"/>
+
+      <!-- Powered by - muted white -->
+      <text x="394" y="176"
+            font-family="Arial, Helvetica, sans-serif"
+            font-weight="400" font-size="13" letter-spacing="1.2"
+            fill="rgba(255,255,255,0.45)">AI-Enhanced JD Edwards Reconciliation · Powered by GSI</text>
+    </svg></span>
   <span>
     <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a>
     &nbsp;·&nbsp;
