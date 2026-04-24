@@ -35,14 +35,14 @@ Start a new session when switching to a different guide version or when the conv
 
 The returned workbook will contain two sheets:
 
-**Sheet 1 — Transaction Details (original sheet, highlights added)**
+**Sheet 1 (left, opens first) — RR Analysis (new sheet)**
 
 | Highlight | Color | Rows |
 |---|---|---|
 | Root cause | Red | The specific F4111 line item(s) directly responsible for the variance |
 | Related | Orange | Doc Header; the corresponding F0911 Inv Acct entries for the affected GL class and batch; the RR Summary rows showing the unmatched cardex and orphaned GL amounts |
 
-**Sheet 2 — RR Analysis (new sheet)**
+**Sheet 2 — Transaction Details (original sheet, highlights added)**
 
 The analysis sheet will follow this structure:
 
@@ -56,7 +56,7 @@ The analysis sheet will follow this structure:
 | **Processing Options — Suggested Causes** | For each program that could have produced the variance, the specific processing options or configuration settings to check, the variance sub-type each would produce, and why each is a plausible cause. Presented as suggestions only, with a note that multiple program versions may be in use and that settings must be confirmed in JD Edwards before drawing conclusions. |
 | **Recommended Action** | Corrective action from Section 5; journal entry details where applicable; any further investigation steps required before posting |
 
-Set column widths to fixed widths sized for readability — do not auto-stretch to full sheet width. Enable wrap text on all cells. Calculate row heights from content length and column width, not a flat default. Resolution tables use a two-column layout: condition in cols A–B, action in cols C–E. Priority colours: P1 fill `FFE0E0` / text `8B0000`, P2 fill `FFF0DC` / text `6B3A00` — lighter fills and non-bold text for readability. Transaction Details source sheet: AutoFilter on row 2, freeze panes at row 3, row highlights matching analysis priority colours. Include a colour key section at the top of the analysis sheet.
+Set column widths to fixed widths sized for readability — do not auto-stretch to full sheet width. Enable wrap text on all cells. Calculate row heights from content length and column width, not a flat default. Resolution tables use a two-column layout: condition in cols A–B, action in cols C–E. Priority colours: P1 fill `FFE0E0` / text `8B0000`, P2 fill `FFD966` / text `6B3A00` — lighter fills and non-bold text for readability. Transaction Details source sheet: AutoFilter on row 2, freeze panes at row 3, row highlights matching analysis priority colours. Include a colour key section at the top of the analysis sheet.
 
 ### 1.4 Notes and Limitations
 

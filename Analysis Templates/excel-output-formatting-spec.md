@@ -25,10 +25,12 @@ DMAAI Analysis.xlsx
 
 Every output workbook contains exactly two sheets:
 
-| Sheet | Contents |
-|---|---|
-| **Source sheet** | The original export data, unchanged except for row highlights, AutoFilter, and freeze panes |
-| **Analysis sheet** | The structured analysis written by Claude |
+| Tab Position | Sheet | Contents |
+|---|---|---|
+| **1 (left)** | **Analysis sheet** | The structured analysis written by Claude — this is the active sheet when the workbook opens |
+| **2 (right)** | **Source sheet** | The original export data, unchanged except for row highlights, AutoFilter, and freeze panes |
+
+The analysis sheet must always be the first (leftmost) tab and must be set as the active sheet so it displays when the workbook is opened.
 
 Do not delete, rename, or reorder the source sheet. Do not add columns, rows, or formulas to the source sheet. The only permitted modifications to the source sheet are cell background colour (highlights), AutoFilter, and freeze panes.
 
@@ -138,15 +140,16 @@ Priority sub-section header rows use the same fill as their priority level but w
 
 ### 5.3 Note Boxes
 
-Note boxes (⚠ observations and warnings) use a distinct gold treatment:
+Note boxes (⚠ observations and warnings) use a distinct wheat treatment that is intentionally outside the priority colour scheme. Do not substitute a priority colour for note boxes — the wheat fill signals an observation or caution rather than a severity level.
 
 | Element | Specification |
 |---|---|
-| Fill | `FFF3CD` (light gold) |
-| Text colour | `7B4C00` (dark gold) |
+| Fill | `F5DEB3` (wheat) — distinct from all priority fills |
+| Text colour | `000000` (black) |
 | Style | Italic |
-| Merge | Full width (all columns) |
+| Merge | Columns A–E |
 | Wrap text | Enabled |
+| Row height | Fixed at **75pt (≈ 100px)** — do not auto-size note rows |
 
 ### 5.4 Font
 
@@ -185,7 +188,7 @@ Header row uses the standard column header style with "If…" and "Then…" labe
 
 ### 6.5 Body Text Rows
 
-Long-form text (root cause explanations, what-was-found descriptions) spans all columns merged. Wrap text enabled. Row height calculated from content.
+Long-form text (root cause explanations, what-was-found descriptions) spans columns A–E merged. Wrap text enabled. Row height calculated from content.
 
 ### 6.6 Blank Separator Rows
 
@@ -208,15 +211,20 @@ When reformatting an existing workbook (not building from scratch), apply the fo
 | `7B6000` | `4A3B00` | Priority 3 text |
 | `FF0000` | `8B0000` | Any bright red text |
 | `FFA500` | `6B3A00` | Any bright orange text |
+| `7B4C00` | `000000` | Old gold note box text → black |
+| `5C4A00` | `000000` | Old dark olive note box text → black |
 
 4. **Fill colour remapping:**
 
 | Old Fill | New Fill | Context |
 |---|---|---|
 | `FFCCCC` | `FFE0E0` | Priority 1 rows |
-| `FFE5CC` | `FFF0DC` | Priority 2 rows |
-| `FFFACD` | `FEFBD8` | Priority 3 rows |
+| `FFE5CC` | `FFD966` | Priority 2 rows |
+| `FFF0DC` | `FFD966` | Priority 2 rows (alternate old value) |
+| `FFFACD` | `FFF2CC` | Priority 3 rows |
+| `FEFBD8` | `FFF2CC` | Priority 3 rows (alternate old value) |
 | `FF0000` | `FFE0E0` | Solid red (source sheet) |
-| `FFA500` | `FFF0DC` | Solid orange (source sheet) |
+| `FFA500` | `FFD966` | Solid orange (source sheet) |
+| `FFF3CD` | `F5DEB3` | Old gold note boxes → wheat |
 
 **

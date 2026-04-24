@@ -29,11 +29,11 @@ Once this guide has been uploaded, it remains in context. Use:
 
 **File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
-**Sheet 1 — Integrity (original)**
+**Sheet 1 (left, opens first) — RR Analysis (new)**
 - Source data, unchanged
 - No row highlighting required
 
-**Sheet 2 — RR Analysis (new)**
+**Sheet 2 — Integrity (original)**
 - Report Summary
 - Issue Type Summary (color-coded by priority)
 - Row Count by Company
@@ -309,14 +309,14 @@ Do not delete, rename, or reorder the source sheet.
 | **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt |
 | **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
 | **Data rows** | Alternating white and light gray (`F2F2F2`) fill; 10pt Arial |
-| **Priority 1 rows** | Red fill (`FFCCCC`), dark red bold text (`C00000`) |
-| **Priority 2 rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
-| **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
+| **Priority 1 rows** | Red fill (`FFE0E0`), dark red text (`8B0000`) |
+| **Priority 2 rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`) |
+| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
 | **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. Typical widths: Col A 22, B 28, C 36, D 20, E 20. |
 | **Row heights** | Calculated from content length and column width — not a flat default. |
 | **Wrap text** | Enabled on all cells on the RR Analysis sheet. |
 | **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
-| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFF0DC` / text `6B3A00`. Lighter fills and non-bold text for readability. |
+| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`. Lighter fills and non-bold text for readability. |
 | **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
 | **Colour key** | Include a colour key section at the top of the analysis sheet. |
 

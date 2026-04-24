@@ -35,7 +35,7 @@ Start a new session when switching to a different guide version or when the conv
 
 The returned workbook will contain two sheets:
 
-**Sheet 1 — Transaction Details (original sheet, highlights added)**
+**Sheet 1 (left, opens first) — RR Analysis (new sheet)**
 
 **Column formatting requirements:**
 
@@ -50,13 +50,14 @@ The returned workbook will contain two sheets:
 
 `companynumber`, `longaccount`, and `branch` are JD Edwards identifiers and account codes that must be preserved exactly as exported — numeric formatting would strip leading zeros or alter the display. `ukid` and `doc` are system-generated record and document identifiers, not quantities or amounts; comma formatting misrepresents them and makes them harder to cross-reference in JD Edwards.
 
-| Highlight | Color | Rows |
-|---|---|---|
-| Root cause | Red | The specific transaction rows directly responsible for the variance |
-| Related | Orange | The Curr bal row; PI/PV revaluation rows that drove cost shifts; rows bracketing the cost inflection point |
-| Informational | Blue | Rows that are normal but contextually significant (e.g., OV/PV pairs on a reconciled WAC item) |
+| Highlight | Color | Hex | Rows |
+|---|---|---|---|
+| Root cause | Red | `FFE0E0` | The specific transaction rows directly responsible for the variance |
+| Related | Amber | `FFD966` | PI/PV revaluation rows that drove cost shifts; rows bracketing the cost inflection point |
 
-**Sheet 2 — RR Analysis (new sheet)**
+Only problem rows are highlighted. Informational rows (IT transfers, Curr bal, Beg bal, normal OV/PV pairs) are not highlighted.
+
+**Sheet 2 — Transaction Details (original sheet, highlights added)**
 
 | Section | Content |
 |---|---|
@@ -72,7 +73,7 @@ The returned workbook will contain two sheets:
 | **Corrective Action** | Full JDE correction steps per Section 6; Re-Roll step per Section 7; "None required" if reconciled |
 | **Preventive Actions** | Follow-up items: cost review, BOM validation, WAC monitoring, negative quantity controls |
 
-Set column widths to fixed widths sized for readability — do not auto-stretch to full sheet width. Enable wrap text on all cells. Calculate row heights from content length and column width, not a flat default. Resolution tables use a two-column layout: condition in cols A–B, action in cols C–E. Priority colours: P1 fill `FFE0E0` / text `8B0000`, P2 fill `FFF0DC` / text `6B3A00` — lighter fills and non-bold text for readability. Source sheet: AutoFilter on row 2, freeze panes at row 3, row highlights matching analysis priority colours. Include a colour key section at the top of the analysis sheet.
+Set column widths to fixed widths sized for readability — do not auto-stretch to full sheet width. Enable wrap text on all cells. Calculate row heights from content length and column width, not a flat default. Resolution tables use a two-column layout: condition in cols A–B, action in cols C–E. Priority colours: P1 fill `FFE0E0` / text `8B0000`, P2 fill `FFD966` / text `6B3A00` — lighter fills and non-bold text for readability. Source sheet: AutoFilter on row 2, freeze panes at row 3, highlight only problem rows (red and amber) — do not highlight informational rows. Include a colour key section at the top of the analysis sheet.
 
 ### 1.4 Notes and Limitations
 

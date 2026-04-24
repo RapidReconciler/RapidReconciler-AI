@@ -29,11 +29,11 @@ Once this guide has been uploaded, it remains in context. Use:
 
 **File naming:** Name the output file `DMAAI Analysis.xlsx`.
 
-**Sheet 1 — Integrity (original)**
+**Sheet 1 (left, opens first) — RR Analysis (new)**
 - Source data, unchanged
 - No row highlighting required for Integrity Report 2 (unlike End of Day exports)
 
-**Sheet 2 — RR Analysis (new)**
+**Sheet 2 — Integrity (original)**
 - Report Summary
 - Variance Type Summary (color-coded by priority)
 - Findings by Priority (with detail, root cause, and resolution for each)
@@ -57,7 +57,7 @@ Integrity Report 2 — **DMAAI Entry Integrity** — compares every active entry
 
 This guide is a reusable template for analyzing any customer's Integrity Report 2 export. The JD Edwards functionality, report structure, comment types, and analysis procedure are consistent across all environments. The specific companies, GL class codes, account numbers, row counts, and findings described in the analysis output will reflect the customer data in the uploaded export.
 
-> **Who should use this guide:** JD Edwards cost accountants, inventory accountants, and RapidReconciler administrators responsible for investigating and resolving DMAAI integrity findings.
+> **Who should use this guide:** JD Edwards cost accountantts, inventory accountantts, and RapidReconciler administrators responsible for investigating and resolving DMAAI integrity findings.
 
 > **Important:** All corrections are made in JD Edwards. RapidReconciler displays integrity findings for visibility but does not modify JD Edwards data.
 
@@ -459,8 +459,8 @@ Output file name: `DMAAI Analysis.xlsx`
 
 | Sheet | Contents |
 |---|---|
+| **RR Analysis** | The analysis sheet (see below). This is the first (leftmost) tab and the active sheet when the workbook opens. |
 | **Integrity** | The original source data, unchanged |
-| **RR Analysis** | The analysis sheet (see below) |
 
 Do not delete, rename, or reorder the source sheet.
 
@@ -482,15 +482,15 @@ Do not delete, rename, or reorder the source sheet.
 | **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt |
 | **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
 | **Data rows** | Alternating white and light gray (`F2F2F2`) fill; 10pt Arial |
-| **Priority 1 rows** | Red fill (`FFCCCC`), dark red bold text (`C00000`) |
-| **Priority 2 rows** | Orange fill (`FFE5CC`), dark brown text (`7B3F00`) |
-| **Priority 3 rows** | Yellow fill (`FFFACD`), dark gold text (`5C4A00`) |
-| **Note boxes** | Light gold fill (`FFF3CD`), dark gold italic text (`7B4C00`); full-width merged cell; wrap text enabled |
+| **Priority 1 rows** | Red fill (`FFE0E0`), dark red text (`8B0000`) |
+| **Priority 2 rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`) |
+| **Priority 3 rows** | Light yellow fill (`FFF2CC`), dark olive text (`4A3B00`) |
+| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
 | **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. Typical widths: Col A 22, B 28, C 36, D 20, E 20. |
 | **Row heights** | Calculated from content length and column width — not a flat default. |
 | **Wrap text** | Enabled on all cells on the RR Analysis sheet. |
 | **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
-| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFF0DC` / text `6B3A00`; Priority 3 fill `FEFBD8` / text `4A3B00`. Use lighter fills and non-bold text so content remains easy to read. |
+| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`; Priority 3 fill `FFF2CC` / text `4A3B00`. Use lighter fills and non-bold text so content remains easy to read. |
 | **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
 | **Colour key** | Include a colour key section at the top of the analysis sheet. |
 
