@@ -6,83 +6,95 @@
 
 ## Section 1: Using Claude for Automated Analysis
 
-Claude can perform a full cardex variance analysis automatically and return a single updated `.xlsx` file with findings written directly into the workbook and all problem rows highlighted. This eliminates manual annotation and ensures consistent output across analysts.
+Claude can perform a full cardex variance analysis automatically and return an updated `.xlsx` workbook with the analysis written to a card-layout sheet, the source sheet sorted into chronological order with priority highlights, and the priority level computed from the variance against typical transaction activity in both quantity and amount dimensions. This eliminates manual annotation and ensures consistent output across analysts.
 
 ### 1.1 First Request in a Session
 
-On the first request, upload **both files** together:
+On the first request, upload **three files** together:
 
-1. This guide (`.md`)
-2. The Item Roll Forward / Transaction Detail report (`.xlsx`)
+1. This guide (`cardex-variance-analysis.md`)
+2. The shared formatting spec (`excel-output-formatting-spec.md`)
+3. The Item Roll Forward export (`.xlsx`)
 
 Then use the following prompt:
 
-> *"Analyze this file using the guide as a template, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis' and all problem rows highlighted."*
+> *"Analyze this file using the Cardex Variance Analysis Guide and the formatting spec, then produce an updated copy of the Excel file with the card-layout analysis sheet and the source sheet sorted ascending by ukid with priority highlights."*
 
-Claude will read the guide to understand the report structure and variance patterns, work through the analysis procedure against the Excel data, highlight the relevant rows on the source sheet, and add the analysis as a new sheet in the same workbook. The returned file is a drop-in replacement for the original — the source sheet is unchanged except for the highlights.
+Claude will read both documents, perform the analysis described in Sections 2–10 of this guide, build the workbook per the formatting spec, and return the file.
 
 ### 1.2 Follow-On Requests in the Same Session
 
-Once the guide has been uploaded in a session, Claude retains it in context for the remainder of the conversation. Subsequent reports **do not require the guide to be re-uploaded**. Simply upload the new `.xlsx` and use a shorter prompt:
+Once the guide and formatting spec have been uploaded in a session, Claude retains them in context for the remainder of the conversation. Subsequent reports **do not require re-uploading**. Simply upload the new `.xlsx` and use a shorter prompt:
 
 > *"Analyze this file and return it with the analysis sheet and highlights."*
 
-Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide again — Claude will use it and ignore the duplication.
+Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide and the formatting spec again — Claude will use them and ignore the duplication.
 
 ### 1.3 Output Specification
 
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+The output workbook follows the conventions defined in the **shared formatting spec** (`excel-output-formatting-spec.md`) — file naming pattern, sheet structure, card layout, colour palette, priority calculation, source-sheet handling, and floating text box specifications all live in that document so they stay consistent across all RapidReconciler analysis guides.
 
-The returned workbook will contain two sheets:
+This section captures only the **cardex-specific** content that the formatting spec needs from this guide.
 
-**Sheet 1 (left, opens first) — RR Analysis (new sheet)**
+**File name:** `Cardex Variance Analysis for Item {item} {branch}.xlsx`. Example: `Cardex Variance Analysis for Item 555 IDM.xlsx`.
 
-**Column formatting requirements:**
+**Source sheet name:** `Item Roll Forward`. The export arrives in descending order by ukid (newest transaction first); per Section 3.4 of the formatting spec, this guide requires the source sheet to be **sorted ascending by ukid (column C)** before analysis. The Beg bal row (ukid `0`) sorts to the top, the Curr bal row (ukid `999999999999`) sorts to the bottom, and the running totals build chronologically.
+
+**Headline content** (Section 6.1 of the formatting spec):
+
+> `Item {n} — Branch {b}, Location {loc}`
+
+Cardex analysis is item-focused, so the item identification is the page anchor.
+
+**Variance subline** (Section 6.2): a single sentence that quantifies the gap, e.g., "Item ledger shows 10.35 LB ($59.15) the on-hand table doesn't see."
+
+**Secondary context strip** (Section 6.3) carries: GL Class, GL Account, Std Cost (or WAC depending on cost method).
+
+**Pattern label** for the variance card (Section 6.4): use the Section 4 / Section 5 pattern name. For quantity variances: `F41021 vs F4111 Integrity Gap (Quantity Variance)` — followed by a one-line explanation appropriate to the case.
+
+**Priority calculation** (Section 6.4.1.1 of the formatting spec): cardex uses a **dual-ratio** rule that considers both quantity and amount, taking the higher of the two as the governing ratio. This is necessary because some items have negligible cost — a 10,000-unit gap on a $0.001/unit item shows almost no dollar variance but is still a real operational problem.
+
+The two ratios are computed against the **transaction rows** of the sorted-ascending source sheet (excluding Beg bal and Curr bal anchors):
+
+```
+qty_ratio = |QtyVar| / mean(|qty change|)
+amt_ratio = |AmtVar| / mean(|amt change|)
+governing = max(qty_ratio, amt_ratio)
+```
+
+For zero-cost or near-zero-cost items, the amount ratio will be undefined; the quantity ratio governs. For mixed-cost items, taking the max biases toward the higher-priority outcome. See Section 6.4.1.1 of the formatting spec for the rationale-string format and edge-case handling.
+
+**FIX card standard steps** for cardex variances:
+
+1. Confirm F41021 on-hand qty matches expectation. If it doesn't, run a cycle count or adjust the quantity manually, then re-evaluate after the next RapidReconciler refresh cycle.
+2. View the item on the item ledger screen in JD Edwards, display all rows, and export to Excel. Then perform an analysis using the "Handling Cardex Variance Guide" to obtain the current quantity and amount variances — these are the figures to use for the corrections in the steps below.
+3. Request an F41021 SQL correction from IT using the current quantity variance from Step 2 (DBA support required — confirm F4111 is the accurate record before proceeding).
+4. If there are any residual amounts after the quantity correction, perform a dollars-only adjustment to clear.
+5. Run Re-Roll on the RapidReconciler As Of page for all locations for Item {n} and confirm QtyVar and AmtVar both go to zero on the next refresh.
+
+The exact wording above can be specialized to the case (item number, location, etc.) but the step structure should be preserved.
+
+**Source sheet column formatting requirements:**
 
 | Column | Field | Format |
 |---|---|---|
-| **A** | **`companynumber`** | **Text / character — format as `@`** |
-| **B** | **`longaccount`** | **Text / character — format as `@`** |
-| **C** | **`ukid`** | **Plain integer, no commas — format as `0`** |
-| **D** | **`branch`** | **Text / character — format as `@`** |
+| A | `companynumber` | Text / character — format as `@` |
+| B | `longaccount` | Text / character — format as `@` |
+| C | `ukid` | Plain integer, no commas — format as `0` |
+| D | `branch` | Text / character — format as `@` |
 | E–N, P–U | All other fields | Per field type: dates as date, quantities as `#,##0.000`, amounts as `#,##0.00`, text as text |
-| **O** | **`doc` (document number)** | **Plain integer, no commas — format as `0`** |
+| O | `doc` (document number) | Plain integer, no commas — format as `0` |
 
-`companynumber`, `longaccount`, and `branch` are JD Edwards identifiers and account codes that must be preserved exactly as exported — numeric formatting would strip leading zeros or alter the display. `ukid` and `doc` are system-generated record and document identifiers, not quantities or amounts; comma formatting misrepresents them and makes them harder to cross-reference in JD Edwards.
-
-| Highlight | Color | Hex | Rows |
-|---|---|---|---|
-| Root cause | Red | `FFE0E0` | The specific transaction rows directly responsible for the variance |
-| Related | Amber | `FFD966` | PI/PV revaluation rows that drove cost shifts; rows bracketing the cost inflection point |
-
-Only problem rows are highlighted. Informational rows (IT transfers, Curr bal, Beg bal, normal OV/PV pairs) are not highlighted.
-
-**Sheet 2 — Transaction Details (original sheet, highlights added)**
-
-| Section | Content |
-|---|---|
-| **Document** | Item number, lot, branch, location, GL account, GL class, UOM, analysis date, variance amounts |
-| **Cost Method** | Cost method code from `dt` on Curr bal row (`ukid = 999999999999`); method name; key implications for this item |
-| **Cost Level** | Cost level from `dt` on Beg bal row (`ukid = 0`); level name (1 = item/branch, 2 = item/branch with location/lot qty, 3 = item/branch/location/lot); reconciliation scope note |
-| **Beginning Balance** | Beg bal date, qty, amount, implied cost; internal consistency check result; note if gap may pre-date RR go-live |
-| **Transaction Summary** | Net qty and val by dt code; confirmation that net qty ties to Curr bal |
-| **Cost Evolution** | Chronological table of distinct cost values, dates, and transaction types; identification of inflection points (dollar-only items) |
-| **WAC Analysis** | OV/PV pair trace; IB row review; negative quantity check; opening vs current WAC comparison (WAC items only) |
-| **Root Cause** | Section 5 pattern classification; two-component breakdown where applicable; specific dates, costs, and quantities |
-| **Evidence** | Row numbers from the source sheet supporting the finding |
-| **Corrective Action** | Full JDE correction steps per Section 6; Re-Roll step per Section 7; "None required" if reconciled |
-| **Preventive Actions** | Follow-up items: cost review, BOM validation, WAC monitoring, negative quantity controls |
-
-Set column widths to fixed widths sized for readability — do not auto-stretch to full sheet width. Enable wrap text on all cells. Calculate row heights from content length and column width, not a flat default. Resolution tables use a two-column layout: condition in cols A–B, action in cols C–E. Priority colours: P1 fill `FFE0E0` / text `8B0000`, P2 fill `FFD966` / text `6B3A00` — lighter fills and non-bold text for readability. Source sheet: AutoFilter on row 2, freeze panes at row 3, highlight only problem rows (red and amber) — do not highlight informational rows. No freeze panes on the analysis sheet. Grid lines disabled on the analysis sheet. Include a colour key section at the top of the analysis sheet. Include a floating text box (col F → col R, rows 1–18, no fill, no border) with sections: title 16pt bold, What is a Cardex Variance? / Why does it matter? / What does this workbook show? / About this workbook — headings 13pt bold, body 12pt. See formatting spec Section 6.7.
+`companynumber`, `longaccount`, and `branch` are JD Edwards identifiers that must be preserved exactly as exported — numeric formatting would strip leading zeros or alter the display. `ukid` and `doc` are system-generated identifiers, not quantities; comma formatting misrepresents them.
 
 ### 1.4 Notes and Limitations
 
 - Claude analyzes the data as exported. If the source report was generated with filters applied or sections suppressed, the analysis reflects only what is present in the file.
-- The highlight colors applied by Claude are standard fills. If the original file already uses cell fill colors for other purposes, advise Claude of the existing convention in the prompt so it can use different colors.
 - For very large Item Roll Forward files spanning many items or periods, include a note in the prompt identifying the specific item number and lot to focus on if only one item is under investigation.
-- Claude will note findings that require further investigation in JD Edwards (e.g., verifying a PI revaluation authorization, querying F0911 for a specific batch) that cannot be completed from the Excel file alone. These will appear as open questions in the Corrective Action section of the analysis sheet.
+- Claude will note findings that require further investigation in JD Edwards (e.g., verifying a PI revaluation authorization, querying F0911 for a specific batch) that cannot be completed from the Excel file alone. These will appear inside the FIX card or as Related evidence rows pointing to the source.
 - Amounts in the exported file may display with floating-point precision artifacts (e.g., `$139.50660000000001`). Claude rounds all amounts to two decimal places for analysis and reporting purposes. These artifacts do not affect the accuracy of the analysis.
-- The correction amounts and IA field values provided in the output are based on the exported data. Always verify the current JDE on-hand balance independently before posting any adjustment.
+- The correction amounts in the output reflect the variance present at the time the workbook was generated. The variance in JDE may have moved since then (corrections applied, new transactions posted), which is why FIX Step 2 directs the analyst to refresh the variance numbers from JDE before posting any correction.
+- The priority level on the variance card is computed mechanically from `max(qty_ratio, amt_ratio)` against the thresholds in Section 6.4.1 of the formatting spec, where each ratio is `|variance| / mean(|change|)` for that dimension. A reviewer who disagrees with the computed priority can override it manually, but should also question whether the threshold rule needs adjustment in the guide rather than just the one workbook.
 
 
 ## Section 2: What Is a Cardex Variance?

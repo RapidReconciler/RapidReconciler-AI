@@ -6,66 +6,76 @@
 
 ## Section 1: Using Claude for Automated Analysis
 
-Claude can perform the full Section 7 analysis procedure automatically and return a single updated `.xlsx` file with the findings written directly into the workbook and all problem rows highlighted. This eliminates manual annotation and ensures consistent output across analysts.
+Claude can perform a full Transaction Detail analysis automatically and return an updated `.xlsx` workbook with the analysis written to a card-layout sheet, the source sheet highlighted with priority colours and equipped with jump-to-row hyperlinks, and the priority level computed from the variance against the document amount. This eliminates manual annotation and ensures consistent output across analysts.
 
 ### 1.1 First Request in a Session
 
-On the first request, upload **both files** together:
+On the first request, upload **three files** together:
 
-1. This guide (`.md`)
-2. The Transaction Detail report (`.xlsx`)
+1. This guide (`transaction-detail-analysis.md`)
+2. The shared formatting spec (`excel-output-formatting-spec.md`)
+3. The Transaction Detail report (`.xlsx`)
 
 Then use the following prompt:
 
-> *"Analyze this file using the guide as a template, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis' and all problem rows highlighted."*
+> *"Analyze this file using the Transaction Detail Analysis Guide and the formatting spec, then produce an updated copy of the Excel file with the card-layout analysis sheet and the source sheet with priority highlights."*
 
-Claude will read the guide to understand the report structure, variance patterns, and processing option reference, work through the Section 7 procedure against the Excel data, highlight the relevant rows on the Transaction Details sheet, and add the analysis as a new sheet in the same workbook. The returned file is a drop-in replacement for the original -- the Transaction Details sheet is unchanged except for the highlights.
+Claude will read both documents, work through the analysis procedure against the Excel data, build the workbook per the formatting spec, and return the file.
 
 ### 1.2 Follow-On Requests in the Same Session
 
-Once the guide has been uploaded in a session, Claude retains it in context for the remainder of the conversation. Subsequent Transaction Detail reports **do not require the guide to be uploaded again**. Simply upload the new `.xlsx` and use a shorter prompt:
+Once the guide and formatting spec have been uploaded in a session, Claude retains them in context for the remainder of the conversation. Subsequent Transaction Detail reports **do not require re-uploading**. Simply upload the new `.xlsx` and use a shorter prompt:
 
 > *"Analyze this file and return it with the analysis sheet and highlights."*
 
-Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide again -- Claude will use it and ignore the duplication.
+Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide and the formatting spec again — Claude will use them and ignore the duplication.
 
 ### 1.3 Output Specification
 
-**File naming:** Name the output file `Transaction Detail Analysis for [Doc] [DT].xlsx` — where `[Doc]` is the document number and `[DT]` is the document type from the Doc Header. Example: `Transaction Detail Analysis for 576728 IC.xlsx`.
+The output workbook follows the conventions defined in the **shared formatting spec** (`excel-output-formatting-spec.md`) — file naming pattern, sheet structure, card layout, colour palette, priority calculation, source-sheet handling, and floating text box specifications all live in that document so they stay consistent across all RapidReconciler analysis guides.
 
-The returned workbook will contain two sheets:
+This section captures only the **Transaction Detail-specific** content that the formatting spec needs from this guide.
 
-**Sheet 1 (left, opens first) — RR Analysis (new sheet)**
+**File name:** `Transaction Detail Analysis for {doc} {DT}.xlsx`. Example: `Transaction Detail Analysis for DOC-00001 RI.xlsx` or `Transaction Detail Analysis for 576728 IC.xlsx`. `{doc}` is the document number from the Doc Header; `{DT}` is the document type code.
 
-| Highlight | Color | Rows |
-|---|---|---|
-| Root cause | Red | The specific F4111 line item(s) directly responsible for the variance |
-| Related | Orange | Doc Header; the corresponding F0911 Inv Acct entries for the affected GL class and batch; the RR Summary rows showing the unmatched cardex and orphaned GL amounts |
+**Source sheet name:** `Transaction Details`. **Sorting is not required** — the Transaction Detail export is grouped by section (Doc Header, F4111 Data, F0911 Inv Acct, F0911 Exp Acct, RR Summary, Header Comp, Receipts, DMAAs) rather than sequenced by time. Apply AutoFilter on the header row (row 2) and freeze panes at A3 per the formatting spec; do not reorder rows.
 
-**Sheet 2 — Transaction Details (original sheet, highlights added)**
+**Headline content** (Section 6.1 of the formatting spec):
 
-The analysis sheet will follow this structure:
+> `Document {doc} ({DT name}) — Order {order} ({OT})`
 
-| Section | Content |
-|---|---|
-| **Document** | Document number, type, order number, order type, company, period, variance amount |
-| **Unassigned Check** | Whether an Unassigned section is present; true cardex total if understated |
-| **RR Summary Findings** | CardexAmount, LedgerAmount, Variance; whether the pattern is full cardex-only, GL-only, partial, GL-excess, or account/period mismatch; account-level breakdown by GL class and batch showing which combinations reconcile and which do not |
-| **Root Cause** | Section 5 pattern classification; specific item, batch, GL class, and account involved |
-| **Evidence** | Row numbers from the Transaction Details sheet that support the finding |
-| **Processing Options — Suggested Causes** | For each program that could have produced the variance, the specific processing options or configuration settings to check, the variance sub-type each would produce, and why each is a plausible cause. Presented as suggestions only, with a note that multiple program versions may be in use and that settings must be confirmed in JD Edwards before drawing conclusions. |
-| **Recommended Action** | Corrective action from Section 5; journal entry details where applicable; any further investigation steps required before posting |
+Transaction Detail analysis is document-focused, so the document identification is the page anchor. Spell out the DT and OT codes (RI = Sales Invoice, OV = Purchase Order Receipt, IM = Material Issue, etc.) — see Section 9 of this guide for the full DT reference.
 
-Set column widths to fixed widths sized for readability — do not auto-stretch to full sheet width. Enable wrap text on all cells. Calculate row heights from content length and column width, not a flat default. Resolution tables use a two-column layout: condition in cols A–B, action in cols C–E. Priority colours: P1 fill `FFE0E0` / text `8B0000`, P2 fill `FFD966` / text `6B3A00` — lighter fills and non-bold text for readability. Transaction Details source sheet: AutoFilter on row 2, freeze panes at row 3, row highlights matching analysis priority colours. No freeze panes on the analysis sheet. Grid lines disabled on the analysis sheet. Include a colour key section at the top of the analysis sheet. Include a floating text box (col F → col R, rows 1–18, no fill, no border) with sections: title 16pt bold, What is a Transaction Detail Analysis? / Why does it matter? (begins: "When a transaction variance appears in RapidReconciler...") / What does this workbook show? / About this workbook — headings 13pt bold, body 12pt. See formatting spec Section 6.7.
+**Variance subline** (Section 6.2): a single sentence that describes the gap, e.g., "GL credit of $338.00 has no inventory match" or "Account mismatch — $1,250 cardex on inventory, $1,250 GL on COGS."
+
+**Secondary context strip** (Section 6.3) carries: Company, GL Date, Period.
+
+**Pattern label** for the variance card (Section 6.4): use the Section 5 pattern classification followed by a one-line plain-English explanation. Examples:
+
+- `Pattern:  GL-Only Entry — Non-stock line posted to inventory account`
+- `Pattern:  Account Mismatch — Receipt landed on COGS instead of inventory`
+- `Pattern:  Period Mismatch — Sales Update ran in a later period than the cardex`
+
+**Priority denominator** (Section 6.4.1): `max(|CardexAmount|, |LedgerAmount|)` from the RR Summary line. The label in the rationale string is "document amount" — full string format: `${variance:.2f} variance vs ${denom:.2f} document amount = {ratio:.0f}% → Priority {N}`. When both Cardex and Ledger are zero (no document found), treat ratio as 100% / Priority 1.
+
+**FIX card content** for Transaction Detail variances generally takes one of two shapes:
+
+1. **Posting-correction case** (the variance is real and needs a journal entry). Structure: `DR / CR` journal entry on indented lines as Step 1, followed by investigation and control steps. Include a materiality reminder if the amount is small or the document is old.
+
+2. **Configuration-correction case** (the variance is symptomatic of a misconfigured AAI, processing option, or GL class code). Structure: identify the configuration item to fix as Step 1, the verification step as Step 2, and the correction-or-suspension decision as Step 3.
+
+In both cases, include a step that has the user verify the current state of the document on the Transactions page in RapidReconciler before posting any correction, since the variance may have moved since this analysis was generated.
+
+**Suggested causes from Section 8 Quick Lookup** should be distilled into the WHY card body, not listed as a separate section. The full lookup table lives in this guide for the analyst to reference; the workbook only needs the most likely cause.
 
 ### 1.4 Notes and Limitations
 
 - Claude analyzes the data as exported. If the source report was generated with filters applied or sections suppressed, the analysis reflects only what is present in the file.
-- The highlight colors applied by Claude are standard fills. If the original file already uses cell fill colors for other purposes, advise Claude of the existing convention in the prompt so it can use different colors.
 - For very large Transaction Detail reports spanning many documents or periods, include a note in the prompt identifying the specific document number to focus on if only one transaction is under investigation.
-- Claude will note if a finding requires further investigation in JD Edwards (e.g., querying F0911 across all accounts for a specific batch or GL document number) that cannot be completed from the Excel file alone. These items will appear as open questions in the Recommended Action section of the analysis sheet.
+- Claude will note if a finding requires further investigation in JD Edwards (e.g., querying F0911 across all accounts for a specific batch or GL document number) that cannot be completed from the Excel file alone. These items will appear inside the FIX card or as Related evidence rows.
 - Amounts in the exported file may display with floating-point precision artifacts (e.g., $636.20000000000005). Claude rounds all amounts to two decimal places for analysis and reporting purposes. These artifacts do not affect the accuracy of the analysis.
 - Processing option suggestions are drawn from the Section 8 Quick Lookup table in this guide. They identify candidate settings to investigate, not confirmed causes. The correct version settings must be verified in JD Edwards before any conclusions are drawn.
+- The priority level on the variance card is computed mechanically from `|variance| / max(|cardex|, |ledger|)` against the thresholds in Section 6.4.1 of the formatting spec. A small variance against a large document is genuinely lower priority than the same variance on a small document, even when both look like "$X has a problem" at first glance.
 
 ## Overview
 

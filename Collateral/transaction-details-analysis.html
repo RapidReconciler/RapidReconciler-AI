@@ -1,0 +1,165 @@
+﻿Gemini
+Generate HTML Report from CSV
+Conversation with Gemini
+Can you make an html file from the first tab of content
+
+Your HTML file is ready. I have structured the data from the Analysis tab into a professional report format, including a highlighted variance section, detailed root cause analysis, and an evidence traceability table.
+HTML icon
+ Transactio...sis_Report 
+HTML
+
+Gemini is still syncing with your apps. Your responses will be more personalised soon.
+
+
+
+
+Gemini is AI and can make mistakes.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Analysis Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        header {
+            border-bottom: 3px solid #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin: 0;
+        }
+        h2 {
+            color: #e74c3c;
+            font-size: 18px;
+            margin-top: 5px;
+        }
+        .meta-info {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+        .variance-box {
+            background-color: #fdf2f2;
+            border-left: 5px solid #e74c3c;
+            padding: 15px;
+            margin-bottom: 30px;
+        }
+        .variance-amount {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        .section-title {
+            background-color: #ecf0f1;
+            padding: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 25px;
+            border-radius: 4px;
+        }
+        .section-content {
+            padding: 10px 0;
+            white-space: pre-line;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+        }
+        .severity-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            background-color: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header><h1>Document DOC-00001 (RI Sales Invoice) — Order ORD-00001 (SO)</h1>        <h2>GL credit of $338.00 has no inventory match</h2></header>        <div class='meta-info'>Company  00010          GL Date  Aug 11 2016          Period  Apr 20 2026</div>
+        <div class="variance-box">
+            <div style="font-weight:bold; margin-bottom:5px;">VARIANCE  (Priority 1 — investigate immediately)</div>
+            <div class="variance-amount">$338.00</div>
+            <div style="margin-top:10px;">Pattern:  GL-Only Entry — Non-stock line posted to inventory account
+
+$338.00 variance vs $338.00 document amount = 100%  →  Priority 1</div>
+        </div>
+
+        <div class="section-title">1.  WHAT happened</div>
+        <div class="section-content">An IB-batch journal entry posted a $338.00 credit to inventory account BU1.142000 — but no cardex (F4111) row exists for this document.
+
+RapidReconciler flagged the entry with the comment “Non stock line in Inv acct,” confirming the GL side is real and the cardex side is empty.  The entire $338 GL entry is the variance.</div>
+        
+        <div class="section-title">2.  WHY it happened</div>
+        <div class="section-content">Order line 13 is line type N (non-stock), item ITEM-00004, GL class BUYP, 1,000 EA × $0.338.  Non-stock lines should never write a cardex record and should never post to a balance-sheet inventory account.
+
+Someone created IB batch BATCH-00001 that booked the value to BU1.142000 instead of the correct COGS or expense account.  A secondary indicator on Header Comp line 4 (doc 0, GL date 2000-01-01, comment “sales ext cost error calc = 338.0000”) suggests an unprocessed line that never completed Sales Update — this is likely the same value that was later booked manually via the IB batch.</div>
+        
+        <div class="section-title">3.  HOW to fix it</div>
+        <div class="section-content">Step 1.  Reclassify the $338.00 from inventory to COGS by posting this journal entry:
+    DR  BU2.501010  COGS (AAI 4220, GL class BUYP)  $338.00
+    CR  BU1.142000  Inventory (AAI 4152, GL class BUYP)  $338.00
+
+Step 2.  Investigate IB batch BATCH-00001 — identify who created it and why it was coded to the inventory account.  A non-stock line should never reach a balance-sheet inventory account, so an IB batch posting one is a control gap that should be closed.
+
+Step 3.  Investigate Header Comp line 4 (doc 0, GL date 2000-01-01).  Confirm in JD Edwards whether this line was meant to be processed through Sales Update.  If yes, the IB-batch correction has already fixed the GL impact and no further action is needed; if no, work with the order desk to close the line cleanly.
+
+Step 4.  Add GL class FT60 to DMAAI model table 4152.  Low priority — all FT60 freight lines on this order carry zero cost — but worth doing for completeness so future freight transactions reconcile cleanly.
+
+Step 5.  At $338 and approximately 10 years old (August 2016), evaluate the materiality of this entry against your threshold before posting the correction.  If below threshold, consider suspending in RapidReconciler instead of posting a correcting entry.</div>
+        
+        <div class="section-title"></div>
+        <div class="section-content">Evidence  (click to jump to the row on the Transaction Details sheet)</div>
+        
+        <div class="section-title">GL credit  →  Row 8</div>
+        <div class="section-content">Order line 13  →  Row 21</div>
+        
+        <div class="section-title">Evidence & Traceability</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Evidence Source</th>
+                    <th>Details</th>
+                    <th>Role/Severity</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+Transaction_Analysis_Report.html
+Displaying Transaction_Analysis_Report.html.
