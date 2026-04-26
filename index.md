@@ -42,7 +42,7 @@ The result produces AI-generated insights: root causes, recommended actions, and
 
 ---
 
-## Technical Documents
+## Technical Documentation
 
 These technical documents provide detailed guidance on the installation, configuration, and maintenance of RapidReconciler. They cover everything from initial setup requirements to server migration and certificate management. Whether you're a system administrator responsible for maintaining the application or an IT professional involved in the deployment process, these resources will help ensure a smooth and successful implementation of RapidReconciler in your JD Edwards environment.
 
@@ -51,13 +51,13 @@ These technical documents provide detailed guidance on the installation, configu
 | [Technical Requirements](/RapidReconciler-AI/Collateral/tech-requirements.html) | Installation and configuration requirements |
 | [Certificate Management](/RapidReconciler-AI/Collateral/certificate-management.html) | SSL certificate scope, DNS 'A' record configuration, certificate renewal process, responsibilities by role, and troubleshooting common connectivity issues |
 | [Installing the Database](MDS/Installing_production_database.md) | Step-by-step database installation including skill sets, architecture overview, SSISDB catalog setup, SSIS package deployment, initial data load, and security requirements |
-| [Installing a Client in VALC](MDS/installing-valc.md) | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
+| [Client Management](MDS/installing-valc.md) | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
 | [Server Migration Guide](MDS/server-migration.md) | Moving RapidReconciler to a new dedicated or separate server including prerequisites, database backup and restore, SSIS package migration, SQL Agent job setup, and VALC and Cloudflare updates |
 
 
 ---
 
-## Getting Started with RapidReconciler
+## Getting Started with the Application
 
 These documents provide an introduction to RapidReconciler, including its benefits, how it compares to traditional reconciliation methods in JD Edwards, and the basics of using the application. Whether you're new to RapidReconciler or looking for a refresher on its core features, these resources will help you get up to speed quickly and start leveraging the application for more efficient reconciliations.
 
