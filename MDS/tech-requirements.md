@@ -13,7 +13,6 @@
 - [RR Application Server](#rr-application-server)
 - [End User PC](#end-user-pc)
 - [JD Edwards Information](#jd-edwards-information)
-- [Table Listing](#table-listing)
 - [Appendix A -- Creating the Integration Services Catalog](#appendix-a--creating-the-integration-services-catalog)
 - [Appendix B -- Proof of Concept Requirements](#appendix-b--proof-of-concept-requirements)
 
@@ -133,59 +132,36 @@ Integration Services is typically installed and run on the database server. Howe
 
 ## JD Edwards Information
 
+> **Note:** The values below are to be recorded and submitted to GSI for product configuration during installation.
+
 ### Data Dictionary Variables
 
-| Variable | Description | Typical Value |
-|---|---|---|
-| ECST | Decimal places for extended cost | 2 |
-| UNCS | Decimal places for unit cost | 4 |
-| PQOH | Decimal places for quantity on hand | — |
-| TRQT | Decimal places for transaction quantities in cardex | — |
+| Variable | Description | Typical Value | Customer Value |
+|---|---|---|---|
+| ECST | Decimal places for extended cost | 2 | _____________ |
+| UNCS | Decimal places for unit cost | 4 | _____________ |
+| PQOH | Decimal places for quantity on hand | — | _____________ |
+| TRQT | Decimal places for transaction quantities in cardex | — | _____________ |
 
 ### JD Edwards Connection Details
 
-- Name or IP address of the JDE data server or data warehouse
-- Database credentials *(use rapidrec/rapidrec if possible)*
-- JDE server type: I-Series, Oracle, or Microsoft SQL Server
-- Table qualifier name (e.g., `proddta`)
-
----
-
-## Table Listing
-
-All tables below are accessed by RapidReconciler in **read-only** mode.
-
-| Table | Description |
+| Item | Customer Value |
 |---|---|
-| F0006 | Business Unit Master |
-| F0008 | Date Patterns |
-| F0010 | Company Master |
-| F0011 | Batch Headers |
-| F0013 | Currency Codes |
-| F0015 | Exchange Rates |
-| F0101 | Address Book (Vendor Names Only) |
-| F0901 | Account Master |
-| F0902 | Account Balances |
-| F0911 | Account Ledger |
-| F1113 | Currency Restatement |
-| F30026 | Cost Components |
-| F3106 | Work Order Cross Ref |
-| F4095 | D/M Accounting Instructions |
-| F4096 | Flex Accounting Rules |
-| F41001 | Inventory Constants |
-| F41002 | UOM Conversions |
-| F41003 | Standard Conversions |
-| F4101 | Item Master |
-| F4102 | Item Branch |
-| F41021 | Item Location |
-| F4105 | Cost Ledger |
-| F4108 | Lot Master |
-| F4111 | Item Ledger |
-| F4211 | Sales Order Details |
-| F42119 | Sales Order History |
-| F4311 | Purchase Order Details |
-| F43121 | Purchase Receipts |
-| F4801 | Work Order Headers |
+| Name or IP address of the JDE data server or data warehouse | _____________ |
+| Database username *(use `rapidrec` if possible)* | _____________ |
+| Database password *(use `rapidrec` if possible)* | _____________ |
+| JDE server type *(I-Series, Oracle, or Microsoft SQL Server)* | _____________ |
+| Table qualifier name *(e.g., `proddta`)* | _____________ |
+
+### Submitted By
+
+| Field | Value |
+|---|---|
+| Name | _____________ |
+| Title | _____________ |
+| Email | _____________ |
+| Phone | _____________ |
+| Date | _____________ |
 
 ---
 
@@ -227,33 +203,36 @@ To provide data to GSI for a proof of concept, follow the steps below.
 
 ### Table Extract Statements
 
-| Table | Description | Select Statement |
+All tables below are accessed by RapidReconciler in **read-only** mode. The Select Statement column is provided for proof of concept extracts; tables without a Select Statement are referenced by RapidReconciler but are not part of the proof of concept extract.
+
+| Table | Description | Select Statement for Proof of Concept |
 |---|---|---|
 | F0006 | Business Unit Master | `SELECT * FROM F0006` |
 | F0008 | Fiscal Date Patterns | `SELECT * FROM F0008` |
 | F0010 | Company Master | `SELECT * FROM F0010` |
 | F0011 | Batch Headers | `SELECT * FROM F0011 WHERE ICDICJ >= 125001` |
 | F0013 | Currency Codes | `SELECT * FROM F0013` |
+| F0015 | Currency Exchange Rates | `SELECT * FROM F0015 WHERE CXEFT >= 125001` |
+| F0101 | Address Book (Vendor Names Only) | `SELECT ABAN8, ABALPH FROM F0101` |
 | F0901 | Account Master | `SELECT * FROM F0901` |
 | F0902 | Account Balances | `SELECT GBAID, GBCO, GBFY, GBLT, SUM(GBAPYC), SUM(GBAN01–GBAN14) FROM F0902 WHERE GBFY BETWEEN 11 AND 40 AND GBLT = 'AA' GROUP BY GBAID, GBCO, GBFY, GBLT` |
 | F0911 | Account Ledger | `SELECT * FROM F0911 WHERE GLLT = 'AA' AND GLDGJ >= 125001` |
-| F3106 | Work Order Cross Ref | `SELECT * FROM F3106 WHERE SDDICJ >= 125001` |
+| F1113 | Currency Restatement Rates | `SELECT * FROM F1113 WHERE C1EFT >= 125001` |
 | F30026 | Cost Components | `SELECT * FROM F30026 WHERE IELEDG = '07'` |
+| F3106 | Work Order Cross Ref | `SELECT * FROM F3106 WHERE SDDICJ >= 125001` |
 | F4095 | D/M Accounting Instructions | `SELECT * FROM F4095` |
 | F4096 | Flex Accounting Instructions | `SELECT * FROM F4096` |
 | F41001 | Inventory Constants | `SELECT * FROM F41001` |
 | F41002 | UOM Conversions | `SELECT * FROM F41002` |
-| F41003 | UOM Conversions | `SELECT * FROM F41003` |
+| F41003 | Standard Conversions | `SELECT * FROM F41003` |
 | F4101 | Item Master | `SELECT * FROM F4101` |
-| F41021 | Item Balances | `SELECT * FROM F41021` |
-| F4111 | Item Ledger | `SELECT * FROM F4111 WHERE ILCRDJ >= 124350` |
-| F4105 | Cost Ledger | `SELECT * FROM F4105 WHERE COCSIN = 'I'` |
-| F4211 | Sales Order Details | `SELECT * FROM F4211 WHERE SDUPMJ >= 124350` |
-| F42119 | Sales History | `SELECT * FROM F42119 WHERE SDUPMJ >= 124350` |
-| F4311 | Purchase Order Details | `SELECT * FROM F4311 WHERE PDTRDJ >= 124350` |
-| F4801 | Work Order Headers | `SELECT * FROM F4801 WHERE WAUPMJ >= 125001` |
 | F4102 | Item Branch Plant | `SELECT * FROM F4102` |
-| F0015 | Currency Exchange Rates | `SELECT * FROM F0015 WHERE CXEFT >= 125001` |
-| F1113 | Restatement Rates | `SELECT * FROM F1113 WHERE C1EFT >= 125001` |
+| F41021 | Item Location / Balances | `SELECT * FROM F41021` |
+| F4105 | Cost Ledger | `SELECT * FROM F4105 WHERE COCSIN = 'I'` |
+| F4108 | Lot Master | |
+| F4111 | Item Ledger | `SELECT * FROM F4111 WHERE ILCRDJ >= 124350` |
+| F4211 | Sales Order Details | `SELECT * FROM F4211 WHERE SDUPMJ >= 124350` |
+| F42119 | Sales Order History | `SELECT * FROM F42119 WHERE SDUPMJ >= 124350` |
+| F4311 | Purchase Order Details | `SELECT * FROM F4311 WHERE PDTRDJ >= 124350` |
 | F43121 | Purchase Order Receipts | `SELECT * FROM F43121` |
-| F0101 | Address Book | `SELECT ABAN8, ABALPH FROM F0101` |
+| F4801 | Work Order Headers | `SELECT * FROM F4801 WHERE WAUPMJ >= 125001` |

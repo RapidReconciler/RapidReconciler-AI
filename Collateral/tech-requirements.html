@@ -115,6 +115,16 @@ ol.process-list li::before { content:counter(step-counter); width:22px; height:2
 /* INLINE CODE */
 code { font-family:'DM Mono',monospace; font-size:11px; background:var(--blue-pale); color:var(--blue); padding:1px 5px; border-radius:3px; border:1px solid var(--rule); }
 
+/* Fillable form inputs (for customer-recorded values) */
+.fill-input { font-family:'DM Mono',monospace; font-size:11px; color:var(--navy); width:100%; padding:4px 8px; border:none; border-bottom:1px dashed var(--rule); background:transparent; outline:none; transition:border-color 0.15s, background 0.15s; }
+.fill-input:hover { border-bottom-color:var(--blue); }
+.fill-input:focus { border-bottom-color:var(--orange); background:var(--orange-lt); }
+.fill-cell { background:#fafcff; }
+@media print {
+  .fill-input { border-bottom:1px solid var(--navy); background:transparent !important; }
+  .fill-cell { background:transparent !important; }
+}
+
 /* ── EXTENDED COMPONENTS (specific to this document) ── */
 
 /* Spec row — key/value pair for quick-scan requirement lists */
@@ -216,7 +226,6 @@ code { font-family:'DM Mono',monospace; font-size:11px; background:var(--blue-pa
   <a class="toc-item" href="#app-server">App Server</a>
   <a class="toc-item" href="#end-user">End User PC</a>
   <a class="toc-item" href="#jde">JD Edwards</a>
-  <a class="toc-item" href="#tables">Table Listing</a>
   <a class="toc-item" href="#appendix-a">Appendix A</a>
   <a class="toc-item" href="#appendix-b">Appendix B</a>
 </div>
@@ -396,68 +405,48 @@ code { font-family:'DM Mono',monospace; font-size:11px; background:var(--blue-pa
     <div class="section-label">JD Edwards</div>
     <h2>JD Edwards Information</h2>
 
+    <div class="callout callout-info">
+      <span class="callout-label">For GSI Submission</span>
+      <p>The values recorded below are to be submitted to GSI for product configuration during installation.</p>
+    </div>
+
     <h3>Data Dictionary Variables</h3>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Variable</th><th>Description</th><th>Typical Value</th></tr></thead>
+        <thead><tr><th>Variable</th><th>Description</th><th>Typical Value</th><th>Customer Value</th></tr></thead>
         <tbody>
-          <tr><td>ECST</td><td>Decimal places for extended cost</td><td>2</td></tr>
-          <tr><td>UNCS</td><td>Decimal places for unit cost</td><td>4</td></tr>
-          <tr><td>PQOH</td><td>Decimal places for quantity on hand</td><td>—</td></tr>
-          <tr><td>TRQT</td><td>Decimal places for transaction quantities in cardex</td><td>—</td></tr>
+          <tr><td>ECST</td><td>Decimal places for extended cost</td><td>2</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Customer value for ECST"></td></tr>
+          <tr><td>UNCS</td><td>Decimal places for unit cost</td><td>4</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Customer value for UNCS"></td></tr>
+          <tr><td>PQOH</td><td>Decimal places for quantity on hand</td><td>—</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Customer value for PQOH"></td></tr>
+          <tr><td>TRQT</td><td>Decimal places for transaction quantities in cardex</td><td>—</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Customer value for TRQT"></td></tr>
         </tbody>
       </table>
     </div>
 
-    <h3>Connection Details to Collect</h3>
-    <ul class="spec-list">
-      <li class="spec-row"><span class="spec-key">JDE Data Server</span><span class="spec-val">Name or IP address of the JDE data server or data warehouse</span></li>
-      <li class="spec-row"><span class="spec-key">Database Credentials</span><span class="spec-val">Use <code>rapidrec / rapidrec</code> if possible</span></li>
-      <li class="spec-row"><span class="spec-key">Server Type</span><span class="spec-val">I-Series, Oracle, or Microsoft SQL Server</span></li>
-      <li class="spec-row"><span class="spec-key">Table Qualifier</span><span class="spec-val">e.g. <code>proddta</code></span></li>
-    </ul>
-  </div>
-
-
-  <!-- ── TABLE LISTING ───────────────────────────────────── -->
-  <div class="section" id="tables">
-    <div class="section-label">Table Listing</div>
-    <h2>JD Edwards Tables</h2>
-    <p>All tables below are accessed by RapidReconciler in <strong style="color:var(--navy);">read-only</strong> mode.</p>
-
+    <h3>Connection Details</h3>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Table</th><th>Description</th></tr></thead>
+        <thead><tr><th style="width:55%;">Item</th><th>Customer Value</th></tr></thead>
         <tbody>
-          <tr><td>F0006</td><td>Business Unit Master</td></tr>
-          <tr><td>F0008</td><td>Date Patterns</td></tr>
-          <tr><td>F0010</td><td>Company Master</td></tr>
-          <tr><td>F0011</td><td>Batch Headers</td></tr>
-          <tr><td>F0013</td><td>Currency Codes</td></tr>
-          <tr><td>F0015</td><td>Exchange Rates</td></tr>
-          <tr><td>F0101</td><td>Address Book (Vendor Names Only)</td></tr>
-          <tr><td>F0901</td><td>Account Master</td></tr>
-          <tr><td>F0902</td><td>Account Balances</td></tr>
-          <tr><td>F0911</td><td>Account Ledger</td></tr>
-          <tr><td>F1113</td><td>Currency Restatement</td></tr>
-          <tr><td>F30026</td><td>Cost Components</td></tr>
-          <tr><td>F3106</td><td>Work Order Cross Ref</td></tr>
-          <tr><td>F4095</td><td>D/M Accounting Instructions</td></tr>
-          <tr><td>F4096</td><td>Flex Accounting Rules</td></tr>
-          <tr><td>F41001</td><td>Inventory Constants</td></tr>
-          <tr><td>F41002</td><td>UOM Conversions</td></tr>
-          <tr><td>F41003</td><td>Standard Conversions</td></tr>
-          <tr><td>F4101</td><td>Item Master</td></tr>
-          <tr><td>F4102</td><td>Item Branch</td></tr>
-          <tr><td>F41021</td><td>Item Location</td></tr>
-          <tr><td>F4105</td><td>Cost Ledger</td></tr>
-          <tr><td>F4108</td><td>Lot Master</td></tr>
-          <tr><td>F4111</td><td>Item Ledger</td></tr>
-          <tr><td>F4211</td><td>Sales Order Details</td></tr>
-          <tr><td>F42119</td><td>Sales Order History</td></tr>
-          <tr><td>F4311</td><td>Purchase Order Details</td></tr>
-          <tr><td>F43121</td><td>Purchase Receipts</td></tr>
-          <tr><td>F4801</td><td>Work Order Headers</td></tr>
+          <tr><td>Name or IP address of the JDE data server or data warehouse</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="JDE data server name or IP"></td></tr>
+          <tr><td>Database username <em>(use <code>rapidrec</code> if possible)</em></td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Database username"></td></tr>
+          <tr><td>Database password <em>(use <code>rapidrec</code> if possible)</em></td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Database password"></td></tr>
+          <tr><td>JDE server type <em>(I-Series, Oracle, or Microsoft SQL Server)</em></td><td class="fill-cell"><input class="fill-input" type="text" aria-label="JDE server type"></td></tr>
+          <tr><td>Table qualifier name <em>(e.g., <code>proddta</code>)</em></td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Table qualifier name"></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Submitted By</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:25%;">Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Name</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Submitter name"></td></tr>
+          <tr><td>Title</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Submitter title"></td></tr>
+          <tr><td>Email</td><td class="fill-cell"><input class="fill-input" type="email" aria-label="Submitter email"></td></tr>
+          <tr><td>Phone</td><td class="fill-cell"><input class="fill-input" type="tel" aria-label="Submitter phone"></td></tr>
+          <tr><td>Date</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Submission date"></td></tr>
         </tbody>
       </table>
     </div>
@@ -516,38 +505,40 @@ code { font-family:'DM Mono',monospace; font-size:11px; background:var(--blue-pa
     </div>
 
     <h3>Table Extract Statements</h3>
+    <p>All tables below are accessed by RapidReconciler in <strong style="color:var(--navy);">read-only</strong> mode. The Select Statement column is provided for proof of concept extracts; tables without a Select Statement are referenced by RapidReconciler but are not part of the proof of concept extract.</p>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Table</th><th>Description</th><th>Select Statement</th></tr></thead>
+        <thead><tr><th>Table</th><th>Description</th><th>Select Statement for Proof of Concept</th></tr></thead>
         <tbody>
           <tr><td>F0006</td><td>Business Unit Master</td><td><code>SELECT * FROM F0006</code></td></tr>
           <tr><td>F0008</td><td>Fiscal Date Patterns</td><td><code>SELECT * FROM F0008</code></td></tr>
           <tr><td>F0010</td><td>Company Master</td><td><code>SELECT * FROM F0010</code></td></tr>
           <tr><td>F0011</td><td>Batch Headers</td><td><code>SELECT * FROM F0011 WHERE ICDICJ >= 125001</code></td></tr>
           <tr><td>F0013</td><td>Currency Codes</td><td><code>SELECT * FROM F0013</code></td></tr>
+          <tr><td>F0015</td><td>Currency Exchange Rates</td><td><code>SELECT * FROM F0015 WHERE CXEFT >= 125001</code></td></tr>
+          <tr><td>F0101</td><td>Address Book (Vendor Names Only)</td><td><code>SELECT ABAN8, ABALPH FROM F0101</code></td></tr>
           <tr><td>F0901</td><td>Account Master</td><td><code>SELECT * FROM F0901</code></td></tr>
           <tr><td>F0902</td><td>Account Balances</td><td><code>SELECT GBAID, GBCO, GBFY, GBLT, SUM(GBAPYC), SUM(GBAN01–GBAN14) FROM F0902 WHERE GBFY BETWEEN 11 AND 40 AND GBLT = 'AA' GROUP BY GBAID, GBCO, GBFY, GBLT</code></td></tr>
           <tr><td>F0911</td><td>Account Ledger</td><td><code>SELECT * FROM F0911 WHERE GLLT = 'AA' AND GLDGJ >= 125001</code></td></tr>
-          <tr><td>F3106</td><td>Work Order Cross Ref</td><td><code>SELECT * FROM F3106 WHERE SDDICJ >= 125001</code></td></tr>
+          <tr><td>F1113</td><td>Currency Restatement Rates</td><td><code>SELECT * FROM F1113 WHERE C1EFT >= 125001</code></td></tr>
           <tr><td>F30026</td><td>Cost Components</td><td><code>SELECT * FROM F30026 WHERE IELEDG = '07'</code></td></tr>
+          <tr><td>F3106</td><td>Work Order Cross Ref</td><td><code>SELECT * FROM F3106 WHERE SDDICJ >= 125001</code></td></tr>
           <tr><td>F4095</td><td>D/M Accounting Instructions</td><td><code>SELECT * FROM F4095</code></td></tr>
           <tr><td>F4096</td><td>Flex Accounting Instructions</td><td><code>SELECT * FROM F4096</code></td></tr>
           <tr><td>F41001</td><td>Inventory Constants</td><td><code>SELECT * FROM F41001</code></td></tr>
           <tr><td>F41002</td><td>UOM Conversions</td><td><code>SELECT * FROM F41002</code></td></tr>
-          <tr><td>F41003</td><td>UOM Conversions</td><td><code>SELECT * FROM F41003</code></td></tr>
+          <tr><td>F41003</td><td>Standard Conversions</td><td><code>SELECT * FROM F41003</code></td></tr>
           <tr><td>F4101</td><td>Item Master</td><td><code>SELECT * FROM F4101</code></td></tr>
-          <tr><td>F41021</td><td>Item Balances</td><td><code>SELECT * FROM F41021</code></td></tr>
-          <tr><td>F4111</td><td>Item Ledger</td><td><code>SELECT * FROM F4111 WHERE ILCRDJ >= 124350</code></td></tr>
-          <tr><td>F4105</td><td>Cost Ledger</td><td><code>SELECT * FROM F4105 WHERE COCSIN = 'I'</code></td></tr>
-          <tr><td>F4211</td><td>Sales Order Details</td><td><code>SELECT * FROM F4211 WHERE SDUPMJ >= 124350</code></td></tr>
-          <tr><td>F42119</td><td>Sales History</td><td><code>SELECT * FROM F42119 WHERE SDUPMJ >= 124350</code></td></tr>
-          <tr><td>F4311</td><td>Purchase Order Details</td><td><code>SELECT * FROM F4311 WHERE PDTRDJ >= 124350</code></td></tr>
-          <tr><td>F4801</td><td>Work Order Headers</td><td><code>SELECT * FROM F4801 WHERE WAUPMJ >= 125001</code></td></tr>
           <tr><td>F4102</td><td>Item Branch Plant</td><td><code>SELECT * FROM F4102</code></td></tr>
-          <tr><td>F0015</td><td>Currency Exchange Rates</td><td><code>SELECT * FROM F0015 WHERE CXEFT >= 125001</code></td></tr>
-          <tr><td>F1113</td><td>Restatement Rates</td><td><code>SELECT * FROM F1113 WHERE C1EFT >= 125001</code></td></tr>
+          <tr><td>F41021</td><td>Item Location / Balances</td><td><code>SELECT * FROM F41021</code></td></tr>
+          <tr><td>F4105</td><td>Cost Ledger</td><td><code>SELECT * FROM F4105 WHERE COCSIN = 'I'</code></td></tr>
+          <tr><td>F4108</td><td>Lot Master</td><td></td></tr>
+          <tr><td>F4111</td><td>Item Ledger</td><td><code>SELECT * FROM F4111 WHERE ILCRDJ >= 124350</code></td></tr>
+          <tr><td>F4211</td><td>Sales Order Details</td><td><code>SELECT * FROM F4211 WHERE SDUPMJ >= 124350</code></td></tr>
+          <tr><td>F42119</td><td>Sales Order History</td><td><code>SELECT * FROM F42119 WHERE SDUPMJ >= 124350</code></td></tr>
+          <tr><td>F4311</td><td>Purchase Order Details</td><td><code>SELECT * FROM F4311 WHERE PDTRDJ >= 124350</code></td></tr>
           <tr><td>F43121</td><td>Purchase Order Receipts</td><td><code>SELECT * FROM F43121</code></td></tr>
-          <tr><td>F0101</td><td>Address Book</td><td><code>SELECT ABAN8, ABALPH FROM F0101</code></td></tr>
+          <tr><td>F4801</td><td>Work Order Headers</td><td><code>SELECT * FROM F4801 WHERE WAUPMJ >= 125001</code></td></tr>
         </tbody>
       </table>
     </div>
