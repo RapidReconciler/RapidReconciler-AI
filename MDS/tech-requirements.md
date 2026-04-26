@@ -66,7 +66,7 @@ Integration Services is typically installed and run on the database server. Howe
 
 | Requirement | Specification |
 |---|---|
-| Operating System | Windows Server 2012 or later |
+| Operating System | Windows Server 2019 or later |
 | RAM | 16 GB minimum |
 
 ### SQL Server Management Tools
@@ -120,10 +120,12 @@ Integration Services is typically installed and run on the database server. Howe
 
 | Requirement | Specification |
 |---|---|
-| Operating System | Windows XP or later / macOS 10.9 or later |
+| Operating System | Windows 10 or later / macOS 12 (Monterey) or later |
 | RAM | 8 GB minimum |
 | Screen Resolution | 1280 x 800 minimum recommended |
 | Browsers | Microsoft Edge, Chrome, Firefox, Safari |
+| Microsoft Excel | 2016 or later (required for export/import functionality) |
+| PDF Viewer | Adobe Acrobat Reader or equivalent |
 | Internet Access | https://rapidreconciler.getgsi.com |
 | Network | Access to application server required |
 

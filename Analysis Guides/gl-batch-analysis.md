@@ -6,55 +6,98 @@
 
 ## Section 1: Using Claude for Automated Analysis
 
-Claude can perform the full Section 12 analysis procedure automatically and return a single updated `.xlsx` file with the analysis sheet added and all source rows highlighted.
+Claude can perform a full Unposted GL Batches analysis automatically and return an updated `.xlsx` workbook with the multi-finding analysis written to a card-layout sheet, the source sheet equipped with AutoFilter and freeze panes, and findings categorized by status combination and priority. This eliminates manual annotation and ensures consistent output across analysts.
 
-### 1.1 What to Upload
+### 1.1 First Request in a Session
 
-Upload **two files**:
+On the first request, upload **three files** together:
 
-1. This guide (`.md`)
-2. The Unposted GL Batches export (`.xlsx`)
+1. This guide (`gl-batch-analysis.md`)
+2. The shared formatting spec (`excel-output-formatting-spec.md`)
+3. The Unposted GL Batches export (`.xlsx`)
 
 Then use the following prompt:
 
-> *"Analyze this file using the guide as a template, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'GL Batch Analysis' and all source rows highlighted by priority."*
+> *"Analyze this file using the GL Batch Analysis Guide and the formatting spec, then produce an updated copy of the Excel file with the multi-finding analysis sheet."*
 
-Claude will work through the Section 12 procedure against the Excel data, apply highlights to the source sheet, and add the analysis sheet in the format specified in Section 13. The returned file is a drop-in replacement for the original.
+Claude will read both documents, work through the analysis procedure against the Excel data, build the workbook per the formatting spec, and return the file.
 
 ### 1.2 Follow-On Requests in the Same Session
 
-Once the guide has been uploaded in a session, Claude retains it in context for the remainder of the conversation. Subsequent GL batch exports do not require the guide to be uploaded again. Use the shorter prompt:
+Once the guide and formatting spec have been uploaded in a session, Claude retains them in context for the remainder of the conversation. Subsequent Unposted GL Batches reports **do not require re-uploading**. Simply upload the new `.xlsx` and use a shorter prompt:
 
-> *"Analyze this file and return it with the analysis sheet and highlights."*
+> *"Analyze this file and return it with the analysis sheet."*
 
-Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost.
+Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide and the formatting spec again — Claude will use them and ignore the duplication.
 
 ### 1.3 Output Specification
 
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+The output workbook follows the conventions defined in the **shared formatting spec** (`excel-output-formatting-spec.md`) — file naming pattern, sheet structure, card layout, colour palette, priority calculation, source-sheet handling, adaptive row heights, and floating text box specifications all live in that document so they stay consistent across all RapidReconciler analysis guides.
 
-**Sheet 1 (left, opens first) — GL Batch Analysis (new sheet)**
+This section captures only the **Unposted GL Batches-specific** content that the formatting spec needs from this guide.
 
-**Sheet 2 — Unposted GL Batches (original sheet, highlights added)**
+**Template family** (formatting spec, Section 3): **Multi-Finding, period-end report.** Each finding catalogues a class of unposted batches awaiting resolution before close; the aggregate dollar variance is meaningful (it equals the unposted activity that hasn't yet hit the GL).
 
-| Highlight | Color | Hex | Criteria |
-|---|---|---|---|
-| Red | `FFE0E0` | `FFE0E0` | In Use OR age ≥ 8 days OR posting error |
-| Amber | `FFD966` | `FFD966` | Pending approval / Pending (needs approval) |
-| Light Yellow | `FFF2CC` | `FFF2CC` | Approved / Approved (needs posting run only) |
+**File naming** (formatting spec, Section 1): `Unposted GL Batches Analysis {YYYY-MM-DD}.xlsx`. Use the period being closed (PeriodEnds value in the export) — Unposted GL Batches is a period-end report.
 
-Follows the structure defined in Section 13.4. Contains Report Summary, Status Summary, Findings by Priority, and Recommended Actions.
+**Source sheet name:** `Unposted GL Batches`. **Sorting is not required** for analysis correctness. Apply AutoFilter on the header row and freeze panes per the formatting spec.
+
+**Headline anchor** (formatting spec, Section 4): period being closed.
+
+> `Unposted GL Batches — Period Ending {YYYY-MM-DD}`
+
+If the report is run against historical data, include the analysis date in the secondary context strip: `Generated {date} (against data through {period end})`.
+
+**Subline** (formatting spec, Section 5.3): the aggregate amount of unposted activity and a finding count, e.g., `${X} in {N} unposted batches — {n1} require manual reset, {n2} await approval, {n3} ready to post`.
+
+**Secondary context strip** (formatting spec, Section 5.4) carries: companies in scope, batch type breakdown, and total batch count.
+
+**Issue Summary table** (formatting spec, Section 7.1): one row per distinct status-combination finding, sorted by priority. Columns: Issue label (e.g., "Pending Approval — IB Inventory"), Scope (companies / batch types), Detail (batch counts, age range, dollar magnitude), Rows count, Priority badge.
+
+**Finding cards** (formatting spec, Section 7.2): one card per status combination. The natural partition for this report is **by status combination plus batch type**, because each combination has a different verification path and resolution. Typical findings:
+
+- `In Use Posting Status — O-type Batches` (P1 — manual reset required)
+- `Pending Approval — IB-type Inventory Batches` (P2 — needs approval)
+- `Pending Approval — G-type Manual Journal Entry` (P2 — needs approval)
+- `Pending Approval — V-type AP Voucher` (P2 — needs approval)
+- `Approved and Ready to Post` (P3 — needs R09801 posting run only)
+
+When the same status combination spans multiple batch types with materially different verification paths (e.g., Pending/Pending across IB, G, and V), split into separate findings — each batch type has different verification owners (cost accounting vs. AP).
+
+Each card has the standard Scope / Pattern / Resolution sub-fields. **Do not use a "Root Cause" sub-field** — Unposted GL Batches is a snapshot of pending work; the Pattern field characterizes what the data shows.
+
+**Priority assignment** (formatting spec, Section 9.3, rule-based by status combination):
+
+| Priority | Status combination |
+|---|---|
+| **P1** | "In Use" approval or posting status (manual intervention required); OR posting error; OR age ≥ 8 days |
+| **P2** | "Pending" approval status (needs approver action) |
+| **P3** | "Approved" and "Approved" (just needs R09801 posting run) |
+
+**Sub-tables** (formatting spec, Section 7.3): for small exports (≤30 batches), inline a sub-table under each Finding card listing the affected batches with batch number, age, and amount. For larger exports, point to source AutoFilter.
+
+**Action Plan** (formatting spec, Section 7.4): in execution order. Typical sequence:
+
+1. Manually reset any "In Use" batches first (P1) — they cannot post until reset.
+2. Investigate and clear posting errors.
+3. Notify approvers for any Pending Approval batches; provide batch lists by approval owner.
+4. Run R09801 to post all approved batches.
+5. Re-run the Unposted GL Batches report after posting to confirm batches have cleared.
+6. Do not post period-close journal entries until all batches required for the period are posted.
+
+The final action (period-close gate) is mandatory.
+
+**Source sheet handling** (formatting spec, Section 10): **Pattern A — no highlights, AutoFilter only** for typical exports. For very small exports (≤30 rows) where each batch clearly belongs to one finding, **Pattern B — highlight all rows by issue type** is acceptable.
 
 ### 1.4 Notes and Limitations
 
-- Claude analyzes the data as exported. If the report was generated with account filters applied, the total variance reflects only the filtered accounts — not the full GL Batches variance for the period.
+- Claude analyzes the data as exported. If the report was generated with account filters applied, the total amount reflects only the filtered accounts — not the full unposted activity for the period.
 - Batch age is calculated against the PeriodEnds date in the export. The analysis always uses PeriodEnds as the reference point, not the date the analysis is run.
-- Claude cannot access JD Edwards to verify batch details, confirm user identities, or look up invoice amounts. Findings that require JD Edwards investigation are flagged as open items in the Recommended Actions section.
-- For exports with more than 50 rows, include a note in the prompt identifying the period-end date to confirm the correct reference point for age calculations.
+- Claude cannot access JD Edwards to verify batch details, confirm user identities, or look up invoice amounts. Findings that require JD Edwards investigation are flagged inside the Resolution sub-field of the relevant Finding card.
+- For exports with more than 50 batches, include a note in the prompt identifying the period-end date to confirm the correct reference point for age calculations.
 - Amounts in the exported file may display with floating-point precision artifacts. Claude rounds all amounts to two decimal places for reporting purposes.
 
 ---
-
 
 ## Overview
 
@@ -528,7 +571,7 @@ Assign each batch a priority and action:
 
 **Step 8 — Document Findings**
 
-Record the analysis on the GL Batch Analysis sheet (see Section 13 for formatting rules). Note the root cause, responsible party, and recommended action for each batch group.
+Record the analysis on the Analysis sheet (see the shared formatting spec for layout rules). Note the root cause, responsible party, and recommended action for each batch group.
 
 **Step 9 — Follow Up**
 
@@ -536,93 +579,7 @@ After corrections are made, verify that the GL Batches variance in RapidReconcil
 
 ---
 
-## Section 13: Excel Output Formatting Rules
-
-The following rules govern the format of the Excel output produced when analyzing an Unposted GL Batches export.
-
-### 13.1 File Naming
-
-Output file name: `DMAAI Analysis.xlsx`
-
-### 13.2 Sheet Structure
-
-The workbook must contain exactly two sheets:
-
-| Sheet | Contents |
-|---|---|
-| **GL Batch Analysis** | The analysis sheet — see Section 13.4 for structure. This is the first (leftmost) tab and the active sheet when the workbook opens. |
-| **Unposted GL Batches** | The original source data, unchanged except for row highlights |
-
-Do not delete, rename, or reorder the source sheet. Do not add columns, rows, or formulas to the source sheet. The only permitted modification to the source sheet is cell background color (highlights).
-
-### 13.3 Row Highlighting — Source Sheet
-
-Every data row in the source sheet must be highlighted based on its priority classification:
-
-| Color | Hex | Criteria |
-|---|---|---|
-| **Red** | `FFE0E0` | Posting_Status = "In Use" (requires manual status reset in P0011) **OR** batch age ≥ 8 days **OR** Posting_Status = "Error" |
-| **Amber** | `FFD966` | Approval_Status = "Pending approval" AND Posting_Status = "Pending" (batch header exists, needs approval) |
-| **Light Yellow** | `FFF2CC` | Approval_Status = "Approved" AND Posting_Status = "Approved" (approved, needs posting run only) |
-
-**Rules:**
-- Apply the highlight to all columns in the row, not just the status columns.
-- When multiple rows share the same BatchNumber, all rows receive the same highlight color.
-- If a batch qualifies for both Red and Orange (e.g., pending approval and age > 8 days), Red takes precedence.
-- The header row (row 2) and title row (row 1) are never highlighted.
-
-### 13.4 Analysis Sheet Structure
-
-The GL Batch Analysis sheet must contain the following sections in order, each separated by a blank row:
-
-| Section | Content |
-|---|---|
-| **Report Summary** | Period-end date, generation timestamp, total record count, total variance amount, companies present, batch types present |
-| **Status Summary** | One row per status combination showing row count, batch count, and total amount. Use the same highlight colors as the source sheet. |
-| **Findings by Priority** | One sub-section per priority level (Priority 1, Priority 2, Priority 3). Each sub-section lists the individual batches with batch number, detail (company, type, date, user, age), and amount. Followed by a note box explaining the root cause pattern and recommended resolution. |
-| **Recommended Actions** | Numbered action steps in execution order. Each step includes the specific action, the batches or systems it applies to, and the responsible owner. |
-
-### 13.5 Analysis Sheet Formatting
-
-| Element | Specification |
-|---|---|
-| **Font** | Arial throughout |
-| **Section headers** | Dark blue fill (`1F3864`), white bold text, 11pt |
-| **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt |
-| **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
-| **Data rows** | Alternating white and light gray (`F2F2F2`) fill; 10pt Arial |
-| **Priority 1 rows** | Red fill (`FFE0E0`), dark red text (`8B0000`) |
-| **Priority 2 rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`) |
-| **Priority 3 rows** | Light yellow fill (`FFF2CC`), dark olive text (`4A3B00`) |
-| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
-| **Column widths** | A: 22, B: 80, C: 30 — fixed, not auto-stretched. |
-| **Row heights** | Calculated from content length and column width — not a flat default. |
-| **Wrap text** | Enabled on all cells on the GL Batch Analysis sheet. |
-| **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
-| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`; Priority 3 fill `FFF2CC` / text `4A3B00`. Lighter fills and non-bold text for readability. |
-| **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
-| **Grid lines** | Disabled on the GL Batch Analysis sheet (`showGridLines = False`). |
-| **Text box note** | Floating text box anchored col F → col R, rows 1–18; no fill; no border. Sections: title (16pt bold), What is an Unposted GL Batch? (13pt bold heading + 12pt body), Why does it matter?, What does this workbook show?, About this workbook. See formatting spec Section 6.7. |
-| **Colour key** | Include a colour key section at the top of the analysis sheet. |
-
-### 13.6 Amounts
-
-All dollar amounts must be formatted with a dollar sign, comma thousands separator, and two decimal places (e.g., `$13,354.12`). Negative amounts use a leading minus sign (e.g., `$-5,583.45`). Do not use parentheses for negative amounts.
-
-### 13.7 Batch Age Calculation
-
-Batch age is calculated as the number of calendar days between the BatchDate and the PeriodEnds date. Write this as an integer followed by "days before period end" in the detail column of the findings section (e.g., "27 days before period end").
-
-### 13.8 What Not to Include
-
-- Do not include raw JD Edwards status codes (e.g., "D", "E", "P") in the analysis sheet. Use the descriptive labels from Section 7.
-- Do not include the Currency or Rate columns in the analysis sheet unless a non-1.0 exchange rate requires explanation.
-- Do not calculate or display batch totals as formulas. Write the sum as a static value.
-- Do not add conditional formatting, data validation, or pivot tables to either sheet.
-
----
-
-## Section 14: Related Documentation
+## Section 13: Related Documentation
 
 - [Inventory: Using the Application](../MDS/inventory-using-application.md)
 - [Transaction Detail Analysis Guide](../MDS/transaction-detail-analysis-guide.md)

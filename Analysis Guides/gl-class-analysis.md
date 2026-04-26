@@ -6,50 +6,89 @@
 
 ## Section 1: Using Claude for Automated Analysis
 
-Claude can perform the full analysis procedure automatically and return a single updated `.xlsx` file with the RR Analysis sheet added.
+Claude can perform a full GL Class Integrity analysis automatically and return an updated `.xlsx` workbook with the multi-finding analysis written to a card-layout sheet, the source sheet equipped with AutoFilter and freeze panes (and row highlights for small exports), and findings categorized by issue type and priority. This eliminates manual annotation and ensures consistent output across analysts.
 
-### What to Upload
+### 1.1 First Request in a Session
 
-Upload **two files:**
+On the first request, upload **three files** together:
 
-1. This guide (`.md`)
-2. The Integrity Report 5 export (`.xlsx`)
+1. This guide (`gl-class-analysis.md`)
+2. The shared formatting spec (`excel-output-formatting-spec.md`)
+3. The Integrity Report 5 export (`.xlsx`)
 
 Then use the following prompt:
 
-> *"Analyze this Integrity Report 5 file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis'. Blank location GL class codes on stock items are a red flag and should be Priority 1. GL class mismatches should be Priority 2. Group findings by pattern where possible."*
+> *"Analyze this file using the GL Class Analysis Guide and the formatting spec, then produce an updated copy of the Excel file with the multi-finding analysis sheet."*
 
-### Follow-On Requests in the Same Session
+Claude will read both documents, work through the analysis procedure against the Excel data, build the workbook per the formatting spec, and return the file.
 
-Once this guide has been uploaded, it remains in context. Use:
+### 1.2 Follow-On Requests in the Same Session
 
-> *"Analyze this Integrity Report 5 file and return it with the RR Analysis sheet."*
+Once the guide and formatting spec have been uploaded in a session, Claude retains them in context for the remainder of the conversation. Subsequent Integrity Report 5 reports **do not require re-uploading**. Simply upload the new `.xlsx` and use a shorter prompt:
 
-### Output Specification
+> *"Analyze this file and return it with the analysis sheet."*
 
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide and the formatting spec again — Claude will use them and ignore the duplication.
 
-**Sheet 1 (left, opens first) — RR Analysis (new)**
-- Source data, unchanged
-- No row highlighting required
+### 1.3 Output Specification
 
-**Sheet 2 — Integrity (original)**
-- Report Summary
-- Issue Type Summary (color-coded by priority)
-- Row Count by Company
-- Findings by Priority (with item detail, root cause, verification steps, and resolution for each)
-- Recommended Actions (numbered, in execution order)
+The output workbook follows the conventions defined in the **shared formatting spec** (`excel-output-formatting-spec.md`) — file naming pattern, sheet structure, card layout, colour palette, priority calculation, source-sheet handling, adaptive row heights, and floating text box specifications all live in that document so they stay consistent across all RapidReconciler analysis guides.
 
-### Notes and Limitations
+This section captures only the **GL Class Integrity-specific** content that the formatting spec needs from this guide.
 
-- **Blank LocationClass detection:** The LocationClass column in this export may contain space-padded values (e.g., four spaces) rather than true empty cells. Claude must strip whitespace from GL class fields before classifying rows — a cell containing only spaces is treated as blank, not as a GL class code. Always check for this before counting blank rows.
-- Claude analyzes the data as exported. The StockType column is used to determine whether a blank LocationClass is a red flag — blank location GL class on Stocking Type S is always Priority 1.
-- GL class code interpretation (whether a code is stock vs non-stock) requires JDE access to the chart of accounts and DMAAI setup — Claude flags codes that appear unusual based on the data pattern but cannot confirm their purpose without JDE access.
+**Template family** (formatting spec, Section 3): **Multi-Finding, configuration snapshot.** Each finding catalogues a class of GL class discrepancies between F4102 (Item Branch) and F41021 (Item Location). There is no period concept and no aggregate dollar variance.
+
+**File naming** (formatting spec, Section 1): `GL Class Integrity Analysis {YYYY-MM-DD}.xlsx`. Use the analysis date — GL Class Integrity is a configuration snapshot.
+
+**Source sheet name:** `Integrity`. **Sorting is not required.** Apply AutoFilter on the header row and freeze panes per the formatting spec.
+
+**Headline anchor** (formatting spec, Section 4): analysis date.
+
+> `GL Class Integrity — {Month DD, YYYY}`
+
+**Subline** (formatting spec, Section 5.3): a count summary, e.g., `{N} configuration findings across {M} companies — {n1} blank LocationClass, {n2} GL class mismatches`.
+
+**Secondary context strip** (formatting spec, Section 5.4) carries: source tables compared (F4102 against F41021), companies in scope, stocking types observed.
+
+**Issue Summary table** (formatting spec, Section 7.1): one row per distinct finding, sorted by priority. Columns: Issue label, Scope (companies/branches), Detail (concentration patterns, key counts), Rows count, Priority badge.
+
+**Finding cards** (formatting spec, Section 7.2): one card per issue type. Typical findings:
+
+- `Blank LocationClass on Stock items` (P1 — JDE cannot route the transaction; falls back to wildcard or errors)
+- `GL Class Mismatch — branch and location codes differ` (P2 — same item posts to different accounts depending on transaction type)
+
+When the data shows clear sub-patterns within a finding (e.g., a single branch concentration, a recurring branch→location class pair), describe these in the Pattern field rather than splitting into separate findings — the resolution path is the same.
+
+Each card has the standard Scope / Pattern / Resolution sub-fields. **Do not use a "Root Cause" sub-field** — GL Class Integrity is a configuration snapshot; the Pattern field characterizes what the data shows.
+
+**Priority assignment** (formatting spec, Section 9.3, rule-based by issue severity):
+
+| Priority | Issue type |
+|---|---|
+| **P1** | Blank LocationClass on Stocking Type S (stock) items — JDE cannot determine the inventory account |
+| **P2** | GL Class Mismatch (both populated, values differ) — transactions split across two accounts depending on type |
+
+**Sub-tables** (formatting spec, Section 7.3): for small exports (≤30 rows total, the typical case for GL Class), inline a sub-table under each Finding card listing the affected item-branch-location records. Sort sub-tables by Company → Branch → Item ascending (the natural source-sheet reading order).
+
+**Action Plan** (formatting spec, Section 7.4): in execution order. Typical sequence:
+
+1. Investigate any branch-wide blank-location clusters first — a single setup-process gap may explain many rows.
+2. For each blank row, populate F41021 GL class via P41024 (typically matching the branch class unless a location-specific class is intended).
+3. For each mismatch row, determine which side is correct and update the other; for systematic patterns (same branch→location class pair across many items), apply the fix as a single batch.
+4. Review historical GL postings for corrected items — transactions posted before the correction may have routed to the fallback AAI; post a reclassification journal entry if material amounts are involved.
+5. Re-run Integrity Report 5 to confirm the corrected items have cleared.
+
+**Source sheet handling** (formatting spec, Section 10): GL Class Integrity exports are typically small. **Pattern B — highlight all rows by issue type** when the export has ≤30 rows and the partition is clean (every row is either Blank or Mismatch). For larger exports, **Pattern A — no highlights, AutoFilter only**.
+
+### 1.4 Notes and Limitations
+
+- **Blank LocationClass detection:** The LocationClass column may contain space-padded values (e.g., four spaces) rather than true empty cells. Claude strips whitespace from GL class fields before classifying rows — a cell containing only spaces is treated as blank, not as a GL class code.
+- Claude analyzes the data as exported. The StockType column is used to determine whether a blank LocationClass is a red flag — blank LocationClass on Stocking Type S is always Priority 1.
+- GL class code interpretation (whether a code is stock vs. non-stock) requires JDE access to the chart of accounts and DMAAI setup. Claude flags codes that appear unusual based on the data pattern (e.g., 7xxx-range codes when the inventory series is 6xxx) but cannot confirm their purpose without JDE access.
 - Mismatch resolution requires JDE access to confirm which GL class (branch or location) is correct for each item.
-- For exports with many mismatches following the same GL class pair pattern, Claude groups findings by pattern to make the summary workable.
+- For exports with many mismatches following the same GL class pair pattern, Claude groups findings by pattern in the Pattern field of the relevant card to keep the summary workable.
 
 ---
-
 
 ## Overview
 
@@ -275,56 +314,7 @@ Maintain a log of each finding, the determination (error vs intentional), the ac
 
 ---
 
-## Section 10: Excel Output Formatting Rules
-
-### File Naming
-
-Output file name: `DMAAI Analysis.xlsx`
-
-### Sheet Structure
-
-| Sheet | Contents |
-|---|---|
-| **Integrity** | The original source data, unchanged |
-| **RR Analysis** | The analysis sheet (see below) |
-
-Do not delete, rename, or reorder the source sheet.
-
-### RR Analysis Sheet Structure
-
-| Section | Content |
-|---|---|
-| **Report Summary** | Period-end date, generation timestamp, total row count, companies present, stock types present |
-| **Issue Type Summary** | One row per issue type with row count, % of total, companies affected, and description. Color-coded by severity. |
-| **Row Count by Company** | Total rows, blank LocationClass count, and mismatch count per company |
-| **Findings by Priority** | One sub-section per priority level. Each sub-section lists affected items with detail, root cause, verification steps, and resolution path. |
-| **Recommended Actions** | Numbered action steps in execution order, with the specific items, companies, and responsible owner for each. |
-
-### Analysis Sheet Formatting
-
-| Element | Specification |
-|---|---|
-| **Font** | Arial throughout |
-| **Section headers** | Dark blue fill (`1F3864`), white bold text, 11pt |
-| **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt |
-| **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
-| **Data rows** | Alternating white and light gray (`F2F2F2`) fill; 10pt Arial |
-| **Priority 1 rows** | Red fill (`FFE0E0`), dark red text (`8B0000`) |
-| **Priority 2 rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`) |
-| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
-| **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. Typical widths: Col A 22, B 28, C 36, D 20, E 20. |
-| **Row heights** | Calculated from content length and column width — not a flat default. |
-| **Wrap text** | Enabled on all cells on the RR Analysis sheet. |
-| **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
-| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`. Lighter fills and non-bold text for readability. |
-| **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
-| **Grid lines** | Disabled on the RR Analysis sheet (`showGridLines = False`). |
-| **Text box note** | Floating text box anchored col F → col R, rows 1–18; no fill; no border. Sections: title (16pt bold), What is GL Class Integrity? (13pt bold heading + 12pt body), Why does it matter?, What does this workbook show?, About this workbook. See formatting spec Section 6.7. |
-| **Colour key** | Include a colour key section at the top of the analysis sheet. |
-
----
-
-## Section 11: Related Documentation
+## Section 10: Related Documentation
 
 - [DMAAI Analysis Guide](dmaai-analysis.md) — Reference for Integrity Report 2 (DMAAI Entry Integrity). GL class codes that appear in this report should also be present in the model DMAAI table (4152 PI).
 - [Cardex Variance Analysis Guide](cardex-variance-analysis.md) — If a blank or mismatched GL class has caused transactions to post to the wrong account, cardex variances may result.
