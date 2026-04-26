@@ -6,43 +6,89 @@
 
 ## Section 1: Using Claude for Automated Analysis
 
-Claude can perform the full Section 7 analysis procedure automatically and return a single updated `.xlsx` file with the analysis sheet added and all source rows highlighted.
+Claude can perform a full End of Day variance analysis automatically and return an updated `.xlsx` workbook with the multi-finding analysis written to a card-layout sheet, the source sheet equipped with AutoFilter and freeze panes, and findings categorized by priority. This eliminates manual annotation and ensures consistent output across analysts.
 
-### 1.1 What to Upload
+### 1.1 First Request in a Session
 
-Upload **two files**:
+On the first request, upload **three files** together:
 
-1. This guide (`.md`)
-2. The End of Day report (`.xlsx`)
+1. This guide (`end-of-day-analysis.md`)
+2. The shared formatting spec (`excel-output-formatting-spec.md`)
+3. The End of Day report (`.xlsx`)
 
 Then use the following prompt:
 
-> *"Analyze this End of Day file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'EOD Analysis' and all source rows highlighted by priority."*
+> *"Analyze this file using the End of Day Analysis Guide and the formatting spec, then produce an updated copy of the Excel file with the multi-finding analysis sheet."*
 
-All reference information needed for a complete analysis — work order status codes, R42800 error codes, R31802A behavior, Manufacturing Constants, AAI reference, and pre-close checks — is contained within this guide.
+Claude will read both documents, work through the analysis procedure against the Excel data, build the workbook per the formatting spec, and return the file.
 
 ### 1.2 Follow-On Requests in the Same Session
 
-Once the guide has been uploaded in a session, it remains in context. Subsequent End of Day exports do not require the guide to be re-uploaded. Use the shorter prompt:
+Once the guide and formatting spec have been uploaded in a session, Claude retains them in context for the remainder of the conversation. Subsequent End of Day reports **do not require re-uploading**. Simply upload the new `.xlsx` and use a shorter prompt:
 
-> *"Analyze this file and return it with the analysis sheet and highlights."*
+> *"Analyze this file and return it with the analysis sheet."*
+
+Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide and the formatting spec again — Claude will use them and ignore the duplication.
 
 ### 1.3 Output Specification
 
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+The output workbook follows the conventions defined in the **shared formatting spec** (`excel-output-formatting-spec.md`) — file naming pattern, sheet structure, card layout, colour palette, priority calculation, source-sheet handling, adaptive row heights, and floating text box specifications all live in that document so they stay consistent across all RapidReconciler analysis guides.
 
-**Sheet 1 (left, opens first) — EOD Analysis (new sheet)**
+This section captures only the **End of Day-specific** content that the formatting spec needs from this guide.
 
-| Highlight | Color | Criteria |
-|---|---|---|
-| Red | `FFE0E0` | Prior period PeriodEnds OR work order status ER OR age > 14 days |
-| Amber | `FFD966` | Error type (2000-01-01) with non-zero net amount OR Mfg status 90 OR Sales aged > 7 days |
-| Light Yellow | `FFF2CC` | Normal Sales backlog OR active Mfg work orders (current period) |
-| Green | `E2EFDA` | Error type (2000-01-01) where paired rows net to zero — informational only |
+**Template family** (formatting spec, Section 3): **Multi-Finding, period-end report.** Each finding catalogues a class of pending transactions awaiting resolution before close; there is often a meaningful aggregate dollar variance.
 
-**Sheet 2 — End of Day (original sheet, highlights added)**
+**File naming** (formatting spec, Section 1): `End of Day Analysis {YYYY-MM-DD}.xlsx`. Use the period being closed (most recent PeriodEnds value in the export) — End of Day is a period-end report.
 
-Follows the structure defined in Section 9.4. Contains Report Summary, Variance Type Summary, Findings by Priority, and Recommended Actions.
+**Source sheet name:** `End of Day`. **Sorting is not required** for analysis correctness, but if the export's native order obscures the chronological reading of aging, sort ascending by PeriodEnds and then TransDate. Apply AutoFilter on the header row and freeze panes per the formatting spec.
+
+**Headline anchor** (formatting spec, Section 4): period being closed.
+
+> `End of Day Variance — Period Ending {YYYY-MM-DD}`
+
+If the report is being run against historical data (the most recent PeriodEnds is older than the current calendar period), include the analysis date in the secondary context strip: `Generated {date} (against data through {period end})`.
+
+**Subline** (formatting spec, Section 5.3): the aggregate net variance and a count of findings, e.g., `${X} net variance — {N} findings across {M} companies, {K} rows`.
+
+**Secondary context strip** (formatting spec, Section 5.4) carries: companies in scope, transaction type breakdown (Sales / Mfg / Voucher Match counts), and total row count.
+
+**Issue Summary table** (formatting spec, Section 7.1): one row per distinct finding, sorted by priority. Columns: Issue label, Scope (companies / transaction types), Detail (row counts, age range, dollar magnitude), Rows count, Priority badge.
+
+**Finding cards** (formatting spec, Section 7.2): one card per finding type. Typical findings for End of Day:
+
+- `Sales Backlog — R42800 not run` (status combinations 540/580 in the current period)
+- `Sales — Aged Sales Orders` (status 580 with age > 7 days)
+- `Manufacturing — Prior Period Work Orders` (status outside normal range, or PeriodEnds before the current period)
+- `Manufacturing — Status 90 Not Yet Costed` (active work orders in current period at status 90)
+- `Voucher Match — Error Type` (TransDate of 2000-01-01 with non-zero net amount)
+- `Voucher Match — Net Zero Pairs` (TransDate of 2000-01-01 with paired rows that net to zero — informational)
+
+Each card has the standard Scope / Pattern / Resolution sub-fields. **Do not use a "Root Cause" sub-field** — End of Day is a snapshot of pending work; the Pattern field characterizes what the data shows.
+
+**Priority assignment** (formatting spec, Section 9.3, rule-based by age + status):
+
+| Priority | Conditions |
+|---|---|
+| **P1** | Outside normal status range; OR PeriodEnds before the current period; OR age > 14 days; OR voucher-match error type with non-zero net amount |
+| **P2** | Normal status range with age 7-13 days; OR Mfg status 90 in current period; OR voucher-match net-zero pairs from a prior period |
+| **P3** | Normal status range with age 0-6 days; OR voucher-match net-zero pairs in current period (informational) |
+
+Compute the priority for each row before grouping into findings. Findings are then bucketed by priority in the Issue Summary table.
+
+**Sub-tables** (formatting spec, Section 7.3): not typically used in End of Day — readers filter the source sheet by transaction type and status to see specific subsets. The Issue Summary table provides the at-a-glance breakdown.
+
+**Action Plan** (formatting spec, Section 7.4): in execution order. Typical sequence:
+
+1. Resolve P1 voucher-match errors first — they block period close.
+2. Run R42800 (Sales Update) for any unposted sales backlog.
+3. Investigate aged work orders — confirm whether they should be closed, voided, or carried forward.
+4. Process current-period activity per normal end-of-day workflow.
+5. Re-run the End of Day report after corrections to confirm findings have cleared.
+6. Do not post period-close journal entries until net variance is at expected levels.
+
+The final action (period-close gate) is mandatory for any End of Day analysis.
+
+**Source sheet handling** (formatting spec, Section 10): **Pattern A — no highlights, AutoFilter only** for typical exports (>30 rows). For very small exports (≤30 rows) where each row clearly belongs to one finding, **Pattern B — highlight all rows by issue type** is acceptable.
 
 ### 1.4 Notes and Limitations
 
@@ -50,11 +96,10 @@ Follows the structure defined in Section 9.4. Contains Report Summary, Variance 
 - Prior-period items are identified by comparing PeriodEnds values within the export. Claude flags any PeriodEnds that differs from the most common value in the file.
 - Work order status interpretation uses the full status code table in Section 3.2 of this guide.
 - Floating-point precision artifacts in amounts are rounded to two decimal places throughout.
-- Claude cannot access JD Edwards to confirm work order details, check R42800 run history, or verify voucher match status. These are flagged as open investigation items in the Recommended Actions section.
+- Claude cannot access JD Edwards to confirm work order details, check R42800 run history, or verify voucher match status. These are flagged as investigation steps inside the Resolution sub-field of the relevant Finding card.
 - For exports with more than 100 rows, consider noting the specific companies or date ranges of interest in the prompt to focus the analysis.
 
 ---
-
 
 ## Overview
 
@@ -491,6 +536,8 @@ If Step 3 confirms cross-work-order summarization, suspend the record in RapidRe
 
 ---
 
+## Section 7: Step-by-Step Analysis Procedure
+
 Use this procedure for every End of Day report export:
 
 **Step 1 — Check the PeriodEnds Column First**
@@ -550,7 +597,7 @@ For each group, calculate the age relative to PeriodEnds:
 
 **Step 8 — Document Findings**
 
-Record the analysis on the EOD Analysis sheet following the formatting rules in Section 9.
+Record the analysis on the Analysis sheet following the formatting rules in the shared formatting spec.
 
 **Step 9 — Follow Up**
 
@@ -618,91 +665,7 @@ Before closing a period that includes manufacturing activity, confirm:
 
 ---
 
-## Section 9: Excel Output Formatting Rules
-
-### 9.1 File Naming
-
-Output file name: `DMAAI Analysis.xlsx`
-
-### 9.2 Sheet Structure
-
-| Sheet | Contents |
-|---|---|
-| **EOD Analysis** | The analysis sheet — see Section 9.4 for structure. This is the first (leftmost) tab and the active sheet when the workbook opens. |
-| **End of Day** | The original source data, unchanged except for row highlights |
-
-Do not delete, rename, or reorder the source sheet. The only permitted modification is cell background color (highlights).
-
-### 9.3 Row Highlighting — Source Sheet
-
-Every data row must be highlighted based on its classification:
-
-| Color | Hex | Criteria |
-|---|---|---|
-| **Red** | `FFE0E0` | PeriodEnds is a prior period **OR** Type = Mfg with work order status ER **OR** transaction age > 14 days |
-| **Amber** | `FFD966` | Type = Error (2000-01-01) with non-zero net amount **OR** Type = Mfg with status 90 (ready for R31802A) **OR** Sales rows aged > 7 days |
-| **Light Yellow** | `FFF2CC` | Type = Sales at normal status (awaiting R42800) **OR** Type = Mfg at status 45/50 (active work orders, current period) |
-| **Green** | `E2EFDA` | Type = Error (2000-01-01) where the paired rows net to zero — informational, no action required |
-
-**Rules:**
-- Apply the highlight to all columns in the row.
-- When multiple rows share the same DocNumber and Type, apply the same color to all rows for that document.
-- Red takes precedence over Amber; Amber takes precedence over Light Yellow; Light Yellow takes precedence over Green.
-- The header row (row 2) and title row (row 1) are never highlighted.
-- For paired Error rows (2000-01-01 + real-date): if the pair nets to zero, highlight both rows Green. If the pair does not net to zero, highlight both rows Amber.
-- Net-zero Error pairs must still appear in the Variance Type Summary but are classified as informational — they are not listed in the Findings by Priority sections.
-
-### 9.4 Analysis Sheet Structure
-
-| Section | Content |
-|---|---|
-| **Report Summary** | Period-end date, generation timestamp, total record count, companies present, transaction types present, note if prior-period rows exist |
-| **Variance Type Summary** | One row per Type showing row count, description, and total amount. Use the same highlight colors as the source sheet. Net-zero Error pairs are shown with a green row and marked as informational — they are not escalated to Findings by Priority. |
-| **Findings by Priority** | One sub-section per priority level. Each sub-section lists items with document/work order detail, status, age, and amount. Followed by a note box with root cause and recommended resolution. |
-| **Recommended Actions** | Numbered action steps in execution order, with the specific documents or work orders they apply to and the responsible owner. |
-
-### 9.5 Analysis Sheet Formatting
-
-| Element | Specification |
-|---|---|
-| **Font** | Arial throughout |
-| **Section headers** | Dark blue fill (`1F3864`), white bold text, 11pt |
-| **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt |
-| **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
-| **Data rows** | Alternating white and light gray (`F2F2F2`) fill; 10pt Arial |
-| **Priority 1 rows** | Red fill (`FFE0E0`), dark red text (`8B0000`) |
-| **Priority 2 rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`) |
-| **Priority 3 rows** | Light yellow fill (`FFF2CC`), dark olive text (`4A3B00`) |
-| **Informational rows** | Light green fill (`E2EFDA`), black text (`000000`) |
-| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
-| **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. |
-| **Row heights** | Calculated from content length and column width — not a flat default. |
-| **Wrap text** | Enabled on all cells on the EOD Analysis sheet. |
-| **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
-| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`; Priority 3 fill `FFF2CC` / text `4A3B00`; Informational fill `E2EFDA` / text `000000`. Lighter fills and non-bold text for readability. |
-| **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
-| **Grid lines** | Disabled on the EOD Analysis sheet (`showGridLines = False`). |
-| **Text box note** | Floating text box anchored col F → col R, rows 1–18; no fill; no border. Sections: title (16pt bold), What is End of Day? (13pt bold heading + 12pt body — includes what EOD entries are and the two transaction types that create them: Sales and Manufacturing), Why does it matter?, What does this workbook show?, About this workbook. See formatting spec Section 6.7. |
-| **Colour key** | Include a colour key section at the top of the analysis sheet. |
-
-### 9.6 Amounts
-
-All dollar amounts formatted with a dollar sign, comma thousands separator, and two decimal places (e.g., `$-740,130.45`). Negative amounts use a leading minus sign. Floating-point artifacts (e.g., `-105493.48000000001`) are rounded to two decimal places. For multi-currency exports, include the currency code alongside the amount (e.g., `$-161,175.39 GBP`).
-
-### 9.7 Prior Period Items
-
-Prior-period items (PeriodEnds ≠ current period) must be called out in both the Report Summary and as the first Priority 1 sub-section in Findings by Priority. Do not group prior-period items with current-period items of the same Type.
-
-### 9.8 What Not to Include
-
-- Do not include the OffsetAccount column in the analysis if it is blank for all rows.
-- Do not include the Currency or Rate columns unless a non-1.0 rate or a currency other than the primary company currency requires explanation.
-- Do not calculate or display totals as formulas. Write sums as static values.
-- Do not add conditional formatting, data validation, or pivot tables to either sheet.
-
----
-
-## Section 10: Related Documentation
+## Section 9: Related Documentation
 
 - [GL Batch Analysis Guide](../MDS/gl-batch-analysis-guide.md)
 - [Transaction Detail Analysis Guide](../MDS/transaction-detail-analysis-guide.md)

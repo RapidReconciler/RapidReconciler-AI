@@ -6,52 +6,112 @@
 
 ## Section 1: Using Claude for Automated Analysis
 
-Claude can perform the full Section 8 analysis procedure automatically and return a single updated `.xlsx` file with the analysis sheet added and all source rows highlighted.
+Claude can perform a full Inventory Roll Forward analysis automatically and return an updated `.xlsx` workbook with the multi-finding analysis written to a card-layout sheet, the source sheet equipped with AutoFilter and freeze panes (with selective row highlights for anomalous rows), and findings categorized by priority. This eliminates manual annotation and ensures consistent output across analysts.
 
-### 1.1 What to Upload
+### 1.1 First Request in a Session
 
-Upload **two files**:
+On the first request, upload **three files** together:
 
-1. This guide (`.md`)
-2. The Roll Forward report (`.xlsx`)
+1. This guide (`inv-account-roll-forward-analysis.md`)
+2. The shared formatting spec (`excel-output-formatting-spec.md`)
+3. The Roll Forward report (`.xlsx`)
 
 Then use the following prompt:
 
-> *"Analyze this Roll Forward file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'Roll Forward Analysis' and all source rows highlighted."*
+> *"Analyze this file using the Inventory Roll Forward Analysis Guide and the formatting spec, then produce an updated copy of the Excel file with the multi-finding analysis sheet."*
+
+Claude will read both documents, work through the analysis procedure against the Excel data, build the workbook per the formatting spec, and return the file.
 
 ### 1.2 Follow-On Requests in the Same Session
 
-Once the guide has been uploaded, it remains in context. Subsequent Roll Forward exports do not require the guide to be re-uploaded:
+Once the guide and formatting spec have been uploaded in a session, Claude retains them in context for the remainder of the conversation. Subsequent Roll Forward reports **do not require re-uploading**. Simply upload the new `.xlsx` and use a shorter prompt:
 
-> *"Analyze this file and return it with the analysis sheet and highlights."*
+> *"Analyze this file and return it with the analysis sheet."*
+
+Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide and the formatting spec again — Claude will use them and ignore the duplication.
 
 ### 1.3 Output Specification
 
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+The output workbook follows the conventions defined in the **shared formatting spec** (`excel-output-formatting-spec.md`) — file naming pattern, sheet structure, card layout, colour palette, priority calculation, source-sheet handling, adaptive row heights, and floating text box specifications all live in that document so they stay consistent across all RapidReconciler analysis guides.
 
-**Sheet 1 (left, opens first) — Roll Forward Analysis (new sheet)**
+This section captures only the **Inventory Roll Forward-specific** content that the formatting spec needs from this guide.
 
-| Highlight | Color | Criteria |
-|---|---|---|
-| Red | `FFE0E0` | GLOK = "no" OR VarOK = "no" |
-| Amber | `FFD966` | End period with non-zero UnpostBatch |
-| Green | `E2EFDA` | End period with zero UnpostBatch |
-| Light Yellow | `FFF2CC` | Historical period with non-zero UnpostBatch |
+**Template family** (formatting spec, Section 3): **Multi-Finding, period-end report.** The report's primary check is GL and variance roll-forward continuity (GLOK and VarOK). When GLOK and VarOK are intact across all rows, findings cover the secondary anomalies surfaced by the OOB and CardexVar columns.
 
-**Sheet 2 — Roll Forward (original sheet, highlights added)**
+**File naming** (formatting spec, Section 1): `Account Roll Forward Analysis {YYYY-MM-DD}.xlsx`. Use the period being closed (most recent PeriodEnds value in the export) — this is a period-end report.
 
-Follows the structure defined in Section 11.4. The Historical Unposted Batch Summary covers all periods except the current (end) period; the end-period UnpostBatch total is reported in the Report Summary instead. The Period Variance by Account section covers the prior 3 periods only, with rows included where OOB absolute value exceeds $100 or UnpostBatch is non-zero. JE amounts and CardexVar are excluded from that section. Column order: LongAccount, Period, then Variance / OOB / UnpostBatch.
+**Source sheet name:** `Roll Forward`. **Sorting is not required** for analysis correctness — the export is typically already in Company → Account → Period order, which is the natural reading order. Apply AutoFilter on the header row and freeze panes per the formatting spec.
+
+**Headline anchor** (formatting spec, Section 4): period being closed (most recent period in the dataset).
+
+> `Account Roll Forward — Period Ending {YYYY-MM-DD}`
+
+If the report is run against historical data (the most recent period in the dataset is older than the current calendar period), include the analysis date in the secondary context strip: `Generated {date} (against data through {period end})`.
+
+**Subline** (formatting spec, Section 5.3): answer the report's primary check first, then the secondary anomaly count:
+
+- When GLOK and VarOK are intact: `GL and variance roll forwards intact — 0 GLOK breaks, 0 VarOK breaks across {N} rows · {K} secondary anomalies in OOB and CardexVar`
+- When breaks exist: `{N} GLOK breaks, {M} VarOK breaks across {K} rows · {n} additional anomalies`
+
+**Secondary context strip** (formatting spec, Section 5.4) carries: generation date, period range covered, companies in scope, account count.
+
+**Issue Summary table** (formatting spec, Section 7.1): one row per distinct finding, sorted by priority. Columns: Issue label, Scope (companies / account ranges), Detail (concentration patterns, biggest amount, key counts), Rows count, Priority badge.
+
+**Finding cards** (formatting spec, Section 7.2): findings depend on what the data surfaces. Common findings:
+
+- `GLOK breaks — F0902 vs F0911 misalignment` (P1) — only included when GLOK = "no" rows exist
+- `VarOK breaks — variance roll forward discontinuity` (P1) — only included when VarOK = "no" rows exist
+- `Historical OOB > {threshold}` (P1) — F0902/F0911 disagreements in closed historical periods (typically threshold $100; adjust based on the data scale)
+- `Persistent stuck OOB on a single account` (P2) — same small OOB value across many consecutive periods on one account; signature of a stuck rounding artifact in F0902
+- `End-period CardexVar with material residual` (P2) — accounts where end-period OOB and CardexVar do not fully offset, leaving an unexplained residual
+
+When the data shows clear sub-patterns within a finding (recurring concentration on one account, single-incident vs systematic patterns, currency-specific clusters), describe these in the Pattern field rather than splitting into separate findings.
+
+Each card has the standard Scope / Pattern / Resolution sub-fields. **Do not use a "Root Cause" sub-field** — Inventory Roll Forward catalogues anomalies; the Pattern field characterizes what the data shows.
+
+**End-period OOB is expected** per the guide's Section 4.4 and is not a finding on its own. Only include end-period accounts in findings when the residual after offsetting CardexVar is material (typically > $100 absolute, threshold adjusted to data scale).
+
+**Priority assignment** (formatting spec, Section 9.3, rule-based):
+
+| Priority | Conditions |
+|---|---|
+| **P1** | GLOK = "no" or VarOK = "no" — actual roll-forward chain break; OR historical OOB above the materiality threshold (defaults to $100 absolute) |
+| **P2** | Persistent stuck OOB pattern (same small value across many periods on one account); OR end-period CardexVar residual above the materiality threshold |
+| **P3** | Informational; not typically used for this report |
+
+The materiality threshold is data-dependent — for datasets where the typical inventory account balance is in the millions, $1,000 may be a more appropriate threshold than $100. State the threshold used in the secondary context or the Pattern field of the relevant finding so the reader knows what was filtered.
+
+**Sub-tables** (formatting spec, Section 7.3): use sub-tables for the actionable subset of each finding. Common patterns:
+
+- For historical OOB: sub-table all rows above the materiality threshold, sorted by Company → Account → Period ascending.
+- For persistent stuck OOB: no sub-table needed — the finding is one account across many periods; describe in the Pattern field.
+- For end-period CardexVar residuals: sub-table all rows above the materiality threshold, sorted by Company → Account → Period ascending.
+
+**Action Plan** (formatting spec, Section 7.4): in execution order. Typical sequence:
+
+1. Investigate any recurring patterns first — a single account showing OOB across multiple periods is the strongest signal of a systematic issue.
+2. For any persistent stuck OOB (same value, same account, many periods), run R099102 (Account Balance Repost) scoped tightly to that company and account. Test in non-production first; involve the JD Edwards admin.
+3. For one-time historical OOB incidents that have already healed in subsequent periods, document the incident for the audit trail; no active correction is needed.
+4. For clusters of OOBs on the same date across multiple accounts, investigate whether a single posting incident explains them all.
+5. For end-period CardexVar residuals, run the Cardex Variance Analysis report for each affected account to identify the specific F4111 records that don't reconcile. First check: confirm R30837 (WIP Revaluation) was run after the most recent R30835 (Frozen Standard Update).
+6. After any R099102 or other corrections, refresh RapidReconciler and re-run the report to confirm anomalies have cleared.
+7. When GLOK and VarOK are intact, state explicitly that no batch posting, R099102, or Reroll is required for chain continuity — continue periodic monitoring at each refresh.
+
+Include the standard period-close gate caution: do not post period-close journal entries until variance is at expected levels.
+
+**Source sheet handling** (formatting spec, Section 10): **Pattern C — highlight only the anomalous rows.** Roll Forward exports typically have hundreds of rows where most are clean and a small subset (~5-15%) are anomalous. Apply priority fills only to the rows referenced by findings (P1 historical OOB rows in light-red, P2 stuck-OOB and end-period-residual rows in amber); leave the rest unhighlighted so the anomalies stand out against a clean background.
 
 ### 1.4 Notes and Limitations
 
-- Claude identifies GLOK = "no" and VarOK = "no" rows directly from column values. It then examines surrounding periods to determine the likely cause (prior period UnpostBatch, OOB amount, JE activity, or reset artifact).
+- Claude identifies GLOK = "no" and VarOK = "no" rows directly from column values. It then examines surrounding periods to determine the likely cause (prior-period UnpostBatch, OOB amount, JE activity, or reset artifact).
 - The VarOK baseline timestamp is read from column T of the baseline rows. Claude uses this to contextualize historic VarOK = "no" rows that occurred before the most recent reset.
 - Floating-point precision artifacts are rounded to two decimal places throughout.
-- Claude cannot access JD Edwards to verify batch details, confirm OOB causes, or check R099102 results. Findings requiring JD Edwards investigation are flagged in the Recommended Actions section.
+- Claude cannot access JD Edwards to verify batch details, confirm OOB causes, or check R099102 results. Findings requiring JD Edwards investigation are flagged inside the Resolution sub-field of the relevant Finding card.
 - For exports with more than 200 accounts, consider specifying a company or account range in the prompt to focus the analysis.
+- **End-period OOB is expected** per Section 4.4 and is not flagged as a finding on its own — only when the residual after offsetting CardexVar is material does it become a finding.
+- The materiality threshold for OOB and CardexVar findings is data-dependent. The default is $100 absolute, but it should scale with the typical account balance in the dataset. Claude states the threshold used in the analysis output.
 
 ---
-
 
 ## Overview
 
@@ -519,7 +579,7 @@ Sum the UnpostBatch column for all end-period rows. This total represents the am
 
 **Step 7 — Document Findings**
 
-Record findings on the Roll Forward Analysis sheet following the formatting rules in Section 11.
+Record findings on the Analysis sheet following the formatting rules in the shared formatting spec.
 
 **Step 8 — Follow Up**
 
@@ -646,94 +706,7 @@ Before closing a period using RapidReconciler:
 
 ---
 
-## Section 11: Excel Output Formatting Rules
-
-### 11.1 File Naming
-
-Output file name: `DMAAI Analysis.xlsx`
-
-### 11.2 Sheet Structure
-
-| Sheet | Contents |
-|---|---|
-| **Roll Forward Analysis** | The analysis sheet — see Section 11.4 for structure. This is the first (leftmost) tab and the active sheet when the workbook opens. |
-| **Roll Forward** | The original source data, with row highlights, columns U/V/W hidden, AutoFilter enabled on row 2, freeze panes after row 2, and number formatting on monetary columns |
-
-Do not delete, rename, or reorder the source sheet. Permitted modifications to the source sheet are:
-
-- **Cell background color** — row highlights per Section 11.3
-- **Hidden columns** — columns U/V/W (BusinessUnit, ObjectAccount, SubAccount) are hidden as they are redundant with LongAccount and reduce horizontal scrolling
-- **AutoFilter** — enabled on row 2 (covering columns A through W) so accounts, periods, companies, and flag values can be filtered interactively
-- **Freeze panes** — set at cell A3 so the title row (row 1) and column header row (row 2) remain visible while scrolling through data rows
-- **Number formatting** — columns G, H, I, K, L, M, N, O, P, Q, R, and S (all numeric monetary columns between G and T) are formatted as `#,##0.00` — comma thousands separator and two decimal places. Columns J (GLOK text flag) and T (VarOK text flag) are skipped as they contain text, not amounts.
-
-### 11.3 Row Highlighting — Source Sheet
-
-| Color | Hex | Criteria |
-|---|---|---|
-| **Red** | `FFE0E0` | GLOK = "no" **OR** VarOK = "no" — roll forward break or variance integrity failure |
-| **Amber** | `FFD966` | GLOK = "end" with non-zero UnpostBatch — current period has unposted GL batches |
-| **Green** | `E2EFDA` | GLOK = "end" with zero UnpostBatch — current period, GL rolls forward cleanly |
-| **Light Yellow** | `FFF2CC` | GLOK = "yes" with non-zero UnpostBatch — historical period where unposted batches existed (subsequently cleared or still pending) |
-
-**Rules:**
-- Apply the highlight to all columns in the row.
-- Red takes precedence over all other colors.
-- If a row has both GLOK = "no" and VarOK = "no", it is still red (only one color applied).
-- The header row (row 2) and title row (row 1) are never highlighted.
-- Baseline rows (GLOK = "baseline") are not highlighted unless they also have VarOK = "no".
-
-### 11.4 Analysis Sheet Structure
-
-| Section | Content |
-|---|---|
-| **Report Summary** | Report timestamp, period range, GLOK baseline period, VarOK baseline date, company count, account count, total data rows, current period EndGL and Perpetual totals, total unposted batch |
-| **Row Color Key** | Color legend with criteria and approximate row count for each color |
-| **GL Roll Forward (GLOK) Findings** | One sub-section per GLOK = "no" occurrence. Each entry shows the account and period, detail explaining the gap and its likely cause, and the dollar impact. Followed by a note box summarizing the pattern. |
-| **Variance Roll Forward (VarOK) Findings** | One sub-section per VarOK = "no" occurrence. Each entry shows the account and period, the variance components involved (OOB, JEs, CardexVar, EndofDay), and the likely cause. |
-| **Historical Unposted Batch Summary** | List of accounts with non-zero UnpostBatch in any period except the current (end) period, sorted by absolute UnpostBatch amount descending. Total row at bottom. Followed by a note explaining the retroactive posting risk these represent. The current (end) period's UnpostBatch is reported in the Report Summary section instead. |
-| **Period Variance by Account** | Covers the prior 3 periods only (the three periods immediately before the current end period). The current (end) period and all older historical periods are excluded. Rows are shown only where OOB absolute value exceeds $100 or UnpostBatch is non-zero. JE amounts and CardexVar are excluded. Columns: LongAccount, Period, then Variance / OOB / UnpostBatch. Sorted by account then period. OOB in these periods is informational; escalate only if accompanied by a VarOK = "no" flag. |
-| **Recommended Actions** | Numbered action steps in priority order, with detail and responsible owner. |
-
-### 11.5 Analysis Sheet Formatting
-
-| Element | Specification |
-|---|---|
-| **Font** | Arial throughout |
-| **Section headers** | Dark blue fill (`1F3864`), white bold text, 11pt |
-| **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt |
-| **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
-| **Data rows** | Alternating white and light gray (`F2F2F2`) fill; 10pt Arial |
-| **GLOK/VarOK = "no" rows** | Red fill (`FFE0E0`), dark red text (`8B0000`) |
-| **Unposted batch rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`) |
-| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
-| **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. |
-| **Row heights** | Calculated from content length and column width — not a flat default. |
-| **Wrap text** | Enabled on all cells on the Roll Forward Analysis sheet. |
-| **Grid lines** | Disabled on the Roll Forward Analysis sheet (`showGridLines = False`). |
-| **Text box note** | Floating text box anchored col F → col R, rows 1–18; no fill; no border. Sections: title (16pt bold), What is a Roll Forward? (13pt bold heading + 12pt body), Why does it matter?, What does this workbook show?, About this workbook. See formatting spec Section 6.7. |
-| **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
-| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`; Priority 3 fill `FFF2CC` / text `4A3B00`; Priority 4 fill `E2EFDA` / text `1E4620`. Lighter fills and non-bold text for readability. |
-| **Source sheet — freeze panes** | Set at A3 so the title row (row 1) and header row (row 2) are always visible. |
-| **Source sheet — AutoFilter** | Enabled on row 2 covering all columns. Row highlights match analysis priority colours. |
-| **Source sheet — number format** | Columns G, H, I, K, L, M, N, O, P, Q, R, S formatted as `#,##0.00`. Columns J and T are text flags and are not formatted. |
-| **Colour key** | Include a colour key section at the top of the analysis sheet. |
-
-### 11.6 Amounts
-
-All dollar amounts formatted with a dollar sign, comma thousands separator, and two decimal places (e.g., `$1,816,387.59`). Negative amounts use a leading minus sign. Floating-point artifacts are rounded to two decimal places.
-
-### 11.7 What Not to Include
-
-- Do not include individual period rows for accounts that are all "yes" throughout — the analysis focuses on exceptions.
-- Do not include columns U (BusinessUnit), V (ObjectAccount), or W (SubAccount) in the analysis sheet — these are hidden in the source sheet and are redundant with LongAccount.
-- Do not include the ShortAccount, Currency, or Rate columns in the analysis sheet unless a non-1.0 exchange rate or a specific account format is directly relevant to a finding.
-- Do not add formulas or conditional formatting to either sheet.
-- In the Period Variance by Account section: do not include JE amounts or CardexVar. Do not include periods outside the prior 3 periods. Do not include OOB rows where the absolute value is $100 or less.
-
----
-
-## Section 12: Related Documentation
+## Section 11: Related Documentation
 
 - [GL Batch Analysis Guide](../MDS/gl-batch-analysis-guide.md)
 - [End of Day Analysis Guide](../MDS/end-of-day-analysis-guide.md)

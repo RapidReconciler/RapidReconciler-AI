@@ -32,33 +32,39 @@ Start a new session when switching to a different guide version or when the conv
 
 ### 1.3 Output Specification
 
-The output workbook follows the conventions defined in the **shared formatting spec** (`excel-output-formatting-spec.md`) — file naming pattern, sheet structure, card layout, colour palette, priority calculation, source-sheet handling, and floating text box specifications all live in that document so they stay consistent across all RapidReconciler analysis guides.
+The output workbook follows the conventions defined in the **shared formatting spec** (`excel-output-formatting-spec.md`) — file naming pattern, sheet structure, card layout, colour palette, priority calculation, source-sheet handling, adaptive row heights, and floating text box specifications all live in that document so they stay consistent across all RapidReconciler analysis guides.
 
 This section captures only the **Transaction Detail-specific** content that the formatting spec needs from this guide.
 
-**File name:** `Transaction Detail Analysis for {doc} {DT}.xlsx`. Example: `Transaction Detail Analysis for DOC-00001 RI.xlsx` or `Transaction Detail Analysis for 576728 IC.xlsx`. `{doc}` is the document number from the Doc Header; `{DT}` is the document type code.
+**Template family** (formatting spec, Section 3): **Transactional, document-focused.** A single primary variance with a single root cause; the reader's job is to understand *this* number for *this* document.
+
+**File naming** (formatting spec, Section 1): `Transaction Detail Analysis for {doc} {DT}.xlsx`. The key identifier is the document number (from the Doc Header) and the document type code.
 
 **Source sheet name:** `Transaction Details`. **Sorting is not required** — the Transaction Detail export is grouped by section (Doc Header, F4111 Data, F0911 Inv Acct, F0911 Exp Acct, RR Summary, Header Comp, Receipts, DMAAs) rather than sequenced by time. Apply AutoFilter on the header row (row 2) and freeze panes at A3 per the formatting spec; do not reorder rows.
 
-**Headline content** (Section 6.1 of the formatting spec):
+**Headline anchor** (formatting spec, Section 4): document ID and document type.
 
-> `Document {doc} ({DT name}) — Order {order} ({OT})`
+> `Transaction Detail — Document {doc} ({DT name}) — Order {order} ({OT})`
 
-Transaction Detail analysis is document-focused, so the document identification is the page anchor. Spell out the DT and OT codes (RI = Sales Invoice, OV = Purchase Order Receipt, IM = Material Issue, etc.) — see Section 9 of this guide for the full DT reference.
+Spell out the DT and OT codes (RI = Sales Invoice, OV = Purchase Order Receipt, IM = Material Issue, etc.) — see Section 9 of this guide for the full DT reference.
 
-**Variance subline** (Section 6.2): a single sentence that describes the gap, e.g., "GL credit of $338.00 has no inventory match" or "Account mismatch — $1,250 cardex on inventory, $1,250 GL on COGS."
+**Variance subline** (formatting spec, Section 5.3): a single sentence that describes the gap. Examples of what the sentence should answer: which side has an unmatched amount, what account the gap is on, whether the variance is a posting issue or an account-mismatch issue.
 
-**Secondary context strip** (Section 6.3) carries: Company, GL Date, Period.
+**Secondary context strip** (formatting spec, Section 5.4) carries: Company, GL Date, Period.
 
-**Pattern label** for the variance card (Section 6.4): use the Section 5 pattern classification followed by a one-line plain-English explanation. Examples:
+**Variance card pattern label** (formatting spec, Section 6.1): use the Section 5 pattern classification followed by a one-line plain-English explanation. Examples (substitute the actual case):
 
-- `Pattern:  GL-Only Entry — Non-stock line posted to inventory account`
-- `Pattern:  Account Mismatch — Receipt landed on COGS instead of inventory`
-- `Pattern:  Period Mismatch — Sales Update ran in a later period than the cardex`
+- `Pattern:  GL-Only Entry — {what posted where it shouldn't have}`
+- `Pattern:  Account Mismatch — {what account got the value vs. what should have}`
+- `Pattern:  Period Mismatch — {which side ran in a later period}`
 
-**Priority denominator** (Section 6.4.1): `max(|CardexAmount|, |LedgerAmount|)` from the RR Summary line. The label in the rationale string is "document amount" — full string format: `${variance:.2f} variance vs ${denom:.2f} document amount = {ratio:.0f}% → Priority {N}`. When both Cardex and Ledger are zero (no document found), treat ratio as 100% / Priority 1.
+**Priority calculation** (formatting spec, Section 9.3, ratio-based — single-ratio): denominator is `max(|CardexAmount|, |LedgerAmount|)` from the RR Summary line. The label in the rationale string is "document amount":
 
-**FIX card content** for Transaction Detail variances generally takes one of two shapes:
+> `${variance} variance vs ${denom} document amount = {ratio}% — {action label}`
+
+When both Cardex and Ledger are zero (no document found), treat ratio as 100% / Priority 1.
+
+**HOW card content** for Transaction Detail variances generally takes one of two shapes (Resolution sub-card per formatting spec, Section 6.2):
 
 1. **Posting-correction case** (the variance is real and needs a journal entry). Structure: `DR / CR` journal entry on indented lines as Step 1, followed by investigation and control steps. Include a materiality reminder if the amount is small or the document is old.
 
@@ -66,16 +72,27 @@ Transaction Detail analysis is document-focused, so the document identification 
 
 In both cases, include a step that has the user verify the current state of the document on the Transactions page in RapidReconciler before posting any correction, since the variance may have moved since this analysis was generated.
 
-**Suggested causes from Section 8 Quick Lookup** should be distilled into the WHY card body, not listed as a separate section. The full lookup table lives in this guide for the analyst to reference; the workbook only needs the most likely cause.
+**Suggested causes** from the Section 8 Quick Lookup should be distilled into the WHY card body (formatting spec, Section 6.2), not listed as a separate section. The full lookup table lives in this guide for the analyst to reference; the workbook only needs the most likely cause.
+
+**Evidence list** (formatting spec, Section 6.3): show the source rows that drive the variance. For Transaction Detail, evidence typically includes:
+
+- **Root cause (P1)** — the F4111 row or F0911 row that creates the imbalance
+- **Anchor (P2)** — the RR Summary line showing the variance values
+- **Related (P2)** — the counterpart row(s) that establish the comparison (e.g., the matching ledger entry)
+- **Informational (P3)** — Doc Header, DMAAI, or Receipts rows providing context
+
+Each Evidence row is hyperlinked to its source-sheet row.
+
+**Source sheet handling** (formatting spec, Section 10): Pattern C — **highlight only the rows referenced by Evidence** with priority fills matching their severity badge. Do not highlight every row in the report.
 
 ### 1.4 Notes and Limitations
 
 - Claude analyzes the data as exported. If the source report was generated with filters applied or sections suppressed, the analysis reflects only what is present in the file.
 - For very large Transaction Detail reports spanning many documents or periods, include a note in the prompt identifying the specific document number to focus on if only one transaction is under investigation.
-- Claude will note if a finding requires further investigation in JD Edwards (e.g., querying F0911 across all accounts for a specific batch or GL document number) that cannot be completed from the Excel file alone. These items will appear inside the FIX card or as Related evidence rows.
-- Amounts in the exported file may display with floating-point precision artifacts (e.g., $636.20000000000005). Claude rounds all amounts to two decimal places for analysis and reporting purposes. These artifacts do not affect the accuracy of the analysis.
+- Claude will note if a finding requires further investigation in JD Edwards (e.g., querying F0911 across all accounts for a specific batch or GL document number) that cannot be completed from the Excel file alone. These items will appear inside the HOW card or as Related evidence rows.
+- Amounts in the exported file may display with floating-point precision artifacts. Claude rounds all amounts to two decimal places for analysis and reporting purposes. These artifacts do not affect the accuracy of the analysis.
 - Processing option suggestions are drawn from the Section 8 Quick Lookup table in this guide. They identify candidate settings to investigate, not confirmed causes. The correct version settings must be verified in JD Edwards before any conclusions are drawn.
-- The priority level on the variance card is computed mechanically from `|variance| / max(|cardex|, |ledger|)` against the thresholds in Section 6.4.1 of the formatting spec. A small variance against a large document is genuinely lower priority than the same variance on a small document, even when both look like "$X has a problem" at first glance.
+- The priority level on the variance card is computed mechanically from `|variance| / max(|cardex|, |ledger|)` against the thresholds in Section 9.3 of the formatting spec. A small variance against a large document is genuinely lower priority than the same variance on a small document, even when both look like "$X has a problem" at first glance.
 
 ## Overview
 

@@ -6,50 +6,96 @@
 
 ## Section 1: Using Claude for Automated Analysis
 
-Claude can perform the full analysis procedure automatically and return a single updated `.xlsx` file with the RR Analysis sheet added.
+Claude can perform a full DMAAI Entry Integrity analysis automatically and return an updated `.xlsx` workbook with the analysis written to a card-layout sheet, the source sheet equipped with AutoFilter and freeze panes, and each finding categorized by priority. This eliminates manual annotation and ensures consistent output across analysts.
 
-### What to Upload
+### 1.1 First Request in a Session
 
-Upload **two files:**
+On the first request, upload **three files** together:
 
-1. This guide (`.md`)
-2. The Integrity Report 2 export (`.xlsx`)
+1. This guide (`dmaai-analysis.md`)
+2. The shared formatting spec (`excel-output-formatting-spec.md`)
+3. The Integrity Report 2 export (`.xlsx`)
+
+If the AAI table descriptions reference (`distribution-aais.md`) is available, include it as a fourth file. It is used to populate the issue scope text with table-purpose context.
 
 Then use the following prompt:
 
-> *"Analyze this Integrity Report 2 file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis'. Any comment with net zero needs to be verified, not marked as a potential issue. Mismatches with the model table should be labeled as object account mismatches or business unit mismatches and prioritized by impact. Use the DMAAI table descriptions from the distribution-aais.md reference for the Variance Type Summary."*
+> *"Analyze this file using the DMAAI Analysis Guide and the formatting spec, then produce an updated copy of the Excel file with the multi-finding analysis sheet."*
 
-### Follow-On Requests in the Same Session
+Claude will read both documents, work through the analysis procedure against the Excel data, build the workbook per the formatting spec, and return the file.
 
-Once this guide has been uploaded, it remains in context. Use:
+### 1.2 Follow-On Requests in the Same Session
 
-> *"Analyze this Integrity Report file and return it with the RR Analysis sheet."*
+Once the guide and formatting spec have been uploaded in a session, Claude retains them in context for the remainder of the conversation. Subsequent Integrity Report 2 reports **do not require re-uploading**. Simply upload the new `.xlsx` and use a shorter prompt:
 
-### Output Specification
+> *"Analyze this file and return it with the analysis sheet."*
 
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide and the formatting spec again — Claude will use them and ignore the duplication.
 
-**Sheet 1 (left, opens first) — RR Analysis (new)**
-- Source data, unchanged
-- No row highlighting required for Integrity Report 2 (unlike End of Day exports)
+### 1.3 Output Specification
 
-**Sheet 2 — Integrity (original)**
-- Report Summary
-- Variance Type Summary (color-coded by priority)
-- Findings by Priority (with detail, root cause, and resolution for each)
-- Recommended Actions (numbered, in execution order)
+The output workbook follows the conventions defined in the **shared formatting spec** (`excel-output-formatting-spec.md`) — file naming pattern, sheet structure, card layout, colour palette, priority calculation, source-sheet handling, adaptive row heights, and floating text box specifications all live in that document so they stay consistent across all RapidReconciler analysis guides.
 
-### Notes and Limitations
+This section captures only the **DMAAI-specific** content that the formatting spec needs from this guide.
+
+**Template family** (formatting spec, Section 3): **Multi-Finding, configuration snapshot.** Each finding catalogues one type of DMAAI mismatch; there is no single primary variance. The reader's job is to triage which mismatches to fix first.
+
+**File naming** (formatting spec, Section 1): `DMAAI Entry Integrity Analysis {YYYY-MM-DD}.xlsx`. Use the analysis date — DMAAI is a configuration snapshot with no period concept.
+
+**Source sheet name:** `Integrity`. **Sorting is not required.** Apply AutoFilter on the header row and freeze panes per the formatting spec.
+
+**Headline anchor** (formatting spec, Section 4): analysis date.
+
+> `DMAAI Entry Integrity — {Month DD, YYYY}`
+
+**Subline** (formatting spec, Section 5.3): a count summary, e.g., `{N} configuration findings across {M} companies — {n1} BU mismatches, {n2} object mismatches, {n3} net-zero verifications`.
+
+**Secondary context strip** (formatting spec, Section 5.4) carries: source tables compared (F4095 against the model table 4152), companies in scope, and total row count.
+
+**Issue Summary table** (formatting spec, Section 7.1): one row per distinct finding, sorted by priority. Columns: Issue label, Scope (companies/branches/tables), Detail (table description from `distribution-aais.md` if available, plus distinguishing characteristics), Rows count, Priority badge.
+
+**Finding cards** (formatting spec, Section 7.2): one card per finding type. Use the Section 6 issue-type names from this guide as finding titles:
+
+- `Mismatch — Business Unit` (the most systematic — single setup error affects every transaction in that table)
+- `Mismatch — Object Account` (account-level discrepancy with the model)
+- `Mismatch — Object Account (Work Order Cost Type A1)` — treat as a separate finding when work-order mismatches dominate the data
+- `Net Zero — Verification Required` (informational; do not auto-classify as an error)
+
+Each card has the standard Scope / Pattern / Resolution sub-fields. **Do not use a "Root Cause" sub-field** — DMAAI is a configuration snapshot, not an event log. The Pattern field characterizes what the data shows; the Resolution names the JDE corrective steps.
+
+**Priority assignment** (formatting spec, Section 9.3, rule-based by issue severity):
+
+| Priority | Issue type |
+|---|---|
+| **P1** | Business Unit mismatch — every transaction routes to the wrong company |
+| **P2** | Object Account mismatch — account-level discrepancies; transactions hit the wrong GL account |
+| **P3** | Net Zero — informational; flagged for verification, not auto-classified as an error |
+
+For exports with systematic BU mismatches across many tables for the same company, group the findings into a single card whose Scope describes the affected tables and companies, rather than emitting one card per table.
+
+**Sub-tables** (formatting spec, Section 7.3): not used in DMAAI — the volume is typically too large and there is no clean ranking criterion. The Issue Summary table substitutes for sub-tables; readers filter the source sheet for full details.
+
+**Action Plan** (formatting spec, Section 7.4): in execution order. Typical sequence:
+
+1. Investigate any BU mismatches first (P1) — confirm which side (DMAAI or model) is correct, with the accounting team.
+2. Update the incorrect side in P40950 (DMAAI maintenance) or in the model table maintenance program.
+3. Address Object Account mismatches (P2) by table or by company group.
+4. Verify net-zero findings (P3) — do not auto-classify; confirm with the accounting team whether each is intentional.
+5. Re-run Integrity Report 2 after corrections to confirm findings have cleared.
+
+**Source sheet handling** (formatting spec, Section 10): **Pattern A — no highlights, AutoFilter only.** DMAAI exports typically have hundreds to thousands of rows; row-level highlighting becomes noise at that scale. Readers filter the source sheet by issue type to see specific findings.
+
+### 1.4 Notes and Limitations
 
 - Claude analyzes the data as exported. Account numbers are interpreted from the export columns; the actual JDE DMAAI setup must be verified in JD Edwards.
-- Net zero findings are flagged for verification, not automatically classified as errors.
-- Mismatch resolution requires JDE access to confirm which account (DMAAI or model) is correct.
+- Net-zero findings are flagged for verification, not auto-classified as errors. The Pattern field of the Net Zero finding card explains why this category requires accounting review.
+- Mismatch resolution requires JDE access to confirm which account (DMAAI or model) is correct. The analysis identifies the discrepancy; it cannot determine intent.
 - The analysis cannot determine the intended chart of accounts structure — that must be provided by the accounting team.
-- For exports with systematic mismatches across many GL class codes, the analysis groups findings by pattern (e.g., "all OUTG entries in tables 4122, 4126, 4240, 4310 for companies 2 and 22") to make the summary workable.
-- When table 4365 mismatches include doc type OO (Outside Operations), the analysis treats OO as a separate sub-finding. Outside Operations is a different transaction flow from direct ship and rental settlement doc types and may require a different GL account.
+- For exports with systematic mismatches across many GL class codes for the same companies, the analysis groups findings by pattern (e.g., a single Finding card scoped to "all OUTG entries in tables 4122, 4126, 4240, 4310 for companies X and Y") to keep the summary workable.
+- When table 4365 mismatches include doc type OO (Outside Operations), the analysis treats OO as a separate sub-finding within the Pattern field. Outside Operations is a different transaction flow from direct ship and rental settlement doc types and may require a different GL account.
+- Where the AAI table descriptions reference (`distribution-aais.md`) is available and uploaded, the Detail column of the Issue Summary table includes the table purpose (e.g., "4122 — Inventory issue to manufacturing"). Without that reference, the table number alone is shown.
 
 ---
-
 
 ## Overview
 
@@ -235,7 +281,7 @@ RapidReconciler has detected that the entries in a paired set of tables (debit a
 
 ## Section 7: Report Summary — [Generated from Customer Export]
 
-This section is populated by Claude based on the uploaded Integrity Report 2 export. The following fields and tables will be derived from the actual data and written to the RR Analysis sheet.
+This section is populated by Claude based on the uploaded Integrity Report 2 export. The following fields and tables will be derived from the actual data and written to the Analysis sheet.
 
 ### Report Header
 
@@ -407,7 +453,7 @@ Before beginning analysis, compare the current export row counts to the prior pe
 - **New finding not present in prior export** — treat as a new issue and analyze independently.
 - **Finding from prior export no longer present** — confirm the correction was intentional and not masked by a data change.
 
-Document the delta in the Report Summary section of the RR Analysis sheet.
+Document the delta in the Report Summary section of the Analysis sheet.
 
 ### Step 4: Inspect New Doc Types in Existing Findings
 
@@ -449,56 +495,7 @@ Maintain a running log of:
 
 ---
 
-## Section 11: Excel Output Formatting Rules
-
-### File Naming
-
-Output file name: `DMAAI Analysis.xlsx`
-
-### Sheet Structure
-
-| Sheet | Contents |
-|---|---|
-| **RR Analysis** | The analysis sheet (see below). This is the first (leftmost) tab and the active sheet when the workbook opens. |
-| **Integrity** | The original source data, unchanged |
-
-Do not delete, rename, or reorder the source sheet.
-
-### RR Analysis Sheet Structure
-
-| Section | Content |
-|---|---|
-| **Report Summary** | Period-end date, generation timestamp, total row count, companies present, tables present, issue type breakdown |
-| **Variance Type Summary** | One row per comment type with six columns: Comment / Issue Type, DMAAI Table Description (sourced from distribution-aais.md), Row Count, Companies Affected, Doc Types, and GL Class Codes Impacted. Color-coded by severity. |
-| **Findings by Priority** | One sub-section per priority finding. Each sub-section contains the detailed account analysis, root cause, and resolution path. Followed by a note box with key observations. When a finding contains doc type OO alongside other doc types for table 4365, OO is written as a separate sub-finding. |
-| **Recommended Actions** | Numbered action steps in execution order, with the specific tables, companies, and responsible owner for each. |
-
-### Analysis Sheet Formatting
-
-| Element | Specification |
-|---|---|
-| **Font** | Arial throughout |
-| **Section headers** | Dark blue fill (`1F3864`), white bold text, 11pt |
-| **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt |
-| **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
-| **Data rows** | Alternating white and light gray (`F2F2F2`) fill; 10pt Arial |
-| **Priority 1 rows** | Red fill (`FFE0E0`), dark red text (`8B0000`) |
-| **Priority 2 rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`) |
-| **Priority 3 rows** | Light yellow fill (`FFF2CC`), dark olive text (`4A3B00`) |
-| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
-| **Column widths** | Fixed widths sized for readability — not auto-stretched to full sheet width. Typical widths: Col A 22, B 28, C 36, D 20, E 20. |
-| **Row heights** | Calculated from content length and column width — not a flat default. |
-| **Wrap text** | Enabled on all cells on the RR Analysis sheet. |
-| **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
-| **Colour palette** | Priority 1 fill `FFE0E0` / text `8B0000`; Priority 2 fill `FFD966` / text `6B3A00`; Priority 3 fill `FFF2CC` / text `4A3B00`. Use lighter fills and non-bold text so content remains easy to read. |
-| **Source sheet** | AutoFilter on row 2; freeze panes at row 3. Row highlights match analysis priority colours. |
-| **Grid lines** | Disabled on the RR Analysis sheet (`showGridLines = False`). |
-| **Text box note** | Floating text box anchored col F → col R, rows 1–18; no fill; no border. Sections: title (16pt bold), What is a DMAAI? (13pt bold heading + 12pt body), Why does it matter?, What does this workbook show?, About this workbook. See formatting spec Section 6.7. |
-| **Colour key** | Include a colour key section at the top of the analysis sheet. |
-
----
-
-## Section 12: AAI Quick Reference
+## Section 11: AAI Quick Reference
 
 ### Balance Sheet DMAAI Tables Validated by Integrity Report 2
 
@@ -572,7 +569,7 @@ In this report, **FlexBu = Yes** for rows where the business unit component of t
 
 ---
 
-## Section 13: Related Documentation
+## Section 12: Related Documentation
 
 - [End of Day Analysis Guide](end-of-day-analysis-guide.md) — Reference for EOD variance analysis in RapidReconciler
 - [DMAAI Reference Guide](distribution-aais.md) — Complete reference for JDE Distribution and Manufacturing AAIs (F4095), including all table numbers, key structure, fallback sequence, and Flexible Accounting setup

@@ -6,46 +6,100 @@
 
 ## Section 1: Using Claude for Automated Analysis
 
-Claude can perform the full analysis procedure automatically and return a single updated `.xlsx` file with the RR Analysis sheet added.
+Claude can perform a full Frozen Cost Integrity analysis automatically and return an updated `.xlsx` workbook with the multi-finding analysis written to a card-layout sheet, the source sheet equipped with AutoFilter and freeze panes, and findings categorized by issue type and priority. This eliminates manual annotation and ensures consistent output across analysts.
 
-### What to Upload
+### 1.1 First Request in a Session
 
-Upload **two files:**
+On the first request, upload **three files** together:
 
-1. This guide (`.md`)
-2. The Integrity Report 6 export (`.xlsx`)
+1. This guide (`frozen-cost-integrity-analysis.md`)
+2. The shared formatting spec (`excel-output-formatting-spec.md`)
+3. The Integrity Report 6 export (`.xlsx`)
 
 Then use the following prompt:
 
-> *"Analyze this Integrity Report 6 file using the guide as reference, then produce an updated copy of the Excel file with the analysis written to a new sheet called 'RR Analysis'. Cost in F30026 only (UnitCost = 0, FrzCost > 0) is Priority 1. Cost in F4105 only and both-populated mismatches are Priority 2."*
+> *"Analyze this file using the Frozen Cost Analysis Guide and the formatting spec, then produce an updated copy of the Excel file with the multi-finding analysis sheet."*
 
-### Output Specification
+Claude will read both documents, work through the analysis procedure against the Excel data, build the workbook per the formatting spec, and return the file.
 
-**File naming:** Name the output file `DMAAI Analysis.xlsx`.
+### 1.2 Follow-On Requests in the Same Session
 
-**Sheet 1 (left, opens first) — RR Analysis (new)**
-- Source data, unchanged except row highlights, AutoFilter on row 2, freeze panes at row 3. No freeze panes on the analysis sheet.
-- Priority 1 rows (UnitCost = 0, FrzCost > 0): light red fill (`FFE0E0`)
-- Priority 2 rows (all other findings): amber fill (`FFD966`)
+Once the guide and formatting spec have been uploaded in a session, Claude retains them in context for the remainder of the conversation. Subsequent Integrity Report 6 reports **do not require re-uploading**. Simply upload the new `.xlsx` and use a shorter prompt:
 
-**Sheet 2 — Integrity (original)**
-- Report Summary
-- Colour Key
-- Issue Type Summary (color-coded by priority)
-- Row Count by Company / Branch
-- Findings by Priority (item detail, root cause, verification steps, and resolution for each)
-- Recommended Actions (numbered, in execution order)
+> *"Analyze this file and return it with the analysis sheet."*
 
-### Notes and Limitations
+Start a new session when switching to a different guide version or when the conversation has been idle long enough that context may have been lost. When in doubt, include the guide and the formatting spec again — Claude will use them and ignore the duplication.
 
-- **Space-padded numeric cells:** Cost columns in this export may contain space-padded values rather than true zeros. Strip whitespace from UnitCost and FrzCost before classifying. A cell containing `'    '` (spaces) is treated as zero.
+### 1.3 Output Specification
+
+The output workbook follows the conventions defined in the **shared formatting spec** (`excel-output-formatting-spec.md`) — file naming pattern, sheet structure, card layout, colour palette, priority calculation, source-sheet handling, adaptive row heights, and floating text box specifications all live in that document so they stay consistent across all RapidReconciler analysis guides.
+
+This section captures only the **Frozen Cost-specific** content that the formatting spec needs from this guide.
+
+**Template family** (formatting spec, Section 3): **Multi-Finding, configuration snapshot.** Each finding catalogues a class of cost discrepancies between F4105 (Item Cost method 07) and F30026 (Product Cost components). There is no period concept and no aggregate dollar variance, but P1 items with QOH > 0 produce a derived GL understatement.
+
+**File naming** (formatting spec, Section 1): `Frozen Cost Integrity Analysis {YYYY-MM-DD}.xlsx`. Use the analysis date — Frozen Cost Integrity is a configuration snapshot.
+
+**Source sheet name:** `Integrity`. **Sorting is not required.** Apply AutoFilter on the header row and freeze panes per the formatting spec.
+
+**Headline anchor** (formatting spec, Section 4): analysis date.
+
+> `Frozen Cost Integrity — {Month DD, YYYY}`
+
+**Subline** (formatting spec, Section 5.3): a count summary of the three issue types, e.g., `{N} configuration findings across {M} companies and {B} branches — {n1} zero-cost items, {n2} missing components, {n3} cost mismatches`.
+
+**Secondary context strip** (formatting spec, Section 5.4) carries: source tables compared (F4105 vs F30026), companies in scope, stocking types observed.
+
+**Issue Summary table** (formatting spec, Section 7.1): one row per distinct finding, sorted by priority. Columns: Issue label, Scope (companies/branches), Detail (concentration patterns, GL gap from QOH-bearing P1 items if applicable), Rows count, Priority badge.
+
+**Finding cards** (formatting spec, Section 7.2): one card per issue type, mapped to the guide's three issue types (Section 4):
+
+- `Cost in F30026 only — zero-cost inventory` (P1) — F4105 method 07 = 0, F30026 has components; manufacturing transactions value at zero, on-hand inventory undervalued
+- `Cost in F4105 only — no F30026 components` (P2) — F4105 has cost, F30026 empty; work-order WIP clears entirely to variance
+- `Both populated — F4105 ≠ F30026 sum` (P2) — values disagree; engineering/other variance at R31804
+
+When the data shows clear sub-patterns within a finding (branch concentration, stocking-type concentration, recurring cost-pair pattern), describe these in the Pattern field rather than splitting into separate findings — the resolution path is the same.
+
+Each card has the standard Scope / Pattern / Resolution sub-fields. **Do not use a "Root Cause" sub-field** — Frozen Cost Integrity is a configuration snapshot; the Pattern field characterizes what the data shows.
+
+**Priority assignment** (formatting spec, Section 9.3, rule-based by issue severity):
+
+| Priority | Issue type |
+|---|---|
+| **P1** | Cost in F30026 only — zero-cost inventory (immediate GL impact when QOH > 0) |
+| **P2** | Cost in F4105 only — no F30026 components (every work order produces variance) |
+| **P2** | Both populated, mismatch (variance at R31804 on every transaction) |
+
+**Sub-tables** (formatting spec, Section 7.3): use sub-tables for **the actionable subset** of each finding, not the full data. Common patterns:
+
+- For P1 (zero-cost inventory): sub-table the items with QOH > 0 — they represent the immediate GL understatement. Compute and display the GL gap (`QOH × FrzCost` summed) in the finding's Pattern field.
+- For P2 (mismatch): sub-table the top 10 by absolute variance — these are the items most worth investigating first.
+- For P2 (F4105 only): no sub-table — too many rows with no clean ranking criterion. Point to source AutoFilter.
+
+Sort sub-tables by Company → Branch → Item ascending (the natural source-sheet reading order), not by magnitude.
+
+**Action Plan** (formatting spec, Section 7.4): in execution order. Typical sequence:
+
+1. Confirm with the cost accounting team whether any large F4105-only concentrations (e.g., purchased items in a specific branch) are intentional. A single decision may reclassify many rows.
+2. Run R30835 (Frozen Standard Update) for branches with the zero-cost (P1) cluster to create the missing F4105 method 07 records. Test in non-production first.
+3. For the QOH-bearing P1 items (the GL-understatement subset), review the RapidReconciler Transactions page and assess whether a revaluation journal entry is needed. Confirm with accounting before posting.
+4. Investigate any branch-wide mismatch clusters — likely partial cost rolls. Determine which value is correct and run R30835 for the affected branch.
+5. Build F30026 components for any manufactured items with no F30026 build — every work order produces variance until corrected.
+6. Run R30837 (WIP Revaluation) for any open work orders on items corrected by R30835. Failure to do so produces persistent cardex-only variances.
+7. Refresh RapidReconciler and re-run Integrity Report 6 to confirm corrected items have cleared.
+
+**Source sheet handling** (formatting spec, Section 10): Frozen Cost exports are typically large (hundreds to thousands of rows). **Pattern A — no highlights, AutoFilter only.** Readers filter on `UnitCost = 0` for P1, `FrzCost = 0` for the F4105-only P2 finding, or both > 0 with non-zero variance for the mismatch P2 finding.
+
+### 1.4 Notes and Limitations
+
+- **Space-padded numeric cells:** Cost columns in the export may contain space-padded values rather than true zeros. Strip whitespace from UnitCost and FrzCost before classifying. A cell containing `'    '` (spaces) is treated as zero.
 - Cost interpretation (whether a zero UnitCost is a genuine setup error or an intentional non-costed item) requires JDE access to the item setup and cost history — Claude flags the pattern but cannot confirm intent without JDE access.
-- The QOH displayed in the Lot column is parsed from the string "QOH N" — Claude extracts this value to flag items with on-hand inventory at the zero-cost condition.
-- For exports with many rows (500+), Claude groups findings by pattern (branch, stocking type, cost difference magnitude) to make the summary workable rather than listing every row individually.
+- The QOH displayed in the Lot column is parsed from the string `QOH N` — Claude extracts this value to identify items with on-hand inventory at the zero-cost condition.
+- For exports with many rows (500+), Claude groups findings by pattern (branch, stocking type, cost difference magnitude) in the Pattern field of the relevant card to keep the summary workable rather than listing every row individually.
 - If the Prodplant and Prodcost columns are populated, note them in the analysis — cross-plant costing can produce expected differences that are not data errors.
+- Non-standard stocking type values (anything other than P, S, M) are flagged in the Pattern field of the relevant finding as data-quality candidates worth reviewing with the item setup team.
 
 ---
-
 
 ## Overview
 
@@ -337,65 +391,7 @@ For any items where the frozen standard cost was corrected, check whether there 
 
 ---
 
-## Section 10: Excel Output Specification
-
-### File Naming
-
-Output file name: `DMAAI Analysis.xlsx`
-
-### Sheet Structure
-
-| Sheet | Contents |
-|---|---|
-| **Integrity** | The original source data, unchanged except row highlights, AutoFilter on row 2, and freeze panes at row 3 |
-
-No freeze panes on the RR Analysis sheet. Grid lines disabled on the RR Analysis sheet (`showGridLines = False`). Include a floating text box (col F → col R, rows 1–18, no fill, no border) with sections: title 16pt bold, What is Frozen Cost Integrity? / Why does it matter? / What does this workbook show? / About this workbook — headings 13pt bold, body 12pt. See formatting spec Section 6.7.
-| **RR Analysis** | The analysis sheet |
-
-### Source Sheet Row Highlights
-
-| Highlight | Issue Type | Criteria |
-|---|---|---|
-| Priority 1 — light red (`FFE0E0`) | Cost in F30026 only | UnitCost = 0 and FrzCost > 0 |
-| Priority 2 — amber (`FFD966`) | Cost in F4105 only | UnitCost > 0 and FrzCost = 0 |
-| Priority 2 — amber (`FFD966`) | Both populated — mismatch | Both > 0 and UnitCost ≠ FrzCost |
-
-> **Space-padded blanks:** Cost value columns in this export may contain space-padded cells rather than true zeros. Strip whitespace from numeric fields before classifying rows — a cell containing only spaces is treated as zero, not as a valid cost.
-
-### RR Analysis Sheet Structure
-
-| Section | Content |
-|---|---|
-| **Report Summary** | Period end, generation timestamp, total rows, companies, branch plants, stock types |
-| **Colour Key** | Self-illustrating key showing each priority colour and what it means |
-| **Issue Type Summary** | One row per issue type with count, %, companies and branches affected, description |
-| **Row Count by Company / Branch** | Summary table showing issue type counts per company/branch combination |
-| **Findings by Priority** | Priority 1 first, then Priority 2A (F4105 only), then Priority 2B (mismatch). Each sub-section: item list, root cause, verification steps, resolution table. |
-| **Recommended Actions** | Numbered action steps in execution order, with specific items/branches and responsible owner for each. |
-
-### Analysis Sheet Formatting
-
-Follow the standard formatting specification:
-
-| Element | Specification |
-|---|---|
-| **Font** | Arial throughout |
-| **Section headers** | Dark blue fill (`1F3864`), white bold text, 11pt |
-| **Sub-section headers** | Medium blue fill (`2E75B6`), white bold text, 10pt; priority sub-headers use priority fill with bold text |
-| **Column headers** | Light blue fill (`D6E4F0`), dark blue bold text, 10pt |
-| **Priority 1 rows** | Light red fill (`FFE0E0`), dark red text (`8B0000`), non-bold |
-| **Priority 2 rows** | Amber fill (`FFD966`), dark brown text (`6B3A00`), non-bold |
-| **Note boxes** | Wheat fill (`F5DEB3`), black text (`000000`), italic; full-width merged cell; wrap text enabled; fixed row height 75pt (≈ 100px) |
-| **Column widths** | 6-column layout: A=20, B=28, C=36, D=16, E=14, F=16. Do not auto-stretch to full sheet width. |
-| **Row heights** | Calculated from content: data rows use `ceil(longest_line / col_width) × 13pt`, capped at 80pt. Minimum 16pt. |
-| **P1 items table** | Uses all 6 columns. Col E = QOH (integer, right-aligned). Col F = GL Gap in dollars (numeric, `#,##0.00` format, right-aligned). A total row immediately below the item list sums col F to show the total GL understatement for displayed items. |
-| **Wrap text** | Enabled on all cells. |
-| **Resolution tables** | Two-column layout: condition spans cols A–B, action spans cols C–E. Do not merge the full row width. |
-| **Grid lines** | Disabled (`showGridLines = False`). |
-
----
-
-## Section 11: Related Documentation
+## Section 10: Related Documentation
 
 - [Integrity Report 5 Guide](integrity-report5-glclass-analysis.md) — GL class code integrity (F4102 vs F41021). Section 10 of the manufacturing reference notes that F41021/F4102 GL class code mismatches cause manufacturing transactions to post to unexpected accounts — IR5 and IR6 findings often co-occur on the same items.
 - [DMAAI Analysis Guide](inventory-integrity-report2-analysis.md) — If F30026 contains GL class codes that are missing from the DMAAI model table (4152 PI), manufacturing transactions will error when R31802A runs. IR2 and IR6 findings can be related.
