@@ -14,12 +14,13 @@ analysis that turn RapidReconciler exports into actionable insights in minutes.
 
 Here are some key collateral documents that provide an overview of RapidReconciler's benefits and features. These resources are intended to help you understand the value proposition of the application and how it can assist your JD Edwards reconciliation processes. Click on each document name to view the full content.
 
-| Document                                                                                     | Description                                                  |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| [How RapidReconciler Helps](/RapidReconciler-AI/Collateral/how-rr-helps.html)       | Overview of the application's benefits and value proposition |
-| [RapidReconciler Fact Sheet](/RapidReconciler-AI/Collateral/rr-fact-sheet.html) | One-page summary of key features and benefits                |
-| [Inventory Dashboard Sample](/RapidReconciler-AI/Collateral/inventory-dashboard.html) | Executive summary of inventory reconciliation challenges and how RapidReconciler addresses them |
-| [In-Transit Dashboard Sample](/RapidReconciler-AI/Collateral/in-transit-dashboard.html) | Executive summary of in-transit reconciliation challenges and how RapidReconciler addresses them |
+| Document                                                                                  | Description                                                                                      |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [How RapidReconciler Helps](/RapidReconciler-AI/Collateral/how-rr-helps.html)             | Overview of the application's benefits and value proposition                                     |
+| [RapidReconciler Fact Sheet](/RapidReconciler-AI/Collateral/rr-fact-sheet.html)           | One-page summary of key features and benefits                                                    |
+| [Self-Guided Tour](/RapidReconciler-AI/Collateral/self-guided-tour.html)                  | Interactive walkthrough of the application interface and features                                |
+| [Inventory Dashboard Sample](/RapidReconciler-AI/Collateral/inventory-dashboard.html)     | Executive summary of inventory reconciliation challenges and how RapidReconciler addresses them  |
+| [In-Transit Dashboard Sample](/RapidReconciler-AI/Collateral/in-transit-dashboard.html)   | Executive summary of in-transit reconciliation challenges and how RapidReconciler addresses them |
 | [PO Receipts Dashboard Sample](/RapidReconciler-AI/Collateral/po-receipts-dashboard.html) | Executive summary of PO receipt reconciliation challenges and how RapidReconciler addresses them |
 
 ---
