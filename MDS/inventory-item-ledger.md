@@ -8,6 +8,9 @@
 
 - [Overview](#overview)
 - [Section 1: F4111 Table Structure and Key Fields](#section-1-f4111-table-structure-and-key-fields)
+  - [1.5 Key Field Reference](#15-key-field-reference)
+  - [1.6 Why the F41112 Item ASOF Table is Unreliable](#16-why-the-f41112-item-asof-table-is-unreliable)
+  - [1.7 Joining F4111 to Other Tables](#17-joining-f4111-to-other-tables)
 - [Section 2: Should the Item Ledger Sum Equal the Item Balance Table?](#section-2-should-the-item-ledger-sum-equal-the-item-balance-table)
 - [Section 3: How to Correctly Analyze the Cardex](#section-3-how-to-correctly-analyze-the-cardex)
 - [Section 4: Real-World Example -- Weighted Average Cost Calculation Error](#section-4-real-world-example----weighted-average-cost-calculation-error)
@@ -27,6 +30,8 @@ Understanding how to read, analyze, and validate the item ledger is essential fo
 This guide covers:
 
 - The structure and key fields of the F4111 table
+- A field-level reference for the most important columns analysts work with
+- Why the F41112 (Item ASOF) table cannot be trusted as a standalone source for inventory balances
 - Common questions about item ledger behavior
 - Identifying and correcting quantity integrity variances using R41544 and R41995
 - The Global Item Update creation date override risk and how to protect against it
@@ -58,7 +63,7 @@ The posting code in F4111 is stored in column **ILIPCD**. This field is not disp
 | Posting Code | Description |
 |---|---|
 | **Blank** | The initial value assigned to all qualifying transactions. Also used for IB transactions created when an item is added to the system. |
-| **Y** | Posted by the Item Ledger As-Of Record Generation program (R41542) to the Item ASOF file (F41112). |
+| **Y** | Posted by the Item Ledger As-Of Record Generation program (R41542) to the Item ASOF file (F41112). See Section 1.6 for why F41112 should not be used as a standalone source for balances. |
 | **S** | The value of inventory has not yet been impacted by the transaction. Examples include a ship confirmation transaction before running Sales Update, or an IM document type before Manufacturing Accounting has been run. |
 | **X** | The transaction involved a movement of inventory only and had no effect on the general ledger. Examples include an IZ transaction created on a change of lot status. These transactions must be **excluded** when summarizing item ledger totals. |
 
@@ -109,6 +114,174 @@ The item ledger table does **not** store information about which DMAAI entries w
 > **Note:** The RapidReconciler Transaction Detail Report can provide DMAAI context by combining item ledger data with the applicable DMAAI configuration at the time of the transaction.
 
  Refer to [DMAAI Reference Guide](../MDS/dmaai-reference-guide.md) for more information on how DMAAI entries are determined for inventory transactions.
+
+### 1.5 Key Field Reference
+
+The F4111 table contains over 50 columns. The fields below are the ones most commonly used during cardex analysis, custom report development, and reconciliation work. Field names follow the standard JD Edwards convention where each column is prefixed with `IL` (the table's two-letter alias for Item Ledger).
+
+#### 1.5.1 Item, Branch, and Location Identifiers
+
+| Field | Description | Notes |
+|---|---|---|
+| **ILITM** | Short item number (numeric, system-assigned) | The internal key used in nearly all joins to other inventory tables (F4101, F4102, F41021, F4105) |
+| **ILLITM** | Second item number (long item number) | The user-facing item number entered on most screens; subject to change via Global Item Update |
+| **ILAITM** | Third item number | Often used for cross-references, customer item numbers, or alternate part numbers |
+| **ILMCU** | Branch/Plant (Business Unit) | Always right-justified and space-padded in queries -- e.g. `'      M30'` |
+| **ILLOCN** | Location within the branch | Blank for items not stored in defined locations |
+| **ILLOTN** | Lot number | Blank for items not under lot control |
+| **ILMMCU** | Owning branch (header business unit) | May differ from ILMCU on transfer-related transactions |
+
+#### 1.5.2 Document Identification
+
+| Field | Description | Notes |
+|---|---|---|
+| **ILDCT** | Document type (e.g. OV, IT, IM, IA, IS, IZ, IB) | Identifies what kind of transaction created the record. See Section 1.5.5 below. |
+| **ILDOC** | Document number | Unique within document type and company |
+| **ILKCO** | Document company | Five-character company assigned at document creation |
+| **ILSFX** | Document pay item (suffix) | Distinguishes multiple lines on a single document |
+| **ILDCTO** | Order document type (e.g. OP for purchase orders, SO for sales orders) | Populated when the transaction was generated from an order |
+| **ILDOCO** | Order document number | The originating order number |
+| **ILKCOO** | Order document company | Company of the originating order |
+| **ILLNID** | Order line number | Identifies the line within the originating order |
+
+#### 1.5.3 Quantity, Cost, and Amount Fields
+
+These fields are stored without decimal places in the database. The decimal positions must be applied when displaying or summarizing them.
+
+| Field | Description | Decimal Handling |
+|---|---|---|
+| **ILTRQT** | Transaction quantity (in transaction UOM) | Stored as integer; **divide by 1,000** to obtain actual quantity (3 implied decimal places) |
+| **ILUNCS** | Unit cost at the time of the transaction | Stored as integer; **divide by 10,000** to obtain actual unit cost (4 implied decimal places) |
+| **ILPAID** | Extended cost of the transaction (quantity × unit cost) | Stored as integer; **divide by 100** to obtain actual amount (2 implied decimal places) |
+| **ILTRUM** | Transaction unit of measure | Two-character UOM code; must be checked before totaling quantities (see Section 3.2) |
+
+> **Important:** When summarizing F4111 directly via SQL or a custom report, always apply the correct decimal scaling. A common error is to sum ILTRQT and ILPAID without dividing, producing totals that are 1,000× and 100× larger than expected.
+
+#### 1.5.4 Date Fields
+
+| Field | Description | Notes |
+|---|---|---|
+| **ILDGL** | General Ledger date (Julian) | The date that drives GL posting and period assignment |
+| **ILTRDJ** | Transaction date (Julian) | Date the transaction occurred per the entry screen; can be backdated by users (see Section 1.3) |
+| **ILCRDJ** | Creation date (Julian) | Date the record was written to F4111; the most reliable indicator of when the transaction entered the system, but can be overwritten by Global Item Update (see Section 1.3.1) |
+
+> **Date format note:** All date fields in F4111 are stored in **Julian (CYYDDD) format** -- e.g. `124001` represents January 1, 2024. This is the JD Edwards standard date format and applies throughout the system.
+
+#### 1.5.5 GL and Posting Fields
+
+| Field | Description | Notes |
+|---|---|---|
+| **ILGLPT** | GL Class Code (also called GL Posting Category) | Determines which DMAAI entries are used to derive the GL accounts for the transaction. Critical for reconciliation -- a change to this value mid-life will cause F41112 to show split balances per GL class. |
+| **ILJELN** | Journal entry line number | Used to join F4111 to the corresponding F0911 line (see Section 1.7) |
+| **ILICU** | Batch number | Created when the GL batch is generated (e.g. by R31802 for IM transactions). Will be blank on F4111 records that have not yet been processed by the relevant GL update program. |
+| **ILIPCD** | Posting code (Blank, Y, S, X) | See Section 1.2 for the full meaning of each value |
+| **ILAID** | Account ID | The unique internal account identifier from F0901 -- not the human-readable account number |
+
+#### 1.5.6 Common Document Types in F4111
+
+The document type (ILDCT) tells you what kind of transaction was recorded. The following are the most frequently encountered:
+
+| Document Type | Description | Source Application |
+|---|---|---|
+| **OV** | Purchase order receipt | P4312 (PO Receipts) |
+| **IT** | Inventory transfer | P4113 (Transfers) |
+| **IA** | Inventory adjustment | P4114 (Inventory Adjustments) |
+| **IM** | Material issue (manufacturing) | Manufacturing Accounting (R31802) |
+| **IC** | Manufacturing completion | Work Order Completions |
+| **IS** | Sales shipment | Sales Update (R42800) |
+| **IZ** | Lot status change | Lot Master maintenance |
+| **IB** | Item ledger balance forward / opening balance | Created when an item is added or as part of period-end balance forward processing |
+
+> **Note:** For IM transactions, ILDOC contains the work order number rather than a sequentially-generated document number, which is why standard joins between F4111 and F0911 on `ILDOC = GLDOC` will not work for these records. See Section 1.7 for the correct join logic.
+
+---
+
+### 1.6 Why the F41112 Item ASOF Table is Unreliable
+
+The **Item ASOF table (F41112)** is a JD Edwards summary table that stores period-by-period quantity and amount buckets for each item, branch, location, and lot combination. It is built and maintained by the **Item Ledger As-Of Record Generation program (R41542)**, which reads transactions from F4111, summarizes them into period buckets, and flags the source records with posting code "Y".
+
+The intended purpose of F41112 is to provide fast access to historical period balances without re-summarizing F4111 every time. In practice, however, F41112 has a long history of accuracy problems and **should never be used as a standalone source of truth for inventory balances or reconciliation totals**. The item ledger (F4111) -- with appropriate filtering -- is the authoritative source.
+
+#### 1.6.1 Documented Reasons F41112 Cannot Be Trusted
+
+| Issue | Description |
+|---|---|
+| **Missed transactions during R41542 processing** | The As-Of generation program is known to skip certain transactions. Possible causes include records where ILIPCD is null (often the result of records created via SQL or other non-standard paths), records where the IS document type is incorrectly written with ILIPCD = "Y" instead of "X", and intermittent skips on average cost items. Once a record is missed, the F41112 buckets for the affected period will not match F4111 unless the table is fully regenerated. |
+| **Weighted average cost defects** | Oracle has acknowledged a defect (BUG 8742885) affecting R41544 integrity reporting on weighted-average-cost items. The associated downstream effect is that F41112 buckets for these items can be inaccurate even after a clean regeneration, and Oracle has classified the fix as an enhancement rather than a defect -- meaning it is not patched in the standard product. |
+| **Ship-confirmed but not sales-updated transactions** | Sales orders that have been ship-confirmed but for which Sales Update (R42800) has not yet run produce F4111 records with ILIPCD = "S". R41542 bypasses these records entirely. Until Sales Update runs and the record is replaced, the F41112 totals will not reflect these shipments. |
+| **Duplicate writes** | Several documented cases exist where specific transaction patterns -- including credit notes received via transportation modules -- are written to F41112 twice during As-Of processing, inflating the period buckets. |
+| **Period total corruption after upgrades** | Oracle Knowledge Base document 2817306.1 documents a confirmed case where, after upgrading from JD Edwards 9.1 to 9.2, F41112 period quantities for hundreds of records were materially incorrect (one example showed -1,170 in F41112 against an actual F4111 sum of +180 for the same period). The issue could not be reproduced in a test environment, making root-cause analysis effectively impossible. |
+| **Full regeneration carries operational risk** | The standard remedy for a corrupted F41112 is to re-run R41542 with the regeneration processing option set to "1". This deletes the entire F41112 table before rebuilding it. On large datasets, the deletion can fail mid-flight due to insufficient rollback segment space, leaving the table in a partially-populated state. Full regeneration on a multi-million-record cardex can take many hours and requires careful coordination. |
+| **No GL detail in F41112** | F41112 contains only summarized quantity and amount buckets per period. There is no document-level detail, no GL date, no document type, and no link back to F0911. Any variance identified in F41112 cannot be traced to the underlying transactions without going back to F4111. |
+
+#### 1.6.2 Practical Implications
+
+The R41544 Item Balance/Ledger Integrity Report uses F41112 as part of its calculation. When F41112 is wrong, R41544 will report variances that do not actually exist in F4111 -- producing false positives that consume reconciliation time. Conversely, F41112 errors that offset each other can mask true integrity issues.
+
+> **Recommendation:** Treat F41112 as a convenience table for period reporting only, and only after confirming that R41542 has completed cleanly for the period in question. For reconciliation work, balance integrity checks, and any analysis where accuracy matters, **summarize F4111 directly** with the appropriate ILIPCD and UOM filtering described in Section 3.
+
+> **Note:** RapidReconciler does not rely on F41112 for any reconciliation calculation. All quantity and dollar totals are derived from F4111 directly, eliminating the F41112 reliability problem from the reconciliation process entirely.
+
+---
+
+### 1.7 Joining F4111 to Other Tables
+
+Custom reports and integrity queries often require joining F4111 to related JD Edwards tables. The correct join keys depend on which table is being joined and -- in some cases -- on the document type involved.
+
+#### 1.7.1 F4111 to F0911 (General Ledger)
+
+The relationship between F4111 and F0911 is **one-to-many** -- a single item ledger record will typically have at least two F0911 lines (a debit and an offsetting credit), and may have more depending on how the GL accounts were configured.
+
+| F4111 Field | F0911 Field | Notes |
+|---|---|---|
+| **ILKCO** | GLKCO | Document company -- always required |
+| **ILDCT** | GLDCT | Document type -- always required |
+| **ILDOC** | GLDOC | Document number -- works for most document types, but **not for IM (manufacturing issues)**, where ILDOC contains the work order number and GLDOC contains a generated document number from a NN bucket |
+| **ILJELN** | GLJELN | Journal entry line number -- needed when matching to a specific GL line |
+| **ILICU** | GLICU | Batch number -- required for accurate matching when GL batches have been summarized |
+
+> **For IM document types:** The correct join is `ILDOC = GLSBL` (subledger) with `GLSBLT = 'W'` (subledger type W for work order). The function B0000083 is needed to convert ILDOC from numeric to the left-zero-padded string format used in GLSBL.
+
+#### 1.7.2 F4111 to F41021 (Item Location)
+
+The Item Location table holds the running on-hand balance that the cardex sum should match.
+
+| F4111 Field | F41021 Field |
+|---|---|
+| ILITM | LIITM |
+| ILMCU | LIMCU |
+| ILLOCN | LILOCN |
+| ILLOTN | LILOTN |
+
+The on-hand quantity in F41021 is **LIPQOH** (Primary Quantity On Hand), expressed in the item's primary unit of measure.
+
+#### 1.7.3 F4111 to F4105 (Item Cost)
+
+F4105 stores the current unit cost by cost method. There is no direct one-to-one relationship to a single F4111 record; F4105 reflects the *current* cost rather than the cost at the time of any historical transaction. The historical unit cost for a transaction is captured in F4111.ILUNCS at the moment the transaction was written.
+
+| F4111 Field | F4105 Field |
+|---|---|
+| ILITM | COITM |
+| ILMCU | COMCU |
+| ILLOCN | COLOCN |
+| ILLOTN | COLOTN |
+
+The cost method on F4105 (COCMTH) determines whether the cost is standard, weighted average, last-in, or another method. For weighted average items, F4105.COUNCS is the running weighted average cost, which should agree with the implied cost calculated from on-hand quantity and inventory value.
+
+#### 1.7.4 F4111 to F43121 (PO Receiver)
+
+For OV (purchase receipt) document types, F43121 contains the receiver detail and should reconcile back to F4111.
+
+| F4111 Field | F43121 Field |
+|---|---|
+| ILDOC | PRDOC |
+| ILDCT | PRDCT |
+| ILDOCO | PRDOCO |
+| ILDCTO | PRDCTO |
+| ILLNID | PRLNID |
+| ILKCOO | PRKCOO |
+
+The amount on the receiver (PRAREC) should equal the extended amount on the corresponding cardex record (ILPAID). A discrepancy between these two values is a common source of three-way-match variances.
 
 ---
 
@@ -310,6 +483,7 @@ Before changing a second or third item number and running Global Item Update, ta
 | Topic | Best Practice |
 |---|---|
 | **Memo transactions** | Always exclude ILIPCD = "X" records from any cardex analysis |
+| **F41112 reliability** | Do not treat the Item ASOF table (F41112) as a source of truth -- summarize F4111 directly with appropriate ILIPCD and UOM filtering. F41112 is known to miss transactions, double-count certain document types, and produce corrupted period totals after upgrades. See Section 1.6. |
 | **Unit of measure** | Always verify the UOM column before totaling; convert non-primary UOM quantities before comparing |
 | **Average cost analysis level** | Match the analysis level to the item's cost level setting -- wildcard for Cost Level 2, specific lot/location for Cost Level 3 |
 | **Weighted average cost** | Do not allow on-hand quantities to go negative; verify cost level is set to 3 for lot-controlled items |
