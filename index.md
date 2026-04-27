@@ -59,6 +59,22 @@ These technical documents provide detailed guidance on the installation, configu
 
 ---
 
+## Reference Materials
+
+This section includes reference materials that provide in-depth information on various aspects of RapidReconciler and its use in JD Edwards reconciliation processes. These documents serve as a valuable resource for users seeking detailed explanations, best practices, and troubleshooting guidance related to the application. Whether you're looking for specific information on a particular feature or need comprehensive guidance on a broader topic, these reference materials will help you navigate and utilize RapidReconciler effectively.
+
+| Document | Description |
+|----------|-------------|
+| [Working with the Item Ledger](MDS/inventory-item-ledger.md) | Balances, posting codes, dates, DMAAs, and integrity conditions |
+| [Managing GL Class Codes](MDS/inventory-gl-class-codes.md)   | Procedure, hierarchy of change locations, why adjustments are required |
+| [Product Costing Guide](MDS/inventory-costing.md)            | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact |
+| [Ultimate DMAAI Guide](MDS/distribution-aais.md)                                         | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
+| [About Units of Measure](MDS/inventory-uom.md)               | Changing the primary unit of measure, impact on inventory transactions, and cardex analysis considerations |
+| [Zero Balance Adjustments](MDS/inventory-zero-balance.md)    | Purpose, purchasing and inventory AAIs, journal entry examples |
+| [Outside Operations](MDS/inventory-outside-ops.md)           | Item master, work center, routing, receipt, and WIP journal entries |
+
+---
+
 ## Getting Started with the Application
 
 These documents provide an introduction to RapidReconciler, including its benefits, how it compares to traditional reconciliation methods in JD Edwards, and the basics of using the application. Whether you're new to RapidReconciler or looking for a refresher on its core features, these resources will help you get up to speed quickly and start leveraging the application for more efficient reconciliations.
@@ -67,7 +83,6 @@ These documents provide an introduction to RapidReconciler, including its benefi
 |----------|-------------|
 | [Application Basics](MDS/getting-started-with-rapidreconciler.md)                        | Logging in, navigating the interface, and system requirements |
 | [Complex Password Option](MDS/complex-password.md)                                       | Password policy requirements and reset process |
-| [Ultimate DMAAI Guide](MDS/distribution-aais.md)                                         | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
 
 ---
 
@@ -88,14 +103,10 @@ This section covers all aspects of inventory reconciliation using RapidReconcile
 |----------|-------------|
 | [Reference Guide](MDS/inventory-reference-guide.md)          | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes |
 | [Managing Accounts](MDS/inventory-add-account-rr.md)         | DMAAI model table process and refresh requirements |
-| [Working with the Item Ledger](MDS/inventory-item-ledger.md) | Balances, posting codes, dates, DMAAs, and integrity conditions |
-| [Managing GL Class Codes](MDS/inventory-gl-class-codes.md)   | Procedure, hierarchy of change locations, why adjustments are required |
-| [About Units of Measure](MDS/inventory-uom.md)               | Changing the primary unit of measure, impact on inventory transactions, and cardex analysis considerations |
-| [Product Costing Guide](MDS/inventory-costing.md)            | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact |
-| [Zero Balance Adjustments](MDS/inventory-zero-balance.md)    | Purpose, purchasing and inventory AAIs, journal entry examples |
-| [Handling Cardex Variance](MDS/inventory-cardex-variance.md) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
-| [Outside Operations](MDS/inventory-outside-ops.md)           | Item master, work center, routing, receipt, and WIP journal entries |
 | [Reconciling Inventory](MDS/inventory-reconciliation.md)     | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
+| [Handling Cardex Variance](MDS/inventory-cardex-variance.md) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
+
+---
 
 ## In Transit Module
 
@@ -103,9 +114,9 @@ This section focuses on the reconciliation of in-transit inventory using RapidRe
 
 | Document | Description |
 |----------|-------------|
-| [Reference Guide](MDS/transfer-order-reference.md)             | Transfer order types, processing flow, AAIs, journal entries, and common issues    |
-| [Reconciling In Transit](MDS/transfer-order-reconciliation.md) | Orders page, reconciliation page, transactions page, As-Of page, integrity reports |
-| [Exclusions Guide](MDS/transfer-order-exclusion-guide.md)      | Exclusion types, setup, and troubleshooting                                        |
+| [Reference Guide](MDS/transfer-order-reference.md)                      | Transfer order types, processing flow, AAIs, journal entries, and common issues    |
+| [Reconciliation Walkthrough](HowToHTML/in-transit-rec-walkthrough.html) | Step-by-step reconciliation
+| [Exclusions Guide](MDS/transfer-order-exclusion-guide.md)               | Exclusion types, setup, and troubleshooting                                        |
 
 ---
 
