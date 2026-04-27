@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RapidReconciler vs. Manual JD Edwards Reconciliation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600;700;800&family=Open+Sans:wght@400;600;700;800&family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #4d77b4;
+    --blue-dark: #3d5f93;
+    --blue-darker: #2c4670;
+    --blue-deep: #1f3354;
+    --yellow: #f5cb35;
+    --yellow-dark: #e0b820;
+    --yellow-soft: #fdf6e3;
+    --beige: #e0d8c3;
+    --beige-light: #ede5d0;
+    --paper: #ffffff;
+    --ink: #2a2a2a;
+    --ink-soft: #4a4a4a;
+    --muted: #888888;
+    --rule: #e0e0e0;
+    --red: #c75a3a;
+    --red-deep: #8a3520;
+    --green: #4a6b3a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .container-narrow { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+  /* ==================== HERO ==================== */
+  .hero {
+    background: linear-gradient(135deg, var(--blue-deep) 0%, var(--blue-dark) 50%, var(--blue) 100%);
+    color: white;
+    padding: 80px 0 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    background: var(--yellow);
+    opacity: 0.08;
+    border-radius: 50%;
+    filter: blur(60px);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 80px; left: -80px;
+    width: 300px; height: 300px;
+    background: var(--yellow);
+    opacity: 0.05;
+    border-radius: 50%;
+    filter: blur(50px);
+  }
+
+  .hero-content { position: relative; z-index: 2; }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(245, 203, 53, 0.15);
+    border: 1px solid rgba(245, 203, 53, 0.4);
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--yellow);
+    margin-bottom: 28px;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--yellow);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--yellow);
+  }
+
+  .hero h1 {
+    font-family: 'Bitter', serif;
+    font-weight: 500;
+    font-size: clamp(36px, 5.5vw, 60px);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+    max-width: 920px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--yellow);
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .hero h1 em::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 4px;
+    background: var(--yellow);
+    opacity: 0.4;
+  }
+
+  .hero-lede {
+    font-size: 19px;
+    line-height: 1.55;
+    max-width: 720px;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 36px;
+    font-weight: 300;
+  }
+
+  .hero-cta-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 64px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 26px;
+    border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: var(--yellow);
+    color: var(--blue-deep);
+    border: 1px solid var(--yellow-dark);
+  }
+  .btn-primary:hover {
+    background: var(--yellow-dark);
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.4);
+  }
+  .btn-ghost:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.7);
+    text-decoration: none;
+  }
+
+  /* ==================== HERO STATS BAR ==================== */
+  .hero-stats {
+    background: rgba(0,0,0,0.18);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 28px 0;
+  }
+  .hero-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Bitter', serif;
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--yellow);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.7);
+    font-weight: 600;
+  }
+
+  /* ==================== YELLOW PROBLEM BAR ==================== */
+  .problem-bar {
+    background: var(--yellow);
+    border-top: 1px solid var(--yellow-dark);
+    border-bottom: 1px solid var(--yellow-dark);
+    padding: 28px 0;
+  }
+  .problem-bar-content {
+    text-align: center;
+    font-family: 'Bitter', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--blue-deep);
+    line-height: 1.4;
+  }
+  .problem-bar-content strong { font-weight: 700; }
+
+  /* ==================== SECTIONS ==================== */
+  section { padding: 88px 0; }
+  section.bg-beige { background: var(--beige-light); }
+  section.bg-paper { background: var(--paper); }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--blue);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--yellow);
+  }
+
+  .section-title {
+    font-family: 'Bitter', serif;
+    font-weight: 500;
+    font-size: clamp(30px, 4vw, 42px);
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 16px;
+    max-width: 800px;
+  }
+
+  .section-title em {
+    font-style: normal;
+    color: var(--blue);
+    background: linear-gradient(180deg, transparent 60%, rgba(245, 203, 53, 0.4) 60%);
+  }
+
+  .section-lede {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 720px;
+    margin-bottom: 56px;
+  }
+
+  /* ==================== FAILURE POINTS ==================== */
+  .failure-list { display: flex; flex-direction: column; gap: 24px; }
+
+  .failure-card {
+    background: var(--paper);
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    border-top: 4px solid var(--yellow);
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .failure-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+
+  .failure-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .failure-num {
+    flex-shrink: 0;
+    width: 48px; height: 48px;
+    background: var(--blue);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bitter', serif;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .failure-title {
+    font-family: 'Bitter', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .failure-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .failure-body { display: grid; grid-template-columns: 1fr 1fr; }
+
+  .failure-col {
+    padding: 24px 28px;
+    font-size: 14.5px;
+    line-height: 1.6;
+  }
+
+  .failure-col.jde {
+    background: #fbf7ed;
+    border-right: 1px solid var(--rule);
+    position: relative;
+  }
+
+  .failure-col.rr {
+    background: #f4f8f2;
+    position: relative;
+  }
+
+  .col-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+    padding: 4px 10px;
+    border-radius: 3px;
+  }
+
+  .col-label.jde {
+    background: rgba(199, 90, 58, 0.12);
+    color: var(--red-deep);
+  }
+  .col-label.jde::before {
+    content: '✕';
+    font-size: 13px;
+    color: var(--red);
+  }
+
+  .col-label.rr {
+    background: rgba(74, 107, 58, 0.12);
+    color: var(--green);
+  }
+  .col-label.rr::before {
+    content: '✓';
+    font-size: 13px;
+    color: var(--green);
+  }
+
+  .failure-col p { margin-bottom: 12px; color: var(--ink-soft); }
+  .failure-col p:last-child { margin-bottom: 0; }
+  .failure-col strong { color: var(--ink); font-weight: 600; }
+
+  .failure-col-list {
+    margin: 12px 0 0 0;
+    list-style: none;
+  }
+  .failure-col-list li {
+    padding-left: 22px;
+    position: relative;
+    margin-bottom: 8px;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .failure-col-list li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 9px;
+    width: 12px; height: 1px;
+    background: var(--blue);
+  }
+
+  /* ==================== SUMMARY TABLE ==================== */
+  .summary-table-wrap {
+    background: var(--paper);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    border: 1px solid var(--rule);
+  }
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+  }
+  .summary-table thead th {
+    background: var(--blue);
+    color: white;
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .summary-table thead th:first-child {
+    background: var(--blue-dark);
+  }
+  .summary-table thead th.rr-col {
+    background: var(--blue-deep);
+    border-left: 4px solid var(--yellow);
+  }
+  .summary-table tbody td {
+    padding: 16px 20px;
+    border-top: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .summary-table tbody td:first-child {
+    font-weight: 700;
+    color: var(--blue-dark);
+    background: #f8f5ec;
+    width: 22%;
+  }
+  .summary-table tbody td.jde-cell { color: var(--red-deep); width: 39%; }
+  .summary-table tbody td.rr-cell {
+    color: var(--green);
+    width: 39%;
+    border-left: 4px solid var(--yellow);
+    background: #fafdf7;
+    font-weight: 600;
+  }
+
+  /* ==================== SCALE / WHY ==================== */
+  .scale-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .scale-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 28px;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scale-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--yellow);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.3s ease;
+  }
+  .scale-card:hover::before { transform: scaleY(1); }
+  .scale-card:hover {
+    border-color: var(--blue);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  }
+
+  .scale-icon {
+    width: 40px; height: 40px;
+    background: var(--blue);
+    color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bitter', serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .scale-card h3 {
+    font-family: 'Bitter', serif;
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .scale-card p {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  /* ==================== HOW IT WORKS ==================== */
+  .how-section {
+    background: linear-gradient(135deg, var(--blue-deep) 0%, var(--blue-dark) 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .how-section::before {
+    content: '';
+    position: absolute;
+    top: 50%; right: -200px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(245,203,53,0.1) 0%, transparent 70%);
+    transform: translateY(-50%);
+  }
+
+  .how-section .section-eyebrow {
+    color: var(--yellow);
+    border-bottom-color: var(--yellow);
+  }
+  .how-section .section-title { color: white; }
+  .how-section .section-title em {
+    background: linear-gradient(180deg, transparent 60%, rgba(245,203,53,0.5) 60%);
+    color: var(--yellow);
+  }
+  .how-section .section-lede { color: rgba(255,255,255,0.8); }
+
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .module-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    padding: 28px;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+  }
+  .module-card:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: var(--yellow);
+    transform: translateY(-2px);
+  }
+
+  .module-tag {
+    display: inline-block;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11px;
+    color: var(--yellow);
+    margin-bottom: 14px;
+    letter-spacing: 0.05em;
+    padding: 3px 8px;
+    background: rgba(245,203,53,0.1);
+    border-radius: 3px;
+  }
+
+  .module-card h3 {
+    font-family: 'Bitter', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 8px;
+  }
+
+  .module-card p {
+    font-size: 14.5px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.55;
+  }
+
+  .module-card code {
+    font-family: 'Source Code Pro', monospace;
+    background: rgba(245,203,53,0.15);
+    color: var(--yellow);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+  }
+
+  /* ==================== QUOTE BLOCK ==================== */
+  .quote-section {
+    background: var(--yellow);
+    padding: 80px 0;
+    position: relative;
+  }
+  .quote-section::before {
+    content: '"';
+    position: absolute;
+    top: -40px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Bitter', serif;
+    font-size: 280px;
+    color: var(--blue-deep);
+    opacity: 0.08;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .quote-section blockquote {
+    font-family: 'Bitter', serif;
+    font-style: italic;
+    font-size: clamp(24px, 3.5vw, 34px);
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--blue-deep);
+    text-align: center;
+    max-width: 880px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .quote-section .quote-attr {
+    text-align: center;
+    margin-top: 24px;
+    font-family: 'Open Sans', sans-serif;
+    font-style: normal;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--blue-deep);
+    font-weight: 700;
+    opacity: 0.7;
+  }
+
+  /* ==================== CTA SECTION ==================== */
+  .cta-section {
+    background: var(--blue-deep);
+    color: white;
+    padding: 72px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before,
+  .cta-section::after {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+  }
+  .cta-section::before {
+    background: var(--yellow);
+    top: -100px; left: -100px;
+  }
+  .cta-section::after {
+    background: var(--blue);
+    bottom: -100px; right: -100px;
+  }
+
+  .cta-section .container { position: relative; z-index: 1; }
+
+  .cta-section h2 {
+    font-family: 'Bitter', serif;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 500;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .cta-section p {
+    font-size: 17px;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 32px;
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cta-row {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  /* ==================== FOOTER ==================== */
+  footer {
+    background: #1a1a1a;
+    color: rgba(255,255,255,0.6);
+    padding: 32px 0;
+    font-size: 13px;
+    text-align: center;
+  }
+  footer a { color: var(--yellow); }
+
+  /* ==================== ANIMATIONS ==================== */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ==================== RESPONSIVE ==================== */
+  @media (max-width: 800px) {
+    .failure-body { grid-template-columns: 1fr; }
+    .failure-col.jde {
+      border-right: none;
+      border-bottom: 1px solid var(--rule);
+    }
+    .scale-grid, .modules-grid, .hero-stats-grid { grid-template-columns: 1fr 1fr; }
+    .hero { padding-top: 60px; }
+    .summary-table { font-size: 13px; }
+    .summary-table thead th, .summary-table tbody td { padding: 12px 14px; }
+    .summary-table tbody td:first-child { width: auto; }
+    section { padding: 60px 0; }
+  }
+
+  @media (max-width: 520px) {
+    .hero-stats-grid { grid-template-columns: 1fr 1fr; }
+    .modules-grid { grid-template-columns: 1fr; }
+    .scale-grid { grid-template-columns: 1fr; }
+    .hero-cta-row { flex-direction: column; align-items: stretch; }
+    .btn { justify-content: center; }
+    .summary-table thead { display: none; }
+    .summary-table tbody td { display: block; width: 100%; border-left: none !important; }
+    .summary-table tbody td:first-child {
+      background: var(--blue);
+      color: white;
+    }
+    .summary-table tbody tr { display: block; margin-bottom: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <div class="container hero-content">
+    <span class="hero-eyebrow">JD Edwards · Inventory Reconciliation</span>
+    <h1>Stop reconciling on <em>spreadsheets</em>.<br>Start reconciling on <em>data</em>.</h1>
+    <p class="hero-lede">
+      Manual JD Edwards inventory reconciliation has five well-documented failure points. RapidReconciler eliminates all five — automatically, every night, in read-only mode against your live JDE data.
+    </p>
+    <div class="hero-cta-row">
+      <a href="mailto:rrsupport@getgsi.com" class="btn btn-primary">Request a Demo →</a>
+      <a href="#failures" class="btn btn-ghost">See the comparison</a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="container">
+      <div class="hero-stats-grid">
+        <div>
+          <div class="stat-num">5</div>
+          <div class="stat-label">Failure points<br>eliminated</div>
+        </div>
+        <div>
+          <div class="stat-num">3</div>
+          <div class="stat-label">Modules<br>reconciled nightly</div>
+        </div>
+        <div>
+          <div class="stat-num">6</div>
+          <div class="stat-label">Integrity reports<br>per import cycle</div>
+        </div>
+        <div>
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Read-only<br>JDE access</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PROBLEM BAR ==================== -->
+<div class="problem-bar">
+  <div class="container">
+    <div class="problem-bar-content">
+      The standard Stock Status report has <strong>five well-documented ways</strong> of producing a number that won't agree to the trial balance.
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FAILURE POINTS ==================== -->
+<section class="bg-paper" id="failures">
+  <div class="container">
+    <span class="section-eyebrow">Side-by-Side Comparison</span>
+    <h2 class="section-title">The five failure points — and how RapidReconciler <em>handles each one</em>.</h2>
+    <p class="section-lede">Reconciling inventory to the GL in JD Edwards is necessary but time-consuming. The manual approach depends on perfectly timed reports, correct DMAAI configuration, and institutional knowledge. Every one of these dependencies is a place the process can silently break.</p>
+
+    <div class="failure-list">
+
+      <!-- FAILURE 1: TIMING -->
+      <article class="failure-card">
+        <header class="failure-header">
+          <div class="failure-num">1</div>
+          <div>
+            <div class="failure-title">Timing</div>
+            <div class="failure-subtitle">Server clocks vs. report runs</div>
+          </div>
+        </header>
+        <div class="failure-body">
+          <div class="failure-col jde">
+            <span class="col-label jde">JD Edwards · Manual</span>
+            <p>A Stock Status report is run at a specific moment. Any transaction that posts after the report runs but before the period closes creates a discrepancy — the GL has the entry but the report does not.</p>
+            <p>In multi-timezone environments, transactions are recorded according to the JDE server clock, not the user's local time. A user in a western time zone entering a transaction after the report runs can silently create a reconciling item.</p>
+          </div>
+          <div class="failure-col rr">
+            <span class="col-label rr">RapidReconciler</span>
+            <p>Reconciliation is updated automatically with each nightly import cycle. There is no dependency on a perfectly timed manual report run.</p>
+            <p>Nightly import captures all posted transactions. Timing discrepancies are surfaced immediately and clearly identified by document date and GL date.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- FAILURE 2: BACKDATING -->
+      <article class="failure-card">
+        <header class="failure-header">
+          <div class="failure-num">2</div>
+          <div>
+            <div class="failure-title">Backdating</div>
+            <div class="failure-subtitle">Period mismatches between physical and GL</div>
+          </div>
+        </header>
+        <div class="failure-body">
+          <div class="failure-col jde">
+            <span class="col-label jde">JD Edwards · Manual</span>
+            <p>A transaction is posted to a GL period that differs from the period in which the inventory quantity actually changed. Stock Status reflects physical inventory; the GL reflects the backdated period.</p>
+            <p>Backdating can occur via manual date entry or via processing options in Manufacturing Accounting and Sales Update — sometimes intentionally, sometimes not. Either way, Stock Status and trial balance won't agree.</p>
+          </div>
+          <div class="failure-col rr">
+            <span class="col-label rr">RapidReconciler</span>
+            <p>Backdated transactions are captured in the reconciliation with both their transaction date and GL date visible, making the period mismatch immediately identifiable.</p>
+            <p>The Transactions page surfaces period mismatches as a labeled variance type. The Sub Type field identifies "Periods" as the source — no manual tracing required.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- FAILURE 3: REPORT DEFINITION -->
+      <article class="failure-card">
+        <header class="failure-header">
+          <div class="failure-num">3</div>
+          <div>
+            <div class="failure-title">Report Definition</div>
+            <div class="failure-subtitle">Cost methods, data selection, inclusion logic</div>
+          </div>
+        </header>
+        <div class="failure-body">
+          <div class="failure-col jde">
+            <span class="col-label jde">JD Edwards · Manual</span>
+            <p>The Stock Status report depends on correct cost method logic, data selection criteria, and inclusion rules. These drift over time as items, cost methods, and business units change.</p>
+            <ul class="failure-col-list">
+              <li>Hardcoding cost method "07" instead of using <code style="font-family:Source Code Pro,monospace;font-size:0.9em;background:rgba(199,90,58,0.1);padding:1px 5px;border-radius:3px">COCSIN = 'I'</code></li>
+              <li>Including non-stock items that carry an inadvertent cost</li>
+              <li>Excluding stock items through incorrect data selection</li>
+            </ul>
+          </div>
+          <div class="failure-col rr">
+            <span class="col-label rr">RapidReconciler</span>
+            <p>RapidReconciler reads directly from JD Edwards data tables — F4111, F0902, F0911 — eliminating the risk of incorrect cost method logic or flawed data selection in a custom report.</p>
+            <p>No report definition to configure. The reconciliation is driven by the same source tables JD Edwards uses. If an item has a cardex record, it is included.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- FAILURE 4: DMAAI -->
+      <article class="failure-card">
+        <header class="failure-header">
+          <div class="failure-num">4</div>
+          <div>
+            <div class="failure-title">DMAAI Misconfiguration</div>
+            <div class="failure-subtitle">Silent transaction-to-GL mismaps</div>
+          </div>
+        </header>
+        <div class="failure-body">
+          <div class="failure-col jde">
+            <span class="col-label jde">JD Edwards · Manual</span>
+            <p>DMAAI tables define how inventory transactions map to GL accounts. An incorrect account number causes every transaction of that type to post to the wrong account — silently, with no error message.</p>
+            <p>Unlike timing or backdating issues, DMAAI misconfiguration is <strong>entirely invisible until reconciliation</strong>. Tracing the issue requires hours of manual review across DMAAI tables, document types, and GL class codes.</p>
+          </div>
+          <div class="failure-col rr">
+            <span class="col-label rr">RapidReconciler</span>
+            <p>Integrity Reports compare DMAAI entries against the model table and flag mismatches by object account, business unit, and subsidiary. The Transaction Detail report identifies the specific AAI responsible.</p>
+            <p>Configuration issues are surfaced proactively by six Integrity Reports that run on every import cycle. A misconfigured AAI is identified before it compounds into a large period-end variance.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- FAILURE 5: GL CLASS CODE -->
+      <article class="failure-card">
+        <header class="failure-header">
+          <div class="failure-num">5</div>
+          <div>
+            <div class="failure-title">GL Class Code Changes</div>
+            <div class="failure-subtitle">Stranded inventory value in old accounts</div>
+          </div>
+        </header>
+        <div class="failure-body">
+          <div class="failure-col jde">
+            <span class="col-label jde">JD Edwards · Manual</span>
+            <p>Changing a GL class code on an item with quantity on hand does not automatically generate a journal entry to reclassify inventory value. Subsequent transactions post to the new account while the original value remains stranded in the old account.</p>
+            <p>JDE allows GL class code changes at any level without checking whether inventory is on hand. The result: a permanent reconciling item that grows with every subsequent transaction.</p>
+          </div>
+          <div class="failure-col rr">
+            <span class="col-label rr">RapidReconciler</span>
+            <p>GL class code mismatches are surfaced immediately. Variances appear in the reconciliation on the next import cycle. Integrity Report 5 identifies mismatches between Item Branch and Item Location records.</p>
+            <p>The impact is visible before it compounds. Integrity Report 3 flags GL class codes missing from the model. The As-Of page surfaces items carrying balances in multiple accounts.</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SUMMARY TABLE ==================== -->
+<section class="bg-beige">
+  <div class="container">
+    <span class="section-eyebrow">At a Glance</span>
+    <h2 class="section-title">Five failure points. <em>One simple comparison.</em></h2>
+
+    <div class="summary-table-wrap">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Failure Point</th>
+            <th>Manual JDE Approach</th>
+            <th class="rr-col">RapidReconciler</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Timing</td>
+            <td class="jde-cell">Requires perfect coordination of report timing with the JDE server clock</td>
+            <td class="rr-cell">Continuous nightly reconciliation — no report timing dependency</td>
+          </tr>
+          <tr>
+            <td>Backdating</td>
+            <td class="jde-cell">Identified only after manual investigation of period-end discrepancies</td>
+            <td class="rr-cell">Visible immediately with document date, GL date, and period label</td>
+          </tr>
+          <tr>
+            <td>Report Definition</td>
+            <td class="jde-cell">Fragile — depends on correct cost method, data selection, and inclusion logic</td>
+            <td class="rr-cell">Not applicable — reads directly from F4111, F0902, F0911</td>
+          </tr>
+          <tr>
+            <td>DMAAI Misconfiguration</td>
+            <td class="jde-cell">Invisible until reconciliation; hours of manual tracing</td>
+            <td class="rr-cell">Surfaced proactively by Integrity Reports; drill-down identifies the exact AAI</td>
+          </tr>
+          <tr>
+            <td>GL Class Code Changes</td>
+            <td class="jde-cell">Silent risk — no warning when changing with quantity on hand</td>
+            <td class="rr-cell">Immediate visibility; Integrity Reports 3 and 5 flag mismatches</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WHY MANUAL BREAKS DOWN ==================== -->
+<section class="bg-paper">
+  <div class="container">
+    <span class="section-eyebrow">At Scale</span>
+    <h2 class="section-title">Why the manual approach <em>breaks down</em>.</h2>
+    <p class="section-lede">Each issue is manageable in a small, simple JD Edwards environment. The manual approach breaks down as complexity increases — and it always increases.</p>
+
+    <div class="scale-grid">
+      <div class="scale-card">
+        <div class="scale-icon">↗</div>
+        <h3>Volume</h3>
+        <p>As transaction volume grows, the number of potential reconciling items grows with it. Investigation that takes an hour for 10 items takes a day for 100.</p>
+      </div>
+      <div class="scale-card">
+        <div class="scale-icon">⊞</div>
+        <h3>Multiple Companies</h3>
+        <p>Each company requires its own Stock Status and trial balance comparison. DMAAI configuration must be maintained independently per company. Errors in one company are invisible to reconcilers working on another.</p>
+      </div>
+      <div class="scale-card">
+        <div class="scale-icon">$</div>
+        <h3>Multiple Cost Methods</h3>
+        <p>Environments mixing standard cost, weighted average, and actual cost require careful report definition management. A single incorrect cost method specification affects every item using it.</p>
+      </div>
+      <div class="scale-card">
+        <div class="scale-icon">↻</div>
+        <h3>Frequent Cost Changes</h3>
+        <p>Standard cost updates can create WIP revaluation variances. Without a tool to surface these, they accumulate as unexplained balances until the next reconciliation cycle.</p>
+      </div>
+      <div class="scale-card">
+        <div class="scale-icon">⤺</div>
+        <h3>Staff Turnover</h3>
+        <p>The manual process depends heavily on institutional knowledge of report configuration, DMAAI setup, and organizational backdating practices. When the person who knows leaves, that knowledge leaves with them.</p>
+      </div>
+      <div class="scale-card">
+        <div class="scale-icon">✓</div>
+        <h3>RapidReconciler's Answer</h3>
+        <p>A consistent, automated reconciliation methodology that does not depend on report configuration, server timing, or organizational knowledge of DMAAI setup. It just runs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== HOW IT WORKS ==================== -->
+<section class="how-section">
+  <div class="container">
+    <span class="section-eyebrow">How It Works</span>
+    <h2 class="section-title">Three modules. <em>One nightly cycle.</em></h2>
+    <p class="section-lede">RapidReconciler reads JD Edwards data in <strong style="color:white">read-only mode</strong> on a nightly import cycle and maintains a continuously updated reconciliation across three modules. Variances are broken into labeled sources so the corrective action is immediately apparent. All corrections are made in JDE — RapidReconciler identifies the problem and tracks the resolution.</p>
+
+    <div class="modules-grid">
+      <div class="module-card">
+        <span class="module-tag">MODULE 01</span>
+        <h3>Inventory</h3>
+        <p><code>F4111</code> perpetual item ledger reconciled against <code>F0902</code> / <code>F0911</code> GL balances.</p>
+      </div>
+      <div class="module-card">
+        <span class="module-tag">MODULE 02</span>
+        <h3>In Transit</h3>
+        <p>ST/OT transfer order activity reconciled against the In Transit clearing account.</p>
+      </div>
+      <div class="module-card">
+        <span class="module-tag">MODULE 03</span>
+        <h3>PO Receipts</h3>
+        <p><code>F43121</code> receipt table reconciled against the Received-Not-Vouchered GL account.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== QUOTE ==================== -->
+<section class="quote-section">
+  <div class="container">
+    <blockquote>
+      "The period-end close should be a confirmation of what you already know — not a discovery of what went wrong."
+    </blockquote>
+    <div class="quote-attr">— The RapidReconciler Philosophy</div>
+  </div>
+</section>
+
+<!-- ==================== CTA ==================== -->
+<section class="cta-section">
+  <div class="container">
+    <h2>Ready to reconcile with confidence?</h2>
+    <p>Get in touch to schedule a proof of concept against your own JD Edwards data — read-only, no production impact.</p>
+    <div class="cta-row">
+      <a href="mailto:rrsupport@getgsi.com" class="btn btn-primary">rrsupport@getgsi.com →</a>
+      <a href="https://rapidreconciler.getgsi.com" class="btn btn-ghost" target="_blank" rel="noopener">Visit rapidreconciler.getgsi.com</a>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="container">
+    GSI · RapidReconciler &nbsp;·&nbsp; Inventory reconciliation for JD Edwards &nbsp;·&nbsp; <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a>
+  </div>
+</footer>
+
+<script>
+  // Subtle fade-in on scroll for failure cards and scale cards
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.failure-card, .scale-card, .module-card').forEach(el => {
+    el.classList.add('fade-in');
+    observer.observe(el);
+  });
+</script>
+
+</body>
+</html>
