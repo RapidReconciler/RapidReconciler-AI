@@ -14,14 +14,16 @@ analysis that turn RapidReconciler exports into actionable insights in minutes.
 
 Here are some key collateral documents that provide an overview of RapidReconciler's benefits and features. These resources are intended to help you understand the value proposition of the application and how it can assist your JD Edwards reconciliation processes. Click on each document name to view the full content.
 
-| Document                                                                                  | Description                                                                                      |
-| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [How RapidReconciler Helps](/RapidReconciler-AI/Collateral/how-rr-helps.html)             | Overview of the application's benefits and value proposition                                     |
-| [RapidReconciler Fact Sheet](/RapidReconciler-AI/Collateral/rr-fact-sheet.html)           | One-page summary of key features and benefits                                                    |
-| [Self-Guided Tour](/RapidReconciler-AI/Collateral/rr-self-guided-tour.html)               | Interactive walkthrough of the application interface and features                                |
-| [Inventory Dashboard Sample](/RapidReconciler-AI/Collateral/inventory-dashboard.html)     | Executive summary of inventory reconciliation challenges and how RapidReconciler addresses them  |
-| [In-Transit Dashboard Sample](/RapidReconciler-AI/Collateral/in-transit-dashboard.html)   | Executive summary of in-transit reconciliation challenges and how RapidReconciler addresses them |
-| [PO Receipts Dashboard Sample](/RapidReconciler-AI/Collateral/po-receipts-dashboard.html) | Executive summary of PO receipt reconciliation challenges and how RapidReconciler addresses them |
+| Document                                                                                   | Description                                                                                      |     |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | --- |
+| [How RapidReconciler Helps](/RapidReconciler-AI/Collateral/how-rr-helps.html)              | Overview of the application's benefits and value proposition                                     |     |
+| [RapidReconciler Fact Sheet](/RapidReconciler-AI/Collateral/rr-fact-sheet.html)            | One-page summary of key features and benefits                                                    |     |
+| [RapidReconciler Comparison](/RapidReconciler-AI/Collateral/rapidreconciler-vs-jde.html)   | Comparison of RapidReconciler with traditional spreadsheet-based reconciliation methods          | ]   |
+| [Self-Guided Tour](/RapidReconciler-AI/Collateral/rr-self-guided-tour.html)                | Interactive walkthrough of the application interface and features                                |     |
+| [Inventory Dashboard Sample](/RapidReconciler-AI/Collateral/inventory-dashboard.html)      | Executive summary of inventory reconciliation challenges and how RapidReconciler addresses them  |     |
+| [In-Transit Dashboard Sample](/RapidReconciler-AI/Collateral/in-transit-dashboard.html)    | Executive summary of in-transit reconciliation challenges and how RapidReconciler addresses them |     |
+| [PO Receipts Dashboard Sample](/RapidReconciler-AI/Collateral/po-receipts-dashboard.html)  | Executive summary of PO receipt reconciliation challenges and how RapidReconciler addresses them |     |
+| [JDE vs. RapidReconciler Comparison](MDS/stock-status-trial-balance.md)                    | Timing, backdating, report definition                                                            |     |
 
 ---
 
@@ -32,14 +34,14 @@ The result produces AI-generated insights: root causes, recommended actions, and
 
 | Document | Description |
 |----------|-------------|
-| [End of Day Analysis](AnalysisExamples/End-of-Day-Analysis.xlsx)                   | End of Day Preview Export                 |
-| [DMAAI Integrity](AnalysisExamples/DMAAI-Analysis.xlsx)                            | Inventory Integrity Report 2              |
-| [Account Roll Forward](AnalysisExamples/Account-Roll-Forward-Analysis.xlsx)        | Inventory Validation Status Light Export  |
-| [Unposted GL Batches](AnalysisExamples/Unposted-GL-Batch-Analysis.xlsx)            | Batches Preview Export                    |
-| [Cardex Item Analysis](AnalysisExamples/Cardex-Variance-Item-Analysis.xlsx)        | Expanding an Item on the As Of page       |
-| [Transaction Details Analysis](AnalysisExamples/Transaction-Details-Analysis.xlsx) | Expanding a line on the Transactions page |
-| [GL Class Code Analysis](AnalysisExamples/GL-Class-Analysis.xlsx)                  | Inventory Integrity Report 5              |
-| [Frozen Cost Integrity](AnalysisExamples/Frozen-Cost-Analysis.xlsx)                | Inventory Integrity Report 6              |
+| [End of Day Analysis](AnalysisExamples/End-of-Day-Analysis.xlsx)                         | End of Day Preview Export                 |
+| [DMAAI Integrity](AnalysisExamples/DMAAI-Analysis.xlsx)                                  | Inventory Integrity Report 2              |
+| [Account Roll Forward](AnalysisExamples/Account-Roll-Forward-Analysis.xlsx)              | Inventory Validation Status Light Export  |
+| [Unposted GL Batches](AnalysisExamples/Unposted-GL-Batch-Analysis.xlsx)                  | Batches Preview Export                    |
+| [Cardex Item Analysis](AnalysisExamples/Cardex-Variance-Item-Analysis.xlsx)              | Expanding an Item on the As Of page       |
+| [Transaction Details Analysis](AnalysisExamples/Transaction-Details-Analysis.xlsx)       | Expanding a line on the Transactions page |
+| [GL Class Code Analysis](AnalysisExamples/GL-Class-Analysis.xlsx)                        | Inventory Integrity Report 5              |
+| [Frozen Cost Integrity](AnalysisExamples/Frozen-Cost-Analysis.xlsx)                      | Inventory Integrity Report 6              |
 
 ---
 
@@ -55,7 +57,6 @@ These technical documents provide detailed guidance on the installation, configu
 | [Client Management](MDS/tech-client-management.md)                                        | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
 | [Server Migration Guide](MDS/tech-server-migration.md)                                    | Moving RapidReconciler to a new dedicated or separate server including prerequisites, database backup and restore, SSIS package migration, SQL Agent job setup, and VALC and Cloudflare updates |
 
-
 ---
 
 ## Getting Started with the Application
@@ -64,13 +65,18 @@ These documents provide an introduction to RapidReconciler, including its benefi
 
 | Document | Description |
 |----------|-------------|
-| [How RapidReconciler Helps Document](/MDS/how-rr-helps.md)              | Printable version of the application's benefits and value proposition |
-| [JDE vs. RapidReconciler Comparison](MDS/stock-status-trial-balance.md) | Timing, backdating, report definition |
-| [Application Basics](MDS/getting-started-with-rapidreconciler.md)       | Logging in, navigating the interface, and system requirements |
-| [Complex Password Option](MDS/complex-password.md)                      | Password policy requirements and reset process |
-| [Administrator Responsibilities](MDS/admin-responsibilities.md)         | Company management, user setup, general settings, and offset accounts |
-| [Obtaining a New Company License](MDS/adding-company.md)                | How to request additional company licenses and edit company settings in RapidReconciler. |
-| [Ultimate DMAAI Guide](MDS/distribution-aais.md)                        | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
+| [Application Basics](MDS/getting-started-with-rapidreconciler.md)                        | Logging in, navigating the interface, and system requirements |
+| [Complex Password Option](MDS/complex-password.md)                                       | Password policy requirements and reset process |
+| [Ultimate DMAAI Guide](MDS/distribution-aais.md)                                         | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
+
+---
+
+## Administrating the Application
+This section outlines the key responsibilities of RapidReconciler administrators, including managing companies, users, and general settings within the application. It also covers important tasks such as setting up offset accounts for inventory adjustments and ensuring that the application is configured correctly to meet the needs of your organization. Whether you're a new administrator or looking to refresh your knowledge of your role, these documents provide comprehensive guidance to help you effectively manage RapidReconciler and support your JD Edwards reconciliation processes.
+
+| Document                                                        | Description                                                           |     |
+| --------------------------------------------------------------- | --------------------------------------------------------------------- | --- |
+| [Walkthrough](HowToHTML/administrator-walkthrough.html)         | Company management, user setup, general settings, and offset accounts | ]   |
 
 ---
 
@@ -89,7 +95,7 @@ This section covers all aspects of inventory reconciliation using RapidReconcile
 | [Zero Balance Adjustments](MDS/inventory-zero-balance.md)    | Purpose, purchasing and inventory AAIs, journal entry examples |
 | [Handling Cardex Variance](MDS/inventory-cardex-variance.md) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
 | [Outside Operations](MDS/inventory-outside-ops.md)           | Item master, work center, routing, receipt, and WIP journal entries |
-| [Reconciling Inventory](MDS/inventory-reconciliation.md)      | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
+| [Reconciling Inventory](MDS/inventory-reconciliation.md)     | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
 
 ## In Transit Module
 

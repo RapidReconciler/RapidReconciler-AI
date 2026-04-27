@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RapidReconciler — Administrator Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #4d77b4;
+    --blue-dark: #3d5f93;
+    --yellow: #f5cb35;
+    --yellow-dark: #e0b820;
+    --beige: #e0d8c3;
+    --paper: #ffffff;
+    --ink: #333333;
+    --ink-soft: #555555;
+    --muted: #888888;
+    --rule: #e0e0e0;
+    --link: #4d77b4;
+    --table-border: #d6d2c4;
+    --warning-bg: #fdf6e3;
+    --tip-bg: #f0f4ec;
+    --tip-border: #6b8e4e;
+    --code-bg: #f4f1e8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: var(--beige);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ==================== HEADER ==================== */
+  .blue-header {
+    background: var(--blue);
+    color: white;
+    text-align: center;
+    padding: 36px 20px 30px;
+    border-bottom: 1px solid var(--blue-dark);
+  }
+
+  .blue-header h1 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+
+  .blue-header .tagline {
+    font-size: 15px;
+    opacity: 0.95;
+  }
+
+  /* ==================== YELLOW BAR ==================== */
+  .yellow-bar {
+    background: var(--yellow);
+    border-bottom: 1px solid var(--yellow-dark);
+    padding: 14px 20px;
+  }
+
+  .yellow-bar-inner {
+    width: 100%;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  .home-btn {
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(0,0,0,0.18);
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset;
+  }
+  .home-btn:hover { background: rgba(255,255,255,0.85); text-decoration: none; }
+
+  .corner-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.65);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--yellow);
+    font-family: 'Bitter', serif;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* ==================== LAYOUT ==================== */
+  .page-wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 30px 20px 80px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 30px;
+    align-items: start;
+  }
+
+  /* ==================== SIDEBAR ==================== */
+  .sidebar {
+    padding: 8px 0;
+    position: sticky;
+    top: 20px;
+  }
+
+  .sidebar-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    text-align: right;
+    padding: 6px 14px 6px 0;
+    line-height: 1.3;
+  }
+
+  .sidebar-nav { list-style: none; margin-top: 4px; }
+
+  .sidebar-nav li button {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    border-right: 2px solid transparent;
+    text-align: right;
+    padding: 6px 14px 6px 0;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--link);
+    cursor: pointer;
+    line-height: 1.4;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .sidebar-nav li button:hover { text-decoration: underline; }
+
+  .sidebar-nav li.active button {
+    color: var(--ink);
+    font-weight: 600;
+    border-right-color: var(--yellow);
+    text-decoration: none;
+  }
+
+  /* ==================== CONTENT CARD ==================== */
+  .content-card {
+    background: var(--paper);
+    padding: 36px 44px 48px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border-radius: 2px;
+    min-height: 600px;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ==================== TYPOGRAPHY ==================== */
+  .content-card h1 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 32px;
+    color: var(--ink);
+    margin-bottom: 18px;
+    line-height: 1.2;
+  }
+
+  .content-card h2 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 24px;
+    color: var(--ink);
+    margin-top: 36px;
+    margin-bottom: 14px;
+    line-height: 1.25;
+  }
+
+  .content-card h3 {
+    font-family: 'Bitter', serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+
+  .content-card h4 {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    margin-top: 18px;
+    margin-bottom: 8px;
+  }
+
+  .content-card p {
+    margin-bottom: 14px;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .content-card p strong { font-weight: 600; }
+
+  .content-card ul,
+  .content-card ol {
+    margin: 12px 0 18px 28px;
+  }
+
+  .content-card li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .content-card code {
+    font-family: 'Source Code Pro', monospace;
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    color: #b04a2e;
+  }
+
+  /* ==================== DIAMOND DIVIDER ==================== */
+  .diamond-divider {
+    display: flex;
+    align-items: center;
+    margin: 28px 0;
+    gap: 12px;
+  }
+  .diamond-divider::before,
+  .diamond-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  .diamond-divider .diamond {
+    width: 8px;
+    height: 8px;
+    background: var(--yellow);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ==================== TABLES ==================== */
+  .content-card table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    border: 1px solid var(--table-border);
+    background: #fffdf6;
+  }
+
+  .content-card thead th {
+    background: var(--paper);
+    font-weight: 700;
+    color: var(--ink);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 2px solid var(--yellow);
+  }
+
+  .content-card td {
+    padding: 10px 14px;
+    border-top: 1px solid var(--table-border);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .content-card tbody tr:hover { background: #fdf6e3; }
+
+  .content-card td:first-child {
+    font-weight: 600;
+    color: var(--link);
+  }
+
+  .doc-table td:first-child a { font-weight: 400; color: var(--link); }
+  .doc-table td:first-child { font-weight: 400; }
+
+  /* ==================== CALLOUTS ==================== */
+  .callout {
+    margin: 22px 0;
+    padding: 14px 18px;
+    border-left: 4px solid var(--yellow);
+    background: var(--warning-bg);
+    border-radius: 2px;
+  }
+
+  .callout-label {
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #8a6d1a;
+    margin-bottom: 4px;
+  }
+
+  .callout p { margin-bottom: 0; font-size: 14.5px; }
+
+  .callout.warning {
+    border-left-color: #c75a3a;
+    background: #fbe9e3;
+  }
+  .callout.warning .callout-label { color: #8a3520; }
+
+  .callout.tip {
+    border-left-color: var(--tip-border);
+    background: var(--tip-bg);
+  }
+  .callout.tip .callout-label { color: #4a6b3a; }
+
+  /* ==================== EMAIL CARD ==================== */
+  .email-card {
+    margin: 20px 0;
+    padding: 18px 22px;
+    background: var(--blue);
+    color: white;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .email-card .label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+    margin-bottom: 4px;
+  }
+
+  .email-card .addr {
+    font-family: 'Bitter', serif;
+    font-size: 18px;
+    color: white;
+  }
+
+  .email-card a { color: white; }
+
+  /* ==================== VIDEO LINK ==================== */
+  .video-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 0;
+    padding: 8px 14px;
+    background: var(--yellow);
+    border: 1px solid var(--yellow-dark);
+    border-radius: 3px;
+    font-size: 13px;
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.15s ease;
+  }
+  .video-link:hover { background: var(--yellow-dark); text-decoration: none; }
+  .video-link::before { content: '▶'; font-size: 10px; color: #8a3520; }
+
+  /* ==================== TOPIC FOOTER NAV ==================== */
+  .topic-footer-nav {
+    margin-top: 56px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .back-btn {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--link);
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .back-btn:hover {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+  }
+
+  .next-btn {
+    background: var(--blue);
+    border: 1px solid var(--blue-dark);
+    color: white;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.15s ease;
+  }
+  .next-btn:hover { background: var(--blue-dark); }
+
+  /* ==================== PAGE FOOTER ==================== */
+  .page-footer {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 20px 30px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 30px;
+  }
+
+  .footer-left {
+    text-align: right;
+    padding-right: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .footer-left a { color: var(--link); }
+
+  /* ==================== RESPONSIVE ==================== */
+  @media (max-width: 800px) {
+    .page-wrap, .page-footer {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .sidebar {
+      position: static;
+      padding: 12px;
+      background: var(--paper);
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+    .sidebar-title, .sidebar-nav li button {
+      text-align: left;
+      border-right: none;
+      padding: 6px 0 6px 12px;
+      border-left: 2px solid transparent;
+    }
+    .sidebar-nav li.active button {
+      border-left-color: var(--yellow);
+      border-right-color: transparent;
+    }
+    .footer-left { text-align: left; padding-right: 0; }
+    .content-card { padding: 24px 22px 36px; }
+    .blue-header h1 { font-size: 28px; }
+    .content-card table { font-size: 12.5px; }
+    .content-card th, .content-card td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== TOP BLUE HEADER ==================== -->
+<header class="blue-header">
+  <h1>GSI RapidReconciler Knowledge Base</h1>
+  <div class="tagline">Administrator Training Manual — Configure. Manage. Reconcile.</div>
+</header>
+
+<!-- ==================== YELLOW ACTION BAR ==================== -->
+<div class="yellow-bar">
+  <div class="yellow-bar-inner">
+    <button class="home-btn" onclick="goHome()">← Back to Index</button>
+    <span class="corner-icon">RR</span>
+  </div>
+</div>
+
+<!-- ==================== MAIN PAGE ==================== -->
+<div class="page-wrap">
+
+  <aside class="sidebar">
+    <div class="sidebar-title">Administrator<br>Walkthrough</div>
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li data-target="home"><button onclick="showView('home')">Index</button></li>
+      <li data-target="overview"><button onclick="showView('topic-overview')">About Administration</button></li>
+      <li data-target="company"><button onclick="showView('topic-company')">Company Management</button></li>
+      <li data-target="adding"><button onclick="showView('topic-adding')">Adding a Company License</button></li>
+      <li data-target="users"><button onclick="showView('topic-users')">User Management</button></li>
+      <li data-target="general"><button onclick="showView('topic-general')">General Settings</button></li>
+      <li data-target="offsets"><button onclick="showView('topic-offsets')">Offset Accounts</button></li>
+    </ul>
+  </aside>
+
+  <main class="content-card">
+
+    <!-- ============ HOME / INDEX ============ -->
+    <section id="home" class="view active">
+      <h1>Administrator Walkthrough</h1>
+      <p>Configure and maintain RapidReconciler with confidence. This walkthrough is the companion guide for RapidReconciler administrators — covering company licensing, user permissions, general settings, and inventory offset accounts.</p>
+      <p>Each section is self-contained. Use the sidebar or the table below to jump directly to a topic. From any topic, the <strong>Back to Index</strong> button returns you here.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Topics</h2>
+      <p>Select a section below to view its content. Each topic includes step-by-step navigation, field references, and links to related video tutorials where available.</p>
+
+      <table class="doc-table">
+        <thead>
+          <tr><th>Section</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-overview')">About Administration</a></td>
+            <td>Orientation for the administrator role and the four areas this manual covers.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-company')">Company Management</a></td>
+            <td>Configure licensed companies, fiscal start dates, currencies, AAI documents, and thresholds.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a></td>
+            <td>Request additional licensed companies from GSI support and what to include in your request.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></td>
+            <td>Add, edit, and remove users. Set authorized functions, tabs, and per-module company access.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a></td>
+            <td>Common units of measure, roll forward report configuration, and cardex deletion.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a></td>
+            <td>Configure GL accounts for End of Day and Transactional variance journal entries.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <div class="callout-label">New to the role?</div>
+        <p>Work through the topics in the order shown. If you are looking up a specific task, jump directly to the section you need from the sidebar.</p>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: OVERVIEW ============ -->
+    <section id="topic-overview" class="view">
+      <h1>About Administration</h1>
+      <p>Orientation for the administrator role within RapidReconciler — including how the role is assigned and the four areas this manual covers.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Overview</h2>
+      <p>Any RapidReconciler user can be designated as an administrator by enabling the <strong>Admin</strong> checkbox within their user rights settings. When RapidReconciler is first installed, a <strong>GSI Admin</strong> account is configured as the initial administrator in order to set up the application.</p>
+      <p>GSI will also designate the first customer user as an administrator. That customer administrator then assumes responsibility for maintaining the RapidReconciler configuration going forward.</p>
+
+      <h2>Areas of Administrator Responsibility</h2>
+      <p>This training manual covers the following four areas of RapidReconciler administration:</p>
+      <table>
+        <thead>
+          <tr><th>Area</th><th>What it covers</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Company Management</td><td>Configuring licensed companies and start dates.</td></tr>
+          <tr><td>User Management</td><td>Adding and modifying RapidReconciler users and permissions.</td></tr>
+          <tr><td>General Settings</td><td>Roll forward setup, common units of measure, and cardex deletions.</td></tr>
+          <tr><td>Offset Accounts</td><td>Setting up offset accounts for End of Day and Transactional variances.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <div class="callout-label">Where to begin</div>
+        <p>If you are new to the role, work through the sections in order. If you are looking up a specific task, jump directly to the relevant section from the sidebar.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-company')">Next: Company Management →</button>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: COMPANY MANAGEMENT ============ -->
+    <section id="topic-company" class="view">
+      <h1>Company Management</h1>
+      <p>Configure licensed companies, fiscal start dates, currency settings, AAI documents, and reconciliation thresholds for each company in the application.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Navigation</h2>
+      <p>Company settings are accessed by navigating to <strong>Admin &gt; Companies</strong> in the main navigation panel. Administrator rights must be assigned to your RapidReconciler user ID in order for this option to be visible.</p>
+      <p>Clicking the Companies link displays a list of all licensed companies. To modify a company's settings, click the <strong>Options</strong> icon in the far-right column of the applicable row.</p>
+
+      <h2>Licensed Companies</h2>
+      <p>The Companies page displays all companies currently licensed for use in RapidReconciler. The following fields are shown for each company:</p>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Number</td><td>The company number as defined in JD Edwards.</td></tr>
+          <tr><td>Name</td><td>The company name.</td></tr>
+          <tr><td>Start Date</td><td>The earliest fiscal period available for reconciliation.</td></tr>
+          <tr><td>Base Currency</td><td>The base currency of the company, pulled from JD Edwards.</td></tr>
+          <tr><td>Report Currency</td><td>The currency used for reporting purposes.</td></tr>
+          <tr><td>Rate Type</td><td>The exchange rate type used for currency conversion, if applicable.</td></tr>
+          <tr><td>AAI Doc</td><td>The AAI document type used for the model DMAAI table.</td></tr>
+          <tr><td>Threshold</td><td>The reconciliation threshold value.</td></tr>
+          <tr><td>Options</td><td>Click to open the Company Options pop-up for editing.</td></tr>
+          <tr><td>Reroll</td><td>Click to reroll the company, which recalculates the perpetual balance from the baseline date forward. Typically used if transactions have been backdated more than 1 period.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warning">
+        <div class="callout-label">Important</div>
+        <p>Only GSI can add or remove companies, as they are managed per license agreement. If additional company licenses are required, please contact GSI at <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a>.</p>
+      </div>
+
+      <h2>Company Options</h2>
+      <p>Clicking the Options icon opens the Company Options pop-up window. The <strong>Company Number</strong> and <strong>Base Currency</strong> fields are read-only, as they are pulled directly from JD Edwards and cannot be changed within RapidReconciler.</p>
+      <p>The following fields may be modified:</p>
+
+      <h3>Start Date</h3>
+      <p>The Start Date represents the earliest fiscal period that can be reconciled. It is always set to the first day of a fiscal period — typically the first day of the current fiscal year. Once the current fiscal year is closed, the administrator should update this date to reflect the new fiscal year.</p>
+      <h4>Key considerations</h4>
+      <ul>
+        <li>It is highly recommended that at least 2 months of history be retained in the RapidReconciler database at all times.</li>
+        <li>The Start Date cannot be moved backwards. Once advanced, RapidReconciler will initiate a purge procedure to remove historical data prior to the new date.</li>
+        <li>Advancing the Start Date is a method of recovering server resources and improving application performance. Reducing the volume of data in the database results in faster response times.</li>
+      </ul>
+
+      <h3>Report Currency</h3>
+      <p>The currency used for reporting. This may differ from the base currency where multi-currency reporting is required.</p>
+
+      <h3>Rate Type</h3>
+      <p>The exchange rate type to be applied for currency conversions, where applicable.</p>
+
+      <h3>AAI Doc</h3>
+      <p>The AAI document type used to identify the model DMAAI table for the company. The default value is <code>99</code>. This field should only be changed in consultation with GSI.</p>
+
+      <h3>Threshold</h3>
+      <p>The reconciliation threshold amount. Variances at or below this value may be treated as within tolerance.</p>
+
+      <p>Click <strong>Save Changes</strong> when all modifications are complete.</p>
+
+      <a class="video-link" href="https://vimeo.com/167889137" target="_blank" rel="noopener">Company Management Video Tutorial</a>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-adding')">Next: Adding a Company License →</button>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: ADDING A COMPANY ============ -->
+    <section id="topic-adding" class="view">
+      <h1>Adding a Company License</h1>
+      <p>Company numbers in RapidReconciler are license-controlled and can only be added by GSI staff. Each company in the application corresponds to a licensed JD Edwards company number as specified in your purchase agreement.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Requesting Additional Companies</h2>
+      <p>If you have additional companies you would like to reconcile that are not currently available in the application, please contact GSI support to begin the licensing process.</p>
+
+      <div class="email-card">
+        <div>
+          <div class="label">Email GSI Support</div>
+          <a href="mailto:rrsupport@getgsi.com" class="addr">rrsupport@getgsi.com</a>
+        </div>
+      </div>
+
+      <p>Please include the following information in your request:</p>
+      <ul>
+        <li>Your company name and RapidReconciler account details</li>
+        <li>The JD Edwards company numbers you would like to add</li>
+        <li>The corresponding company names</li>
+      </ul>
+      <p>A GSI representative will follow up to confirm licensing and coordinate the update.</p>
+
+      <h2>Managing Company Settings</h2>
+      <p>Company settings, including enabling or disabling companies for individual users, are managed by your RapidReconciler administrator. If you need changes to your company configuration, please contact your internal RapidReconciler administrator.</p>
+
+      <div class="callout">
+        <div class="callout-label">Note</div>
+        <p>Changes to company licensing may require a restart of the RapidReconciler Agent before they take effect in the application.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-users')">Next: User Management →</button>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: USER MANAGEMENT ============ -->
+    <section id="topic-users" class="view">
+      <h1>User Management</h1>
+      <p>Add, edit, and remove RapidReconciler users. Configure their authorized functions, visible tabs, and which companies they may access in each module.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Navigation</h2>
+      <p>User management is accessed by navigating to <strong>Admin &gt; Users</strong> in the main navigation panel. The Users page displays a list of all current users in the RapidReconciler application, showing their active status, full name, username, and available options.</p>
+
+      <h2>User Actions</h2>
+      <p>The following actions are available from the Users page:</p>
+      <table>
+        <thead>
+          <tr><th>Action</th><th>How to Access</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Add a new user</td><td>Click the <strong>New User</strong> button in the top right corner.</td></tr>
+          <tr><td>Edit user details</td><td>Click the <strong>paper/pencil icon</strong> in the center of the Options column.</td></tr>
+          <tr><td>Edit user rights</td><td>Click the <strong>lock icon</strong> on the left of the Options column.</td></tr>
+          <tr><td>Delete a user</td><td>Click the <strong>trash can icon</strong> on the right of the Options column, then confirm the prompt.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Adding or Editing a User</h2>
+      <p>Clicking the <strong>New User</strong> button or the <strong>paper/pencil icon</strong> opens the user details pop-up window. Complete the following fields:</p>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Full Name</td><td>The first and last name of the user.</td></tr>
+          <tr><td>Email</td><td>The company email address of the user. The user will automatically receive an email regarding the confidentiality policy upon account creation.</td></tr>
+          <tr><td>Password</td><td>Assign an initial password. The minimum length is 8 characters. If complex passwords have been enabled for your company, the password must meet those requirements.</td></tr>
+          <tr><td>Temporary Password (1 Day)</td><td>Set to <strong>True</strong> to require the user to reset their password after 1 day. Recommended for new users.</td></tr>
+          <tr><td>Active</td><td>Set to <strong>True</strong> for active users. Setting this to <strong>False</strong> prevents the user from logging in until it is changed back.</td></tr>
+        </tbody>
+      </table>
+      <p>Click the <strong>Add User</strong> button when complete to save the new user record.</p>
+
+      <h2>Editing User Rights</h2>
+      <p>Click the <strong>lock icon</strong> on the Users page to edit the rights and permissions for a specific user. The user rights window is divided into three sections.</p>
+
+      <h3>Authorized Functions</h3>
+      <p>Authorized functions control access to specific system-level operations.</p>
+      <table>
+        <thead>
+          <tr><th>Function</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Import JDE</td><td>Grants permission to import data from JD Edwards on an ad hoc basis. This permission is rarely recommended and should not be assigned without first consulting GSI.</td></tr>
+          <tr><td>Restart Service</td><td>Grants permission to restart RapidReconciler data services. This should only be assigned to RR administrators. It is used when there is difficulty exporting inventory As-Of data to Excel and clears memory on the application server. The restart process takes approximately 5 to 10 minutes.</td></tr>
+          <tr><td>In Transit Exclude</td><td>Grants the ability to exclude order pairs in the In Transit module. Usually reserved for administrators.</td></tr>
+          <tr><td>PO Receipts Suspend</td><td>Grants the ability to suspend purchase orders in the PO Receipts module. Usually reserved for administrators.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Authorized Tabs</h3>
+      <p>Authorized tabs control which modules are visible to the user in the main navigation panel.</p>
+      <table>
+        <thead>
+          <tr><th>Tab</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Inventory</td><td>Access to the Inventory module.</td></tr>
+          <tr><td>In Transit</td><td>Access to the In Transit module.</td></tr>
+          <tr><td>Admin</td><td>Access to the administration module.</td></tr>
+          <tr><td>PO Receipts</td><td>Access to the PO Receipts module.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Authorized Companies</h3>
+      <p>The Authorized Companies section limits which company numbers the user can view within the application, broken down by module (Inventory, In Transit, PO Receipts). Enable or disable company access per module as appropriate for each user's role.</p>
+      <p>Click <strong>Done</strong> when all rights have been configured.</p>
+
+      <h2>Deleting a User</h2>
+      <p>To delete a user, click the <strong>trash can icon</strong> to the right of their name on the Users page and confirm the prompt when displayed.</p>
+
+      <a class="video-link" href="https://vimeo.com/rapidreconciler/user-management" target="_blank" rel="noopener">User Management Video Tutorial</a>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-general')">Next: General Settings →</button>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: GENERAL SETTINGS ============ -->
+    <section id="topic-general" class="view">
+      <h1>General Settings</h1>
+      <p>Configure common units of measure, define roll forward report columns, and access the cardex deletion utility from the General Settings page.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Navigation</h2>
+      <p>General settings are accessed by navigating to <strong>Admin &gt; General</strong> in the main navigation panel. From this page, administrators can configure or execute the following:</p>
+      <ul>
+        <li>Common Units of Measure</li>
+        <li>Roll Forward Report Settings</li>
+        <li>Delete RapidReconciler Cardex Records</li>
+      </ul>
+
+      <h2>Common Units of Measure</h2>
+      <p>Common units of measure allow quantities to be restated in a single unit of measure across all items. This is useful in scenarios where multiple items in a warehouse have different primary units of measure but each has a conversion factor set up for a common unit.</p>
+
+      <div class="callout tip">
+        <div class="callout-label">Example</div>
+        <p>If hundreds of items in a particular warehouse need to be totaled by weight, and each item has a conversion factor defined for <code>LB</code> (pounds), adding <code>LB</code> as a common unit of measure allows the total weight to be reported across all items in that single unit.</p>
+      </div>
+
+      <h4>Procedure</h4>
+      <ol>
+        <li>Type the 2-character UOM code into the input field.</li>
+        <li>Click the <strong>Add UOM</strong> button.</li>
+        <li>The added UOM will be available for use after the next data refresh cycle.</li>
+      </ol>
+
+      <a class="video-link" href="https://vimeo.com/167889079" target="_blank" rel="noopener">Common Units of Measure Video Tutorial</a>
+
+      <h2>Roll Forward Settings</h2>
+      <p>The roll forward settings define the columns displayed between the opening and closing balance columns on the Roll Forward page within the Inventory module. Each row in the settings represents one column in the report. Units or amounts are summarized from the item ledger table <code>F4111</code> based on either the order type (DCTO) or document type (DCT) field.</p>
+      <p>Use the <strong>New Setting</strong> button in the top right corner to add a new row. The maximum limit is 12 rows or "totals columns."</p>
+
+      <p>Each setting contains the following fields:</p>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Column Title</td><td>A user-defined title describing the type of transactions being summarized in that column.</td></tr>
+          <tr><td>Sort</td><td>The sequence of the column in the report output. The order can be manually adjusted.</td></tr>
+          <tr><td>Field</td><td>Determines whether the total is calculated using the order type (DCTO) or document type (DCT).</td></tr>
+          <tr><td>Codes 1 through 6</td><td>The specific order types or document types to be summarized in that column. The maximum is 6 codes per row. If additional codes are required, add a new setting.</td></tr>
+        </tbody>
+      </table>
+
+      <p>To delete a setting, click the <strong>trash can icon</strong> at the far right of the row. To edit an existing setting, click the <strong>paper/pencil icon</strong>. When editing, key the desired values into the applicable fields. For fields with drop-down arrows, select the value from the list provided. Click <strong>Save Changes</strong> when complete.</p>
+
+      <h3>Sample Roll Forward Configuration</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th><th>Sort</th><th>Field</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Receipts</td><td>1</td><td>DCTO</td><td>OP</td><td>OL</td><td>OO</td><td>OT</td><td></td><td></td></tr>
+          <tr><td>NetWO</td><td>2</td><td>DCTO</td><td>WO</td><td>W1</td><td>WR</td><td></td><td></td><td></td></tr>
+          <tr><td>Adjustments</td><td>3</td><td>DCT</td><td>PI</td><td>IA</td><td>II</td><td>IR</td><td>IT</td><td>IB</td></tr>
+          <tr><td>Transfers</td><td>4</td><td>DCTO</td><td>ST</td><td>S2</td><td>S3</td><td>S5</td><td>S6</td><td>S7</td></tr>
+          <tr><td>Shipments</td><td>5</td><td>DCTO</td><td>SO</td><td>SI</td><td>SJ</td><td>SM</td><td>S8</td><td>S9</td></tr>
+          <tr><td>Returns</td><td>6</td><td>DCTO</td><td>CO</td><td>C2</td><td>CW</td><td></td><td></td><td></td></tr>
+          <tr><td>WriteDowns</td><td>7</td><td>DCT</td><td>WD</td><td></td><td></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <a class="video-link" href="https://vimeo.com/252701483" target="_blank" rel="noopener">Roll Forward Settings Video Tutorial</a>
+
+      <h2>Delete RapidReconciler Cardex Records</h2>
+      <p>This function allows administrators to delete cardex records from the RapidReconciler database. A training video is available within the application to guide administrators through this process.</p>
+
+      <div class="callout warning">
+        <div class="callout-label">Caution</div>
+        <p>This is an administrative function that should be used with caution. Refer to the in-application video for full guidance before proceeding.</p>
+      </div>
+
+      <a class="video-link" href="https://vimeo.com/250146759" target="_blank" rel="noopener">Delete Cardex Records Video Tutorial</a>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-offsets')">Next: Offset Accounts →</button>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: OFFSET ACCOUNTS ============ -->
+    <section id="topic-offsets" class="view">
+      <h1>Offset Accounts</h1>
+      <p>Set up the GL accounts used for End of Day and Transactional variance journal entries within the Inventory module.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Navigation</h2>
+      <p>Offset account settings are accessed by navigating to <strong>Admin &gt; Inventory Offsets</strong> in the main navigation panel.</p>
+      <p>Offset accounts are used to set up the GL accounts that will be used for End of Day and Transactional variance journal entries within the Inventory module.</p>
+
+      <h2>Configuration</h2>
+      <p>A training video is available within the application to provide detailed guidance on Inventory Offset Management. It is recommended that administrators review this video before configuring offset accounts.</p>
+      <p>Navigate to <strong>Admin &gt; Inventory Offsets</strong> in the main navigation bar to access the setup screen.</p>
+
+      <div class="callout tip">
+        <div class="callout-label">Recommended</div>
+        <p>Review the in-application Inventory Offset Management video before making changes to GL account configurations.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="goHome()">Return to Index ↺</button>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<!-- ==================== PAGE FOOTER ==================== -->
+<footer class="page-footer">
+  <div class="footer-left">
+    Project maintained by<br>
+    <a href="#">RapidReconciler</a>
+  </div>
+  <div class="footer-left" style="text-align:left; padding-right:0;">
+    Hosted on GitHub Pages — Theme adapted for documentation
+  </div>
+</footer>
+
+<script>
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      const slug = id === 'home' ? 'home' : id.replace('topic-', '');
+      document.querySelectorAll('#sidebar-nav li').forEach(li => {
+        li.classList.toggle('active', li.dataset.target === slug);
+      });
+
+      // Try to update hash for shareable links — fails silently in sandboxed iframes
+      try {
+        if (window.location.protocol !== 'about:') {
+          history.replaceState(null, '', slug === 'home' ? ' ' : '#' + slug);
+        }
+      } catch (e) { /* sandboxed context — navigation still works fine without URL hash */ }
+    }
+  }
+
+  function goHome() { showView('home'); }
+
+  document.querySelectorAll('#sidebar-nav li[data-target="home"]').forEach(li => li.classList.add('active'));
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && hash !== 'home') showView('topic-' + hash);
+    } catch (e) { /* ignore */ }
+  });
+
+  window.addEventListener('popstate', () => {
+    try {
+      const hash = window.location.hash.replace('#', '');
+      showView(hash && hash !== 'home' ? 'topic-' + hash : 'home');
+    } catch (e) { /* ignore */ }
+  });
+</script>
+
+</body>
+</html>
