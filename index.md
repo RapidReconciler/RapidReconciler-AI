@@ -89,7 +89,7 @@ This section covers all aspects of inventory reconciliation using RapidReconcile
 | [Zero Balance Adjustments](MDS/inventory-zero-balance.md)    | Purpose, purchasing and inventory AAIs, journal entry examples |
 | [Handling Cardex Variance](MDS/inventory-cardex-variance.md) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
 | [Outside Operations](MDS/inventory-outside-ops.md)           | Item master, work center, routing, receipt, and WIP journal entries |
-| [Reconciling Inventory](MDS/inventory-reconciliaton.md)      | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
+| [Reconciling Inventory](MDS/inventory-reconciliation.md)      | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
 
 ## In Transit Module
 
