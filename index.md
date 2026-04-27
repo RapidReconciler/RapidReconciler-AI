@@ -30,16 +30,16 @@ Here are some key collateral documents that provide an overview of RapidReconcil
 The following examples demonstrate AI-powered analysis of JD Edwards data using RapidReconciler. Each example was sourced from RapidReconciler existing reports into Excel and analyzed using a functional template.
 The result produces AI-generated insights: root causes, recommended actions, and prioritized next steps for resolution. Clicking on each report name will allow you to reviewing source data and to see how AI interpreted the issue:
 
-| Report | RR Source | Description |
-| --- | --- | --- |
-| [End of Day Analysis](Analysis%20Examples/End-of-Day-Analysis.xlsx) | End of Day Preview Export | End of day reconciliation analysis. Identifies outstanding GL variances, flags unprocessed transactions, and provides prioritized action items for resolution before period close. |
-| [DMAAI Integrity](Analysis%20Examples/DMAAI-Analysis.xlsx) | Inventory Integrity Report 2 | DMAAI entry integrity analysis. Reviews automatic accounting instruction (AAI) configurations across companies, identifying account mismatches and entries flagged for net-zero review. |
-| [Account Roll Forward](Analysis%20Examples/Account-Roll-Forward-Analysis.xlsx) | Inventory Validation Status Light Export | Period-over-period account roll forward analysis reconciling beginning GL balances, period activity, and ending balances against the perpetual inventory ledger. Highlights accounts with GL variances, cardex discrepancies, and unposted batches across multiple periods. |
-| [Unposted GL Batches](Analysis%20Examples/Unposted-GL-Batch-Analysis.xlsx) | Batches Preview Export | Analysis of unposted general ledger batches. Identifies batches across multiple companies and batch types that are pending approval or stuck in an "In Use" state, with prioritized resolution steps to clear the backlog before period close. |
-| [Cardex Item Analysis](Analysis%20Examples/Cardex-Variance-Item-Analysis.xlsx) | Expanding an Item on the As Of page and exporting | Item-level cardex roll forward analysis for a single item across a specific branch and location. Traces quantity and amount variances between the item ledger and on-hand balances back to their root cause transaction, using standard cost method. |
-| [Transaction Details Analysis](Analysis%20Examples/Transaction-Details-Analysis.xlsx) | Expanding a line on the Transactions page and exporting | Deep-dive transaction analysis for a specific document, reconciling F4111 item ledger entries against GL account F0911 postings. Includes DMAAI inventory account mapping validation and identifies misconfigured model table entries contributing to posting discrepancies. |
-| [GL Class Code Analysis](Analysis%20Examples/GL-Class-Analysis.xlsx) | Inventory Integrity Report 5 | GL class code integrity analysis comparing item branch records (F4102) against item location records (F41021). Identifies blank location GL class codes and branch-to-location mismatches that cause inventory transactions to post to incorrect accounts, with prioritized remediation steps. |
-| [Frozen Cost Integrity](Analysis%20Examples/Frozen-Cost-Analysis.xlsx) | Inventory Integrity Report 6 | Frozen cost integrity analysis comparing the frozen standard unit cost in F4105 (cost method 07) against the sum of cost components in F30026. Identifies zero-cost inventory, missing cost builds, and cost mismatches that cause manufacturing transactions to post at incorrect values, with GL understatement calculated per item. |
+| Document | Description |
+|----------|-------------|
+| [End of Day Analysis](AnalysisExamples/End-of-Day-Analysis.xlsx)                   | End of Day Preview Export                 |
+| [DMAAI Integrity](AnalysisExamples/DMAAI-Analysis.xlsx)                            | Inventory Integrity Report 2              |
+| [Account Roll Forward](AnalysisExamples/Account-Roll-Forward-Analysis.xlsx)        | Inventory Validation Status Light Export  |
+| [Unposted GL Batches](AnalysisExamples/Unposted-GL-Batch-Analysis.xlsx)            | Batches Preview Export                    |
+| [Cardex Item Analysis](AnalysisExamples/Cardex-Variance-Item-Analysis.xlsx)        | Expanding an Item on the As Of page       |
+| [Transaction Details Analysis](AnalysisExamples/Transaction-Details-Analysis.xlsx) | Expanding a line on the Transactions page |
+| [GL Class Code Analysis](AnalysisExamples/GL-Class-Analysis.xlsx)                  | Inventory Integrity Report 5              |
+| [Frozen Cost Integrity](AnalysisExamples/Frozen-Cost-Analysis.xlsx)                | Inventory Integrity Report 6              |
 
 ---
 
@@ -49,11 +49,11 @@ These technical documents provide detailed guidance on the installation, configu
 
 | Document | Description |
 |----------|-------------|
-| [Technical Requirements](/RapidReconciler-AI/Collateral/tech-requirements.html) | Installation and configuration requirements |
+| [Technical Requirements](/RapidReconciler-AI/Collateral/tech-requirements.html)           | Installation and configuration requirements |
 | [Certificate Management](/RapidReconciler-AI/Collateral/tech-certificate-management.html) | SSL certificate scope, DNS 'A' record configuration, certificate renewal process, responsibilities by role, and troubleshooting common connectivity issues |
-| [Installing the Database](MDS/tech-installing-database.md) | Step-by-step database installation including skill sets, architecture overview, SSISDB catalog setup, SSIS package deployment, initial data load, and security requirements |
-| [Client Management](MDS/tech-client-management.md) | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
-| [Server Migration Guide](MDS/tech-server-migration.md) | Moving RapidReconciler to a new dedicated or separate server including prerequisites, database backup and restore, SSIS package migration, SQL Agent job setup, and VALC and Cloudflare updates |
+| [Installing the Database](MDS/tech-installing-database.md)                                | Step-by-step database installation including skill sets, architecture overview, SSISDB catalog setup, SSIS package deployment, initial data load, and security requirements |
+| [Client Management](MDS/tech-client-management.md)                                        | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
+| [Server Migration Guide](MDS/tech-server-migration.md)                                    | Moving RapidReconciler to a new dedicated or separate server including prerequisites, database backup and restore, SSIS package migration, SQL Agent job setup, and VALC and Cloudflare updates |
 
 
 ---
@@ -64,13 +64,13 @@ These documents provide an introduction to RapidReconciler, including its benefi
 
 | Document | Description |
 |----------|-------------|
-| [How RapidReconciler Helps Document](/MDS/how-rr-helps.md) | Printable version of the application's benefits and value proposition |
+| [How RapidReconciler Helps Document](/MDS/how-rr-helps.md)              | Printable version of the application's benefits and value proposition |
 | [JDE vs. RapidReconciler Comparison](MDS/stock-status-trial-balance.md) | Timing, backdating, report definition |
-| [Application Basics](MDS/getting-started-with-rapidreconciler.md) | Logging in, navigating the interface, and system requirements |
-| [Complex Password Option](MDS/complex-password.md) | Password policy requirements and reset process |
-| [Administrator Responsibilities](MDS/admin-responsibilities.md) | Company management, user setup, general settings, and offset accounts |
-| [Obtaining a New Company License](MDS/adding-company.md) | How to request additional company licenses and edit company settings in RapidReconciler. |
-| [Ultimate DMAAI Guide](MDS/distribution-aais.md) | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
+| [Application Basics](MDS/getting-started-with-rapidreconciler.md)       | Logging in, navigating the interface, and system requirements |
+| [Complex Password Option](MDS/complex-password.md)                      | Password policy requirements and reset process |
+| [Administrator Responsibilities](MDS/admin-responsibilities.md)         | Company management, user setup, general settings, and offset accounts |
+| [Obtaining a New Company License](MDS/adding-company.md)                | How to request additional company licenses and edit company settings in RapidReconciler. |
+| [Ultimate DMAAI Guide](MDS/distribution-aais.md)                        | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
 
 ---
 
@@ -80,26 +80,26 @@ This section covers all aspects of inventory reconciliation using RapidReconcile
 
 | Document | Description |
 |----------|-------------|
-| [Inventory Reference Guide](MDS/inventory-reference-guide.md) | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes |
-| [Managing Inventory Accounts](MDS/inventory-add-account-rr.md) | DMAAI model table process and refresh requirements |
-| [Inventory: Using the Application](MDS/inventory-using-application.md) | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
+| [Reference Guide](MDS/inventory-reference-guide.md)          | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes |
+| [Managing Accounts](MDS/inventory-add-account-rr.md)         | DMAAI model table process and refresh requirements |
 | [Working with the Item Ledger](MDS/inventory-item-ledger.md) | Balances, posting codes, dates, DMAAs, and integrity conditions |
-| [Managing GL Class Codes](MDS/inventory-gl-class-codes.md) | Procedure, hierarchy of change locations, why adjustments are required |
-| [About Units of Measure](MDS/inventory-uom.md) | Changing the primary unit of measure, impact on inventory transactions, and cardex analysis considerations |
-| [Product Costing Guide](MDS/inventory-costing.md) | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact |
-| [Zero Balance Adjustments](MDS/inventory-zero-balance.md) | Purpose, purchasing and inventory AAIs, journal entry examples |
+| [Managing GL Class Codes](MDS/inventory-gl-class-codes.md)   | Procedure, hierarchy of change locations, why adjustments are required |
+| [About Units of Measure](MDS/inventory-uom.md)               | Changing the primary unit of measure, impact on inventory transactions, and cardex analysis considerations |
+| [Product Costing Guide](MDS/inventory-costing.md)            | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact |
+| [Zero Balance Adjustments](MDS/inventory-zero-balance.md)    | Purpose, purchasing and inventory AAIs, journal entry examples |
 | [Handling Cardex Variance](MDS/inventory-cardex-variance.md) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
-| [Understanding Outside Operations](MDS/inventory-outside-ops.md) | Item master, work center, routing, receipt, and WIP journal entries |
+| [Outside Operations](MDS/inventory-outside-ops.md)           | Item master, work center, routing, receipt, and WIP journal entries |
+| [Reconciling Inventory](MDS/inventory-reconciliaton.md)      | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
 
 ## In Transit Module
 
 This section focuses on the reconciliation of in-transit inventory using RapidReconciler. It covers key concepts related to the in-transit process, how to use the application, and a wealth of JD Edwards best practice knowledge.
 
-| Document                                                                   | Description                                                                        |
-| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| [Transfer Order Reference Guide](MDS/transfer-order-reference.md)          | Transfer order types, processing flow, AAIs, journal entries, and common issues    |
-| [Transfer Order Using the Application](MDS/transfer-order-using-application.md)   | Orders page, reconciliation page, transactions page, As-Of page, integrity reports |
-| [Transfer Order Exclusion Guide](MDS/transfer-order-exclusion-guide.md)    | Exclusion types, setup, and troubleshooting                                        |
+| Document | Description |
+|----------|-------------|
+| [Reference Guide](MDS/transfer-order-reference.md)             | Transfer order types, processing flow, AAIs, journal entries, and common issues    |
+| [Reconciling In Transit](MDS/transfer-order-reconciliation.md) | Orders page, reconciliation page, transactions page, As-Of page, integrity reports |
+| [Exclusions Guide](MDS/transfer-order-exclusion-guide.md)      | Exclusion types, setup, and troubleshooting                                        |
 
 ---
 
@@ -109,10 +109,9 @@ This section provides comprehensive information on reconciling purchase order re
 
 | Document | Description |
 |----------|-------------|
-| [PO Receipts Key Concepts](MDS/po-receipts-key-concepts.md) | RNV definition, process flow, Table F43121, match types, challenges |
-| [PO Receipts: Using the Application](MDS/po-receipts-using-application.md) | Orders page, reconciliation page, line analysis, how to reconcile |
-| [Reconciling RNV Accounts](MDS/reconciling-rnv.md) | Summary, drill-down, and suspension features in RR V7 |
-| [Purchase Order Reference Guide](MDS/purchase_order_reference.md) | Purchase order types, processing flow, AAIs, journal entries, and common issues |
+| [Reference Guide](MDS/purchase_order_reference.md)             | Purchase order types, processing flow, AAIs, journal entries, and common issues |
+| [Reconciling PO Receipts](MDS/po-receipts-reconciliation.md)   | Summary, drill-down, and suspension features in RR V7 |
+| [Suspension and Exclusions](po-receipts-suspension-exclusion)  | Suspension and exclusion features in RR V7, including setup, use cases, and troubleshooting |
 
 ---
 
