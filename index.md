@@ -126,9 +126,9 @@ This section provides comprehensive information on reconciling purchase order re
 
 | Document | Description |
 |----------|-------------|
-| [Reference Guide](MDS/purchase_order_reference.md)             | Purchase order types, processing flow, AAIs, journal entries, and common issues |
-| [Reconciling PO Receipts](MDS/po-receipts-reconciliation.md)   | Summary, drill-down, and suspension features in RR V7 |
-| [Suspension and Exclusions](po-receipts-suspension-exclusion)  | Suspension and exclusion features in RR V7, including setup, use cases, and troubleshooting |
+| [Reference Guide](MDS/purchase_order_reference.md)                     | Purchase order types, processing flow, AAIs, journal entries, and common issues |
+| [Reconciliation Walkthrough](HowToHTML/po-receipts-walkthrough.html)   | Step-by-step reconciliation |
+| [Suspension and Exclusions](po-receipts-suspension-exclusion)          | Suspension and exclusion features in RR V7, including setup, use cases, and troubleshooting |
 
 ---
 
