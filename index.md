@@ -14,16 +14,16 @@ analysis that turn RapidReconciler exports into actionable insights in minutes.
 
 Here are some key collateral documents that provide an overview of RapidReconciler's benefits and features. These resources are intended to help you understand the value proposition of the application and how it can assist your JD Edwards reconciliation processes. Click on each document name to view the full content.
 
-| Document                                                                                   | Description                                                                                      |     |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ | --- |
-| [How RapidReconciler Helps](/RapidReconciler-AI/Collateral/how-rr-helps.html)              | Overview of the application's benefits and value proposition                                     |     |
-| [RapidReconciler Fact Sheet](/RapidReconciler-AI/Collateral/rr-fact-sheet.html)            | One-page summary of key features and benefits                                                    |     |
-| [RapidReconciler Comparison](/RapidReconciler-AI/Collateral/rapidreconciler-vs-jde.html)   | Comparison of RapidReconciler with traditional spreadsheet-based reconciliation methods          | ]   |
-| [Self-Guided Tour](/RapidReconciler-AI/Collateral/rr-self-guided-tour.html)                | Interactive walkthrough of the application interface and features                                |     |
-| [Inventory Dashboard Sample](/RapidReconciler-AI/Collateral/inventory-dashboard.html)      | Executive summary of inventory reconciliation challenges and how RapidReconciler addresses them  |     |
-| [In-Transit Dashboard Sample](/RapidReconciler-AI/Collateral/in-transit-dashboard.html)    | Executive summary of in-transit reconciliation challenges and how RapidReconciler addresses them |     |
-| [PO Receipts Dashboard Sample](/RapidReconciler-AI/Collateral/po-receipts-dashboard.html)  | Executive summary of PO receipt reconciliation challenges and how RapidReconciler addresses them |     |
-| [JDE vs. RapidReconciler Comparison](MDS/stock-status-trial-balance.md)                    | Timing, backdating, report definition                                                            |     |
+| Document                                                                                   | Description                                                                                      |
+| ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| [How RapidReconciler Helps](/RapidReconciler-AI/Collateral/how-rr-helps.html)              | Overview of the application's benefits and value proposition                                     |
+| [RapidReconciler Fact Sheet](/RapidReconciler-AI/Collateral/rr-fact-sheet.html)            | One-page summary of key features and benefits                                                    |
+| [RapidReconciler Comparison](/RapidReconciler-AI/Collateral/rapidreconciler-vs-jde.html)   | Comparison of RapidReconciler with traditional spreadsheet-based reconciliation methods          |
+| [Self-Guided Tour](/RapidReconciler-AI/Collateral/rr-self-guided-tour.html)                | Interactive walkthrough of the application interface and features                                |
+| [Inventory Dashboard Sample](/RapidReconciler-AI/Collateral/inventory-dashboard.html)      | Executive summary of inventory reconciliation challenges and how RapidReconciler addresses them  |
+| [In-Transit Dashboard Sample](/RapidReconciler-AI/Collateral/in-transit-dashboard.html)    | Executive summary of in-transit reconciliation challenges and how RapidReconciler addresses them |
+| [PO Receipts Dashboard Sample](/RapidReconciler-AI/Collateral/po-receipts-dashboard.html)  | Executive summary of PO receipt reconciliation challenges and how RapidReconciler addresses them |
+| [JDE vs. RapidReconciler Comparison](MDS/stock-status-trial-balance.md)                    | Timing, backdating, report definition                                                            |
 
 ---
 
@@ -89,9 +89,9 @@ These documents provide an introduction to RapidReconciler, including its benefi
 ## Administrating the Application
 This section outlines the key responsibilities of RapidReconciler administrators, including managing companies, users, and general settings within the application. It also covers important tasks such as setting up offset accounts for inventory adjustments and ensuring that the application is configured correctly to meet the needs of your organization. Whether you're a new administrator or looking to refresh your knowledge of your role, these documents provide comprehensive guidance to help you effectively manage RapidReconciler and support your JD Edwards reconciliation processes.
 
-| Document                                                        | Description                                                           |     |
-| --------------------------------------------------------------- | --------------------------------------------------------------------- | --- |
-| [Walkthrough](HowToHTML/administrator-walkthrough.html)         | Company management, user setup, general settings, and offset accounts | ]   |
+| Document                                                        | Description                                                           |
+| --------------------------------------------------------------- | --------------------------------------------------------------------- |
+| [Walkthrough](HowToHTML/administrator-walkthrough.html)         | Company management, user setup, general settings, and offset accounts |
 
 ---
 
