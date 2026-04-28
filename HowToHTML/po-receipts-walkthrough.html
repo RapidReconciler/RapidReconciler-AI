@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RapidReconciler — PO Receipts Reconciliation Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #4d77b4;
+    --blue-dark: #3d5f93;
+    --blue-deep: #2c4670;
+    --yellow: #f5cb35;
+    --yellow-dark: #e0b820;
+    --yellow-soft: #fdf6e3;
+    --beige: #e0d8c3;
+    --paper: #ffffff;
+    --ink: #333333;
+    --ink-soft: #555555;
+    --muted: #888888;
+    --rule: #e0e0e0;
+    --link: #4d77b4;
+    --table-border: #d6d2c4;
+    --warning-bg: #fdf6e3;
+    --tip-bg: #f0f4ec;
+    --tip-border: #6b8e4e;
+    --code-bg: #f4f1e8;
+    --red: #c75a3a;
+    --red-deep: #8a3520;
+    --green: #4a6b3a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: var(--beige);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ==================== HEADER ==================== */
+  .blue-header {
+    background: var(--blue);
+    color: white;
+    text-align: center;
+    padding: 36px 20px 30px;
+    border-bottom: 1px solid var(--blue-dark);
+  }
+
+  .blue-header h1 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+
+  .blue-header .tagline {
+    font-size: 15px;
+    opacity: 0.95;
+  }
+
+  /* ==================== YELLOW BAR ==================== */
+  .yellow-bar {
+    background: var(--yellow);
+    border-bottom: 1px solid var(--yellow-dark);
+    padding: 14px 20px;
+  }
+
+  .yellow-bar-inner {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  .home-btn {
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(0,0,0,0.18);
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset;
+  }
+  .home-btn:hover { background: rgba(255,255,255,0.85); text-decoration: none; }
+
+  .corner-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.65);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--yellow);
+    font-family: 'Bitter', serif;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* ==================== LAYOUT ==================== */
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px 80px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 30px;
+    align-items: start;
+  }
+
+  /* ==================== SIDEBAR ==================== */
+  .sidebar {
+    padding: 8px 0;
+    position: sticky;
+    top: 20px;
+  }
+
+  .sidebar-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    text-align: right;
+    padding: 6px 14px 6px 0;
+    line-height: 1.3;
+  }
+
+  .sidebar-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-align: right;
+    padding: 14px 14px 4px 0;
+  }
+
+  .sidebar-nav { list-style: none; margin-top: 4px; }
+
+  .sidebar-nav li button {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    border-right: 2px solid transparent;
+    text-align: right;
+    padding: 6px 14px 6px 0;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--link);
+    cursor: pointer;
+    line-height: 1.4;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .sidebar-nav li button:hover { text-decoration: underline; }
+
+  .sidebar-nav li.active button {
+    color: var(--ink);
+    font-weight: 600;
+    border-right-color: var(--yellow);
+    text-decoration: none;
+  }
+
+  .sidebar-nav li.step-num button::before {
+    content: attr(data-step);
+    display: inline-block;
+    background: var(--blue);
+    color: white;
+    width: 18px; height: 18px;
+    line-height: 18px;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    margin-right: 8px;
+    font-family: 'Bitter', serif;
+  }
+
+  /* ==================== CONTENT CARD ==================== */
+  .content-card {
+    background: var(--paper);
+    padding: 36px 44px 48px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border-radius: 2px;
+    min-height: 600px;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ==================== TYPOGRAPHY ==================== */
+  .content-card h1 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 32px;
+    color: var(--ink);
+    margin-bottom: 18px;
+    line-height: 1.2;
+  }
+
+  .content-card h2 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 24px;
+    color: var(--ink);
+    margin-top: 36px;
+    margin-bottom: 14px;
+    line-height: 1.25;
+  }
+
+  .content-card h3 {
+    font-family: 'Bitter', serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+
+  .content-card h4 {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    margin-top: 18px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .content-card p {
+    margin-bottom: 14px;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .content-card p strong { font-weight: 600; }
+
+  .content-card ul,
+  .content-card ol {
+    margin: 12px 0 18px 28px;
+  }
+
+  .content-card li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .content-card code {
+    font-family: 'Source Code Pro', monospace;
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    color: #b04a2e;
+  }
+
+  /* ==================== STEP BADGE ==================== */
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--blue);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+  }
+
+  .step-badge .num {
+    background: var(--yellow);
+    color: var(--blue-deep);
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bitter', serif;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .goal-box {
+    background: var(--blue);
+    color: white;
+    padding: 14px 20px;
+    border-radius: 4px;
+    margin: 16px 0 22px;
+    border-left: 4px solid var(--yellow);
+  }
+
+  .goal-box .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.85;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .goal-box .text {
+    font-family: 'Bitter', serif;
+    font-size: 17px;
+    line-height: 1.4;
+  }
+
+  /* ==================== DIAMOND DIVIDER ==================== */
+  .diamond-divider {
+    display: flex;
+    align-items: center;
+    margin: 28px 0;
+    gap: 12px;
+  }
+  .diamond-divider::before,
+  .diamond-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  .diamond-divider .diamond {
+    width: 8px;
+    height: 8px;
+    background: var(--yellow);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ==================== TABLES ==================== */
+  .content-card table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    border: 1px solid var(--table-border);
+    background: #fffdf6;
+  }
+
+  .content-card thead th {
+    background: var(--paper);
+    font-weight: 700;
+    color: var(--ink);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 13.5px;
+    border-bottom: 2px solid var(--yellow);
+  }
+
+  .content-card td {
+    padding: 10px 14px;
+    border-top: 1px solid var(--table-border);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .content-card tbody tr:hover { background: #fdf6e3; }
+
+  .content-card td:first-child {
+    font-weight: 600;
+    color: var(--link);
+  }
+
+  .content-card td.num-cell {
+    font-weight: 700;
+    color: var(--blue-deep);
+    text-align: center;
+    width: 50px;
+    background: var(--yellow-soft);
+  }
+
+  /* ==================== CALLOUTS ==================== */
+  .callout {
+    margin: 22px 0;
+    padding: 14px 18px;
+    border-left: 4px solid var(--yellow);
+    background: var(--warning-bg);
+    border-radius: 2px;
+  }
+
+  .callout-label {
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #8a6d1a;
+    margin-bottom: 4px;
+  }
+
+  .callout p { margin-bottom: 0; font-size: 14.5px; }
+
+  .callout.warning {
+    border-left-color: var(--red);
+    background: #fbe9e3;
+  }
+  .callout.warning .callout-label { color: var(--red-deep); }
+
+  .callout.tip {
+    border-left-color: var(--tip-border);
+    background: var(--tip-bg);
+  }
+  .callout.tip .callout-label { color: var(--green); }
+
+  .callout.principle {
+    border-left-color: var(--blue);
+    background: #eef2f8;
+  }
+  .callout.principle .callout-label { color: var(--blue-dark); }
+
+  /* ==================== WORKED EXAMPLE ==================== */
+  .worked-example {
+    margin: 30px 0;
+    background: var(--paper);
+    border: 1px solid var(--table-border);
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .worked-example-header {
+    background: linear-gradient(90deg, var(--blue) 0%, var(--blue-dark) 100%);
+    color: white;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .worked-example-header .pill {
+    background: var(--yellow);
+    color: var(--blue-deep);
+    font-family: 'Bitter', serif;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .worked-example-header h3 {
+    font-family: 'Bitter', serif;
+    font-weight: 500;
+    font-size: 18px;
+    margin: 0;
+    color: white;
+    border: none;
+    padding: 0;
+  }
+  .worked-example-body { padding: 22px 26px; }
+  .worked-example-body h4 {
+    font-family: 'Bitter', serif;
+    font-weight: 600;
+    font-size: 15px;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--blue-dark);
+    margin-top: 22px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .worked-example-body h4:first-child { margin-top: 0; }
+  .worked-example-body p {
+    font-size: 14.5px;
+    margin-bottom: 12px;
+  }
+  .worked-example-body table {
+    margin: 14px 0;
+    font-size: 13px;
+  }
+  .worked-example-body table th,
+  .worked-example-body table td {
+    padding: 8px 10px;
+  }
+  .worked-example-body code {
+    font-family: 'Source Code Pro', monospace;
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    color: #b04a2e;
+  }
+  .worked-example-body .num-pos { color: var(--green); font-weight: 600; font-family: 'Source Code Pro', monospace; }
+  .worked-example-body .num-neg { color: var(--red-deep); font-weight: 600; font-family: 'Source Code Pro', monospace; }
+  .worked-example-body .verdict {
+    margin-top: 18px;
+    padding: 14px 18px;
+    background: var(--tip-bg);
+    border-left: 4px solid var(--tip-border);
+    border-radius: 2px;
+  }
+  .worked-example-body .verdict .verdict-label {
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--green);
+    margin-bottom: 6px;
+  }
+  .worked-example-body .verdict ul { margin: 6px 0 0 22px; }
+  .worked-example-body .verdict li { font-size: 14px; }
+
+  /* ==================== KEY-VALUE GRID ==================== */
+  .kv-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 22px 0;
+  }
+
+  .kv-card {
+    background: var(--yellow-soft);
+    border: 1px solid var(--table-border);
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+
+  .kv-card .kv-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .kv-card .kv-value {
+    font-family: 'Bitter', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--blue-dark);
+    line-height: 1.2;
+  }
+
+  /* ==================== CHECKLIST ==================== */
+  .checklist {
+    background: var(--yellow-soft);
+    border: 1px solid var(--table-border);
+    border-left: 4px solid var(--yellow);
+    border-radius: 3px;
+    padding: 16px 20px;
+    margin: 18px 0;
+    list-style: none !important;
+    margin-left: 0 !important;
+  }
+
+  .checklist li {
+    padding-left: 28px;
+    position: relative;
+    margin-bottom: 8px;
+    line-height: 1.5;
+    font-size: 14.5px;
+  }
+  .checklist li:last-child { margin-bottom: 0; }
+
+  .checklist li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 4px;
+    width: 16px; height: 16px;
+    border: 2px solid var(--blue);
+    border-radius: 3px;
+    background: white;
+  }
+
+  .checklist-title {
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--blue-dark);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ==================== STATUS PILLS ==================== */
+  .status-pill {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .status-pill.green { background: rgba(74, 107, 58, 0.15); color: var(--green); }
+  .status-pill.red { background: rgba(199, 90, 58, 0.15); color: var(--red-deep); }
+  .status-pill.yellow { background: rgba(245, 203, 53, 0.25); color: #8a6d1a; }
+
+  /* ==================== PROCESS FLOW DIAGRAM ==================== */
+  .flow-container {
+    background: linear-gradient(180deg, #fffdf6 0%, var(--yellow-soft) 100%);
+    padding: 32px 20px;
+    border-radius: 6px;
+    margin: 24px 0;
+    border: 1px solid var(--table-border);
+    overflow-x: auto;
+  }
+
+  .flow-svg {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ==================== SCREENSHOT FIGURE ==================== */
+  .screenshot {
+    margin: 24px 0 28px;
+    padding: 14px;
+    background: var(--yellow-soft);
+    border: 1px solid var(--table-border);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .screenshot img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: white;
+  }
+  .screenshot figcaption {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .screenshot figcaption strong {
+    font-style: normal;
+    color: var(--blue-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 11px;
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  /* ==================== FILTER BUTTON CARDS ==================== */
+  .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 22px 0;
+  }
+  .filter-card {
+    background: var(--paper);
+    border: 1px solid var(--table-border);
+    border-top: 3px solid var(--blue);
+    border-radius: 4px;
+    padding: 16px 18px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .filter-card h4 {
+    font-family: 'Bitter', serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--blue-dark);
+    text-transform: none;
+    letter-spacing: 0;
+    margin-top: 0;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .filter-card p {
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin-bottom: 0;
+    color: var(--ink-soft);
+  }
+
+  /* ==================== EMAIL CARD ==================== */
+  .email-card {
+    margin: 20px 0;
+    padding: 18px 22px;
+    background: var(--blue);
+    color: white;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .email-card .label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+    margin-bottom: 4px;
+  }
+
+  .email-card .addr {
+    font-family: 'Bitter', serif;
+    font-size: 18px;
+    color: white;
+  }
+
+  .email-card a { color: white; }
+
+  /* ==================== TOPIC FOOTER NAV ==================== */
+  .topic-footer-nav {
+    margin-top: 56px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .back-btn {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--link);
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .back-btn:hover {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+  }
+
+  .next-btn {
+    background: var(--blue);
+    border: 1px solid var(--blue-dark);
+    color: white;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.15s ease;
+  }
+  .next-btn:hover { background: var(--blue-dark); }
+
+  /* ==================== INDEX TOPIC LINKS ==================== */
+  .doc-table td:first-child a { font-weight: 400; color: var(--link); }
+  .doc-table td:first-child { font-weight: 400; }
+  .doc-table .step-link::before {
+    content: attr(data-step);
+    display: inline-block;
+    background: var(--blue);
+    color: white;
+    width: 22px; height: 22px;
+    line-height: 22px;
+    text-align: center;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 10px;
+    font-family: 'Bitter', serif;
+    vertical-align: middle;
+  }
+
+  /* ==================== PAGE FOOTER ==================== */
+  .page-footer {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px 30px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 30px;
+  }
+
+  .footer-left {
+    text-align: right;
+    padding-right: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .footer-left a { color: var(--link); }
+
+  /* ==================== RESPONSIVE ==================== */
+  @media (max-width: 800px) {
+    .page-wrap, .page-footer {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .sidebar {
+      position: static;
+      padding: 12px;
+      background: var(--paper);
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+    .sidebar-title, .sidebar-nav li button, .sidebar-section-label {
+      text-align: left;
+      border-right: none;
+      padding: 6px 0 6px 12px;
+      border-left: 2px solid transparent;
+    }
+    .sidebar-nav li.active button {
+      border-left-color: var(--yellow);
+      border-right-color: transparent;
+    }
+    .footer-left { text-align: left; padding-right: 0; }
+    .content-card { padding: 24px 22px 36px; }
+    .blue-header h1 { font-size: 28px; }
+    .content-card table { font-size: 12.5px; }
+    .content-card th, .content-card td { padding: 8px 10px; }
+    .kv-grid { grid-template-columns: 1fr; }
+    .filter-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== TOP BLUE HEADER ==================== -->
+<header class="blue-header">
+  <h1>How to Reconcile PO Receipts (RNV) Using RapidReconciler</h1>
+  <div class="tagline">A step-by-step process guide for the Received-Not-Vouchered account</div>
+</header>
+
+<!-- ==================== YELLOW ACTION BAR ==================== -->
+<div class="yellow-bar">
+  <div class="yellow-bar-inner">
+    <button class="home-btn" onclick="goHome()">← Back to Index</button>
+    <span class="corner-icon">RR</span>
+  </div>
+</div>
+
+<!-- ==================== MAIN PAGE ==================== -->
+<div class="page-wrap">
+
+  <aside class="sidebar">
+    <div class="sidebar-title">PO Receipts<br>Reconciliation</div>
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li data-target="home"><button onclick="showView('home')">Index</button></li>
+      <li data-target="purpose"><button onclick="showView('topic-purpose')">Purpose &amp; Scope</button></li>
+      <li data-target="flow"><button onclick="showView('topic-flow')">Process Flow Diagram</button></li>
+      <li data-target="before"><button onclick="showView('topic-before')">Before You Begin</button></li>
+      <li data-target="concepts"><button onclick="showView('topic-concepts')">Key Concepts</button></li>
+    </ul>
+
+    <div class="sidebar-section-label">Reconciliation Steps</div>
+    <ul class="sidebar-nav" id="sidebar-steps">
+      <li data-target="step1" class="step-num"><button data-step="1" onclick="showView('topic-step1')">Validate Orders Page</button></li>
+      <li data-target="step2" class="step-num"><button data-step="2" onclick="showView('topic-step2')">Review Reconciliation</button></li>
+      <li data-target="step3" class="step-num"><button data-step="3" onclick="showView('topic-step3')">Work Unreconciled</button></li>
+      <li data-target="step4" class="step-num"><button data-step="4" onclick="showView('topic-step4')">Post JE &amp; Close</button></li>
+    </ul>
+
+    <div class="sidebar-section-label">Reference</div>
+    <ul class="sidebar-nav" id="sidebar-ref">
+      <li data-target="orderspage"><button onclick="showView('topic-orderspage')">Orders Page</button></li>
+      <li data-target="reconpage"><button onclick="showView('topic-reconpage')">Reconciliation Page</button></li>
+      <li data-target="lineanalysis"><button onclick="showView('topic-lineanalysis')">Line Analysis Page</button></li>
+      <li data-target="suspendexcl"><button onclick="showView('topic-suspendexcl')">Suspension vs Exclusion</button></li>
+      <li data-target="issues"><button onclick="showView('topic-issues')">Common Issues</button></li>
+      <li data-target="patterns"><button onclick="showView('topic-patterns')">Variance Patterns</button></li>
+      <li data-target="cadence"><button onclick="showView('topic-cadence')">Recommended Cadence</button></li>
+      <li data-target="glossary"><button onclick="showView('topic-glossary')">Glossary</button></li>
+    </ul>
+  </aside>
+
+  <main class="content-card">
+
+    <!-- ============ HOME / INDEX ============ -->
+    <section id="home" class="view active">
+      <h1>PO Receipts Reconciliation</h1>
+      <p class="lead">A walkthrough for reconciling the <strong>Received-Not-Vouchered (RNV)</strong> liability account using the RapidReconciler PO Receipts module. Use the sidebar to navigate, or follow the four-step process top to bottom.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Getting Started</h2>
+      <p>If this is your first time, work through the topics in order using the sidebar — beginning with <a href="javascript:void(0)" onclick="showView('topic-purpose')">Purpose &amp; Scope</a>, then the <a href="javascript:void(0)" onclick="showView('topic-flow')">Process Flow Diagram</a>. Make sure to review <a href="javascript:void(0)" onclick="showView('topic-concepts')">Key Concepts</a> before starting the four-step process — understanding the F43121 table and Match Types is essential to everything that follows. If you're looking up a specific step or reference, jump directly to it from the sidebar.</p>
+
+      <h2>The Four-Step Process</h2>
+      <table>
+        <thead>
+          <tr><th>Step</th><th>Goal</th><th>Where</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-step1')">Step 1</a></td><td>Validate the Orders page — make sure the open receipts list is accurate before comparing to the GL</td><td>Orders Page</td></tr>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-step2')">Step 2</a></td><td>Review the Reconciliation page — confirm the GL Balance, Open Receipts, and Out of Balance amounts</td><td>Reconciliation Page</td></tr>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-step3')">Step 3</a></td><td>Work each unreconciled order using Line Analysis to find the offending document(s)</td><td>Line Analysis Page</td></tr>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-step4')">Step 4</a></td><td>Post the adjusting JE and save audit documentation</td><td>JD Edwards + Reconciliation Page</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Reference Sections</h2>
+      <p>Reference pages cover individual application surfaces and recurring concepts in depth. They are organized for lookup rather than sequential reading:</p>
+      <table>
+        <thead>
+          <tr><th>Section</th><th>What It Covers</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-orderspage')">Orders Page</a></td><td>Filters, suspensions, column definitions, line details, and validation checks</td></tr>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-reconpage')">Reconciliation Page</a></td><td>Status indicators, account filters, Calculation Section fields, PO Receipts Aging Chart</td></tr>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-lineanalysis')">Line Analysis Page</a></td><td>Edit Note button, Document button, filter drop-downs, Recalc and Export, Documents grid</td></tr>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-suspendexcl')">Suspension vs Exclusion</a></td><td>When to suspend an entire order versus excluding a single document</td></tr>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-issues')">Common Issues</a></td><td>Business-process and tooling issues with their resolutions</td></tr>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-patterns')">Variance Patterns</a></td><td>Quick-reference table of common variance patterns and their causes</td></tr>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-cadence')">Recommended Cadence</a></td><td>How often to perform each reconciliation activity</td></tr>
+          <tr><td><a href="javascript:void(0)" onclick="showView('topic-glossary')">Glossary</a></td><td>Definitions for all acronyms and terms used throughout</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout principle">
+        <div class="callout-label">Key principle</div>
+        <p>RapidReconciler does not correct RNV issues — all corrections are made in JD Edwards or through manual journal entries. RapidReconciler's role is to identify <strong>which</strong> purchase orders are unbalanced, <strong>at which line and document</strong>, and <strong>by how much</strong> — so the correct corrective action can be applied efficiently rather than discovered at period end.</p>
+      </div>
+
+    </section>
+
+    <!-- ============ PURPOSE & SCOPE ============ -->
+    <section id="topic-purpose" class="view">
+      <h1>Purpose &amp; Scope</h1>
+      <p>The RapidReconciler PO Receipts module reconciles the <strong>Received-Not-Vouchered (RNV)</strong> balance sheet liability account against open purchase order receipt activity. The RNV account is controlled by DMAAI <code>4320</code> and holds the value of goods received from suppliers until the corresponding supplier invoice is matched and vouchered through Accounts Payable.</p>
+
+      <p>Receipt table data (<code>F43121</code>) is imported into RapidReconciler and balanced directly against general ledger details (<code>F0902</code> / <code>F0911</code>), eliminating the need for separate tools or manual matching processes. The module surfaces only the orders and documents that require attention — fully vouchered and reconciled orders are removed automatically.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>What is the RNV Account?</h2>
+      <p>The Received-Not-Vouchered (RNV) account is a temporary liability account that holds the value of goods received from a supplier until the corresponding supplier invoice is matched and vouchered. It acts as the bridge between the <strong>purchasing</strong> and <strong>accounts payable</strong> processes.</p>
+      <p>At any point in time, the RNV account balance should equal the value of goods that have been received but not yet matched to a supplier invoice. If the balance does not agree to open receipt activity, a reconciling variance exists.</p>
+
+      <h2>The Standard Accounting Flow</h2>
+      <table>
+        <thead>
+          <tr><th>Step</th><th>Transaction</th><th>Account Debited</th><th>Account Credited</th><th>AAI</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="num-cell">1</td><td>PO Receipt</td><td>Inventory</td><td><strong>RNV</strong></td><td>4310 / 4320</td></tr>
+          <tr><td class="num-cell">2</td><td>Voucher Match</td><td><strong>RNV</strong></td><td>A/P Trade</td><td>4320 / PC</td></tr>
+        </tbody>
+      </table>
+      <p>A balanced RNV account therefore shows offsetting debits and credits for every fully processed PO line, with a residual balance that reflects only goods received but not yet vouchered.</p>
+
+      <h2>Why RNV Reconciliation Is Challenging</h2>
+      <p>Without a dedicated tool, reconciling the RNV account requires manually matching F43121 records to general ledger entries — a time-consuming process that becomes increasingly complex as transaction volume grows. Common challenges include:</p>
+      <table>
+        <thead>
+          <tr><th>Challenge</th><th>Why It's Difficult</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Volume</td><td>High-volume purchasing environments can have thousands of open receipts at any point in time.</td></tr>
+          <tr><td>Aging receipts</td><td>Old receipts that were never vouchered or were incorrectly closed accumulate over time and are difficult to identify manually.</td></tr>
+          <tr><td>Manual vouchers</td><td>Receipts cleared through manual journal entries rather than the standard voucher match process leave the F43121 record open, creating a false variance.</td></tr>
+          <tr><td>Cost variances</td><td>Price variances at voucher match (AAIs 4330, 4332, 4335) can leave residual balances in the RNV account that are difficult to trace.</td></tr>
+          <tr><td>Currency differences</td><td>In multi-currency environments, exchange rate variances at voucher match (AAI 4340) can create additional reconciling items.</td></tr>
+          <tr><td>No As-Of reporting</td><td>The F43121 table overwrites records on reversal rather than maintaining a transaction history, so reconciling to a prior point in time is not possible from the table itself.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>What RapidReconciler Reconciles</h2>
+      <table>
+        <thead>
+          <tr><th>Side</th><th>Source</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Open Receipts Balance</td><td>F43121 Match Type 1 records</td><td>Receipts not yet vouchered</td></tr>
+          <tr><td>GL Balance</td><td>F0902 Account Balances</td><td>General ledger balance for the RNV account</td></tr>
+          <tr><td>Out of Balance</td><td>Difference between the two</td><td>What must be explained and resolved</td></tr>
+        </tbody>
+      </table>
+
+      <h2>How RapidReconciler Helps</h2>
+      <table>
+        <thead>
+          <tr><th>Feature</th><th>How It Helps</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Orders Page</td><td>Automatically calculates the open receipt position for every purchase order and displays only those with open amounts or variances. Fully vouchered and reconciled orders are removed automatically.</td></tr>
+          <tr><td>Reconciled / Suspended Filters</td><td>Allow the user to focus on unreconciled orders, audit suspended orders, or validate the full open receipts listing — without manual sorting or filtering of raw data.</td></tr>
+          <tr><td>Calculation Section</td><td>Separates the total out-of-balance amount into Open Receipts, Unreconciled, and Batches components, and provides a Suggested Entry amount that excludes outstanding variances.</td></tr>
+          <tr><td>PO Receipts Aging Chart</td><td>Visual breakdown of open receipts by period — identifies whether the RNV balance is driven by recent activity or aging items.</td></tr>
+          <tr><td>Suspension Feature</td><td>Removes orders cleared by manual voucher entry, PRLAND = 3 landed cost records, or data cutoff artifacts from the variance calculation.</td></tr>
+          <tr><td>Line Analysis Page</td><td>Side-by-side F43121 vs. GL comparison at the document level, with the ability to exclude specific documents and add audit notes.</td></tr>
+          <tr><td>Document Button</td><td>Displays all transactions for a PO line with a Variance column identifying precisely which documents have discrepancies.</td></tr>
+          <tr><td>Unreconciled Link</td><td>Navigates directly from the Reconciliation page to a pre-filtered Orders page showing only the orders requiring action.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-flow')">Next: Process Flow Diagram →</button>
+      </div>
+    </section>
+
+    <!-- ============ PROCESS FLOW DIAGRAM ============ -->
+    <section id="topic-flow" class="view">
+      <h1>Process Flow Diagram</h1>
+      <p>The diagram below shows the end-to-end PO Receipts reconciliation flow at a glance. Each step is detailed in the four-step process pages.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <div class="flow-container">
+        <svg class="flow-svg" viewBox="0 0 880 1180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flowchart showing the PO Receipts reconciliation process from login through to saving audit documentation">
+          <defs>
+            <marker id="arrowFlow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#3d5f93"/>
+            </marker>
+            <linearGradient id="boxGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#fdfdfd"/>
+              <stop offset="100%" stop-color="#f4f0e2"/>
+            </linearGradient>
+            <linearGradient id="stepGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4d77b4"/>
+              <stop offset="100%" stop-color="#3d5f93"/>
+            </linearGradient>
+            <linearGradient id="endGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f5cb35"/>
+              <stop offset="100%" stop-color="#e0b820"/>
+            </linearGradient>
+            <filter id="flowShadow" x="-5%" y="-5%" width="110%" height="115%">
+              <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.15"/>
+            </filter>
+          </defs>
+
+          <!-- START -->
+          <g filter="url(#flowShadow)">
+            <rect x="320" y="20" width="240" height="60" rx="30" fill="url(#endGrad)" stroke="#b8901a" stroke-width="1.5"/>
+            <text x="440" y="48" text-anchor="middle" font-family="Bitter, serif" font-size="14" font-weight="700" fill="#2c4670">START</text>
+            <text x="440" y="66" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#2c4670">Log in to RapidReconciler</text>
+          </g>
+          <line x1="440" y1="80" x2="440" y2="110" stroke="#3d5f93" stroke-width="2" marker-end="url(#arrowFlow)"/>
+
+          <!-- Navigate -->
+          <g filter="url(#flowShadow)">
+            <rect x="290" y="115" width="300" height="50" rx="6" fill="url(#boxGrad)" stroke="#d6d2c4"/>
+            <text x="440" y="135" text-anchor="middle" font-family="Open Sans" font-size="13" font-weight="600" fill="#333">Navigate to PO Receipts module</text>
+            <text x="440" y="153" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#666">Confirm both status lights are green</text>
+          </g>
+          <line x1="440" y1="165" x2="440" y2="195" stroke="#3d5f93" stroke-width="2" marker-end="url(#arrowFlow)"/>
+
+          <!-- STEP 1 -->
+          <g filter="url(#flowShadow)">
+            <rect x="180" y="200" width="520" height="90" rx="6" fill="url(#stepGrad)" stroke="#2c4670"/>
+            <circle cx="215" cy="225" r="16" fill="#f5cb35"/>
+            <text x="215" y="231" text-anchor="middle" font-family="Bitter, serif" font-size="15" font-weight="700" fill="#2c4670">1</text>
+            <text x="245" y="230" font-family="Bitter, serif" font-size="14" font-weight="600" fill="#fff">Validate the Orders Page</text>
+            <text x="200" y="255" font-family="Open Sans" font-size="11" fill="#fff">• Sort by MostRecReceipt asc — find aged receipts</text>
+            <text x="200" y="271" font-family="Open Sans" font-size="11" fill="#fff">• Audit suspended orders — confirm each is still warranted</text>
+          </g>
+          <line x1="440" y1="290" x2="440" y2="320" stroke="#3d5f93" stroke-width="2" marker-end="url(#arrowFlow)"/>
+
+          <!-- DECISION: Open Receipts validated? -->
+          <g filter="url(#flowShadow)">
+            <polygon points="440,325 600,400 440,475 280,400" fill="url(#boxGrad)" stroke="#d6d2c4"/>
+            <text x="440" y="395" text-anchor="middle" font-family="Open Sans" font-size="12" font-weight="600" fill="#333">AmtOpen total matches</text>
+            <text x="440" y="412" text-anchor="middle" font-family="Open Sans" font-size="12" font-weight="600" fill="#333">JD Edwards Open Receipts?</text>
+          </g>
+
+          <!-- NO branch -->
+          <line x1="280" y1="400" x2="180" y2="400" stroke="#c75a3a" stroke-width="2" marker-end="url(#arrowFlow)"/>
+          <text x="225" y="392" text-anchor="middle" font-family="Open Sans" font-size="11" font-weight="700" fill="#c75a3a">NO</text>
+          <g filter="url(#flowShadow)">
+            <rect x="20" y="375" width="160" height="50" rx="6" fill="#fbe9e3" stroke="#c75a3a"/>
+            <text x="100" y="395" text-anchor="middle" font-family="Open Sans" font-size="11" font-weight="600" fill="#8a3520">Investigate timing</text>
+            <text x="100" y="411" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#8a3520">/ data differences</text>
+          </g>
+          <path d="M 100 425 Q 100 460 200 460" fill="none" stroke="#c75a3a" stroke-width="2" stroke-dasharray="4,4"/>
+
+          <!-- YES branch -->
+          <line x1="440" y1="475" x2="440" y2="505" stroke="#4a6b3a" stroke-width="2" marker-end="url(#arrowFlow)"/>
+          <text x="455" y="495" font-family="Open Sans" font-size="11" font-weight="700" fill="#4a6b3a">YES</text>
+
+          <!-- STEP 2 -->
+          <g filter="url(#flowShadow)">
+            <rect x="180" y="510" width="520" height="80" rx="6" fill="url(#stepGrad)" stroke="#2c4670"/>
+            <circle cx="215" cy="535" r="16" fill="#f5cb35"/>
+            <text x="215" y="541" text-anchor="middle" font-family="Bitter, serif" font-size="15" font-weight="700" fill="#2c4670">2</text>
+            <text x="245" y="540" font-family="Bitter, serif" font-size="14" font-weight="600" fill="#fff">Review the Reconciliation Page</text>
+            <text x="200" y="565" font-family="Open Sans" font-size="11" fill="#fff">• Confirm Batches = 0 • Validate GL Balance and Open Receipts</text>
+            <text x="200" y="581" font-family="Open Sans" font-size="11" fill="#fff">• Identify Out of Balance and Unreconciled amounts</text>
+          </g>
+          <line x1="440" y1="590" x2="440" y2="620" stroke="#3d5f93" stroke-width="2" marker-end="url(#arrowFlow)"/>
+
+          <!-- DECISION: Out of Balance = 0? -->
+          <g filter="url(#flowShadow)">
+            <polygon points="440,625 600,700 440,775 280,700" fill="url(#boxGrad)" stroke="#d6d2c4"/>
+            <text x="440" y="700" text-anchor="middle" font-family="Open Sans" font-size="13" font-weight="600" fill="#333">Out of Balance = $0?</text>
+          </g>
+
+          <!-- YES: skip ahead -->
+          <line x1="600" y1="700" x2="780" y2="700" stroke="#4a6b3a" stroke-width="2"/>
+          <text x="650" y="692" font-family="Open Sans" font-size="11" font-weight="700" fill="#4a6b3a">YES</text>
+          <path d="M 780 700 L 780 1080" fill="none" stroke="#4a6b3a" stroke-width="2"/>
+
+          <!-- NO: continue down -->
+          <line x1="440" y1="775" x2="440" y2="805" stroke="#3d5f93" stroke-width="2" marker-end="url(#arrowFlow)"/>
+          <text x="455" y="795" font-family="Open Sans" font-size="11" font-weight="700" fill="#c75a3a">NO</text>
+
+          <!-- STEP 3 -->
+          <g filter="url(#flowShadow)">
+            <rect x="180" y="810" width="520" height="100" rx="6" fill="url(#stepGrad)" stroke="#2c4670"/>
+            <circle cx="215" cy="835" r="16" fill="#f5cb35"/>
+            <text x="215" y="841" text-anchor="middle" font-family="Bitter, serif" font-size="15" font-weight="700" fill="#2c4670">3</text>
+            <text x="245" y="840" font-family="Bitter, serif" font-size="14" font-weight="600" fill="#fff">Work Unreconciled Orders</text>
+            <text x="200" y="865" font-family="Open Sans" font-size="11" fill="#fff">• Click Unreconciled link → expand each order with [+]</text>
+            <text x="200" y="881" font-family="Open Sans" font-size="11" fill="#fff">• Click Line Analysis on grey lines • Set Rec=All, Line=0, Query</text>
+            <text x="200" y="897" font-family="Open Sans" font-size="11" fill="#fff">• Click Document button — find variances; correct or exclude; Recalc</text>
+          </g>
+          <line x1="440" y1="910" x2="440" y2="940" stroke="#3d5f93" stroke-width="2" marker-end="url(#arrowFlow)"/>
+
+          <!-- STEP 4 -->
+          <g filter="url(#flowShadow)">
+            <rect x="180" y="945" width="520" height="80" rx="6" fill="url(#stepGrad)" stroke="#2c4670"/>
+            <circle cx="215" cy="970" r="16" fill="#f5cb35"/>
+            <text x="215" y="976" text-anchor="middle" font-family="Bitter, serif" font-size="15" font-weight="700" fill="#2c4670">4</text>
+            <text x="245" y="975" font-family="Bitter, serif" font-size="14" font-weight="600" fill="#fff">Post Adjusting JE</text>
+            <text x="200" y="1000" font-family="Open Sans" font-size="11" fill="#fff">• All resolved → use Out of Balance amount</text>
+            <text x="200" y="1016" font-family="Open Sans" font-size="11" fill="#fff">• Carrying forward → use Suggested Entry amount</text>
+          </g>
+          <line x1="440" y1="1025" x2="440" y2="1055" stroke="#3d5f93" stroke-width="2" marker-end="url(#arrowFlow)"/>
+
+          <!-- END -->
+          <g filter="url(#flowShadow)">
+            <rect x="320" y="1060" width="240" height="60" rx="30" fill="url(#endGrad)" stroke="#b8901a" stroke-width="1.5"/>
+            <text x="440" y="1088" text-anchor="middle" font-family="Bitter, serif" font-size="14" font-weight="700" fill="#2c4670">END</text>
+            <text x="440" y="1106" text-anchor="middle" font-family="Open Sans" font-size="11" fill="#2c4670">Save audit documentation</text>
+          </g>
+
+          <!-- YES branch arrow into END -->
+          <line x1="780" y1="1080" x2="565" y2="1080" stroke="#4a6b3a" stroke-width="2" marker-end="url(#arrowFlow)"/>
+        </svg>
+      </div>
+
+      <h2>The Four Steps at a Glance</h2>
+      <table>
+        <thead>
+          <tr><th>Step</th><th>Goal</th><th>Key Output</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="num-cell">1</td><td>Validate the Orders page — make sure the open receipts list is accurate</td><td>AmtOpen total agrees with JD Edwards Open Receipts report</td></tr>
+          <tr><td class="num-cell">2</td><td>Compare Open Receipts to the GL on the Reconciliation page</td><td>Out of Balance amount and contributing variance sources</td></tr>
+          <tr><td class="num-cell">3</td><td>Work each unreconciled order using Line Analysis to find the offending document</td><td>Variances corrected in JDE or excluded with notes; Out of Balance reduced</td></tr>
+          <tr><td class="num-cell">4</td><td>Post the adjusting journal entry and save audit documentation</td><td>Out of Balance = $0 after next refresh; period closed</td></tr>
+        </tbody>
+      </table>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-before')">Next: Before You Begin →</button>
+      </div>
+    </section>
+
+    <!-- ============ BEFORE YOU BEGIN ============ -->
+    <section id="topic-before" class="view">
+      <h1>Before You Begin</h1>
+      <p>Confirm the prerequisites and operating rules before starting a reconciliation. Most surprises during the process come from skipping one of these checks.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Prerequisites</h2>
+      <table>
+        <thead>
+          <tr><th>Item</th><th>Requirement</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>RapidReconciler access</td><td>Login credentials provided by your administrator</td></tr>
+          <tr><td>Module permissions</td><td>Access to the PO Receipts module and applicable companies</td></tr>
+          <tr><td>Suspension permission</td><td>Must be granted by your administrator to suspend orders</td></tr>
+          <tr><td>Exclusion permission</td><td>Must be granted by your administrator to exclude documents</td></tr>
+          <tr><td>JD Edwards access</td><td>Required to investigate and correct issues identified in RapidReconciler</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Key Rules Before Starting</h2>
+      <ul class="checklist">
+        <div class="checklist-title">Confirm before any reconciliation work</div>
+        <li>Both status lights on the Reconciliation page must be <strong>green</strong> before making any adjustments to the general ledger.</li>
+        <li>RapidReconciler data is refreshed <strong>nightly</strong>. Any JD Edwards report used for comparison should be run at approximately the same time as the RapidReconciler data was imported.</li>
+        <li>The <strong>Open Receipts balance</strong> in RapidReconciler should match an Open Receipts report run directly from JD Edwards. Resolve any discrepancies between the two before making journal entries.</li>
+        <li>The reconciliation objective is to ensure that <strong>amounts on receipts and vouchers match between F43121 and the GL</strong> — not to match individual vouchers to receipts. A receipt without a voucher is a legitimate open receipt.</li>
+      </ul>
+
+      <div class="callout">
+        <div class="callout-label">Reconciliation objective</div>
+        <p>RapidReconciler reconciles the F43121 receipts table to the F0902 GL balance. The goal is <strong>not</strong> to match every individual voucher to its receipt — that's how JD Edwards processes them. The goal is to identify cases where the two data sources <em>disagree</em>, and to resolve those disagreements.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-concepts')">Next: Key Concepts →</button>
+      </div>
+    </section>
+
+    <!-- ============ KEY CONCEPTS ============ -->
+    <section id="topic-concepts" class="view">
+      <h1>Key Concepts</h1>
+      <p>Reference material on the data model that powers the PO Receipts module. A working understanding of the F43121 table, Match Types, and the PRLAND field will save significant investigation time when variances appear.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>The F43121 Table</h2>
+      <p>The <strong>F43121 (PO Receiver)</strong> table is the source of truth for RNV reconciliation. It stores a record of every receipt and voucher match transaction on a purchase order line. RapidReconciler imports F43121 data and compares it directly to the corresponding GL entries to identify where the two do not agree.</p>
+
+      <h2>F43121 Match Types</h2>
+      <p>Each record in F43121 carries a <strong>Match Type</strong> field that identifies what stage of the purchasing process the record represents. Understanding match types is essential for interpreting the RNV reconciliation.</p>
+
+      <table>
+        <thead>
+          <tr><th>Match Type</th><th>Description</th><th>Effect on RNV</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="num-cell">1</td><td><strong>Receipt</strong> — Created when goods are received against a purchase order (P4312). The initial record that opens the RNV balance.</td><td><strong>Opens</strong> RNV — credits the RNV account via AAI 4320</td></tr>
+          <tr><td class="num-cell">2</td><td><strong>Voucher Match</strong> — Created when the supplier invoice is matched to the receipt (P4314 / P0411). Written when the Match Type 1 record transitions from open to paid.</td><td><strong>Closes</strong> RNV — debits the RNV account via AAI 4320</td></tr>
+          <tr><td class="num-cell">3</td><td><strong>Reversal of Receipt</strong> — Created when a receipt is reversed. Offsets the original Match Type 1 record.</td><td>Closes RNV for the reversed quantity</td></tr>
+          <tr><td class="num-cell">4</td><td><strong>Reversal of Voucher Match</strong> — Created when a voucher match is reversed.</td><td>Reopens RNV for the reversed amount</td></tr>
+          <tr><td class="num-cell">5</td><td><strong>Landed Cost Receipt</strong> — Created when a landed cost is applied at the time of receipt (P4312).</td><td>Opens RNV for the landed cost amount (AAI 4390)</td></tr>
+          <tr><td class="num-cell">6</td><td><strong>Landed Cost Voucher Match</strong> — Created when a landed cost is matched to an invoice.</td><td>Closes RNV for the landed cost amount</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout principle">
+        <div class="callout-label">Key point</div>
+        <p>A fully reconciled purchase order line should have offsetting Match Type 1 and Match Type 2 records that net to zero. A line where Match Type 1 exists without a corresponding Match Type 2 represents an open receipt — a legitimate component of the RNV balance. Lines that appear unbalanced for reasons <em>other</em> than a missing voucher match are where reconciling variances originate.</p>
+      </div>
+
+      <h2>The PRLAND Field</h2>
+      <p>The <strong>PRLAND</strong> field in F43121 identifies whether a record is a standard receipt or a landed cost, and whether the landed cost is eligible for voucher match:</p>
+
+      <table>
+        <thead>
+          <tr><th>PRLAND Value</th><th>Meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Blank</strong></td><td>Standard product/item receipt line</td></tr>
+          <tr><td class="num-cell">1</td><td>Product/item line</td></tr>
+          <tr><td class="num-cell">2</td><td>Landed cost — eligible for voucher match</td></tr>
+          <tr><td class="num-cell">3</td><td>Landed cost — accrual only, not eligible for voucher match</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warning">
+        <div class="callout-label">PRLAND = 3 requires suspension</div>
+        <p>When PRLAND = 3, the landed cost is accrued at receipt but will <strong>never</strong> be vouchered. These records contribute to the F43121 open balance but will never have a corresponding Match Type 2 record. They must be <strong>suspended</strong> in RapidReconciler to avoid creating a permanent false variance.</p>
+      </div>
+
+      <h2>No Period Selector — Why It Matters</h2>
+      <p>Unlike the Inventory and In Transit modules, the PO Receipts module has <strong>no period selector</strong>. Because the F43121 table overwrites records on reversal rather than creating new entries, As-Of reporting is not possible. The reconciliation is always performed as a <strong>current balance-to-balance comparison</strong> — open receipts now vs. GL balance now.</p>
+
+      <p>This has two practical implications:</p>
+      <ol>
+        <li>The reconciliation must be performed <strong>regularly</strong> (weekly is recommended) so that issues are caught while the supporting evidence is still recent.</li>
+        <li>JD Edwards reports used for comparison should be run at approximately the <strong>same time</strong> as the most recent RapidReconciler nightly import.</li>
+      </ol>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-step1')">Next: Step 1 — Validate Orders Page →</button>
+      </div>
+    </section>
+
+    <!-- ============ STEP 1 ============ -->
+    <section id="topic-step1" class="view">
+      <span class="step-badge">Step 1</span>
+      <h1>Validate the Orders Page</h1>
+      <p>Before comparing RapidReconciler's open receipts total to the GL, validate that the Orders page itself is correct. The reconciliation is only as good as the underlying list — orders that appear here in error will produce phantom variances downstream.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Login &amp; Filters</h2>
+      <ol>
+        <li>Log in to RapidReconciler at <code>https://rapidreconciler.getgsi.com</code></li>
+        <li>Navigate to the <strong>PO Receipts</strong> module</li>
+        <li>Confirm both status lights at the top of the page are <strong>green</strong> — do not proceed if either is red</li>
+        <li>Apply the appropriate company and account filters</li>
+      </ol>
+
+      <h2>Validate the Orders List</h2>
+      <ol>
+        <li>Set filters to <strong>Reconciled = All; Suspended = No</strong></li>
+        <li>Sort by <strong>MostRecReceipt</strong> ascending to identify the oldest open receipts</li>
+        <li>Review every order on the list and decide its disposition:
+          <table style="margin-top:10px;">
+            <thead>
+              <tr><th>Order Type</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Genuinely in transit (recent receipt, voucher pending)</td><td>Leave open — this is a legitimate component of the RNV balance</td></tr>
+              <tr><td>Cleared by manual voucher (P0411 instead of P4314)</td><td>Correct in JD Edwards if possible; otherwise suspend in RapidReconciler with a note</td></tr>
+              <tr><td>PRLAND = 3 landed cost record (accrual only)</td><td>Suspend — will never be vouchered</td></tr>
+              <tr><td>PO at status 999 with no further activity possible</td><td>Suspend with a note explaining the closure context</td></tr>
+              <tr><td>Aged receipt under active investigation</td><td>Suspend temporarily with a note describing the investigation</td></tr>
+            </tbody>
+          </table>
+        </li>
+        <li>Set filters to <strong>Reconciled = All; Suspended = Yes</strong> — confirm every suspended order still warrants suspension and has a note explaining why</li>
+        <li>Confirm the <strong>AmtOpen</strong> total is accurate before proceeding</li>
+      </ol>
+
+      <div class="callout warning">
+        <div class="callout-label">Validate before comparing</div>
+        <p>The open receipts listing <strong>must be validated</strong> before proceeding with the reconciliation. The quality of the reconciliation depends on the accuracy of the Orders page. Any order on the list in error — either correct in JD Edwards or suspend in RapidReconciler.</p>
+      </div>
+
+      <h2>Compare to JD Edwards</h2>
+      <p>With filters set to <strong>Reconciled = All; Suspended = No</strong>, the <strong>AmtOpen</strong> column total represents the open receipts position. Run an Open Receipts report directly from JD Edwards at approximately the same time as the most recent RapidReconciler nightly import, and compare:</p>
+      <ul>
+        <li>If the totals match — proceed to Step 2.</li>
+        <li>If they don't — investigate timing differences first (the two reports may have been run at different points in time). If timing is not the cause, contact your administrator before continuing.</li>
+      </ul>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-step2')">Next: Step 2 — Review Reconciliation →</button>
+      </div>
+    </section>
+
+    <!-- ============ STEP 2 ============ -->
+    <section id="topic-step2" class="view">
+      <span class="step-badge">Step 2</span>
+      <h1>Review the Reconciliation Page</h1>
+      <p>With the Orders page validated, the Reconciliation page is where the open receipts balance is compared to the GL balance and all variance sources are identified. This is the page that tells you <em>whether</em> there is a problem and <em>what kind</em> of problem it is.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Status Indicators</h2>
+      <p>Both status indicators at the top of the page must be <strong>green</strong> before making any adjustments to the general ledger:</p>
+      <table>
+        <thead>
+          <tr><th>Indicator</th><th>Green Means</th><th>Red Means</th><th>Action if Red</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>PO Receipt Validation</td><td>Carry-forward from prior period is accurate</td><td>Prior period issue exists</td><td>Hover for details; resolve before proceeding</td></tr>
+          <tr><td>System Status</td><td>JD Edwards import completed successfully</td><td>Import error occurred</td><td>Hover for details; contact your administrator</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Out of Balance — Skip Ahead?</h2>
+      <p>If <strong>Out of Balance = $0</strong>, the period is reconciled — skip to <a href="javascript:void(0)" onclick="showView('topic-step4')">Step 4</a> for audit documentation. If non-zero, work through the Calculation section below.</p>
+
+      <h2>Read the Calculation Section</h2>
+      <p>The Calculation section breaks the Out of Balance amount into its contributing parts:</p>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Required Before Close?</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GL Balance</td><td><span class="status-pill green">Informational</span></td><td>Confirm matches the trial balance</td></tr>
+          <tr><td>Open Receipts</td><td><span class="status-pill yellow">Validate first</span></td><td>Confirm matches the JD Edwards Open Receipts report (Step 1)</td></tr>
+          <tr><td>Out of Balance</td><td><span class="status-pill red">Resolve</span></td><td>Investigate each contributing source</td></tr>
+          <tr><td>Unreconciled</td><td><span class="status-pill yellow">Resolve or carry forward</span></td><td>Click the link to navigate to unreconciled orders (Step 3)</td></tr>
+          <tr><td>Batches</td><td><span class="status-pill red">Must be zero</span></td><td>Work with finance to post outstanding GL batches</td></tr>
+          <tr><td>Suggested Entry</td><td><span class="status-pill yellow">Use if carrying forward</span></td><td>Journal entry amount excluding unreconciled orders</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Suggested Entry vs. Out of Balance</h2>
+      <p>Two amounts on this page are candidates for the closing journal entry. Which one to use depends on whether all unreconciled variances are resolved:</p>
+      <table>
+        <thead>
+          <tr><th>Use</th><th>Amount</th><th>When to Use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Out of Balance</strong></td><td>Includes unreconciled orders</td><td>All unreconciled variances have been resolved before closing</td></tr>
+          <tr><td><strong>Suggested Entry</strong></td><td>Excludes unreconciled orders</td><td>Unreconciled orders will be carried forward for resolution next period</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warning">
+        <div class="callout-label">Best practice</div>
+        <p>Resolve all unreconciled orders before closing the period. Using the Suggested Entry amount to close around outstanding variances defers the problem and accumulates carry-forward balances over time. Reach for Suggested Entry only when an unreconciled order genuinely cannot be addressed in the current cycle.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-step3')">Next: Step 3 — Work Unreconciled →</button>
+      </div>
+    </section>
+
+    <!-- ============ STEP 3 ============ -->
+    <section id="topic-step3" class="view">
+      <span class="step-badge">Step 3</span>
+      <h1>Work Unreconciled Orders</h1>
+      <p>Step 3 is where the actual investigation happens. For each unreconciled order, the goal is to identify the specific document(s) where F43121 disagrees with the GL, determine the root cause, and either correct in JD Edwards or exclude the document with an audit note.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Display Unreconciled Orders</h2>
+      <p>Click the <strong>Unreconciled</strong> link on the Reconciliation page. This opens the Orders page with filters preset to <strong>Reconciled = No; Suspended = No</strong> — showing only orders with variances. (Setting these filters manually on the Orders page produces the same result.)</p>
+
+      <h2>For Each Unreconciled Order</h2>
+      <ol>
+        <li>Click the <strong>+</strong> icon on the left of the order row to expand it</li>
+        <li>Identify which lines are displayed in <strong>grey</strong> — these are the unreconciled lines</li>
+        <li>Click <strong>Line Analysis</strong> on the grey line. This navigates to the Line Analysis page with filter data pre-populated for that line. <em>(See <a href="javascript:void(0)" onclick="showView('topic-lineanalysis')">Line Analysis Page</a> for full reference.)</em></li>
+        <li>On the Line Analysis page, change the <strong>Rec filter to All</strong> and the <strong>Line filter to 0</strong>, then click <strong>Query</strong> to display data for the entire order — useful when a variance spans multiple lines</li>
+        <li>Click the <strong>Document</strong> button to view the F43121 vs. GL side-by-side comparison</li>
+        <li>Review the <strong>Variance</strong> column — identify the specific document(s) showing a non-zero variance</li>
+        <li>For each variant document, determine whether the discrepancy is in F43121, the GL, or both — see the <a href="javascript:void(0)" onclick="showView('topic-patterns')">Variance Patterns</a> reference for common signatures</li>
+      </ol>
+
+      <h2>Take Corrective Action</h2>
+      <p>Each variance has one of two outcomes:</p>
+
+      <div class="kv-grid" style="grid-template-columns: 1fr 1fr;">
+        <div class="kv-card">
+          <div class="kv-label">Correctable in JD Edwards</div>
+          <div class="kv-value" style="font-size:14px;">Process the voucher match, reverse the bad transaction, or post a correcting journal entry directly in JDE</div>
+          <p style="margin-top:6px;font-size:12.5px;color:var(--ink-soft);">After correction, the next nightly refresh will clear the variance from RapidReconciler.</p>
+        </div>
+        <div class="kv-card">
+          <div class="kv-label">Known exception</div>
+          <div class="kv-value" style="font-size:14px;">Suspend the order or exclude the specific document in RapidReconciler with an audit note</div>
+          <p style="margin-top:6px;font-size:12.5px;color:var(--ink-soft);">See <a href="javascript:void(0)" onclick="showView('topic-suspendexcl')">Suspension vs Exclusion</a> for which to choose.</p>
+        </div>
+      </div>
+
+      <h2>The Edit Note Action</h2>
+      <p>When a document is being excluded, use the <strong>Edit Note</strong> button on the Line Analysis page. The Edit Note popup combines two actions in one place:</p>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Excluded</strong> checkbox</td><td>Tick to remove the document's amount from the variance calculation after recalculation</td></tr>
+          <tr><td><strong>Note</strong> text box</td><td>Audit text — describe why the exclusion is being made (mandatory in practice)</td></tr>
+        </tbody>
+      </table>
+      <p>If an exclusion is made in error, unchecking the box reinstates the document. After making any exclusions, click <strong>Recalc</strong> to refresh the variance calculation. The recalc takes a few minutes — a gear icon in the top right indicates progress.</p>
+
+      <div class="callout">
+        <div class="callout-label">Helpful trick</div>
+        <p>On the Line Analysis page, change the line number to <strong>0</strong> and click <strong>Query</strong> to display data for <em>all lines</em> on the PO. This is extremely useful when diagnosing variances that span multiple lines — the Document button will then show all documents for the entire order in one view.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-step4')">Next: Step 4 — Post JE &amp; Close →</button>
+      </div>
+    </section>
+
+    <!-- ============ STEP 4 ============ -->
+    <section id="topic-step4" class="view">
+      <span class="step-badge">Step 4</span>
+      <h1>Post the Adjusting JE &amp; Save Audit Documentation</h1>
+      <p>Once all unreconciled orders have been addressed (corrected in JDE or excluded with notes), the period can be closed with a final journal entry and audit documentation produced.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Choose the JE Amount</h2>
+      <p>Two amounts on the Reconciliation page are candidates for the closing journal entry. Which one to use depends on whether unreconciled variances were resolved or carried forward:</p>
+
+      <div class="kv-grid" style="grid-template-columns: 1fr;">
+        <div class="kv-card" style="background:var(--blue-deep); border-color:var(--blue-deep);">
+          <div class="kv-label" style="color:var(--yellow);">If all variances resolved</div>
+          <div class="kv-value" style="color:white; font-size:18px;">Use the <strong style="color:var(--yellow);">Out of Balance</strong> amount</div>
+          <p style="margin-top:6px;font-size:13px;color:rgba(255,255,255,0.85);">Posting this entry should drive Out of Balance to <strong style="color:var(--yellow);">$0</strong> after the next nightly refresh.</p>
+        </div>
+        <div class="kv-card" style="background:#5a4a2a; border-color:#5a4a2a;">
+          <div class="kv-label" style="color:var(--yellow);">If carrying variances forward</div>
+          <div class="kv-value" style="color:white; font-size:18px;">Use the <strong style="color:var(--yellow);">Suggested Entry</strong> amount</div>
+          <p style="margin-top:6px;font-size:13px;color:rgba(255,255,255,0.85);">This excludes the unreconciled amount, which will reappear next period as Carry Forward.</p>
+        </div>
+      </div>
+
+      <h2>Common Offset Accounts for RNV Journal Entries</h2>
+      <p>The offset side of the closing JE depends on the nature of the variance being cleared:</p>
+      <table>
+        <thead>
+          <tr><th>Situation</th><th>Offset Account</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Unvouchered receipt to be written off</td><td>Expense / Cost of Goods Sold</td></tr>
+          <tr><td>Price variance between receipt and invoice</td><td>Purchase Price Variance (AAI 4330)</td></tr>
+          <tr><td>Goods consumed before voucher match</td><td>Cost of Sales Variance (AAI 4332)</td></tr>
+          <tr><td>Standard cost variance</td><td>AAI 4335</td></tr>
+          <tr><td>Exchange rate variance (multi-currency)</td><td>AAI 4340</td></tr>
+          <tr><td>Correction of a processing error</td><td>Appropriate correcting account per the error</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Post the JE in JD Edwards</h2>
+      <p>Post the journal entry to the RNV account with the appropriate offset account. RapidReconciler will not see the JE until the next nightly refresh.</p>
+
+      <h2>Confirm Reconciliation</h2>
+      <ol>
+        <li><strong>Wait for the next nightly refresh</strong> — RapidReconciler does not see the JE until then</li>
+        <li>Return to the Reconciliation page</li>
+        <li>Confirm <strong>Out of Balance = $0</strong> (or only the Carry Forward amount, if Suggested Entry was used)</li>
+        <li>If a residual variance remains, return to <a href="javascript:void(0)" onclick="showView('topic-step3')">Step 3</a> and identify which line moved</li>
+      </ol>
+
+      <h2>Save Audit Documentation</h2>
+      <div class="callout">
+        <div class="callout-label">No dedicated Audit Report button</div>
+        <p>Unlike the Inventory and In Transit modules, the PO Receipts module does <strong>not</strong> have a dedicated Audit Report button. Save period-end documentation by:</p>
+        <ol style="margin-top:8px;margin-bottom:0;">
+          <li>Exporting the Reconciliation page (screenshot or print to PDF)</li>
+          <li>Exporting the Orders page to Excel using the green down arrow</li>
+          <li>Storing both in your audit folder for the period</li>
+        </ol>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-orderspage')">Next: Reference — Orders Page →</button>
+      </div>
+    </section>
+
+    <!-- ============ REF: ORDERS PAGE ============ -->
+    <section id="topic-orderspage" class="view">
+      <h1>Reference — The Orders Page</h1>
+      <p>The Orders page lists all purchase orders — summarized to the order level — where one or more of the following conditions exist:</p>
+      <ul>
+        <li><strong>Open Receipts</strong> — A receipt document (Match Type 1) has not yet been matched to a supplier invoice (Match Type 2)</li>
+        <li><strong>Variances</strong> — A receipt or voucher in F43121 has an amount that does not match the corresponding GL entry in the RNV account</li>
+      </ul>
+      <p>Orders that have been fully received, fully vouchered, and where everything reconciles are <strong>automatically removed</strong> from the list.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Filter Drop-Downs</h2>
+      <table>
+        <thead>
+          <tr><th>Filter</th><th>All</th><th>Yes</th><th>No</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Reconciled</td><td>Show all orders</td><td>Show only reconciled orders</td><td>Show only unreconciled orders</td></tr>
+          <tr><td>Suspended</td><td>Show all orders</td><td>Show only suspended orders</td><td>Show only non-suspended orders</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Recommended Filter Combinations</h3>
+      <table>
+        <thead>
+          <tr><th>Reconciled</th><th>Suspended</th><th>What You See</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>All</td><td>No</td><td>All orders contributing to the Open Receipts balance</td><td>Validate the total open receipts amount</td></tr>
+          <tr><td>No</td><td>No</td><td>All unreconciled, non-suspended orders</td><td>Identify orders requiring investigation</td></tr>
+          <tr><td>All</td><td>Yes</td><td>All suspended orders</td><td>Audit that suspensions are still warranted</td></tr>
+        </tbody>
+      </table>
+
+      <h2>What Is a Suspension?</h2>
+      <p>A suspension in PO Receipts is equivalent to flagging an order as "Ignore Me." Suspending an order removes its amounts from the out-of-balance and variance calculations.</p>
+
+      <h3>Common Reasons to Suspend</h3>
+      <table>
+        <thead>
+          <tr><th>Reason</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Data cutoff artifact</td><td>RapidReconciler was loaded by date and only the voucher was imported, not the original receipt. The order processed correctly — it's a start-up issue.</td></tr>
+          <tr><td>Manual voucher clearance</td><td>A supplier invoice was entered using standard voucher entry (P0411) instead of being matched to the PO (P4314), leaving a paid receipt showing as open in F43121. Correcting in JD Edwards is preferred; suspension is the alternative.</td></tr>
+          <tr><td>PRLAND = 3 landed cost</td><td>An accrual-only landed cost that will never be vouchered. Suspend to prevent a permanent false variance.</td></tr>
+          <tr><td>Aged receipt under review</td><td>An older open receipt being actively investigated. Suspend temporarily with a note explaining the status.</td></tr>
+          <tr><td>PO at status 999 with no further activity possible</td><td>Closed in JD Edwards but still showing residual F43121 balance.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warning">
+        <div class="callout-label">Suspension does not change JD Edwards</div>
+        <p>Performing a suspension in RapidReconciler does <strong>not</strong> change any data in JD Edwards. If the order should be corrected in JD Edwards, make that correction first. If an order is suspended in error, it can be unsuspended. Suspension permission must be granted by your administrator.</p>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Best practice</div>
+        <p>Document the reason for each suspension in the note field for audit purposes. Suspended orders should be reviewed periodically to confirm they remain appropriately suspended and have not had new activity applied against them.</p>
+      </div>
+
+      <h2>Orders Page Column Definitions</h2>
+      <table>
+        <thead>
+          <tr><th>Column</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Suspended</td><td>Checkbox indicating the order has been suspended</td></tr>
+          <tr><td>Note</td><td>Icon indicating a text note has been entered. Click "Edit Note" to view.</td></tr>
+          <tr><td>Company</td><td>The company number associated with the RNV account</td></tr>
+          <tr><td>Long Account</td><td>The RNV account number being reconciled</td></tr>
+          <tr><td>Supplier</td><td>The address book number on the PO. May show two addresses if landed costs are applied.</td></tr>
+          <tr><td>Name</td><td>Name of the supplier on the row</td></tr>
+          <tr><td>Order</td><td>Purchase order number</td></tr>
+          <tr><td>Type</td><td>Purchase order type</td></tr>
+          <tr><td>MostRecReceipt</td><td>The date of the most recent receipt — key field for aging analysis</td></tr>
+          <tr><td>UnitsRec</td><td>Total units received</td></tr>
+          <tr><td>AmtRec</td><td>Total value of units received</td></tr>
+          <tr><td>UnitsVouch</td><td>Total units vouchered</td></tr>
+          <tr><td>AmtVouch</td><td>Total value of units vouchered</td></tr>
+          <tr><td>UnitsOpen</td><td>Units received but not yet vouchered</td></tr>
+          <tr><td>AmtOpen</td><td>Value of units received but not yet vouchered. When Reconciled = All and Suspended = No, this column total matches the Open Receipts balance on the Reconciliation page.</td></tr>
+          <tr><td>RecTotal</td><td>Total value of all order transactions from F43121</td></tr>
+          <tr><td>GLTotal</td><td>Total value of all order transactions posted to the GL RNV account</td></tr>
+          <tr><td>Variance</td><td>RecTotal minus GLTotal. Ideally zero. Non-zero values indicate an issue to resolve.</td></tr>
+          <tr><td>ExclAmount</td><td>The total exclusion amount for the order</td></tr>
+          <tr><td>CurrCode</td><td>Currency code associated with amounts</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout principle">
+        <div class="callout-label">Key distinction</div>
+        <p><strong>AmtOpen</strong> reflects legitimate open receipts (receipts not yet vouchered). <strong>Variance</strong> reflects a discrepancy between F43121 and the GL for the same document — this is a reconciling issue, not a legitimate open receipt. Different columns, different actions.</p>
+      </div>
+
+      <h2>Line Details</h2>
+      <p>Click the <strong>+</strong> icon on the left of any order row to expand the line detail. This shows each individual PO line and whether it has an open receipt amount or a variance.</p>
+      <ul>
+        <li>Unreconciled lines are highlighted in <strong>grey</strong></li>
+        <li>Reconciled lines are displayed in <strong>white</strong></li>
+        <li>Details can be exported to Excel using the green down arrow</li>
+      </ul>
+      <p>Clicking the <strong>Line Analysis</strong> button within the expanded row navigates directly to the Line Analysis page with filter data pre-populated for that line. This is the fastest way to investigate a specific unreconciled line.</p>
+
+      <h2>Things to Check on the Orders Page</h2>
+      <p>Before proceeding to the Reconciliation page, validate the Orders page to ensure the Open Receipts balance is accurate. Work through the following checks:</p>
+      <table>
+        <thead>
+          <tr><th>Check</th><th>How</th><th>What to Look For</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Identify aged open receipts</td><td>Sort by <strong>MostRecReceipt</strong> ascending</td><td>Oldest receipts at top — confirm whether they are still active or candidates for suspension or JD Edwards correction</td></tr>
+          <tr><td>Audit suspended orders</td><td>Set Reconciled = All; Suspended = Yes</td><td>Confirm every suspended order still genuinely warrants suspension — review the note for each</td></tr>
+          <tr><td>Identify orders requiring review</td><td>Set Reconciled = No; Suspended = No</td><td>These orders have variances that must be resolved</td></tr>
+          <tr><td>Review unreconciled lines</td><td>Expand any order by clicking <strong>+</strong></td><td>Grey lines indicate unreconciled lines — click Line Analysis for detail</td></tr>
+          <tr><td>Validate the open receipts total</td><td>Set Reconciled = All; Suspended = No</td><td>The <strong>AmtOpen</strong> total must be validated before comparing to the GL balance</td></tr>
+        </tbody>
+      </table>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-reconpage')">Next: Reconciliation Page →</button>
+      </div>
+    </section>
+
+    <!-- ============ REF: RECONCILIATION PAGE ============ -->
+    <section id="topic-reconpage" class="view">
+      <h1>Reference — The Reconciliation Page</h1>
+      <p>The Reconciliation page is the default page displayed on login. This is where the open receipts balance is compared to the GL balance and all variance sources are identified.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Status Indicators</h2>
+      <p>Both indicators must be <strong>green</strong> before making any adjustments to the general ledger.</p>
+      <table>
+        <thead>
+          <tr><th>Indicator</th><th>Green Means</th><th>Red Means</th><th>Action if Red</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>PO Receipt Validation</td><td>Carry-forward from prior period is accurate</td><td>Prior period issue exists</td><td>Hover for details; resolve before proceeding</td></tr>
+          <tr><td>System Status</td><td>JD Edwards import completed successfully</td><td>Import error occurred</td><td>Hover for details; contact your administrator</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Account Filters</h2>
+      <ul>
+        <li>Operate as a hierarchy from left to right (<strong>Company → Business Unit → Object → Subsidiary</strong>)</li>
+        <li>Removing a company automatically removes associated business units, objects, and subsidiaries</li>
+        <li>Search rows at the top of each column filter within that column</li>
+        <li>Filter selections persist across pages within the PO Receipts module</li>
+      </ul>
+
+      <h2>Calculation Section</h2>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Description</th><th>Source</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>GL Balance</td><td>General ledger balance for the RNV account</td><td>F0902 — matches the trial balance exactly</td></tr>
+          <tr><td>Open Receipts</td><td>Calculated from F43121 Match Type 1 records</td><td>F43121</td></tr>
+          <tr><td>Out of Balance</td><td>Difference between GL Balance and Open Receipts</td><td>Zero = fully reconciled</td></tr>
+          <tr><td>Unreconciled</td><td>Total variance between F43121 and GL for unreconciled orders</td><td>Orders page Variance column total</td></tr>
+          <tr><td>Batches</td><td>GL batches awaiting posting</td><td>Unposted F0911 entries</td></tr>
+          <tr><td>Total Variance</td><td>Sum of Unreconciled and Batches amounts</td><td>—</td></tr>
+          <tr><td>Suggested Entry</td><td>Out of Balance minus Unreconciled amount</td><td>The journal entry amount if unreconciled orders are excluded from the current close</td></tr>
+          <tr><td>Manual Entries</td><td>Manual adjustments made to the selected accounts</td><td>Informational</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Suggested Entry vs. Out of Balance</h3>
+      <table>
+        <thead>
+          <tr><th>Use</th><th>Amount</th><th>When to Use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Out of Balance</strong></td><td>Includes unreconciled orders</td><td>Use when all unreconciled variances have been resolved before closing</td></tr>
+          <tr><td><strong>Suggested Entry</strong></td><td>Excludes unreconciled orders</td><td>Use when unreconciled orders will be carried forward for resolution next period</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warning">
+        <div class="callout-label">Best practice</div>
+        <p>Resolve all unreconciled orders before closing the period. Using the Suggested Entry amount to close around outstanding variances defers the problem and accumulates carry-forward balances over time.</p>
+      </div>
+
+      <h2>PO Receipts Aging Chart</h2>
+      <p>The aging chart provides a visual breakdown of open receipts by period. Use this to identify whether open receipts are recent (normal) or aging (requires investigation). A large proportion of aged open receipts is a signal that the voucher match process is not keeping pace with receipts, and may indicate:</p>
+      <ul>
+        <li>Supplier invoices that were never received or processed</li>
+        <li>Purchase orders that were incorrectly closed without a voucher match</li>
+        <li>Disputed invoices being held outside the normal process</li>
+        <li>System errors that prevented the voucher match from completing</li>
+      </ul>
+      <p>Addressing aging RNV items regularly prevents the balance from accumulating to a point where it becomes difficult to manage.</p>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-lineanalysis')">Next: Line Analysis Page →</button>
+      </div>
+    </section>
+
+    <!-- ============ REF: LINE ANALYSIS PAGE ============ -->
+    <section id="topic-lineanalysis" class="view">
+      <h1>Reference — The Line Analysis Page</h1>
+      <p>The Line Analysis page is the diagnosis surface — where individual receipt and voucher documents are compared between F43121 and the GL. This is where most reconciliation work happens during Step 3.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Accessing the Line Analysis Page</h2>
+      <div class="callout warning">
+        <div class="callout-label">Always access from the Orders page</div>
+        <p>Always access the Line Analysis page by clicking the <strong>Line Analysis</strong> button on an expanded order row on the Orders page. This pre-populates the filter with the correct order and line data. Clicking the Line Analysis link in the Main Navigation pane does not populate filter data and may cause confusion.</p>
+      </div>
+
+      <h2>Edit Note Button (Notes and Exclusions)</h2>
+      <p>The Edit Note button is used to:</p>
+      <ul>
+        <li>Add a note for future reference or audit documentation</li>
+        <li>Exclude a specific document (receipt or voucher) from variance calculations</li>
+      </ul>
+
+      <h3>Procedure</h3>
+      <ol>
+        <li>Click the grid row(s) to be edited</li>
+        <li>Type in the text box to add a note</li>
+        <li>Check the <strong>Excluded</strong> box to remove amounts from the variance calculation after recalculation</li>
+        <li>Click <strong>Save</strong></li>
+      </ol>
+
+      <p>If an exclusion is made in error, unchecking the box will reinstate the document. Exclusion permission must be granted by your administrator.</p>
+
+      <div class="callout">
+        <div class="callout-label">When to exclude a document</div>
+        <p>Document exclusion at the line level is different from order suspension. Use document exclusion when a specific receipt or voucher document has a known discrepancy that is being tracked — for example, a receipt that was partially reversed out of sequence, creating an entry in F43121 that no longer matches the GL. See <a href="javascript:void(0)" onclick="showView('topic-suspendexcl')">Suspension vs Exclusion</a> for which to use.</p>
+      </div>
+
+      <h2>Document Button</h2>
+      <p>The Document button displays a pop-up listing all documents associated with the PO line, combining data from F43121 and F0911. This provides a <strong>side-by-side comparison</strong> of the receipts table and GL amounts for each document.</p>
+      <table>
+        <thead>
+          <tr><th>Column</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Cutoff Date</td><td>The earliest date considered during import. Discrepancies caused by the cutoff date are less likely the further the capture date is from the cutoff.</td></tr>
+          <tr><td>Capture Date</td><td>The date the data was imported into RapidReconciler</td></tr>
+          <tr><td>Variance</td><td>The difference between the F43121 amount and the GL amount by document — the key field to review</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Filter Drop-Downs</h2>
+      <table>
+        <thead>
+          <tr><th>Filter</th><th>Options</th><th>Use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Exc (Excluded Docs)</td><td>All / Yes / No</td><td>Show all, only excluded, or only non-excluded documents</td></tr>
+          <tr><td>Rec (Reconciled Docs)</td><td>All / Yes / No</td><td>Show all, only reconciled, or only unreconciled documents</td></tr>
+          <tr><td>Doc</td><td>Individual document selection</td><td>Filter to a specific document number</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <div class="callout-label">Helpful trick</div>
+        <p>Change the line number to <strong>0</strong> and click Query to display data for <em>all lines</em> on the PO. This is extremely useful when diagnosing variances that span multiple lines. The Document button will then show all documents for the entire order.</p>
+      </div>
+
+      <h2>Recalc and Export</h2>
+      <ul>
+        <li><strong>Recalc</strong> — Recalculates variances after documents have been excluded. A gear icon in the top right corner indicates the recalculation is in progress. Results are available within a few minutes.</li>
+        <li><strong>Export</strong> — Exports grid data to Excel.</li>
+      </ul>
+
+      <h2>Documents Grid</h2>
+      <p>Lists all transactions for the PO line(s) being filtered, split by data source:</p>
+      <ul>
+        <li><strong>F43121 rows</strong> — Receipt and voucher data from the receipts table</li>
+        <li><strong>F0911 rows</strong> — GL detail entries for the same transactions</li>
+        <li>Reconciled rows are displayed in <strong>light color</strong>; unreconciled rows are displayed in <strong>grey</strong></li>
+      </ul>
+      <p>For a side-by-side comparison, click the <strong>Document</strong> button rather than reading the grid rows individually.</p>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-suspendexcl')">Next: Suspension vs Exclusion →</button>
+      </div>
+    </section>
+
+    <!-- ============ REF: SUSPENSION vs EXCLUSION ============ -->
+    <section id="topic-suspendexcl" class="view">
+      <h1>Reference — Suspension vs. Exclusion</h1>
+      <p>A common point of confusion is when to <strong>suspend an order</strong> versus when to <strong>exclude a document</strong>. Both remove amounts from variance calculations, but they operate at different levels.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <table>
+        <thead>
+          <tr><th>Action</th><th>Scope</th><th>Use When</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Order Suspension</strong></td><td>Entire purchase order</td><td>The whole order should be ignored — e.g., PRLAND = 3 landed cost, manual voucher clearance for the entire order, or a data cutoff artifact affecting the whole order</td></tr>
+          <tr><td><strong>Document Exclusion</strong></td><td>Individual document (single receipt or voucher)</td><td>The order is mostly correct, but a specific document has a known discrepancy — e.g., a single receipt reversed out of sequence, a tax rounding difference, or a manual GL entry tied to one document</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout principle">
+        <div class="callout-label">Rule of thumb</div>
+        <p>If the issue affects every line on the order — <strong>suspend the order</strong>. If the issue is limited to a specific receipt or voucher number — <strong>exclude the document</strong>.</p>
+      </div>
+
+      <h2>Where Each Action Lives</h2>
+      <table>
+        <thead>
+          <tr><th>Action</th><th>Where</th><th>How</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Order Suspension</td><td>Orders page</td><td>Tick the <strong>Suspended</strong> checkbox on the order row</td></tr>
+          <tr><td>Document Exclusion</td><td>Line Analysis page</td><td>Click <strong>Edit Note</strong> on a document row, tick the <strong>Excluded</strong> box, save, then click <strong>Recalc</strong></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warning">
+        <div class="callout-label">Neither changes JD Edwards</div>
+        <p>Both actions affect <strong>only RapidReconciler</strong> — neither changes any data in JD Edwards. Always document the reason in the note field.</p>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Always add a note</div>
+        <p>Whether suspending or excluding, always populate the note field with a clear explanation of why. The notes form the audit trail and remind future reviewers (including yourself) why an action was taken.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-issues')">Next: Common Issues →</button>
+      </div>
+    </section>
+
+    <!-- ============ REF: COMMON ISSUES ============ -->
+    <section id="topic-issues" class="view">
+      <h1>Reference — Common Issues</h1>
+      <p>The most frequently encountered RNV reconciliation issues — both at the underlying business-process level and at the RapidReconciler tooling level.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Business-Process Issues</h2>
+      <table>
+        <thead>
+          <tr><th>Issue</th><th>Cause</th><th>Resolution</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Unmatched receipt</td><td>Goods received but supplier invoice not yet processed</td><td>Process voucher match in JD Edwards (P4314) when the invoice is received</td></tr>
+          <tr><td>Manual GL entry used to clear RNV</td><td>A journal entry was posted directly to the RNV account instead of processing through voucher match</td><td>Suspend the order in RapidReconciler; verify the GL is correct</td></tr>
+          <tr><td>Price variance at voucher match</td><td>Invoice amount differs from receipt amount; AAI 4330 or 4332 not configured to clear RNV</td><td>Review AAI configuration; post manual journal entry if needed</td></tr>
+          <tr><td>Standard cost variance</td><td>Receiving at a different cost than the standard (AAI 4335)</td><td>Verify DMAAI 4335 configuration for the applicable order type</td></tr>
+          <tr><td>Exchange rate variance</td><td>Multi-currency orders where the rate changed between receipt and voucher match</td><td>Review AAI 4340; post manual entry to clear residual</td></tr>
+          <tr><td>Landed cost not vouchered</td><td>Landed cost applied at receipt with PRLAND = 2 but voucher match not completed</td><td>Process voucher match for the landed cost; or set PRLAND = 3 if accrual only</td></tr>
+          <tr><td>Aging open receipts</td><td>Old receipts never vouchered accumulating in the balance</td><td>Investigate each aged item; process voucher match, reversal, or manual entry as appropriate</td></tr>
+          <tr><td>Duplicate receipt or voucher</td><td>Same receipt or voucher processed more than once</td><td>Reverse the incorrect transaction in JD Edwards</td></tr>
+          <tr><td>Purchase order incorrectly closed</td><td>Order set to status 999 without voucher match</td><td>Reopen and reprocess through standard voucher match, or write off via journal entry</td></tr>
+        </tbody>
+      </table>
+
+      <h2>RapidReconciler Tooling Issues</h2>
+      <table>
+        <thead>
+          <tr><th>Issue</th><th>Cause</th><th>Resolution</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Open Receipts balance does not match JD Edwards</td><td>Timing difference — RapidReconciler imports nightly; JD Edwards report run at a different time</td><td>Run both reports at approximately the same time; confirm timing of last import</td></tr>
+          <tr><td>Suspended order reappears after unsuspension</td><td>New activity posted against the order</td><td>Review the new activity; re-suspend if appropriate or process the voucher match</td></tr>
+          <tr><td>Aged open receipts accumulating</td><td>Supplier invoices not being processed promptly; or receipts processed without corresponding voucher matches</td><td>Investigate each aged receipt; contact the supplier for the invoice; consider writing off if the receipt is no longer valid</td></tr>
+          <tr><td>Large number of unreconciled orders</td><td>DMAAI misconfiguration causing receipts to post to a different account than expected</td><td>Review DMAAI 4320 configuration</td></tr>
+          <tr><td>Variance on a specific document</td><td>Reversed receipt or voucher processed out of sequence; rounding difference; tax entry mismatch</td><td>Use Line Analysis Document view to compare F43121 vs. GL; exclude the document if the discrepancy is known and justified</td></tr>
+          <tr><td>PRLAND = 3 records causing permanent variance</td><td>Accrual-only landed costs that will never be vouchered</td><td>Suspend the order in RapidReconciler</td></tr>
+          <tr><td>Tax entries creating unexpected variances</td><td>Tax explanation codes S, U, V, C, or B generate different AAI entries at receipt vs. voucher match</td><td>Review tax configuration</td></tr>
+          <tr><td>Carry-forward balance growing each period</td><td>Unresolved variances being deferred using Suggested Entry instead of being resolved</td><td>Prioritize working unreconciled orders before close; avoid using Suggested Entry as a routine practice</td></tr>
+          <tr><td>Status light is red</td><td>Prior period issue or import failure</td><td>Hover for details; contact administrator if import failed</td></tr>
+          <tr><td>Batches amount is non-zero</td><td>Unposted F0911 batches</td><td>Work with finance to post outstanding batches before closing</td></tr>
+        </tbody>
+      </table>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-patterns')">Next: Variance Patterns →</button>
+      </div>
+    </section>
+
+    <!-- ============ REF: VARIANCE PATTERNS ============ -->
+    <section id="topic-patterns" class="view">
+      <h1>Reference — Variance Patterns</h1>
+      <p>Quick-reference table for the most common variance patterns seen on the Line Analysis Documents grid. Match the pattern to identify the likely cause and the appropriate corrective action.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <table>
+        <thead>
+          <tr><th>Variance Pattern</th><th>Likely Cause</th><th>Corrective Action</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>F43121 amount differs from GL</td><td>Receipt cost and GL entry do not match</td><td>Investigate the receipt transaction; post a manual journal entry to the GL if needed</td></tr>
+          <tr><td>GL entry exists but no F43121 record</td><td>Manual GL entry posted to RNV account</td><td>Exclude the GL document in Line Analysis; document the manual entry</td></tr>
+          <tr><td>F43121 record exists but no GL entry</td><td>Unposted batch</td><td>Post the outstanding batch in JD Edwards</td></tr>
+          <tr><td>Reversal out of sequence</td><td>Receipt or voucher reversed after period close</td><td>Investigate the reversal; post a correcting journal entry</td></tr>
+          <tr><td>Cutoff date artifact</td><td>Data imported from a date after the original receipt</td><td>Exclude the document if the original receipt predates the import cutoff</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <div class="callout-label">How to use this table</div>
+        <p>On the Line Analysis page, click the <strong>Document</strong> button and review the Variance column. Each non-zero variance will fit one of the patterns above. Identify which side (F43121 or GL) contains the unexpected value, then follow the corresponding corrective action.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-cadence')">Next: Recommended Cadence →</button>
+      </div>
+    </section>
+
+    <!-- ============ REF: CADENCE ============ -->
+    <section id="topic-cadence" class="view">
+      <h1>Reference — Recommended Cadence</h1>
+      <p>RapidReconciler's data refreshes nightly and the F43121 table has no As-Of capability — the reconciliation should be performed on a regular schedule rather than only at period end.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <table>
+        <thead>
+          <tr><th>Activity</th><th>Recommended Frequency</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Review Orders page for aged receipts</td><td><strong>Weekly</strong></td></tr>
+          <tr><td>Audit suspended orders</td><td><strong>Monthly</strong></td></tr>
+          <tr><td>Full reconciliation review</td><td><strong>Weekly</strong></td></tr>
+          <tr><td>Period-end closing activities</td><td><strong>Period-end close</strong></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Why Weekly</h2>
+      <p>The F43121 table overwrites records on reversal rather than maintaining a transaction history. This means reconciling to a prior point in time is not possible — once a record changes, the original state is gone. Performing the reconciliation weekly ensures that:</p>
+      <ul>
+        <li>Issues are identified while the supporting evidence is still recent</li>
+        <li>Aging receipts don't accumulate to the point of being difficult to investigate</li>
+        <li>Carry-forward balances don't snowball across periods</li>
+      </ul>
+
+      <h2>Key Benefits Recap</h2>
+      <table>
+        <thead>
+          <tr><th>Benefit</th><th>What It Means</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Consolidated platform</td><td>RNV reconciliation is performed in the same application as inventory and goods in-transit reconciliation, reducing the need for multiple tools</td></tr>
+          <tr><td>Automated balancing</td><td>Receipt table data is automatically imported and compared to general ledger details, eliminating manual matching</td></tr>
+          <tr><td>Focused exception reporting</td><td>The Unreconciled link surfaces only the orders with issues, saving time during the reconciliation process</td></tr>
+          <tr><td>Flexible handling</td><td>Orders cleared by manual voucher can be suspended, and individual documents can be excluded, preventing them from distorting variance calculations</td></tr>
+          <tr><td>Full drill-down capability</td><td>From the summary level down to the individual document, all detail is accessible within the application</td></tr>
+          <tr><td>Aging visibility</td><td>Open receipts can be reviewed by age to identify and address items that have been outstanding for extended periods</td></tr>
+          <tr><td>Audit trail</td><td>Notes can be attached to suspensions and exclusions, providing documentation for audit review</td></tr>
+        </tbody>
+      </table>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-glossary')">Next: Glossary →</button>
+      </div>
+    </section>
+
+    <!-- ============ REF: GLOSSARY ============ -->
+    <section id="topic-glossary" class="view">
+      <h1>Reference — Glossary</h1>
+      <p>Definitions for acronyms, JD Edwards programs, and table names referenced throughout this walkthrough.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <table>
+        <thead>
+          <tr><th>Term</th><th>Definition</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>AAI</strong></td><td>Automatic Accounting Instruction — JD Edwards configuration that maps transactions to GL accounts</td></tr>
+          <tr><td><strong>DMAAI</strong></td><td>Distribution/Manufacturing AAI — the AAI subset used by purchasing and inventory transactions</td></tr>
+          <tr><td><strong>F0902</strong></td><td>Account Balances table — source of GL balance</td></tr>
+          <tr><td><strong>F0911</strong></td><td>Account Ledger table — source of GL transaction detail</td></tr>
+          <tr><td><strong>F43121</strong></td><td>PO Receiver table — source of receipt and voucher match transaction detail</td></tr>
+          <tr><td><strong>Match Type</strong></td><td>Field in F43121 identifying the type of transaction (1 = Receipt, 2 = Voucher Match, 3 = Reversal of Receipt, 4 = Reversal of Voucher Match, 5 = Landed Cost Receipt, 6 = Landed Cost Voucher Match)</td></tr>
+          <tr><td><strong>P4312</strong></td><td>JD Edwards PO Receipts program</td></tr>
+          <tr><td><strong>P4314</strong></td><td>JD Edwards Voucher Match program</td></tr>
+          <tr><td><strong>P0411</strong></td><td>JD Edwards Standard Voucher Entry program</td></tr>
+          <tr><td><strong>PRLAND</strong></td><td>F43121 field identifying record as standard receipt or landed cost</td></tr>
+          <tr><td><strong>RNV</strong></td><td>Received-Not-Vouchered — the temporary liability account holding the value of received but unvouchered goods</td></tr>
+          <tr><td><strong>Suspension</strong></td><td>RapidReconciler action that flags an order to be ignored in variance calculations</td></tr>
+          <tr><td><strong>Exclusion</strong></td><td>RapidReconciler action that removes a specific document from variance calculations</td></tr>
+        </tbody>
+      </table>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="goHome()">Return to Index ↺</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ==================== PAGE FOOTER ==================== -->
+<footer class="page-footer">
+  <div>RapidReconciler &middot; PO Receipts Reconciliation Walkthrough</div>
+  <div class="footer-meta">For internal use. Contact GSI for licensing or product support.</div>
+</footer>
+
+<script>
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      const slug = id === 'home' ? 'home' : id.replace('topic-', '');
+      document.querySelectorAll('.sidebar-nav li').forEach(li => {
+        li.classList.toggle('active', li.dataset.target === slug);
+      });
+
+      try {
+        if (window.location.protocol !== 'about:') {
+          history.replaceState(null, '', slug === 'home' ? ' ' : '#' + slug);
+        }
+      } catch (e) { /* sandboxed context */ }
+    }
+  }
+
+  function goHome() { showView('home'); }
+
+  document.querySelectorAll('.sidebar-nav li[data-target="home"]').forEach(li => li.classList.add('active'));
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && hash !== 'home') showView('topic-' + hash);
+    } catch (e) { /* ignore */ }
+  });
+
+  window.addEventListener('popstate', () => {
+    try {
+      const hash = window.location.hash.replace('#', '');
+      showView(hash && hash !== 'home' ? 'topic-' + hash : 'home');
+    } catch (e) { /* ignore */ }
+  });
+</script>
+
+
+</body>
+</html>
