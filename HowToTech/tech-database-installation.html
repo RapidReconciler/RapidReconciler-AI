@@ -680,7 +680,7 @@
           </tr>
           <tr>
             <td><a href="javascript:void(0)" onclick="showView('topic-new-client')">Working with a New Client</a></td>
-            <td>What to gather from the sales rep and the customer's IT contact before scheduling the install meeting.</td>
+            <td>What to gather from the customer's IT contact before scheduling the install meeting.</td>
           </tr>
           <tr>
             <td><a href="javascript:void(0)" onclick="showView('topic-ssis-catalog')">Tour 1: SSISDB Catalog</a></td>
@@ -738,7 +738,6 @@
       <ul>
         <li><strong>SQL Server Management Studio</strong> (SSMS)</li>
         <li><strong>Visual Studio Community</strong> with the <strong>SQL Server Integration Services</strong> extension installed</li>
-        <li><strong>SQL Server Data Tools</strong> (SSDT)</li>
         <li>The appropriate <strong>OLE DB provider</strong> for the customer's JDE source (covered in Architecture &amp; Requirements)</li>
       </ul>
 
@@ -784,7 +783,6 @@
         <tbody>
           <tr><td><strong>Database server</strong></td><td>Runs Microsoft SQL Server. Hosts the RapidReconciler database. Data is extracted from JDE using Integration Services in read-only mode.</td></tr>
           <tr><td><strong>Application server</strong></td><td>Hosts the RapidReconciler application services. Can be the same machine as the database server if the customer dedicates a server to RR.</td></tr>
-          <tr><td><strong>User PC</strong></td><td>End-user workstation. Must be connected to the company network to view data.</td></tr>
         </tbody>
       </table>
 
@@ -835,28 +833,13 @@
         </tbody>
       </table>
 
-      <h3>Network Access Requirements</h3>
-      <p>The application server must be able to reach these GSI hosts on the indicated ports. Access by hostname is preferred over IP.</p>
-      <table>
-        <thead>
-          <tr><th>Host</th><th>IP Address</th><th>Ports</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><code>rapidreconciler.getgsi.com</code></td><td>191.237.24.89</td><td>80 and 443 outbound</td></tr>
-          <tr><td><code>rr-spa.cloudapp.net</code></td><td>52.170.255.174</td><td>443 outbound</td></tr>
-        </tbody>
-      </table>
-
-      <h3>Connectivity Test</h3>
-      <p>From the application server, navigate to <code>rapidreconciler.getgsi.com</code> in a browser. The login page should appear. If it doesn't, escalate the firewall/network access issue with the customer's IT contact before continuing.</p>
-
       <h2>SSIS Server — When Different from the Database Server</h2>
       <p>If SSIS is run on a separate server (uncommon, but possible), that server must have:</p>
       <ul>
         <li>Windows Server 2016 or later</li>
         <li>16 GB RAM minimum</li>
         <li>SQL Server Management Studio</li>
-        <li>SQL Server Data Tools</li>
+        <li>Visual Studio Community with the SQL Server Integration Services extension</li>
       </ul>
 
       <h2>JDE Source Driver Requirements</h2>
@@ -889,15 +872,6 @@
       <p>Before scheduling the install meeting, gather the information below. Missing inputs at install time are the most common reason an install meeting runs over the planned 2 hours or has to be rescheduled.</p>
 
       <div class="diamond-divider"><span class="diamond"></span></div>
-
-      <h2>Information from the Sales Rep</h2>
-      <p>RapidReconciler licensing is based on JD Edwards company numbers — normally one license per company. From the sales rep, obtain:</p>
-      <ul>
-        <li>The <strong>number of companies</strong> the customer has purchased</li>
-        <li>The <strong>exact JD Edwards company numbers</strong> (e.g. <code>00001</code>, <code>00002</code>)</li>
-        <li>The <strong>customer name</strong> (e.g. Acme Manufacturing)</li>
-        <li>The <strong>customer's IT contact</strong> — email and phone number</li>
-      </ul>
 
       <h2>Information from the Customer's IT Contact</h2>
       <p>Send the GSI <strong>Tech Requirements</strong> document to the customer's IT contact ahead of the install meeting. Have them complete and return the requested information from page 3, which captures:</p>
@@ -1483,6 +1457,11 @@
         <li>Confirm the most recent run shows a green checkmark and a non-zero duration.</li>
         <li>If the run failed, expand the failed step in the history view to see the error message — the agent log files in the SSISDB catalog also have detailed execution logs.</li>
       </ol>
+
+      <div class="callout">
+        <div class="callout-label">Timing</div>
+        <p>The initial load can take longer than subsequent runs and may not finish inside the 2-hour install meeting. That's expected. The customer's IT contact can complete the verification once the run finishes and communicate the result back to the DBA — the meeting does not need to be held open until the load is done.</p>
+      </div>
 
       <h2>Hand Off to the GSI Tech Team</h2>
       <p>Once the database installation is verified, the remaining client setup steps are handled by the GSI tech team and are documented separately. Hand the customer's information off to the team responsible for completing the install.</p>

@@ -1030,6 +1030,7 @@
         </thead>
         <tbody>
           <tr><td>Number of companies purchased</td><td>From the sales contract — drives the Maximum Companies Allowed value.</td></tr>
+          <tr><td>Exact JD Edwards company numbers</td><td>From the sales contract — the specific 5-digit company numbers the customer has purchased (e.g., <code>00001</code>, <code>00002</code>). Needed at install time to verify the right boxes are checked on the <strong>Companies</strong> tab. See <a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3, Step 3</a>.</td></tr>
           <tr><td>Customer name</td><td>e.g., Acme Manufacturing.</td></tr>
           <tr><td>IT contact email and phone</td><td>Needed to schedule the install web meeting.</td></tr>
           <tr><td>Server topology</td><td>Whether the customer is using a single dedicated server or separate application and database servers — confirmed during the discovery call. This determines which IPs are recorded where (see note below).</td></tr>
@@ -1073,6 +1074,19 @@
         <div class="callout-label">Tip</div>
         <p>Document the answers to the checklist in the customer's record (or wherever your team tracks install prep) so they're available to anyone who picks up the work later. Discovery answers also feed directly into the <strong>Information to Collect</strong> table below — capture them once.</p>
       </div>
+
+      <h3>Network Access Requirements</h3>
+      <p>The customer's application server must be able to reach the following GSI hosts on the indicated ports for the agent to install and run. Confirm with the customer's IT contact that outbound traffic to these hosts is permitted; access by hostname is preferred over IP.</p>
+      <table>
+        <thead>
+          <tr><th>Host</th><th>IP Address</th><th>Ports</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>rapidreconciler.getgsi.com</code></td><td>191.237.24.89</td><td>80 and 443 outbound</td></tr>
+          <tr><td><code>rr-spa.cloudapp.net</code></td><td>52.170.255.174</td><td>443 outbound</td></tr>
+        </tbody>
+      </table>
+      <p>To verify connectivity before install day, have the customer's IT contact open a browser on the application server and navigate to <a href="https://rapidreconciler.getgsi.com" target="_blank" rel="noopener">https://rapidreconciler.getgsi.com</a>. The login page should appear. If it does not, the firewall or proxy rules need to be addressed before <a href="javascript:void(0)" onclick="showView('topic-part2')">Part 2</a>.</p>
 
       <h2>Pre-Install Checks</h2>
       <ol>
