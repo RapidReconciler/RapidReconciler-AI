@@ -996,6 +996,32 @@
         <li><strong>Part 3: Completing the Setup in VALC</strong> — Verifying connectivity, database status, and licensing company numbers.</li>
       </ul>
 
+      <h3>Agent Deployment Constraints</h3>
+      <p>Two architectural rules that shape every install and migration:</p>
+      <ul>
+        <li><strong>One agent per customer network.</strong> Only a single instance of the RapidReconciler Agent should be installed on the customer's internal network. Multiple agents pointing at the same VALC client record will compete and produce inconsistent state.</li>
+        <li><strong>One agent supports multiple databases.</strong> A single agent can serve any number of RapidReconciler databases (Prod, Test, Dev, Train) — including databases hosted on different SQL Servers. Each database is registered separately in VALC (see <a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3, Step 1</a>) but they all communicate through the same agent.</li>
+      </ul>
+
+      <h3>What the RR Agent Transmits to GSI</h3>
+      <p>The agent maintains an outbound-only connection from the customer's application server to GSI's VALC infrastructure (256-bit encrypted; no inbound traffic to the customer's network). It transmits the following data, used to keep VALC's view of the customer environment current and to support licensing and version control:</p>
+      <table>
+        <thead>
+          <tr><th>Data</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Public-facing IP of the application server</td><td>Populates <strong>Agent External IP Address</strong> on Client Details; used for connectivity verification.</td></tr>
+          <tr><td>Internal IP of the application server</td><td>Populates <strong>Agent Internal IP Address</strong> on Client Details.</td></tr>
+          <tr><td>IP address and port of the database server</td><td>Surfaced on the Databases tab; used to confirm database reachability.</td></tr>
+          <tr><td>Credentials used by the agent to access the RapidReconciler database</td><td>Stored in VALC so the agent can be re-pointed or reconfigured without re-prompting the customer. GSI cannot retrieve a password — only reset it.</td></tr>
+          <tr><td>RapidReconciler database name(s) and port number(s)</td><td>One row per registered database on the Databases tab.</td></tr>
+          <tr><td>RapidReconciler usernames and passwords</td><td>Stored hashed; GSI cannot retrieve them, only reset.</td></tr>
+          <tr><td>User access security settings (companies and tabs each user can see)</td><td>Allows GSI support to assist with access questions without needing screen-share into the customer environment.</td></tr>
+          <tr><td>5-digit company number and name from JD Edwards</td><td>Used solely for licensing — the company number drives the Companies tab in VALC and enforces the license count from the contract.</td></tr>
+        </tbody>
+      </table>
+      <p>Knowing what the agent reports back is useful when answering customer security questions, when explaining why a value appears in VALC without being entered there manually, and when triaging mismatches between the customer's environment and what VALC shows.</p>
+
       <h2>Information to Collect</h2>
       <p>Before beginning, gather the following from the sales contract or the customer's IT contact:</p>
       <table>

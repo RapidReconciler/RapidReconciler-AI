@@ -704,7 +704,7 @@
           </tr>
           <tr>
             <td><a href="javascript:void(0)" onclick="showView('topic-next-steps')">What to Do Next</a></td>
-            <td>Handoff to the VALC setup once the database is installed.</td>
+            <td>Verification of the initial load and handoff once the database is installed.</td>
           </tr>
         </tbody>
       </table>
@@ -783,33 +783,17 @@
         </thead>
         <tbody>
           <tr><td><strong>Database server</strong></td><td>Runs Microsoft SQL Server. Hosts the RapidReconciler database. Data is extracted from JDE using Integration Services in read-only mode.</td></tr>
-          <tr><td><strong>Application server</strong></td><td>Runs the RapidReconciler agent and data services. Can be the same machine as the database server if the customer dedicates a server to RR.</td></tr>
+          <tr><td><strong>Application server</strong></td><td>Hosts the RapidReconciler application services. Can be the same machine as the database server if the customer dedicates a server to RR.</td></tr>
           <tr><td><strong>User PC</strong></td><td>End-user workstation. Must be connected to the company network to view data.</td></tr>
-          <tr><td><strong>Version control server (VALC)</strong></td><td>GSI-hosted. Maintains licensing and control information for RapidReconciler configurations.</td></tr>
         </tbody>
       </table>
-
-      <h3>Data Synchronized with the RR Agent</h3>
-      <p>All data stored on GSI servers employs <strong>256-bit encryption</strong> and is limited to:</p>
-      <ul>
-        <li>Public-facing IP address of the application server</li>
-        <li>Internal IP address of the application server</li>
-        <li>IP address of the database server</li>
-        <li>Credentials to access the RapidReconciler database</li>
-        <li>RapidReconciler database name(s) and port numbers</li>
-        <li>Usernames and passwords <em>(GSI cannot retrieve passwords, only reset them)</em></li>
-        <li>User access security settings (companies and tabs)</li>
-        <li>5-digit company number and name from JD Edwards <em>(used for licensing only)</em></li>
-      </ul>
-      <p>Internet traffic is <strong>outbound only</strong>.</p>
 
       <div class="callout">
         <div class="callout-label">Notes on deployment</div>
         <ul>
-          <li>If a server is dedicated for RapidReconciler, both the database and agent can be on the same machine.</li>
+          <li>If a server is dedicated for RapidReconciler, both the database and application services can be on the same machine.</li>
           <li>Port <strong>443 outbound</strong> is used by RapidReconciler for JMS communications.</li>
           <li>Work with the customer's IT support to decide how RapidReconciler will be deployed.</li>
-          <li>Only <strong>1 instance</strong> of the agent can be run on the internal network. The agent can support multiple RapidReconciler databases, even if they are on different servers.</li>
         </ul>
       </div>
 
@@ -859,7 +843,6 @@
         </thead>
         <tbody>
           <tr><td><code>rapidreconciler.getgsi.com</code></td><td>191.237.24.89</td><td>80 and 443 outbound</td></tr>
-          <tr><td><code>rr-valc-spa.cloudapp.net</code></td><td>23.96.83.121</td><td>80 and 443 outbound</td></tr>
           <tr><td><code>rr-spa.cloudapp.net</code></td><td>52.170.255.174</td><td>443 outbound</td></tr>
         </tbody>
       </table>
@@ -1501,18 +1484,8 @@
         <li>If the run failed, expand the failed step in the history view to see the error message — the agent log files in the SSISDB catalog also have detailed execution logs.</li>
       </ol>
 
-      <h2>Set Up the Client in VALC</h2>
-      <p>Once the database installation is verified, the customer needs to be set up in VALC (the Version Control Server). VALC setup is a separate procedure handled by the GSI tech team and includes:</p>
-      <ul>
-        <li>Creating the client record in VALC and registering the database</li>
-        <li>Creating the initial GSI Admin user account</li>
-        <li>Configuring modules and additional fields per the customer's contract</li>
-        <li>Coordinating the DNS/Cloudflare reference for the customer's <code>.getgsi.com</code> URL</li>
-        <li>Installing the RapidReconciler agent on the customer's application server</li>
-        <li>Licensing the customer's company numbers</li>
-        <li>Handing off login credentials to the customer's RapidReconciler administrator</li>
-      </ul>
-      <p>The VALC setup procedure is documented separately. Hand the customer's information off to the GSI tech team responsible for the VALC side of the install.</p>
+      <h2>Hand Off to the GSI Tech Team</h2>
+      <p>Once the database installation is verified, the remaining client setup steps are handled by the GSI tech team and are documented separately. Hand the customer's information off to the team responsible for completing the install.</p>
 
       <div class="callout tip">
         <div class="callout-label">You're done</div>
