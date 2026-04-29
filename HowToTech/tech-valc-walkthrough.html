@@ -660,6 +660,7 @@
 
       <h2>How to Use This Walkthrough</h2>
       <p>This document is meant to live <em>beside</em> a live VALC window. Open VALC in another browser window, sit it side-by-side with this document, and follow the steps in each tour. You'll be looking at real customers but <strong>you will not create or change anything</strong> — popups will be opened in look-only mode and closed without saving.</p>
+      <p>Plan for about <strong>10 minutes</strong> total to work through all five tours.</p>
 
       <h2>Tours</h2>
       <table class="doc-table">
@@ -705,6 +706,11 @@
     <section id="topic-getting-started" class="view">
       <h1>Before You Start</h1>
       <p>This walkthrough is designed to live beside a live VALC window. A few quick things to set up first so the experience flows.</p>
+
+      <div class="callout tip">
+        <div class="callout-label">Time required</div>
+        <p>Plan for about <strong>10 minutes</strong> to work through all five tours at a comfortable pace. You can pause anywhere and come back later — the walkthrough won't lose your place.</p>
+      </div>
 
       <div class="diamond-divider"><span class="diamond"></span></div>
 
@@ -835,7 +841,7 @@
         <div class="step-meta">Step 4 of 4</div>
         <div class="step-title">Open one customer's Manage Clients</div>
         <p>Pick a healthy active customer (their Status badge says Connected). Click the <strong>Manage Clients</strong> icon for that row. You'll be taken to their detail screen, which Tour 3 walks you through.</p>
-        <p>Reference: <em>Reference doc Part 2 Step 3 (Verify Connectivity in VALC)</em> shows what a healthy row should look like after an install completes.</p>
+        <p>Reference: <a href="tech-client-management.html#part2" target="_blank">Reference doc &rarr; Part 2 Step 3 (Verify Connectivity in VALC)</a> shows what a healthy row should look like after an install completes.</p>
       </div>
 
       <div class="checkpoint">
@@ -887,9 +893,13 @@
         <div class="step-badge">2</div>
         <div class="step-meta">Tab 1 · Step 2 of 4</div>
         <div class="step-title">Look at the toggles</div>
-        <p>Scroll down to the toggle section. You'll see toggles for <strong>Active</strong>, <strong>Password Policy</strong>, <strong>HTTPS</strong>, and various module flags.</p>
-        <p>The <strong>Password Policy</strong> toggle is the one customers most often request to be flipped after install. When ON, that customer's users are subject to the complex password rules.</p>
-        <p>Reference: <em>Reference doc Password Policy</em> covers what's in scope when this toggle is on.</p>
+        <p>Find the toggle section in the <strong>top right</strong> of the Client Details tab. There are only two:</p>
+        <ul>
+          <li><strong>Active</strong> — whether this client record is currently in service.</li>
+          <li><strong>Password Policy</strong> — when ON, that customer's users are subject to the complex password rules.</li>
+        </ul>
+        <p>Of the two, Password Policy is the one customers most often request to be flipped after install.</p>
+        <p>Reference: <a href="tech-client-management.html#password-policy" target="_blank">Reference doc &rarr; Password Policy</a> covers what's in scope when this toggle is on.</p>
       </div>
 
       <div class="step-card">
@@ -907,11 +917,14 @@
         <p>Locate <strong>Agent Internal IP Address</strong> and <strong>Agent External IP Address</strong>.</p>
 
         <div class="callout warning">
-          <div class="callout-label">Important distinction</div>
-          <p>These are the customer's <em>application server</em> IPs (where the RR Agent runs). The <em>database server</em> IP is recorded separately on the Databases tab — even if it's the same physical machine. This split trips up new techs constantly.</p>
+          <div class="callout-label">Important distinctions</div>
+          <ul>
+            <li>Both of these are the customer's <em>application server</em> IPs (where the RR Agent runs). The <em>database server</em> IP is recorded separately on the Databases tab — even if it's the same physical machine. This split trips up new techs constantly.</li>
+            <li>The <strong>Agent Internal IP</strong> is the value used for the Cloudflare DNS reference — it's what GSI I/T uses when adding or updating the customer's <code>.getgsi.com</code> A record.</li>
+          </ul>
         </div>
 
-        <p>Reference: <em>Reference doc Part 1 Step 3</em> has the full field-by-field reference for Client Details. The Overview's Discovery Call section explains the topology question that drives where each IP goes.</p>
+        <p>Reference: <a href="tech-client-management.html#part1" target="_blank">Reference doc &rarr; Part 1 Step 3</a> has the full field-by-field reference for Client Details. The <a href="tech-client-management.html#overview" target="_blank">Overview's Discovery Call section</a> explains the topology question that drives where each IP goes.</p>
       </div>
 
       <h2>Tab 2: Databases</h2>
@@ -952,7 +965,7 @@
         <div class="step-meta">Tab 2 · Step 3 of 3</div>
         <div class="step-title">Hover the Options icon</div>
         <p>On any row, hover the Options icon in the rightmost column. You'll see an edit icon — that's how you open the <strong>Edit Database</strong> popup, which Tour 5 covers.</p>
-        <p>Reference: <em>Reference doc Part 3 Step 1</em> has the full Edit Database field reference. <em>Reference doc Troubleshooting</em> has a full breakdown of Unknown / Stopped status, with remediation steps.</p>
+        <p>Reference: <a href="tech-client-management.html#part3" target="_blank">Reference doc &rarr; Part 3 Step 1</a> has the full Edit Database field reference. <a href="tech-client-management.html#troubleshooting" target="_blank">Reference doc &rarr; Troubleshooting</a> has a full breakdown of Unknown / Stopped status, with remediation steps.</p>
       </div>
 
       <h2>Tab 3: Companies</h2>
@@ -977,7 +990,7 @@
         <div class="step-title">Look at the Licensed checkboxes</div>
         <p>Scan the rightmost <strong>Licensed</strong> column. Some company numbers are checked (licensed), others not.</p>
         <p>Only checked company numbers will appear in that customer's RapidReconciler interface. The list of available companies is populated automatically from the customer's JDE — you can only license what's there. If the list is empty even though the database is Online, there's a sync issue.</p>
-        <p>Reference: <em>Reference doc Part 3 Step 3</em> covers the licensing process during a fresh install. <em>Reference doc Troubleshooting &gt; Companies Tab is Empty</em> covers the "Online but no companies showing" scenario.</p>
+        <p>Reference: <a href="tech-client-management.html#part3" target="_blank">Reference doc &rarr; Part 3 Step 3</a> covers the licensing process during a fresh install. <a href="tech-client-management.html#troubleshooting" target="_blank">Reference doc &rarr; Troubleshooting (Companies Tab is Empty)</a> covers the "Online but no companies showing" scenario.</p>
       </div>
 
       <h2>Tab 4: User Accounts</h2>
@@ -994,7 +1007,7 @@
           <p>Once installed and handed off, this tab is mostly the customer's responsibility. They use it to add their own team members. GSI tech only touches it when there's a specific support request — for example, the customer's admin loses access and needs a temporary password reset.</p>
         </div>
 
-        <p>Reference: <em>Reference doc Password Policy &gt; Locked or Inaccessible Accounts</em> covers when GSI gets pulled into User Accounts work.</p>
+        <p>Reference: <a href="tech-client-management.html#password-policy" target="_blank">Reference doc &rarr; Password Policy (Locked or Inaccessible Accounts)</a> covers when GSI gets pulled into User Accounts work.</p>
       </div>
 
       <div class="checkpoint">
@@ -1044,7 +1057,7 @@
         <div class="step-title">Close without saving</div>
         <p>Click the <strong>X</strong> button to close the popup. <strong>Do not click Confirm.</strong></p>
         <p>This was just a look at the form. Real Add Client work happens in Part 1 of the install workflow. You'll get there in the install practice phase.</p>
-        <p>Reference: <em>Reference doc Part 1 Step 1</em> has the field-by-field guide for filling out Add Client.</p>
+        <p>Reference: <a href="tech-client-management.html#part1" target="_blank">Reference doc &rarr; Part 1 Step 1</a> has the field-by-field guide for filling out Add Client.</p>
       </div>
 
       <div class="topic-footer-nav">
@@ -1086,7 +1099,7 @@
         <div class="step-meta">Step 2 of 2</div>
         <div class="step-title">Close without saving</div>
         <p>Click <strong>X</strong> to close. <strong>Do not click Confirm.</strong></p>
-        <p>Reference: <em>Reference doc Part 3 Step 1</em> has the full Edit Database field reference, including the backup-restore approach for adding a second or third database without re-running creation scripts.</p>
+        <p>Reference: <a href="tech-client-management.html#part3" target="_blank">Reference doc &rarr; Part 3 Step 1</a> has the full Edit Database field reference, including the backup-restore approach for adding a second or third database without re-running creation scripts.</p>
       </div>
 
       <div class="topic-footer-nav">
@@ -1122,7 +1135,7 @@
         <div class="step-badge">2</div>
         <div class="step-meta">Once you're comfortable with the tour</div>
         <div class="step-title">Read the reference doc straight through</div>
-        <p>Parts 1, 2, 3 in order. Now that you've seen the screens, the steps will read more concretely.</p>
+        <p><a href="tech-client-management.html#part1" target="_blank">Parts 1, 2, 3</a> in order. Now that you've seen the screens, the steps will read more concretely.</p>
       </div>
 
       <div class="step-card">
@@ -1136,7 +1149,7 @@
         <div class="checkpoint-label">Final Checkpoint</div>
         <p>Before you close this doc:</p>
         <ul>
-          <li>Can you re-draw the install flow from memory, with the right boxes in the right swim lanes? (Look at the flow diagram on the reference doc's home page if you can't.)</li>
+          <li>Can you re-draw the install flow from memory, with the right boxes in the right swim lanes? (Look at the flow diagram on the <a href="tech-client-management.html" target="_blank">reference doc's home page</a> if you can't.)</li>
           <li>If a customer reports "it's not working," what's the first VALC screen you'd open?</li>
           <li>Where do agent log files live on the customer's application server?</li>
         </ul>
