@@ -52,8 +52,8 @@ These technical documents provide detailed guidance on the installation, configu
 | [Technical Requirements](/RapidReconciler-AI/HowToTech/tech-requirements.html)           | Installation and configuration requirements |
 | [Certificate Management](/RapidReconciler-AI/HowToTech/tech-certificate-management.html) | SSL certificate scope, DNS 'A' record configuration, certificate renewal process, responsibilities by role, and troubleshooting common connectivity issues |
 | [Installing the Database](MDS/tech-installing-database.md)                               | Step-by-step database installation including skill sets, architecture overview, SSISDB catalog setup, SSIS package deployment, initial data load, and security requirements |
-| [Valc Onboarding](/RapidReconciler-AIHowToTech/tech-valc-walkthrough.html)	           | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
-| [Client Management](/RapidReconciler-AIHowToTech/tech-client-management.html)            | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
+| [Valc Onboarding](/RapidReconciler-AI/HowToTech/tech-valc-walkthrough.html)	           | A Companion doc used to familiarize RapidReconciler support technicians with VALC (version an license control)|
+| [Client Management](/RapidReconciler-AI/HowToTech/tech-client-management.html)           | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
 
 ---
 
