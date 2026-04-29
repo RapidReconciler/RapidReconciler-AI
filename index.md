@@ -51,25 +51,9 @@ These technical documents provide detailed guidance on the installation, configu
 |----------|-------------|
 | [Technical Requirements](/RapidReconciler-AI/HowToTech/tech-requirements.html)           | Installation and configuration requirements |
 | [Certificate Management](/RapidReconciler-AI/HowToTech/tech-certificate-management.html) | SSL certificate scope, DNS 'A' record configuration, certificate renewal process, responsibilities by role, and troubleshooting common connectivity issues |
-| [Installing the Database](MDS/tech-installing-database.md)                               | Step-by-step database installation including skill sets, architecture overview, SSISDB catalog setup, SSIS package deployment, initial data load, and security requirements |
+| [Installing the Database](/RapidReconciler-AI/HowToTech/tech-database-installation.md)                               | Step-by-step database installation including skill sets, architecture overview, SSISDB catalog setup, SSIS package deployment, initial data load, and security requirements |
 | [Valc Onboarding](/RapidReconciler-AI/HowToTech/tech-valc-walkthrough.html)	           | A Companion doc used to familiarize RapidReconciler support technicians with VALC (version an license control)|
 | [Client Management](/RapidReconciler-AI/HowToTech/tech-client-management.html)           | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
-
----
-
-## Reference Materials
-
-This section includes reference materials that provide in-depth information on various aspects of RapidReconciler and its use in JD Edwards reconciliation processes. These documents serve as a valuable resource for users seeking detailed explanations, best practices, and troubleshooting guidance related to the application. Whether you're looking for specific information on a particular feature or need comprehensive guidance on a broader topic, these reference materials will help you navigate and utilize RapidReconciler effectively.
-
-| Document | Description |
-|----------|-------------|
-| [Working with the Item Ledger](MDS/inventory-item-ledger.md) | Balances, posting codes, dates, DMAAs, and integrity conditions |
-| [Managing GL Class Codes](MDS/inventory-gl-class-codes.md)   | Procedure, hierarchy of change locations, why adjustments are required |
-| [Product Costing Guide](MDS/inventory-costing.md)            | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact |
-| [Ultimate DMAAI Guide](MDS/distribution-aais.md)                                         | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
-| [About Units of Measure](MDS/inventory-uom.md)               | Changing the primary unit of measure, impact on inventory transactions, and cardex analysis considerations |
-| [Zero Balance Adjustments](MDS/inventory-zero-balance.md)    | Purpose, purchasing and inventory AAIs, journal entry examples |
-| [Outside Operations](MDS/inventory-outside-ops.md)           | Item master, work center, routing, receipt, and WIP journal entries |
 
 ---
 
@@ -81,14 +65,6 @@ These documents provide an introduction to RapidReconciler, including its benefi
 |----------|-------------|
 | [Application Basics](MDS/getting-started-with-rapidreconciler.md)                        | Logging in, navigating the interface, and system requirements |
 | [Complex Password Option](MDS/complex-password.md)                                       | Password policy requirements and reset process |
-
----
-
-## Administrating the Application
-This section outlines the key responsibilities of RapidReconciler administrators, including managing companies, users, and general settings within the application. It also covers important tasks such as setting up offset accounts for inventory adjustments and ensuring that the application is configured correctly to meet the needs of your organization. Whether you're a new administrator or looking to refresh your knowledge of your role, these documents provide comprehensive guidance to help you effectively manage RapidReconciler and support your JD Edwards reconciliation processes.
-
-| Document                                                        | Description                                                           |
-| --------------------------------------------------------------- | --------------------------------------------------------------------- |
 | [Walkthrough](HowToHTML/administrator-walkthrough.html)         | Company management, user setup, general settings, and offset accounts |
 
 ---
@@ -127,6 +103,22 @@ This section provides comprehensive information on reconciling purchase order re
 | [Reference Guide](MDS/purchase_order_reference.md)                     | Purchase order types, processing flow, AAIs, journal entries, and common issues |
 | [Reconciliation Walkthrough](HowToHTML/po-receipts-walkthrough.html)   | Step-by-step reconciliation |
 | [Suspension and Exclusions](po-receipts-suspension-exclusion)          | Suspension and exclusion features in RR V7, including setup, use cases, and troubleshooting |
+
+---
+
+## Reference Materials
+
+This section includes reference materials that provide in-depth information on various aspects of RapidReconciler and its use in JD Edwards reconciliation processes. These documents serve as a valuable resource for users seeking detailed explanations, best practices, and troubleshooting guidance related to the application. Whether you're looking for specific information on a particular feature or need comprehensive guidance on a broader topic, these reference materials will help you navigate and utilize RapidReconciler effectively.
+
+| Document | Description |
+|----------|-------------|
+| [Working with the Item Ledger](MDS/inventory-item-ledger.md) | Balances, posting codes, dates, DMAAs, and integrity conditions |
+| [Managing GL Class Codes](MDS/inventory-gl-class-codes.md)   | Procedure, hierarchy of change locations, why adjustments are required |
+| [Product Costing Guide](MDS/inventory-costing.md)            | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact |
+| [Ultimate DMAAI Guide](MDS/distribution-aais.md)                                         | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
+| [About Units of Measure](MDS/inventory-uom.md)               | Changing the primary unit of measure, impact on inventory transactions, and cardex analysis considerations |
+| [Zero Balance Adjustments](MDS/inventory-zero-balance.md)    | Purpose, purchasing and inventory AAIs, journal entry examples |
+| [Outside Operations](MDS/inventory-outside-ops.md)           | Item master, work center, routing, receipt, and WIP journal entries |
 
 ---
 
