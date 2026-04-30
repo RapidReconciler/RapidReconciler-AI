@@ -1,633 +1,621 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Working with the Item Ledger &mdash; RapidReconciler University</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<html lang="en"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JD Edwards Item Ledger (Cardex) Reference · RapidReconciler University</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
-  :root {
-    --navy:        #1f2d4a;
-    --navy-deep:   #142037;
-    --navy-soft:   #2c3e63;
-    --blue:        #2b5fb0;
-    --blue-bright: #3d8fd6;
-    --blue-pale:   #d6e6f5;
-    --orange:      #f08a24;
-    --orange-deep: #d97316;
-    --bg:          #ffffff;
-    --bg-soft:     #f6f8fb;
-    --bg-panel:    #eef3f9;
-    --text:        #1f2d4a;
-    --text-soft:   #5a6479;
-    --text-muted:  #8a93a6;
-    --rule:        #e1e7ef;
-    --rule-strong: #c9d3e0;
-    --green:       #2e8b57;
-    --red:         #c0392b;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Open Sans', -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.65;
-    font-weight: 400;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 40px;
-  }
-
-  /* ============== TOP NAV ============== */
-  header.topnav {
-    background: #fff;
-    border-bottom: 1px solid var(--rule);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 1px 0 rgba(31, 45, 74, 0.04);
-  }
-
-  .topnav-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 0;
-    gap: 32px;
-  }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    text-decoration: none;
-    color: var(--navy);
-  }
-
-  .brand img { height: 42px; width: auto; display: block; }
-
-  .brand-divider { width: 1px; height: 28px; background: var(--rule-strong); }
-
-  .brand-product { display: flex; flex-direction: column; line-height: 1.1; }
-
-  .brand-product-name {
-    font-family: 'Source Sans 3', sans-serif;
-    font-weight: 700; font-size: 17px; color: var(--navy);
-    letter-spacing: -0.005em;
-  }
-
-  .brand-product-tag {
-    font-size: 11px; color: var(--text-muted); font-weight: 500;
-    letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px;
-  }
-
-  nav.section-nav {
-    display: flex; gap: 28px; font-size: 14px; font-weight: 600; margin-left: auto;
-  }
-
-  nav.section-nav a {
-    color: var(--navy); text-decoration: none; position: relative; padding: 6px 0;
-    transition: color 0.2s;
-  }
-
-  nav.section-nav a:hover { color: var(--blue); }
-
-  nav.section-nav a::after {
-    content: ''; position: absolute; left: 0; bottom: 0; width: 0;
-    height: 2px; background: var(--orange); transition: width 0.3s ease;
-  }
-
-  nav.section-nav a:hover::after { width: 100%; }
-
-  .nav-cta {
-    background: var(--orange); color: #fff !important; padding: 10px 22px !important;
-    border-radius: 4px; font-weight: 700 !important; font-size: 13px !important;
-    transition: background 0.2s !important;
-  }
-
-  .nav-cta:hover { background: var(--orange-deep); color: #fff !important; }
-  .nav-cta::after { display: none !important; }
-
-  /* ============== PAGE HEADER ============== */
-  .page-header {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
-    color: #fff;
-    padding: 64px 0 56px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .page-header::before {
-    content: '';
-    position: absolute;
-    top: -120px; right: -100px;
-    width: 380px; height: 380px;
-    border: 1px solid rgba(61, 143, 214, 0.18);
-    border-radius: 30px;
-    transform: rotate(30deg);
-    background: radial-gradient(circle at 30% 30%, rgba(61, 143, 214, 0.08), transparent 60%);
-    pointer-events: none;
-  }
-
-  .breadcrumb {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 13px; color: rgba(255,255,255,0.65);
-    margin-bottom: 24px;
-    position: relative; z-index: 2;
-  }
-
-  .breadcrumb a {
-    color: rgba(255,255,255,0.65); text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .breadcrumb a:hover { color: var(--blue-bright); }
-
-  .breadcrumb .sep { color: rgba(255,255,255,0.3); }
-
-  .breadcrumb .current { color: #fff; font-weight: 600; }
-
-  .page-eyebrow {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: rgba(61, 143, 214, 0.15);
-    border: 1px solid rgba(61, 143, 214, 0.35);
-    color: var(--blue-bright);
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    padding: 6px 14px; border-radius: 100px;
-    margin-bottom: 18px;
-    position: relative; z-index: 2;
-  }
-
-  .page-title {
-    font-family: 'Source Sans 3', sans-serif;
-    font-weight: 700; font-size: clamp(34px, 4.5vw, 48px);
-    line-height: 1.1; letter-spacing: -0.025em;
-    position: relative; z-index: 2;
-  }
-
-  .page-title em {
-    color: var(--blue-bright); font-style: normal;
-  }
-
-  /* ============== CONTENT WRAPPER ============== */
-  .content-wrap {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 64px;
-    padding: 56px 0 96px;
-    align-items: start;
-  }
-
-  /* TOC sidebar */
-  .toc {
-    position: sticky;
-    top: 100px;
-    border-left: 2px solid var(--rule-strong);
-    padding-left: 20px;
-  }
-
-  .toc h4 {
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--orange); margin-bottom: 14px;
-  }
-
-  .toc ul { list-style: none; }
-
-  .toc li { margin-bottom: 10px; }
-
-  .toc a {
-    color: var(--text-soft); text-decoration: none;
-    font-size: 13.5px; line-height: 1.4;
-    display: block; transition: color 0.2s, padding-left 0.2s;
-  }
-
-  .toc a:hover { color: var(--blue); padding-left: 4px; }
-
-  /* Article body */
-  article.doc-body {
-    max-width: 760px;
-  }
-
-  article.doc-body h2 {
-    font-family: 'Source Sans 3', sans-serif;
-    font-weight: 700; font-size: 28px;
-    color: var(--navy); margin-top: 48px; margin-bottom: 16px;
-    letter-spacing: -0.015em;
-    padding-bottom: 12px;
-    border-bottom: 2px solid var(--rule);
-    scroll-margin-top: 100px;
-  }
-
-  article.doc-body h2:first-child { margin-top: 0; }
-
-  article.doc-body h3 {
-    font-family: 'Source Sans 3', sans-serif;
-    font-weight: 700; font-size: 19px;
-    color: var(--navy); margin-top: 32px; margin-bottom: 12px;
-    letter-spacing: -0.01em;
-    scroll-margin-top: 100px;
-  }
-
-  article.doc-body h3 .num {
-    color: var(--blue-bright);
-    font-weight: 700;
-    margin-right: 8px;
-  }
-
-  article.doc-body p {
-    font-size: 15.5px; line-height: 1.7;
-    color: var(--text); margin-bottom: 16px;
-  }
-
-  article.doc-body p strong { color: var(--navy); font-weight: 700; }
-
-  article.doc-body a {
-    color: var(--blue); text-decoration: none;
-    border-bottom: 1px solid var(--blue-pale);
-    transition: color 0.2s, border-color 0.2s;
-  }
-
-  article.doc-body a:hover {
-    color: var(--orange); border-bottom-color: var(--orange);
-  }
-
-  article.doc-body ul, article.doc-body ol {
-    margin: 0 0 20px 22px;
-    font-size: 15.5px; line-height: 1.7;
-  }
-
-  article.doc-body li { margin-bottom: 8px; color: var(--text); }
-
-  article.doc-body li strong { color: var(--navy); font-weight: 700; }
-
-  article.doc-body code {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    background: var(--bg-panel);
-    color: var(--navy);
-    padding: 2px 6px;
-    border-radius: 3px;
-  }
-
-  /* Tables */
-  article.doc-body table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0 28px;
-    font-size: 14px;
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-    overflow: hidden;
-  }
-
-  article.doc-body thead {
-    background: var(--navy);
-    color: #fff;
-  }
-
-  article.doc-body th {
-    text-align: left;
-    padding: 12px 16px;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  article.doc-body td {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--rule);
-    vertical-align: top;
-    line-height: 1.55;
-  }
-
-  article.doc-body tr:last-child td { border-bottom: none; }
-
-  article.doc-body tbody tr:nth-child(even) { background: var(--bg-soft); }
-
-  article.doc-body tbody tr:hover { background: var(--blue-pale); }
-
-  article.doc-body td strong { color: var(--navy); }
-
-  /* Callouts */
-  .callout {
-    display: flex;
-    gap: 14px;
-    padding: 18px 22px;
-    border-radius: 6px;
-    margin: 24px 0;
-    border-left: 4px solid;
-  }
-
-  .callout-icon {
-    flex-shrink: 0;
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    display: grid; place-items: center;
-    font-weight: 700; font-size: 13px;
-    color: #fff;
-  }
-
-  .callout p { margin-bottom: 0; font-size: 14.5px; }
-
-  .callout.important {
-    background: #fef5e7;
-    border-color: var(--orange);
-  }
-
-  .callout.important .callout-icon { background: var(--orange); }
-
-  .callout.note {
-    background: var(--blue-pale);
-    border-color: var(--blue);
-  }
-
-  .callout.note .callout-icon { background: var(--blue); }
-
-  /* Images */
-  article.doc-body img {
-    max-width: 100%;
-    height: auto;
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-    margin: 12px 0;
-    background: var(--bg-soft);
-  }
-
-  .img-row {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin: 16px 0;
-  }
-
-  .img-row img { flex: 1; min-width: 240px; margin: 0; }
-
-  /* Inline icons inside table cells */
-  article.doc-body td img {
-    display: inline-block;
-    margin: 0 6px 0 0;
-    vertical-align: middle;
-    border: 1px solid var(--rule);
-    background: #fff;
-    padding: 2px;
-    border-radius: 3px;
-  }
-
-  /* Footer nav (prev/next, back) */
-  .doc-footer-nav {
-    margin-top: 64px;
-    padding-top: 32px;
-    border-top: 1px solid var(--rule);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .back-link {
-    display: inline-flex; align-items: center; gap: 8px;
-    color: var(--blue); text-decoration: none;
-    font-weight: 600; font-size: 14px;
-    border: 1px solid var(--rule-strong);
-    padding: 10px 18px;
-    border-radius: 4px;
-    transition: all 0.2s;
-  }
-
-  .back-link:hover {
-    background: var(--navy); color: #fff; border-color: var(--navy);
-  }
-
-  .support-link {
-    font-size: 14px; color: var(--text-soft);
-  }
-
-  .support-link a {
-    color: var(--blue); font-weight: 600; text-decoration: none;
-  }
-
-  .support-link a:hover { color: var(--orange); }
-
-  /* ============== FOOTER ============== */
-  footer {
-    background: var(--navy-deep);
-    color: #fff;
-    padding: 64px 0 32px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  footer::before {
-    content: '';
-    position: absolute;
-    top: -100px; right: -100px;
-    width: 400px; height: 400px;
-    border: 1px solid rgba(61, 143, 214, 0.12);
-    border-radius: 32px;
-    transform: rotate(30deg);
-    pointer-events: none;
-  }
-
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 48px;
-    padding-bottom: 40px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    position: relative; z-index: 1;
-  }
-
-  .footer-brand-block img {
-    height: 40px; margin-bottom: 18px;
-    filter: brightness(0) invert(1);
-  }
-
-  .footer-tag {
-    font-size: 14px; color: rgba(255,255,255,0.65);
-    line-height: 1.6; margin-bottom: 20px; max-width: 360px;
-  }
-
-  .footer-cta {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--orange); color: #fff; text-decoration: none;
-    padding: 11px 20px; border-radius: 4px;
-    font-weight: 700; font-size: 13px;
-    transition: background 0.2s;
-  }
-
-  .footer-cta:hover { background: var(--orange-deep); }
-
-  .footer-col h4 {
-    font-size: 12px; font-weight: 700;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--blue-bright); margin-bottom: 16px;
-  }
-
-  .footer-col a {
-    display: block; color: rgba(255,255,255,0.7);
-    text-decoration: none; font-size: 14px;
-    margin-bottom: 10px;
-    transition: color 0.2s, padding-left 0.2s;
-  }
-
-  .footer-col a:hover { color: var(--blue-bright); padding-left: 4px; }
-
-  .footer-bottom {
-    display: flex; justify-content: space-between; align-items: center;
-    padding-top: 24px; font-size: 13px; color: rgba(255,255,255,0.5);
-    position: relative; z-index: 1;
-  }
-
-  /* ============== RESPONSIVE ============== */
-  @media (max-width: 960px) {
-    .content-wrap { grid-template-columns: 1fr; gap: 32px; }
-    .toc { position: static; border-left: none; padding-left: 0;
-           border-top: 2px solid var(--rule-strong); padding-top: 20px; }
-    .toc ul { display: flex; flex-wrap: wrap; gap: 8px 20px; }
-  }
-
-  @media (max-width: 800px) {
-    .container { padding: 0 22px; }
-    nav.section-nav { display: none; }
-    .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
-    .footer-brand-block { grid-column: 1 / -1; }
-    .footer-bottom { flex-direction: column; gap: 12px; align-items: flex-start; }
-    .doc-footer-nav { flex-direction: column; align-items: flex-start; }
-  }
-</style>
-</head>
+:root{--navy:#1f2d4a;--navy-deep:#142037;--navy-soft:#2c3e63;--blue:#2b5fb0;--blue-bright:#3d8fd6;--blue-pale:#d6e6f5;--orange:#f08a24;--orange-deep:#d97316;--orange-pale:#fef5e7;--bg:#fff;--bg-soft:#f6f8fb;--bg-panel:#eef3f9;--text:#1f2d4a;--text-soft:#5a6479;--rule:#e1e7ef;--rule-strong:#c9d3e0}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:'Open Sans',sans-serif;color:var(--text);background:var(--bg);line-height:1.65;font-size:16px}
+h1,h2,h3,h4,h5,h6{font-family:'Source Sans 3',sans-serif;color:var(--navy);line-height:1.25;font-weight:700}
+code,pre,kbd{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace}
+.topnav{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--rule);box-shadow:0 1px 0 rgba(20,32,55,.04)}
+.topnav-inner{max-width:1320px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;gap:32px}
+.brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--navy)}
+.brand img{height:36px;width:auto;display:block}
+.brand-text{display:flex;flex-direction:column;line-height:1.1}
+.brand-product{font-family:'Source Sans 3';font-weight:800;font-size:16px;color:var(--navy);letter-spacing:-.01em}
+.brand-sub{font-size:11px;color:var(--text-soft);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.nav-links{display:flex;gap:26px;margin-left:auto;align-items:center}
+.nav-links a{text-decoration:none;color:var(--navy);font-weight:600;font-size:14px;padding:6px 0;border-bottom:2px solid transparent;transition:.15s}
+.nav-links a:hover{color:var(--blue);border-color:var(--blue-bright)}
+.cta{background:var(--orange);color:#fff;padding:9px 18px;border-radius:6px;font-weight:700;font-size:14px;text-decoration:none;transition:.15s}
+.cta:hover{background:var(--orange-deep)}
+.page-header{background:linear-gradient(180deg,var(--bg-soft) 0%,#fff 100%);border-bottom:1px solid var(--rule);padding:36px 28px 32px}
+.page-header-inner{max-width:1320px;margin:0 auto}
+.breadcrumb{font-size:13px;color:var(--text-soft);margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.breadcrumb a{color:var(--blue);text-decoration:none;font-weight:600}
+.breadcrumb a:hover{text-decoration:underline}
+.breadcrumb .sep{color:var(--rule-strong)}
+.eyebrow{display:inline-block;background:var(--blue-pale);color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:999px;margin-bottom:14px}
+.page-title{font-size:42px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px;line-height:1.1}
+.page-title em{font-style:normal;color:var(--blue-bright)}
+.page-subtitle{font-size:18px;color:var(--text-soft);max-width:780px;margin:0;font-weight:400}
+.layout{max-width:1320px;margin:0 auto;padding:36px 28px 80px;display:grid;grid-template-columns:240px 1fr;gap:48px;align-items:start}
+.toc{position:sticky;top:96px;font-size:13.5px;border-left:2px solid var(--rule);padding:6px 0 6px 18px;max-height:calc(100vh - 120px);overflow-y:auto}
+.toc-title{font-family:'Source Sans 3';font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.1em;color:var(--text-soft);margin-bottom:12px}
+.toc ul{list-style:none;padding:0;margin:0}.toc li{margin:4px 0}
+.toc a{color:var(--text);text-decoration:none;display:block;padding:5px 8px;border-radius:4px;transition:.15s;line-height:1.35}
+.toc a:hover{background:var(--bg-panel);color:var(--blue)}
+.toc .sub{padding-left:14px;font-size:12.5px;color:var(--text-soft)}
+article{min-width:0;max-width:880px}
+article p{margin:0 0 16px}
+article a{color:var(--blue);text-decoration:underline;text-decoration-color:var(--blue-pale);text-underline-offset:3px}
+article a:hover{text-decoration-color:var(--blue)}
+article ul,article ol{margin:0 0 18px;padding-left:24px}
+article li{margin:6px 0}
+article strong{color:var(--navy);font-weight:700}
+article code{background:var(--bg-panel);padding:1px 6px;border-radius:3px;font-size:13px;color:var(--navy-soft);border:1px solid var(--rule)}
+article h2{font-size:28px;margin:44px 0 18px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+article h2:first-child{margin-top:0}
+article h3{font-size:20px;margin:30px 0 12px;display:flex;align-items:baseline;gap:12px}
+article h3 .num{color:var(--orange);font-family:'JetBrains Mono';font-size:15px;font-weight:600;background:var(--orange-pale);padding:2px 8px;border-radius:4px;flex-shrink:0}
+article h4{font-size:16px;margin:24px 0 10px;color:var(--navy-soft);display:flex;align-items:baseline;gap:10px}
+article h4 .num{color:var(--blue);font-family:'JetBrains Mono';font-size:13px;font-weight:600;flex-shrink:0}
+figure{margin:18px 0 24px;border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--bg-soft)}
+figure img{display:block;max-width:100%;height:auto}
+figcaption{padding:10px 14px;font-size:13px;color:var(--text-soft);background:#fff;border-top:1px solid var(--rule)}
+.table-wrap{overflow-x:auto;margin:18px 0 24px;border:1px solid var(--rule);border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+thead th{background:var(--navy);color:#fff;text-align:left;padding:11px 14px;font-family:'Source Sans 3';font-weight:700;text-transform:uppercase;letter-spacing:.05em;font-size:12px}
+tbody td{padding:11px 14px;border-top:1px solid var(--rule);vertical-align:top}
+tbody tr:nth-child(even){background:var(--bg-soft)}
+tbody tr:hover{background:var(--blue-pale)}
+tbody td strong{color:var(--navy)}
+tbody td code{font-size:12.5px}
+.callout{margin:20px 0;padding:16px 18px 16px 52px;border-radius:6px;position:relative;font-size:15px;line-height:1.6}
+.callout::before{position:absolute;left:16px;top:14px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-family:'Source Sans 3';font-size:14px}
+.callout p{margin:0 0 8px}.callout p:last-child{margin-bottom:0}
+.callout strong{color:var(--navy)}
+.callout.important{background:var(--orange-pale);border-left:4px solid var(--orange)}
+.callout.important::before{content:"!";background:var(--orange)}
+.callout.note{background:var(--blue-pale);border-left:4px solid var(--blue)}
+.callout.note::before{content:"i";background:var(--blue);font-style:italic}
+footer.gsi-footer{background:var(--navy-deep);color:#cfd8e8;padding:48px 28px 28px;margin-top:80px;position:relative;overflow:hidden}
+.footer-deco{position:absolute;top:-60px;right:-60px;width:220px;height:220px;border:2px solid rgba(61,143,214,.18);border-radius:36px;transform:rotate(18deg);pointer-events:none}
+.footer-inner{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;position:relative}
+.footer-brand img{height:42px;margin-bottom:14px;filter:brightness(0) invert(1)}
+.footer-brand p{font-size:13.5px;color:#9aa9c2;line-height:1.6;margin:0 0 14px;max-width:300px}
+.footer-col h4{color:#fff;font-size:13px;text-transform:uppercase;letter-spacing:.1em;margin:0 0 14px;font-weight:700}
+.footer-col ul{list-style:none;padding:0;margin:0}.footer-col li{margin:7px 0}
+.footer-col a{color:#9aa9c2;text-decoration:none;font-size:13.5px;transition:.15s}
+.footer-col a:hover{color:var(--blue-bright)}
+.footer-bottom{max-width:1320px;margin:36px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;font-size:12.5px;color:#7a8aa3;flex-wrap:wrap;gap:12px;position:relative}
+@media (max-width:960px){.nav-links a:not(.cta){display:none}.layout{grid-template-columns:1fr;gap:24px}.toc{position:static;max-height:none;border:1px solid var(--rule);border-radius:6px;padding:14px 16px;background:var(--bg-soft)}.page-title{font-size:32px}.footer-inner{grid-template-columns:1fr 1fr;gap:28px}}
+@media (max-width:560px){.topnav-inner{padding:12px 18px;gap:14px}.page-header{padding:24px 18px}.layout{padding:24px 18px 60px}.footer-inner{grid-template-columns:1fr}}
+</style></head>
 <body>
 
-<!-- ============ TOP NAV ============ -->
-<header class="topnav">
-  <div class="container topnav-inner">
-    <a class="brand" href="rapidreconciler-university.html">
-      <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAFUAmMDASIAAhEBAxEB/8QAHQABAAEFAQEBAAAAAAAAAAAAAAYEBQcICQMCAf/EAFoQAAEDAwEFBAUDDAwLCAMAAAEAAgMEBREGBxIhMUEIE1FhFCJxgZEyQqEJFRgjUlZilbHB0dI4RlNygoSFkrTCxOEWJDdDVXWTlLKz0xclM1RXY6LwNHPD/8QAHAEBAAIDAQEBAAAAAAAAAAAAAAQFAQMGAgcI/8QANBEBAAIBAgMDCgYDAQEAAAAAAAECAwQRBSExEkFRBhMUIjJhcaGx8DNSgZHB0RUjQuHx/9oADAMBAAIRAxEAPwDctERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBEXhU1tHTf8A5FVDF5PeAVmImeUMTMRzl7orVJqOysOHVzT+9Y4/kC+RqayE49OH+yf+hbPMZfyz+zV6Rh/PH7wu6Kip7vbJyBFX05J5AvAPwKrQQRkHIWu1Zr1hsretvZncREWHoREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERARF8zSRwxOlle1jGjLnE4ACHR9Kw3nU9DQl0UH+NTjgQ0+q32n9Cj+pNSzVxdTURdFTci7k6T9A8lHVaafQb+tk/ZTarie09nF+/8AS7XHUN0rSQ6oMMZ+ZF6o+PMq1EknJOSVVWy31VxqO4pY9483E8GtHiSpGzRMhjy+4sD/AAEWR8c/mU22XDg9Xor64dRqfWiJlEUVzvVlrbU4GdofEThsjOR8vIq2LfW9bxvWeSPelqT2bRtIquhuVdQuBpaqSMD5oOW/A8FSIk1i0bSxW01neJ2TG06xBIjuUIb072MflH6PgpXTTw1MLZoJWyRu5OachYjVdaLpV2uo7ynf6pPrxn5Lvb+lQM+grbnj5Ss9NxO9Z2yc4+bKSKgsl1prrS97Cd17eEkZ5tP6PNV6qLVms7T1XtL1vWLVnkIiLy9C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AdjhkezJ8MKd2C1QWezw2+n5Mb67wOLnHm7/AO+S8bJpyzWaV01BRiOVwwXucXOx4Ak8PcrsgjWjNMz2CetmnuDqp1S4Y9UjkT6xyeJOVJURYZEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQf//Z" alt="GSI" />
-      <div class="brand-divider"></div>
-      <div class="brand-product">
-        <span class="brand-product-name">RapidReconciler</span>
-        <span class="brand-product-tag">University</span>
-      </div>
-    </a>
-    <nav class="section-nav">
-      <a href="rapidreconciler-university.html#getting-started">Getting Started</a>
-      <a href="rapidreconciler-university.html#inventory">Inventory</a>
-      <a href="rapidreconciler-university.html#in-transit">In Transit</a>
-      <a href="rapidreconciler-university.html#po-receipts">PO Receipts</a>
-      <a href="rapidreconciler-university.html#reference">Reference</a>
-      <a href="mailto:rrsupport@getgsi.com" class="nav-cta">Contact Support</a>
-    </nav>
-  </div>
-</header>
+<header class="topnav"><div class="topnav-inner">
+<a class="brand" href="index.html"><img src="../Images/gsi-logo.png" alt="GSI" />
+<span class="brand-text"><span class="brand-product">RapidReconciler University</span><span class="brand-sub">JD Edwards Reconciliation</span></span></a>
+<nav class="nav-links">
+<a href="index.html">Home</a><a href="index.html#inventory">Inventory</a><a href="index.html#in-transit">In Transit</a><a href="index.html#po-receipts">PO Receipts</a><a href="index.html#reference">Reference</a>
+<a class="cta" href="mailto:support@getgsi.com">Contact Support</a>
+</nav></div></header>
 
-<!-- ============ PAGE HEADER ============ -->
-<section class="page-header">
-  <div class="container">
-    <div class="breadcrumb">
-      <a href="rapidreconciler-university.html">University</a>
-      <span class="sep">/</span>
-      <a href="rapidreconciler-university.html#reference">Reference</a>
-      <span class="sep">/</span>
-      <span class="current">Working with the Item Ledger</span>
-    </div>
-    <div class="page-eyebrow">Library &middot; 05 / A</div>
-    <h1 class="page-title">Working with the Item <em>Ledger</em></h1>
-  </div>
-</section>
+<section class="page-header"><div class="page-header-inner">
+<nav class="breadcrumb"><a href="index.html">University</a><span class="sep">/</span><a href="index.html#reference">Reference</a><span class="sep">/</span><span>Item Ledger (Cardex)</span></nav>
+<span class="eyebrow">Module · 05 / A</span>
+<h1 class="page-title">JD Edwards Item Ledger <em>(Cardex)</em> Reference</h1>
+<p class="page-subtitle">Table F4111 — transaction history, analysis technique, and the common errors that produce false variances.</p>
+</div></section>
 
-<!-- ============ CONTENT ============ -->
-<div class="container">
-  <div class="content-wrap">
-    <aside class="toc">
-      <h4>On this page</h4>
-      <ul>
-        <li><a href="#what-to-expect">What to expect</a></li>
-        <li><a href="#get-notified">Get notified</a></li>
-      </ul>
-    </aside>
-
-    <article class="doc-body">
-      
-<p style="font-size:17px; color:var(--text-soft); margin-bottom:32px;">
-This guide is being prepared as part of the RapidReconciler University rollout.
-</p>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>Coming soon.</strong> This document is currently being written. Check back shortly, or contact GSI support if you need this content urgently.</p>
-</div>
-
-<h2 id="what-to-expect">What to expect</h2>
-<p>When complete, this guide will cover the topics described on the <a href="rapidreconciler-university.html">University index page</a>. In the meantime, the following resources may help:</p>
-
+<div class="layout">
+<aside class="toc" aria-label="Table of contents">
+<div class="toc-title">On this page</div>
 <ul>
-  <li><strong>Search the existing knowledge base</strong> &mdash; many adjacent topics are already documented across the modules.</li>
-  <li><strong>Review the module overview</strong> on the <a href="rapidreconciler-university.html">University index</a> to find related guides that are already published.</li>
-  <li><strong>Email support</strong> at <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> for direct assistance with reconciliation questions.</li>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#section-1">1. F4111 Structure &amp; Key Fields</a></li>
+<li class="sub"><a href="#section-1-5">1.5 Key Field Reference</a></li>
+<li class="sub"><a href="#section-1-6">1.6 Why F41112 Is Unreliable</a></li>
+<li class="sub"><a href="#section-1-7">1.7 Joining F4111 to Other Tables</a></li>
+<li><a href="#section-2">2. Should the Sums Match?</a></li>
+<li><a href="#section-3">3. Analyzing the Cardex</a></li>
+<li><a href="#section-4">4. Real-World Example</a></li>
+<li><a href="#section-5">5. Global Item Update Warning</a></li>
+<li><a href="#section-6">6. Best Practices</a></li>
+<li><a href="#section-7">7. How RapidReconciler Helps</a></li>
+<li><a href="#section-8">8. Related Documentation</a></li>
+</ul>
+</aside>
+
+<article>
+
+<h2 id="overview">Overview</h2>
+<p>The JD Edwards item ledger — table F4111, commonly referred to as "The Cardex" — contains the complete transaction history for items in the inventory system. All transactions that impact an item's quantity on hand are recorded in this table, including receipts, transfers, sales shipments, material issues, completions, and more.</p>
+<p>Understanding how to read, analyze, and validate the item ledger is essential for accurate inventory reconciliation. Errors made during cardex analysis are a common source of false variances — issues that appear to be data integrity problems but are actually the result of incorrect analysis technique.</p>
+<p>This guide covers:</p>
+<ul>
+<li>The structure and key fields of the F4111 table</li>
+<li>A field-level reference for the most important columns analysts work with</li>
+<li>Why the F41112 (Item ASOF) table cannot be trusted as a standalone source for inventory balances</li>
+<li>Common questions about item ledger behavior</li>
+<li>Identifying and correcting quantity integrity variances using R41544 and R41995</li>
+<li>The Global Item Update creation date override risk and how to protect against it</li>
+<li>How to correctly analyze the cardex and avoid the three most common analyst errors</li>
+<li>A real-world example of a weighted average cost error identified through cardex analysis</li>
+<li>Best practices for maintaining item ledger integrity</li>
 </ul>
 
-<h2 id="get-notified">Get notified when this is published</h2>
-<p>If you would like to be notified when this guide is available, send an email to <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> with the subject line referencing this page title.</p>
+<h2 id="section-1">Section 1: F4111 Table Structure and Key Fields</h2>
 
+<h3 id="section-1-1"><span class="num">1.1</span>What the Item Ledger Contains</h3>
+<p>The item ledger stores <strong>transactional data only</strong> — it does not store running balances. To obtain the total on-hand quantity from this table, all qualifying transactions must be summarized. The actual on-hand balance for each item is stored in table <strong>F41021</strong> — the Item Location table.</p>
+<p>The balances displayed at the top of the item ledger screen are fetched from the following tables:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Table</th><th>Contents</th></tr></thead>
+<tbody>
+<tr><td><strong>F41021</strong></td><td>Item Location table — quantity on hand</td></tr>
+<tr><td><strong>F4105</strong></td><td>Item Cost table — unit cost</td></tr>
+</tbody></table></div>
 
-      <div class="doc-footer-nav">
-        <a href="rapidreconciler-university.html#reference" class="back-link">&larr; Back to Reference</a>
-        <span class="support-link">Need help? <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a></span>
-      </div>
-    </article>
-  </div>
+<figure>
+<img src="../Images/jde-item-ledger.png" alt="JDE Item Ledger screen showing transaction grid with on-hand balance pulled from F41021 and unit cost from F4105" />
+<figcaption>JDE Item Ledger — the on-hand balance and value shown at the top of the screen are pulled from F41021 and F4105, not summarized from F4111.</figcaption>
+</figure>
+
+<h3 id="section-1-2"><span class="num">1.2</span>Posting Codes (ILIPCD)</h3>
+<p>The posting code in F4111 is stored in column <strong>ILIPCD</strong>. This field is not displayed by default on the item ledger grid but can be viewed using the JD Edwards <strong>data browser</strong> feature. There are four possible values:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Posting Code</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><strong>Blank</strong></td><td>The initial value assigned to all qualifying transactions. Also used for IB transactions created when an item is added to the system.</td></tr>
+<tr><td><strong>Y</strong></td><td>Posted by the Item Ledger As-Of Record Generation program (R41542) to the Item ASOF file (F41112). See Section 1.6 for why F41112 should not be used as a standalone source for balances.</td></tr>
+<tr><td><strong>S</strong></td><td>The value of inventory has not yet been impacted by the transaction. Examples include a ship confirmation transaction before running Sales Update, or an IM document type before Manufacturing Accounting has been run.</td></tr>
+<tr><td><strong>X</strong></td><td>The transaction involved a movement of inventory only and had no effect on the general ledger. Examples include an IZ transaction created on a change of lot status. These transactions must be <strong>excluded</strong> when summarizing item ledger totals.</td></tr>
+</tbody></table></div>
+
+<div class="callout important"><p><strong>Critical:</strong> Transactions with a posting code of <strong>"X"</strong> must always be excluded from any cardex analysis. Including them will produce an incorrect total that does not match the on-hand balance.</p></div>
+
+<h3 id="section-1-3"><span class="num">1.3</span>Date Fields</h3>
+<p>There are two date fields in the item ledger to consider when determining when a transaction entered the system:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Date Field</th><th>Description</th><th>Reliability</th></tr></thead>
+<tbody>
+<tr><td><strong>Transaction Date</strong></td><td>The date typically associated with when the transaction occurred. Available on some entry screens and can be overridden by the user. Backdating and data entry errors are both common.</td><td>Less reliable</td></tr>
+<tr><td><strong>Creation Date</strong> (ILCRDJ)</td><td>The date the transaction record was created in F4111. More reliable under normal circumstances, but can be overwritten — see Section 1.3.1 below.</td><td>More reliable — with exceptions</td></tr>
+</tbody></table></div>
+
+<div class="callout note"><p><strong>Recommendation:</strong> Use the creation date when attempting to determine when a transaction entered the system. However, there is no 100% reliable method for obtaining this information in all scenarios.</p></div>
+
+<h4 id="section-1-3-1"><span class="num">1.3.1</span>Global Item Update and Creation Date Override</h4>
+
+<div class="callout important"><p><strong>Warning:</strong> The creation date in F4111 can be permanently overwritten by the Global Item Update program. Once overwritten, the original transaction entry dates cannot be recovered.</p></div>
+
+<p>Global Item Update (P4101) is a JD Edwards feature that transfers changes made to the second item number (LITM) or third item number in the Item Master table (F4101) to all other inventory tables that contain the same information — including the item ledger (F4111).</p>
+<p>When Global Item Update is run following a change to the second or third item number, the program <strong>R41803</strong> updates matching records across all designated tables. The unintended consequence is that the <strong>Creation Date field (ILCRDJ)</strong> is also updated to the date the change was made — for <strong>every record</strong> in the item ledger for that item, regardless of when those transactions originally occurred.</p>
+
+<p><strong>Processing options for P4101:</strong></p>
+<div class="table-wrap"><table>
+<thead><tr><th>Setting</th><th>Behavior</th></tr></thead>
+<tbody>
+<tr><td><strong>Blank</strong></td><td>Do not transfer changes to other tables</td></tr>
+<tr><td><strong>1</strong></td><td>Transfer changes to all applicable tables</td></tr>
+<tr><td><strong>2</strong></td><td>Transfer changes to selected tables only (defined in UDC table 40/IC, which lists 57 tables by default including F4111)</td></tr>
+</tbody></table></div>
+
+<p><strong>Impact of creation date override:</strong></p>
+<div class="table-wrap"><table>
+<thead><tr><th>Area</th><th>Impact</th></tr></thead>
+<tbody>
+<tr><td><strong>Transaction dating</strong></td><td>Determining when a specific inventory transaction was entered becomes unreliable for all historical records on the affected item</td></tr>
+<tr><td><strong>RapidReconciler period logic</strong></td><td>RapidReconciler uses the creation date as part of its period assignment logic for item ledger records — overwritten dates may affect historical period assignments</td></tr>
+<tr><td><strong>Audit and compliance</strong></td><td>In environments where transaction timestamps are required for audit or regulatory purposes, overwritten creation dates may create gaps in the audit trail</td></tr>
+<tr><td><strong>History reconstruction</strong></td><td>Once the change is made and Global Item Update is run, it may not be possible to reconstruct an accurate transaction history for the affected items</td></tr>
+</tbody></table></div>
+
+<div class="callout important"><p><strong>Important:</strong> There is no "date updated" field or other reliable date field in the item ledger that can be used as an alternative once the creation date has been overwritten. The original transaction entry dates are effectively lost.</p></div>
+
+<h3 id="section-1-4"><span class="num">1.4</span>DMAAI Information</h3>
+<p>The item ledger table does <strong>not</strong> store information about which DMAAI entries were used to process a transaction. It is possible to make a reasonable assumption based on the available data points — company number, document type, GL class code, and knowledge of JD Edwards transaction processing — but this information cannot be retrieved directly from F4111.</p>
+
+<div class="callout note"><p><strong>Note:</strong> The RapidReconciler Transaction Detail Report can provide DMAAI context by combining item ledger data with the applicable DMAAI configuration at the time of the transaction.</p></div>
+
+<p>Refer to the DMAAI Reference Guide for more information on how DMAAI entries are determined for inventory transactions.</p>
+
+<h3 id="section-1-5"><span class="num">1.5</span>Key Field Reference</h3>
+<p>The F4111 table contains over 50 columns. The fields below are the ones most commonly used during cardex analysis, custom report development, and reconciliation work. Field names follow the standard JD Edwards convention where each column is prefixed with <code>IL</code> (the table's two-letter alias for Item Ledger).</p>
+
+<h4 id="section-1-5-1"><span class="num">1.5.1</span>Item, Branch, and Location Identifiers</h4>
+<div class="table-wrap"><table>
+<thead><tr><th>Field</th><th>Description</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td><strong>ILITM</strong></td><td>Short item number (numeric, system-assigned)</td><td>The internal key used in nearly all joins to other inventory tables (F4101, F4102, F41021, F4105)</td></tr>
+<tr><td><strong>ILLITM</strong></td><td>Second item number (long item number)</td><td>The user-facing item number entered on most screens; subject to change via Global Item Update</td></tr>
+<tr><td><strong>ILAITM</strong></td><td>Third item number</td><td>Often used for cross-references, customer item numbers, or alternate part numbers</td></tr>
+<tr><td><strong>ILMCU</strong></td><td>Branch/Plant (Business Unit)</td><td>Always right-justified and space-padded in queries — e.g. <code>'      M30'</code></td></tr>
+<tr><td><strong>ILLOCN</strong></td><td>Location within the branch</td><td>Blank for items not stored in defined locations</td></tr>
+<tr><td><strong>ILLOTN</strong></td><td>Lot number</td><td>Blank for items not under lot control</td></tr>
+<tr><td><strong>ILMMCU</strong></td><td>Owning branch (header business unit)</td><td>May differ from ILMCU on transfer-related transactions</td></tr>
+</tbody></table></div>
+
+<h4 id="section-1-5-2"><span class="num">1.5.2</span>Document Identification</h4>
+<div class="table-wrap"><table>
+<thead><tr><th>Field</th><th>Description</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td><strong>ILDCT</strong></td><td>Document type (e.g. OV, IT, IM, IA, IS, IZ, IB)</td><td>Identifies what kind of transaction created the record. See Section 1.5.5 below.</td></tr>
+<tr><td><strong>ILDOC</strong></td><td>Document number</td><td>Unique within document type and company</td></tr>
+<tr><td><strong>ILKCO</strong></td><td>Document company</td><td>Five-character company assigned at document creation</td></tr>
+<tr><td><strong>ILSFX</strong></td><td>Document pay item (suffix)</td><td>Distinguishes multiple lines on a single document</td></tr>
+<tr><td><strong>ILDCTO</strong></td><td>Order document type (e.g. OP for purchase orders, SO for sales orders)</td><td>Populated when the transaction was generated from an order</td></tr>
+<tr><td><strong>ILDOCO</strong></td><td>Order document number</td><td>The originating order number</td></tr>
+<tr><td><strong>ILKCOO</strong></td><td>Order document company</td><td>Company of the originating order</td></tr>
+<tr><td><strong>ILLNID</strong></td><td>Order line number</td><td>Identifies the line within the originating order</td></tr>
+</tbody></table></div>
+
+<h4 id="section-1-5-3"><span class="num">1.5.3</span>Quantity, Cost, and Amount Fields</h4>
+<p>These fields are stored without decimal places in the database. The decimal positions must be applied when displaying or summarizing them.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Field</th><th>Description</th><th>Decimal Handling</th></tr></thead>
+<tbody>
+<tr><td><strong>ILTRQT</strong></td><td>Transaction quantity (in transaction UOM)</td><td>Stored as integer; <strong>divide by 1,000</strong> to obtain actual quantity (3 implied decimal places)</td></tr>
+<tr><td><strong>ILUNCS</strong></td><td>Unit cost at the time of the transaction</td><td>Stored as integer; <strong>divide by 10,000</strong> to obtain actual unit cost (4 implied decimal places)</td></tr>
+<tr><td><strong>ILPAID</strong></td><td>Extended cost of the transaction (quantity × unit cost)</td><td>Stored as integer; <strong>divide by 100</strong> to obtain actual amount (2 implied decimal places)</td></tr>
+<tr><td><strong>ILTRUM</strong></td><td>Transaction unit of measure</td><td>Two-character UOM code; must be checked before totaling quantities (see Section 3.2)</td></tr>
+</tbody></table></div>
+
+<div class="callout important"><p><strong>Important:</strong> When summarizing F4111 directly via SQL or a custom report, always apply the correct decimal scaling. A common error is to sum ILTRQT and ILPAID without dividing, producing totals that are 1,000× and 100× larger than expected.</p></div>
+
+<h4 id="section-1-5-4"><span class="num">1.5.4</span>Date Fields</h4>
+<div class="table-wrap"><table>
+<thead><tr><th>Field</th><th>Description</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td><strong>ILDGL</strong></td><td>General Ledger date (Julian)</td><td>The date that drives GL posting and period assignment</td></tr>
+<tr><td><strong>ILTRDJ</strong></td><td>Transaction date (Julian)</td><td>Date the transaction occurred per the entry screen; can be backdated by users (see Section 1.3)</td></tr>
+<tr><td><strong>ILCRDJ</strong></td><td>Creation date (Julian)</td><td>Date the record was written to F4111; the most reliable indicator of when the transaction entered the system, but can be overwritten by Global Item Update (see Section 1.3.1)</td></tr>
+</tbody></table></div>
+
+<div class="callout note"><p><strong>Date format note:</strong> All date fields in F4111 are stored in <strong>Julian (CYYDDD) format</strong> — e.g. <code>124001</code> represents January 1, 2024. This is the JD Edwards standard date format and applies throughout the system.</p></div>
+
+<h4 id="section-1-5-5"><span class="num">1.5.5</span>GL and Posting Fields</h4>
+<div class="table-wrap"><table>
+<thead><tr><th>Field</th><th>Description</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td><strong>ILGLPT</strong></td><td>GL Class Code (also called GL Posting Category)</td><td>Determines which DMAAI entries are used to derive the GL accounts for the transaction. Critical for reconciliation — a change to this value mid-life will cause F41112 to show split balances per GL class.</td></tr>
+<tr><td><strong>ILJELN</strong></td><td>Journal entry line number</td><td>Used to join F4111 to the corresponding F0911 line (see Section 1.7)</td></tr>
+<tr><td><strong>ILICU</strong></td><td>Batch number</td><td>Created when the GL batch is generated (e.g. by R31802 for IM transactions). Will be blank on F4111 records that have not yet been processed by the relevant GL update program.</td></tr>
+<tr><td><strong>ILIPCD</strong></td><td>Posting code (Blank, Y, S, X)</td><td>See Section 1.2 for the full meaning of each value</td></tr>
+<tr><td><strong>ILAID</strong></td><td>Account ID</td><td>The unique internal account identifier from F0901 — not the human-readable account number</td></tr>
+</tbody></table></div>
+
+<h4 id="section-1-5-6"><span class="num">1.5.6</span>Common Document Types in F4111</h4>
+<p>The document type (ILDCT) tells you what kind of transaction was recorded. The following are the most frequently encountered:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Document Type</th><th>Description</th><th>Source Application</th></tr></thead>
+<tbody>
+<tr><td><strong>OV</strong></td><td>Purchase order receipt</td><td>P4312 (PO Receipts)</td></tr>
+<tr><td><strong>IT</strong></td><td>Inventory transfer</td><td>P4113 (Transfers)</td></tr>
+<tr><td><strong>IA</strong></td><td>Inventory adjustment</td><td>P4114 (Inventory Adjustments)</td></tr>
+<tr><td><strong>IM</strong></td><td>Material issue (manufacturing)</td><td>Manufacturing Accounting (R31802)</td></tr>
+<tr><td><strong>IC</strong></td><td>Manufacturing completion</td><td>Work Order Completions</td></tr>
+<tr><td><strong>IS</strong></td><td>Sales shipment</td><td>Sales Update (R42800)</td></tr>
+<tr><td><strong>IZ</strong></td><td>Lot status change</td><td>Lot Master maintenance</td></tr>
+<tr><td><strong>IB</strong></td><td>Item ledger balance forward / opening balance</td><td>Created when an item is added or as part of period-end balance forward processing</td></tr>
+</tbody></table></div>
+
+<div class="callout note"><p><strong>Note:</strong> For IM transactions, ILDOC contains the work order number rather than a sequentially-generated document number, which is why standard joins between F4111 and F0911 on <code>ILDOC = GLDOC</code> will not work for these records. See Section 1.7 for the correct join logic.</p></div>
+
+<h3 id="section-1-6"><span class="num">1.6</span>Why the F41112 Item ASOF Table is Unreliable</h3>
+<p>The <strong>Item ASOF table (F41112)</strong> is a JD Edwards summary table that stores period-by-period quantity and amount buckets for each item, branch, location, and lot combination. It is built and maintained by the <strong>Item Ledger As-Of Record Generation program (R41542)</strong>, which reads transactions from F4111, summarizes them into period buckets, and flags the source records with posting code "Y".</p>
+<p>The intended purpose of F41112 is to provide fast access to historical period balances without re-summarizing F4111 every time. In practice, however, F41112 has a long history of accuracy problems and <strong>should never be used as a standalone source of truth for inventory balances or reconciliation totals</strong>. The item ledger (F4111) — with appropriate filtering — is the authoritative source.</p>
+
+<h4 id="section-1-6-1"><span class="num">1.6.1</span>Documented Reasons F41112 Cannot Be Trusted</h4>
+<div class="table-wrap"><table>
+<thead><tr><th>Issue</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><strong>Missed transactions during R41542 processing</strong></td><td>The As-Of generation program is known to skip certain transactions. Possible causes include records where ILIPCD is null (often the result of records created via SQL or other non-standard paths), records where the IS document type is incorrectly written with ILIPCD = "Y" instead of "X", and intermittent skips on average cost items. Once a record is missed, the F41112 buckets for the affected period will not match F4111 unless the table is fully regenerated.</td></tr>
+<tr><td><strong>Weighted average cost defects</strong></td><td>Oracle has acknowledged a defect (BUG 8742885) affecting R41544 integrity reporting on weighted-average-cost items. The associated downstream effect is that F41112 buckets for these items can be inaccurate even after a clean regeneration, and Oracle has classified the fix as an enhancement rather than a defect — meaning it is not patched in the standard product.</td></tr>
+<tr><td><strong>Ship-confirmed but not sales-updated transactions</strong></td><td>Sales orders that have been ship-confirmed but for which Sales Update (R42800) has not yet run produce F4111 records with ILIPCD = "S". R41542 bypasses these records entirely. Until Sales Update runs and the record is replaced, the F41112 totals will not reflect these shipments.</td></tr>
+<tr><td><strong>Duplicate writes</strong></td><td>Several documented cases exist where specific transaction patterns — including credit notes received via transportation modules — are written to F41112 twice during As-Of processing, inflating the period buckets.</td></tr>
+<tr><td><strong>Period total corruption after upgrades</strong></td><td>Oracle Knowledge Base document 2817306.1 documents a confirmed case where, after upgrading from JD Edwards 9.1 to 9.2, F41112 period quantities for hundreds of records were materially incorrect (one example showed -1,170 in F41112 against an actual F4111 sum of +180 for the same period). The issue could not be reproduced in a test environment, making root-cause analysis effectively impossible.</td></tr>
+<tr><td><strong>Full regeneration carries operational risk</strong></td><td>The standard remedy for a corrupted F41112 is to re-run R41542 with the regeneration processing option set to "1". This deletes the entire F41112 table before rebuilding it. On large datasets, the deletion can fail mid-flight due to insufficient rollback segment space, leaving the table in a partially-populated state. Full regeneration on a multi-million-record cardex can take many hours and requires careful coordination.</td></tr>
+<tr><td><strong>No GL detail in F41112</strong></td><td>F41112 contains only summarized quantity and amount buckets per period. There is no document-level detail, no GL date, no document type, and no link back to F0911. Any variance identified in F41112 cannot be traced to the underlying transactions without going back to F4111.</td></tr>
+</tbody></table></div>
+
+<h4 id="section-1-6-2"><span class="num">1.6.2</span>Practical Implications</h4>
+<p>The R41544 Item Balance/Ledger Integrity Report uses F41112 as part of its calculation. When F41112 is wrong, R41544 will report variances that do not actually exist in F4111 — producing false positives that consume reconciliation time. Conversely, F41112 errors that offset each other can mask true integrity issues.</p>
+
+<div class="callout note"><p><strong>Recommendation:</strong> Treat F41112 as a convenience table for period reporting only, and only after confirming that R41542 has completed cleanly for the period in question. For reconciliation work, balance integrity checks, and any analysis where accuracy matters, <strong>summarize F4111 directly</strong> with the appropriate ILIPCD and UOM filtering described in Section 3.</p></div>
+
+<div class="callout note"><p><strong>Note:</strong> RapidReconciler does not rely on F41112 for any reconciliation calculation. All quantity and dollar totals are derived from F4111 directly, eliminating the F41112 reliability problem from the reconciliation process entirely.</p></div>
+
+<h3 id="section-1-7"><span class="num">1.7</span>Joining F4111 to Other Tables</h3>
+<p>Custom reports and integrity queries often require joining F4111 to related JD Edwards tables. The correct join keys depend on which table is being joined and — in some cases — on the document type involved.</p>
+
+<h4 id="section-1-7-1"><span class="num">1.7.1</span>F4111 to F0911 (General Ledger)</h4>
+<p>The relationship between F4111 and F0911 is <strong>one-to-many</strong> — a single item ledger record will typically have at least two F0911 lines (a debit and an offsetting credit), and may have more depending on how the GL accounts were configured.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>F4111 Field</th><th>F0911 Field</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td><strong>ILKCO</strong></td><td>GLKCO</td><td>Document company — always required</td></tr>
+<tr><td><strong>ILDCT</strong></td><td>GLDCT</td><td>Document type — always required</td></tr>
+<tr><td><strong>ILDOC</strong></td><td>GLDOC</td><td>Document number — works for most document types, but <strong>not for IM (manufacturing issues)</strong>, where ILDOC contains the work order number and GLDOC contains a generated document number from a NN bucket</td></tr>
+<tr><td><strong>ILJELN</strong></td><td>GLJELN</td><td>Journal entry line number — needed when matching to a specific GL line</td></tr>
+<tr><td><strong>ILICU</strong></td><td>GLICU</td><td>Batch number — required for accurate matching when GL batches have been summarized</td></tr>
+</tbody></table></div>
+
+<div class="callout important"><p><strong>For IM document types:</strong> The correct join is <code>ILDOC = GLSBL</code> (subledger) with <code>GLSBLT = 'W'</code> (subledger type W for work order). The function B0000083 is needed to convert ILDOC from numeric to the left-zero-padded string format used in GLSBL.</p></div>
+
+<h4 id="section-1-7-2"><span class="num">1.7.2</span>F4111 to F41021 (Item Location)</h4>
+<p>The Item Location table holds the running on-hand balance that the cardex sum should match.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>F4111 Field</th><th>F41021 Field</th></tr></thead>
+<tbody>
+<tr><td>ILITM</td><td>LIITM</td></tr>
+<tr><td>ILMCU</td><td>LIMCU</td></tr>
+<tr><td>ILLOCN</td><td>LILOCN</td></tr>
+<tr><td>ILLOTN</td><td>LILOTN</td></tr>
+</tbody></table></div>
+<p>The on-hand quantity in F41021 is <strong>LIPQOH</strong> (Primary Quantity On Hand), expressed in the item's primary unit of measure.</p>
+
+<h4 id="section-1-7-3"><span class="num">1.7.3</span>F4111 to F4105 (Item Cost)</h4>
+<p>F4105 stores the current unit cost by cost method. There is no direct one-to-one relationship to a single F4111 record; F4105 reflects the <em>current</em> cost rather than the cost at the time of any historical transaction. The historical unit cost for a transaction is captured in F4111.ILUNCS at the moment the transaction was written.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>F4111 Field</th><th>F4105 Field</th></tr></thead>
+<tbody>
+<tr><td>ILITM</td><td>COITM</td></tr>
+<tr><td>ILMCU</td><td>COMCU</td></tr>
+<tr><td>ILLOCN</td><td>COLOCN</td></tr>
+<tr><td>ILLOTN</td><td>COLOTN</td></tr>
+</tbody></table></div>
+<p>The cost method on F4105 (COCMTH) determines whether the cost is standard, weighted average, last-in, or another method. For weighted average items, F4105.COUNCS is the running weighted average cost, which should agree with the implied cost calculated from on-hand quantity and inventory value.</p>
+
+<h4 id="section-1-7-4"><span class="num">1.7.4</span>F4111 to F43121 (PO Receiver)</h4>
+<p>For OV (purchase receipt) document types, F43121 contains the receiver detail and should reconcile back to F4111.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>F4111 Field</th><th>F43121 Field</th></tr></thead>
+<tbody>
+<tr><td>ILDOC</td><td>PRDOC</td></tr>
+<tr><td>ILDCT</td><td>PRDCT</td></tr>
+<tr><td>ILDOCO</td><td>PRDOCO</td></tr>
+<tr><td>ILDCTO</td><td>PRDCTO</td></tr>
+<tr><td>ILLNID</td><td>PRLNID</td></tr>
+<tr><td>ILKCOO</td><td>PRKCOO</td></tr>
+</tbody></table></div>
+<p>The amount on the receiver (PRAREC) should equal the extended amount on the corresponding cardex record (ILPAID). A discrepancy between these two values is a common source of three-way-match variances.</p>
+
+<h2 id="section-2">Section 2: Should the Item Ledger Sum Equal the Item Balance Table?</h2>
+<p><strong>Yes</strong> — with the following conditions all being met:</p>
+<ul>
+<li>All transactions with a posting code of <strong>"X"</strong> have been removed from the calculation.</li>
+<li>The transaction quantity is expressed in the item's <strong>current primary unit of measure</strong>.</li>
+<li>The item ledger table has not been purged without leaving a <strong>balance forward record</strong> to maintain continuity.</li>
+<li>No item <strong>conversion factors</strong> have been removed from the system.</li>
+<li>Any changes to an item's <strong>primary unit of measure</strong> were performed using the recommended procedures.</li>
+</ul>
+<p>If any of these conditions are not met, a discrepancy between the item ledger summary and the item balance table may exist that is not indicative of a true inventory integrity issue, but rather a data management consideration.</p>
+
+<h3 id="section-2-1"><span class="num">2.1</span>Item Balance / Ledger Integrity Report (R41544)</h3>
+<p>The <strong>Item Balance / Ledger Integrity Report (R41544)</strong> is the JD Edwards tool used to identify integrity variances between the Quantity On-Hand in the Item Location table (F41021) and the Item Ledger (F4111).</p>
+<p>In many cases, the cause of these variances can only be attributed to corrupted data in the Item Location Quantity On-Hand field (F41021.PQOH), which is a running balance of all transactions added to and subtracted from an inventory location and/or lot. Since all transaction details are written to the Item Ledger (F4111) while the Item Balance Quantity On-Hand is a running total of all transactions done to date, <strong>the Item Ledger (F4111) is assumed to be the source of truth.</strong></p>
+<p>The RapidReconciler cardex variance report is built on this same principle — the item ledger is the source of truth for quantity, and any variance with the general ledger is a reconciling item that requires investigation.</p>
+<p>Partial updates or corrupted data may occur because of an unpredictable event that terminates the application prematurely. In most cases it is not possible to explain how data was corrupted after the fact.</p>
+
+<h3 id="section-2-2"><span class="num">2.2</span>Repost — Update On-Hand Inventory (R41995)</h3>
+<p>The <strong>Repost — Update On-Hand Inventory report (R41995)</strong> was introduced to resolve quantity discrepancies between F41021 and F4111 without requiring direct SQL intervention.</p>
+<p><strong>Purpose:</strong> R41995 calculates and reposts the Quantity On-Hand value in the Item Location table (F41021). It sums the transaction quantities in the Item Ledger (F4111), or calculates the quantity from both the Item Ledger (F4111) and the Item ASOF table (F41112), and updates the Item Location Quantity On-Hand value (F41021.PQOH).</p>
+<p><strong>Key behavior:</strong></p>
+<ul>
+<li>Updates the Quantity On-Hand in F41021 to match the sum of transaction quantities in F4111</li>
+<li>Does <strong>not</strong> create new records in the Item Ledger (F4111)</li>
+<li>Does <strong>not</strong> create new records in the General Ledger (F0911)</li>
+</ul>
+
+<div class="callout important"><p><strong>Important:</strong> R41995 corrects the quantity balance in F41021 only. It does not adjust the dollar value of inventory or create any GL entries. If a dollar discrepancy also exists, a separate dollars-only adjustment will be required after running R41995.</p></div>
+
+<div class="callout note"><p><strong>Best Practice:</strong> Run R41544 on a regular basis to proactively identify quantity integrity variances. When a variance is confirmed, use R41995 to correct the F41021 balance rather than resorting to direct SQL updates, which carry significant risk.</p></div>
+
+<h2 id="section-3">Section 3: How to Correctly Analyze the Cardex</h2>
+<p>Analyzing the item ledger for integrity issues requires exporting the grid to Excel and summarizing the quantity and extended amount columns, then comparing those totals to the balances displayed at the top of the item ledger screen. Three common errors consistently cause false variances in this process.</p>
+
+<h3 id="section-3-1"><span class="num">3.1</span>Error 1 — Including Memo Transactions</h3>
+<p><strong>The Issue</strong></p>
+<p>Certain transactions in the item ledger do not count toward the on-hand totals and must be filtered out before performing the analysis. These are known as <strong>memo transactions</strong> and include:</p>
+<ul>
+<li>Location adds</li>
+<li>Lot releases</li>
+<li>Manufacturing scrap</li>
+</ul>
+<p>Memo transactions are flagged with an <strong>"X"</strong> in the posting code field (ILIPCD). This field is not displayed by default on the item ledger grid.</p>
+<p><strong>Corrective Action</strong></p>
+<p>Before totaling the exported grid, identify and remove all rows where ILIPCD contains <strong>"X"</strong>. Including these transactions in the summary will result in an incorrect total that does not match the on-hand balance.</p>
+
+<h3 id="section-3-2"><span class="num">3.2</span>Error 2 — Ignoring Alternate Units of Measure</h3>
+<p><strong>The Issue</strong></p>
+<p>After exporting the item ledger grid, analysts must review the transaction unit of measure column to determine whether more than one UOM is referenced. The on-hand quantity total displayed at the top of the screen is always expressed in the <strong>primary unit of measure</strong>.</p>
+<p>Any transaction recorded in a unit of measure other than the primary UOM must be <strong>converted to the primary UOM</strong> before totals are compared. Failing to do so produces an "apples to oranges" comparison and will make it appear that a variance exists when there may not be one.</p>
+<p><strong>Corrective Action</strong></p>
+<ul>
+<li>After exporting the grid, scan the transaction UOM column and identify any rows not in the primary UOM.</li>
+<li>Apply the appropriate conversion factor to bring those quantities into the primary UOM.</li>
+<li>In later versions of JD Edwards, a grid column labelled <strong>"Quantity in Primary"</strong> may be available. If present, use this column for the analysis — manual conversion will not be required.</li>
+</ul>
+
+<h3 id="section-3-3"><span class="num">3.3</span>Error 3 — Incorrect Analysis Level for Average Cost Items</h3>
+<p><strong>The Issue</strong></p>
+<p>Analyzing average cost items requires a different approach than standard cost items, and the correct method depends on the <strong>item's cost level setting</strong>.</p>
+<ul>
+<li><strong>Standard Cost Items</strong> — Analysis is performed at the lot level. Each combination of item, branch, location, and lot should summarize accurately to the balance shown at the top of the screen.</li>
+<li><strong>Average Cost Items</strong> — The analysis must be performed in accordance with the item's cost level setting.</li>
+</ul>
+
+<p><strong>Cost Level Rules for Average Cost Items</strong></p>
+<div class="table-wrap"><table>
+<thead><tr><th>Cost Level</th><th>Required Analysis Approach</th></tr></thead>
+<tbody>
+<tr><td><strong>Cost Level 2</strong></td><td>The location and lot filter fields at the top of the item ledger screen must be populated with <strong>"*"</strong> (wildcard). The analysis must include all locations and lots together — individual location or lot filtering is not valid at this cost level.</td></tr>
+<tr><td><strong>Cost Level 3</strong></td><td>A specific location and lot may be specified in the filter. Analysis can be performed at the individual location and lot level.</td></tr>
+</tbody></table></div>
+
+<div class="callout important"><p><strong>Important:</strong> If a Cost Level 2 item is analyzed by filtering to a specific location or lot, an apparent discrepancy may be identified that is actually offset by transactions in another location. This is not a true variance — it is a result of analyzing the data at the wrong level.</p></div>
+
+<h3 id="section-3-4"><span class="num">3.4</span>Summary of the Three Common Errors</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Error</th><th>Root Cause</th><th>Corrective Action</th></tr></thead>
+<tbody>
+<tr><td><strong>Memo Transactions Included</strong></td><td>Transactions flagged with "X" in ILIPCD are included in the summary total</td><td>Identify and remove all memo transactions before totaling the grid</td></tr>
+<tr><td><strong>Alternate UOM Not Converted</strong></td><td>Transactions in non-primary units of measure are included without conversion</td><td>Convert all non-primary UOM transactions to primary UOM, or use the "Quantity in Primary" column if available</td></tr>
+<tr><td><strong>Incorrect Cost Level for Average Cost Items</strong></td><td>Average cost items analyzed at the wrong level produce misleading variance results</td><td>For Cost Level 2 items, use a wildcard (*) for location and lot filters; for Cost Level 3, individual filtering is valid</td></tr>
+</tbody></table></div>
+
+<h2 id="section-4">Section 4: Real-World Example — Weighted Average Cost Calculation Error</h2>
+<p>This section documents a weighted average cost calculation error identified during a cardex analysis. Understanding this type of error helps analysts recognize similar patterns in their own data.</p>
+
+<h3 id="section-4-1"><span class="num">4.1</span>The Situation</h3>
+<p>During a routine review of item transaction history for a customer, the following observations were made when reviewing cardex data exported to Excel, covering the complete transaction history from mid-2020 to mid-2021:</p>
+<ul>
+<li><strong>Stock Status:</strong> 700 EA on hand</li>
+<li><strong>Stated Value:</strong> $390.74</li>
+<li><strong>Issue Identified:</strong> The unit cost on receipt document <strong>4058804 (OV transaction)</strong> had increased, but the unit costs on subsequent IT (intercompany transfer) transactions did not reflect the updated cost — they were still processed at the old unit cost.</li>
+</ul>
+
+<h3 id="section-4-2"><span class="num">4.2</span>Expected Behavior</h3>
+<p>In a weighted average cost scenario, a receipt processed at a cost different from the current running average should trigger an update to the weighted average unit cost. All subsequent transactions should then reflect the updated cost.</p>
+<p>In this case, the transfers were processed at the <strong>old cost</strong>, indicating the weighted average was not recalculated at the time of the receipt.</p>
+
+<h3 id="section-4-3"><span class="num">4.3</span>Calculating the Impact</h3>
+<p>Taking the stock status quantities and calculating the implied unit cost produces a value of <strong>$0.5582</strong>, confirmed by checking the cost revisions screen in JD Edwards.</p>
+<p>Summarizing the extended cost column in the cardex export produces a total of <strong>$426.58</strong>, not the stated value of $390.74. This represents a <strong>dollar variance of $35.84</strong> between the item ledger and the general ledger — a direct reconciling item.</p>
+
+<h3 id="section-4-4"><span class="num">4.4</span>Potential Root Causes</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Theory</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td><strong>Cost Level Configuration</strong></td><td>Weighted average cost items under lot control should have their cost level set to <strong>3</strong>. If incorrectly set to <strong>2</strong>, the weighted average may not update correctly upon receipt.</td></tr>
+<tr><td><strong>Third-Party Scanning Script</strong></td><td>Receipts at this facility were processed using a barcode gun. A similar issue was previously identified where the script used by the scanning device neglected to update the cost properly. The customer was using the same provider and had not updated the scanning software for an extended period, making this a likely contributing factor.</td></tr>
+</tbody></table></div>
+
+<h3 id="section-4-5"><span class="num">4.5</span>How to Identify This Type of Error</h3>
+<p>Symptoms to watch for:</p>
+<ul>
+<li>A unit cost that does not appear to reflect recent receipts</li>
+<li>A discrepancy between the summarized extended cost in the cardex and the stated item value</li>
+<li>Subsequent transactions processed at a cost that predates a receipt with a different cost</li>
+</ul>
+<p><strong>Recommended steps when these symptoms are observed:</strong></p>
+<ol>
+<li>Perform a full cardex export and review the unit cost progression across all transactions.</li>
+<li>Check the <strong>cost level setting</strong> for lot-controlled weighted average items — it should be <strong>3</strong>.</li>
+<li>Verify that any third-party scanning or receiving software is processing cost updates correctly.</li>
+<li>Document the transaction details and engage your JD Edwards support team to investigate the root cause.</li>
+<li>Once identified, the corrective action will typically involve a <strong>cost restatement</strong> and an <strong>offsetting journal entry</strong> to clear the dollar variance from the general ledger.</li>
+</ol>
+
+<h2 id="section-5">Section 5: Global Item Update — A Critical Warning</h2>
+
+<h3 id="section-5-1"><span class="num">5.1</span>Overview</h3>
+<p>Global Item Update in JD Edwards is a feature that transfers changes made to the second item number (LITM) or third item number in the Item Master table (F4101) to all other inventory tables that contain the same information. While this is useful for maintaining item number consistency across tables, it carries a significant and permanent risk to the item ledger.</p>
+
+<h3 id="section-5-2"><span class="num">5.2</span>The Problem — Creation Date Override</h3>
+<p>When Global Item Update is run following a change to the second or third item number, program <strong>R41803</strong> updates the item ledger records for the affected item. As a side effect, the <strong>Creation Date field (ILCRDJ)</strong> in F4111 is overwritten with the date the change was made — for <strong>every record</strong> in the item ledger for that item.</p>
+<p>Since the creation date is the most reliable indicator of when a transaction was originally entered into the system, this overwrite effectively destroys the transaction date history for the item. There is no alternative date field in F4111 that can be used once ILCRDJ has been overwritten, and the original dates cannot be recovered.</p>
+
+<div class="callout important"><p><strong>Critical:</strong> In environments with large transaction volumes, a single item number change can overwrite thousands of item ledger records. This is an irreversible action.</p></div>
+
+<h3 id="section-5-3"><span class="num">5.3</span>Impact Summary</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Area</th><th>Impact</th></tr></thead>
+<tbody>
+<tr><td><strong>Transaction dating</strong></td><td>All historical creation dates for the item are replaced with the date of the item number change</td></tr>
+<tr><td><strong>RapidReconciler period logic</strong></td><td>RapidReconciler uses ILCRDJ for period assignment — overwritten dates may cause incorrect historical period assignments</td></tr>
+<tr><td><strong>Audit and compliance</strong></td><td>Transaction timestamps required for audit or regulatory purposes may be permanently lost</td></tr>
+<tr><td><strong>History reconstruction</strong></td><td>Original transaction entry dates cannot be reconstructed after Global Item Update is run</td></tr>
+</tbody></table></div>
+
+<h3 id="section-5-4"><span class="num">5.4</span>Precautions Before Running Global Item Update</h3>
+<p>Before changing a second or third item number and running Global Item Update, take the following steps:</p>
+<ol>
+<li><strong>Evaluate necessity</strong> — Confirm the change is truly required and the business benefit outweighs the permanent loss of transaction date history.</li>
+<li><strong>Export and archive the item ledger</strong> — Before running the update, export the complete item ledger history for the affected item and save it. This preserves a record of the original creation dates even though F4111 itself cannot be restored.</li>
+<li><strong>Assess the scope</strong> — Determine how many item ledger records exist for the item before proceeding. Large transaction volumes amplify the impact.</li>
+<li><strong>Notify stakeholders</strong> — Inform reconciliation teams, cost accountants, auditors, and any teams using RapidReconciler before making the change, as it may affect period-end reporting, reconciliation accuracy, and historical analysis.</li>
+<li><strong>Consider the alternative</strong> — In some cases it may be preferable to leave the item number inconsistency in place rather than risk the creation date override. Evaluate whether the item number discrepancy has any operational impact before proceeding.</li>
+</ol>
+
+<h2 id="section-6">Section 6: Best Practices for Item Ledger Integrity</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Topic</th><th>Best Practice</th></tr></thead>
+<tbody>
+<tr><td><strong>Memo transactions</strong></td><td>Always exclude ILIPCD = "X" records from any cardex analysis</td></tr>
+<tr><td><strong>F41112 reliability</strong></td><td>Do not treat the Item ASOF table (F41112) as a source of truth — summarize F4111 directly with appropriate ILIPCD and UOM filtering. F41112 is known to miss transactions, double-count certain document types, and produce corrupted period totals after upgrades. See Section 1.6.</td></tr>
+<tr><td><strong>Unit of measure</strong></td><td>Always verify the UOM column before totaling; convert non-primary UOM quantities before comparing</td></tr>
+<tr><td><strong>Average cost analysis level</strong></td><td>Match the analysis level to the item's cost level setting — wildcard for Cost Level 2, specific lot/location for Cost Level 3</td></tr>
+<tr><td><strong>Weighted average cost</strong></td><td>Do not allow on-hand quantities to go negative; verify cost level is set to 3 for lot-controlled items</td></tr>
+<tr><td><strong>Third-party integrations</strong></td><td>Periodically verify that scanning and receiving software is correctly triggering cost updates in JD Edwards</td></tr>
+<tr><td><strong>Purging</strong></td><td>Never purge the item ledger without leaving a balance forward record to maintain continuity</td></tr>
+<tr><td><strong>UOM changes</strong></td><td>Follow the recommended procedure when changing the primary unit of measure — see the UOM Reference Guide</td></tr>
+<tr><td><strong>DMAAI tracing</strong></td><td>Use RapidReconciler Transaction Detail Report to identify which DMAIs were used for a transaction when standard JDE tools cannot provide this</td></tr>
+<tr><td><strong>Quantity integrity</strong></td><td>Run R41544 (Item Balance/Ledger Integrity Report) regularly to identify variances between F41021 and F4111</td></tr>
+<tr><td><strong>Quantity correction</strong></td><td>Use R41995 (Repost — Update On-Hand Inventory) to correct F41021 quantity without creating item ledger or GL records — do not use SQL</td></tr>
+<tr><td><strong>Global Item Update</strong></td><td>Export and archive the full item ledger before running Global Item Update — creation dates (ILCRDJ) will be permanently overwritten and original dates cannot be recovered</td></tr>
+<tr><td><strong>Period-end analysis</strong></td><td>Run cardex analysis before period-end close to identify and resolve integrity issues before they become reconciling items</td></tr>
+</tbody></table></div>
+
+<h2 id="section-7">Section 7: How RapidReconciler Helps</h2>
+<p>Analyzing the item ledger manually in JD Edwards is time-consuming, technically demanding, and prone to the errors described in this guide. RapidReconciler by GSI is purpose-built to eliminate these challenges by automating the reconciliation process and surfacing item ledger issues in a clear, actionable interface.</p>
+
+<h3 id="section-7-1"><span class="num">7.1</span>Continuous Reconciliation vs. Point-in-Time Analysis</h3>
+<p>The manual cardex analysis process produces a snapshot at a single point in time. If a transaction posts after the analysis is run, the work must be repeated. RapidReconciler updates automatically with each nightly import cycle, providing a <strong>continuous, up-to-date view</strong> of inventory value against the general ledger without requiring manual intervention.</p>
+
+<h3 id="section-7-2"><span class="num">7.2</span>Posting Code Filtering — Handled Automatically</h3>
+<p>One of the most common analyst errors — including memo transactions (ILIPCD = "X") in the summary — is handled automatically by RapidReconciler. The application excludes non-posting transactions from all reconciliation calculations, eliminating the risk of false variances caused by this error.</p>
+
+<h3 id="section-7-3"><span class="num">7.3</span>Unit of Measure Handling</h3>
+<p>RapidReconciler reads quantity data directly from the JD Edwards tables and applies the correct unit of measure conversions automatically. Analysts do not need to manually identify non-primary UOM transactions or apply conversion factors before comparing totals — the application handles this consistently for every item and every transaction.</p>
+
+<h3 id="section-7-4"><span class="num">7.4</span>Cost Level Awareness for Average Cost Items</h3>
+<p>RapidReconciler respects the cost level configuration for each item, ensuring that average cost items are analyzed at the correct level (Cost Level 2 or Cost Level 3) without requiring the analyst to manually set wildcard filters or manage analysis boundaries. This eliminates the third common analyst error entirely.</p>
+
+<h3 id="section-7-5"><span class="num">7.5</span>Weighted Average Cost Variance Detection</h3>
+<p>The type of weighted average cost error described in Section 4 — where a receipt fails to trigger a cost update and subsequent transactions are processed at the old cost — can persist undetected for months in a manual reconciliation environment. RapidReconciler surfaces dollar variances between the item ledger and the general ledger automatically, allowing these issues to be identified and investigated as they occur rather than at period end.</p>
+
+<h3 id="section-7-6"><span class="num">7.6</span>DMAAI Traceability</h3>
+<p>As noted in Section 1.4, JD Edwards does not store DMAAI information in the item ledger. The <strong>RapidReconciler Transaction Detail Report</strong> bridges this gap by combining item ledger data with the applicable DMAAI configuration at the time of each transaction. This allows analysts to quickly determine which GL accounts were impacted by a transaction and whether the correct DMAAI entries were used — without manually cross-referencing multiple JD Edwards screens.</p>
+
+<h3 id="section-7-7"><span class="num">7.7</span>Drill-Down from Variance to Transaction</h3>
+<p>When a reconciling item is identified, RapidReconciler allows users to drill down directly from the variance to the underlying JD Edwards transactions. This eliminates the need to navigate between multiple JD Edwards applications — Item Ledger, Account Ledger, Cost Revisions, and DMAAI — to trace the source of a discrepancy. The full transaction context is available in a single view.</p>
+
+<h3 id="section-7-8"><span class="num">7.8</span>Summary of RapidReconciler Benefits for Cardex Analysis</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Manual JDE Approach</th><th>RapidReconciler</th></tr></thead>
+<tbody>
+<tr><td>Point-in-time snapshot; must be repeated each period</td><td>Continuous reconciliation updated each import cycle</td></tr>
+<tr><td>Memo transactions (ILIPCD = "X") must be manually excluded</td><td>Excluded automatically</td></tr>
+<tr><td>Non-primary UOM transactions must be manually converted</td><td>Handled automatically</td></tr>
+<tr><td>Average cost level must be manually configured per analysis</td><td>Respected automatically per item cost level setting</td></tr>
+<tr><td>Weighted average cost errors may go undetected for months</td><td>Surfaced automatically as dollar variances</td></tr>
+<tr><td>DMAAI information not available in F4111</td><td>Transaction Detail Report combines item ledger with DMAAI context</td></tr>
+<tr><td>Tracing variances requires navigating multiple JDE applications</td><td>Single drill-down from variance to underlying transaction</td></tr>
+</tbody></table></div>
+
+<div class="callout note"><p>For more information on RapidReconciler, contact <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a>.</p></div>
+
+<h2 id="section-8">Section 8: Related Documentation</h2>
+<ul>
+<li>DMAAI Reference Guide</li>
+<li>Product Costing Reference Guide</li>
+<li>GL Class Code Management and Change Procedures</li>
+<li>UOM Reference Guide</li>
+</ul>
+</article>
 </div>
 
-<!-- ============ FOOTER ============ -->
-<footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand-block">
-        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAFUAmMDASIAAhEBAxEB/8QAHQABAAEFAQEBAAAAAAAAAAAAAAYEBQcICQMCAf/EAFoQAAEDAwEFBAUDDAwLCAMAAAEAAgMEBREGBxIhMUEIE1FhFCJxgZEyQqEJFRgjUlZilbHB0dI4RlNygoSFkrTCxOEWJDdDVXWTlLKz0xclM1RXY6LwNHPD/8QAHAEBAAIDAQEBAAAAAAAAAAAAAAQFAQMGAgcI/8QANBEBAAIBAgMDCgYDAQEAAAAAAAECAwQRBSExEkFRBhMUIjJhcaGx8DNSgZHB0RUjQuHx/9oADAMBAAIRAxEAPwDctERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBEXhU1tHTf8A5FVDF5PeAVmImeUMTMRzl7orVJqOysOHVzT+9Y4/kC+RqayE49OH+yf+hbPMZfyz+zV6Rh/PH7wu6Kip7vbJyBFX05J5AvAPwKrQQRkHIWu1Zr1hsretvZncREWHoREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERARF8zSRwxOlle1jGjLnE4ACHR9Kw3nU9DQl0UH+NTjgQ0+q32n9Cj+pNSzVxdTURdFTci7k6T9A8lHVaafQb+tk/ZTarie09nF+/8AS7XHUN0rSQ6oMMZ+ZF6o+PMq1EknJOSVVWy31VxqO4pY9483E8GtHiSpGzRMhjy+4sD/AAEWR8c/mU22XDg9Xor64dRqfWiJlEUVzvVlrbU4GdofEThsjOR8vIq2LfW9bxvWeSPelqT2bRtIquhuVdQuBpaqSMD5oOW/A8FSIk1i0bSxW01neJ2TG06xBIjuUIb072MflH6PgpXTTw1MLZoJWyRu5OachYjVdaLpV2uo7ynf6pPrxn5Lvb+lQM+grbnj5Ss9NxO9Z2yc4+bKSKgsl1prrS97Cd17eEkZ5tP6PNV6qLVms7T1XtL1vWLVnkIiLy9CIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIoXrHanoXSkr6e636B1Ww4dTUwM0rT4ODc7p/fYUDm7TGi2yubFZr/IwHg4xRDPu7xTMXD9VmjtUpMwiZdfpsU9m94iWcEWJdPdoPZ5dZWxVM9faXuO6DWU/q5/fMLgB5nCyja7jQXWijrrZW09bSyDLJoJA9jvYRwWrNpc2Cf8AZWYbMOpw543x2iVSeAyVj/V18dcJzS0z/wDFIzzH+cPj7PBS/UcNZUWieKhcBK4YI6ub1A8ysYua5ri1wLXA4IIwQVM4firMzeesK/ime9YjHHSfvZ+Ii+omPlkbHG0ve44a0DJJVso2RtH0cdLY4HNA35h3j3eOeX0K8KisUE9NaKanqd3vY2YODy8B8FWrms1u1kmfe67BXs46xttyeFfSxVlHLSzDLJG4Pl4FYoe0se5jubTgrKd3rordQS1UrgN0eqPundAsVuJc4uPEk5Ks+Gxbs28FRxaa9qvi/ERFZqgREQVNsrZ7fWMqad2HN5jo4eB8lky018NyoWVUB4O4Ob1aeoKxUr3o+6G33IRSOxTzkNfnk09CoOt0/nK9qOsLDQaqcV+xbpLIqIio3RiIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiD5lkjiifLK9scbGlznOOA0DmSegWqe3DblcL1Vz2LR9XJRWlhLJayM7stV47p5tZ7OJ68OCnPa41tNZ9PU2krfKWVF1aX1bmni2nBxu/w3ZHsa4dVqmus4Fwulq+kZY38I/n+nLcc4nelvR8U7eM/wIiLrHKikmgdb6i0TdW11jrnxtJ+3UzyTDMPBzeXv5joVG0XjJjrkrNbxvEvePJbHaLUnaYb3bJ9odn2g2H02hIp66EBtZROdl8Lj1H3TT0d+QghXDVen21zXVlG0NqgPWbyEg/StGNH6ku+k7/T3uyVRp6qE+1sjerHjq09R7xggFbr7Jtodo2g2AVtERT18IDa2ic7LoXeI8WHo78hBC4riXDcnD8nnsPsfT3T7nY8P4hj4hj8zm9r6++PeirYpXTCFsbjKXboZjjnwwp/pawMtsYqKgB9W4e0RjwHn5q6Nt9G24OrxA0VDm7pf+f2+aoNTXyK1Q93Huvq3j1GdGjxKgZdVfUbY8cdfv8AZKw6PHpd8uSd9un34mpr5Faoe7j3X1bx6jOjR4lRpmsLq2PdMdK4/dFhz9BwrDUTS1Ez5pnufI85c48yV5qbi0WOldrRvKvzcQy3vvWdoVdzuVZcZRJVzF+Pkt5Nb7AqREUqtYrG0IVrTad7TvIiIvTAiIgIiIMm6XrTX2WGVxzIwd2/2j+7B96uaiGzl8uKuMsd3PqkOxwDuo+GFL1zmppFMsxDqtJknJhraRERaEkREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERBpP2mbjLcNsl5a9xMdIIqaIeDWxtJ/8Ak5x96xssg9oymlpds2oWyNI7yWOVpI5tdEwjHxx7lj5fTdBERpce35Y+j5vr5mdVk3/NP1ERFLRBERAV30fqS76Tv9Pe7JVGnqoT7WyN6seOrT1HvGCAVaEXm9K3rNbRvEvVbWpaLVnaYb3bJtodo2g2AVtERT18IDa2ic7LoXeI8WHo78hBCuOrNPiva6spGgVQHrN6SAfnWi+j9SXfSd/p73ZKo09VCfa2RvVjx1aeo94wQCt19k20O0bQbAK2iIp6+EBtbROdl0LvEeLD0d+QghcTxLhuTh+Tz2H2Pp7p9zsuH8Qx8Qx+Zze19ffHvRNzXNcWuBa4HBBGCCvxT3Ven21zXVlG0NqgPWbyEg/SoG5rmuLXAtcDggjBBXvBnrmrvCHqdNbT22no/ERFvRxERAREQFdNPWae7VOBllOw/bJMcvIeaaes092qcDLKdh+2SY5eQ81kSCKkttDuM3IKeFpJJOAAOZJ/OoOr1fm/Up7Sx0Wi8769/Z+pTw0tuodxm5BTwtJJccAAcySfyr1hlimibLDIySNwy17HAgjyIWAdrW0SS/yvs9nkdHamOxJIOBqSP6vgOvMqKaV1bfdMziS11rmxZy+nk9aJ/tb+cYKlYvJrUZcHnLW2vPdP8z4qnUeW+j0+q8xWvapHLtR4+6O+P1+DaxFD9nuvbXq2HuABSXJjcyUznZ3h1LD1H0hTBc/n0+TT3nHljaYdhpdXh1eKM2C3arPeIiLSkCIiAiiu0vaDpXZ3ZPrrqe5NpmvyIIGDfmncPmsYOJ9vIdSFp/tQ7Vetr/UTUukWR6btpOGSBokq3jzectbnhwaMj7orfh02TL7McmrJmpj6t4bjcKC2wGouNdTUcI/zk8rY2/EkBQ+p2wbLKd+5JtA04T/7dex4+LSQua15vF2vVWay83SuuVSeBmq6h0r/AOc4kqhU6vDY/wCrIs62e6HTSLbJsqkeGN1/p8E/dVjWj4ngpZZb5Zb3AKizXe33KEjIkpKlkzceOWkhcn1UW6urbdVsrLfWVFHUx8WTQSmN7fY4HIS3DY7rEa2e+HWhFoZsq7UWudMTw0eqHf4T2oEBxnIbVRt4cWyfO6nD858Qtzdm+u9M7QdPMvemLg2qgzuzRuG7LA/7iRvNp+g8wSOKg5tNfD7XRKx5q5OiTIiLQ2iKz6y1NY9H6dqr/qGvjorfTNy+R3Eknk1oHFzj0A4rS/a52p9XainlodFh+m7VxaJuDqyUeJdxEfsbxH3RW/Dp75p9VqyZq4+rdu73e02emdVXe6UVvgaC50tVO2JgA5klxAUTqNsOyyB+6/aBpwn8CuY8fFpK5pXW43C61r626V9VXVT/AJc1TM6R7va5xJKpVOrw2O+yLOtnuh05pdruy6pOI9oGmm8cfbLjHH/xEKW2642+5Qd/bq+lrIvu4JmyN+IJXJlVVruNwtVW2stdfVUNS0YbNTTOjeP4TSCluGx3WI1s98OsyLQDZ12n9pGmJY4bxUx6nt7cB0Vd6swGPmzNGc8uLg9bc7Htsui9ptP3dnq3Ul1Y0ultlWQ2doHNzcHD2+beWRkDkoWbS5MXOY5JOPPTJyhkZWjUeqNM6b7j/CLUVos3pG93Hp9bHB3u7je3d8jexvNzjlkeKu61H+qLftE/lD+zLzgxxlyRSXrLfsUmzYr/ALUNmn/qJpH8dU/66f8Aahs0/wDUTSP46p/11y9RWP8Ajq/mQ/TbeDrLZrpbL1bYrlZ7jR3Ghmz3VTSTNlifglp3XNJBwQQcHmCFVrEfY6/Y46W/jn9MnWXFV5K9i818E6lu1WJERF4ehERAREQEREBERAREQEREBERAREQEREBERARFbNU3226asFZfLtOIaOkj33u6noGgdXEkADxKzWs2mKx1li1orG89HxqzUdm0rZpbvfa6OkpY+GXcXPd0a0c3OPgFrBtH7QupL1NJSaVa6x2/kJSA6pkHiXcQz2N4j7pQHanr68a/1C643B5ipYyW0dI0+pAz87jwy7r7AAIiu34bwLHhrF88dq3h3R/bjOI8byZbTTBO1fHvn+nvX1lZcKp9XX1c9XUSHL5ZpC97vaTxK8EWUNiOyKv2gSvuFbPJb7FA/cfO1oMkz+rIweHDq48B4Hji5z58Wmxze87RCnwYMmpydikbzLF6Lc+LYFsyZSdy6z1UkmMd86ul3/bgODfoWFtuGxGfRlC6/wCn6ievszCBOyXBmpsng4kABzM8M4BGRnPNV2m45pdRkjHG8TPTdYangmpwY5yTtMR4f/GGURFcKgREQFM9i8OsJdf0J0UXMuTTl73Z7lsWRvd7+B4jnnGOOFaND6VvGsdQQWWy05lnk4veeDIWdXvPQD+4ZJW7Gy3QVn0Bp9tutzRLUyYdV1bm4fO/8zRxw3p5kkmm4vxLHpcc49t7T3f2uOE8OyanJGTfasd/9JZHv7je83d/A3t3lnyUd1Xp9tc11ZRtDaoD1m8hIP0rBXab7RjtK1x0poKogmvEMg9Pri0SR02DkxNB4OeeTujRkfK+TkvYBtfs21PTveR93R32lYPT6De4tPLvGZ4lhPw5HoTxNK5cMRlh2eSMWffFZbXNc1xa4FrgcEEYIK/FPdV6fbXNdWUbQ2qA9ZvISD9Kgbmua4tcC1wOCCMEFXWDPXNXeHOanTW09tp6PxERb0cV009Zp7tU4GWU7D9skxy8h5pp6zT3apwMsp2H7ZJjl5DzWRIIqS20O4zcgp4Wkkk4AA5kn86g6vV+b9SntLHRaLzvr39n6vqipYKOmZT08YZGwYAH5fasb7f2ajdYYzbzm0DjWtjzv5zwLvwPz8+itGodsT4dVRNtNO2e0QOLZi4YdUeLmn5uOnj18srWW526/wBojrqGVlTSTtwQR8WuHQ9CFrrp9TwzJj1OWm8Tz5/z4T3wxfV6LjeHNotPl2mOXL6x417p/wDYlqKi2Sbsq0V6TNNJbpZBK8uEZqHtbHno0NI4e3Kjms9jtA+jkqdMySw1LG5FNK/eZJ5Bx4g+0kezmurxeUuiyXis7xv3zHL6vn+o8iOJ4cc3js227omd/nEfVhahq6mhrIqyjmfBUQuD45GHBaQtlNlusYtW2TM24y5U2G1MY4A+DwPA/QfctZ5o5IZnwyscyRji17XDBaRwIKveg9QS6Z1PS3RhJia7cqGD58R+UPzjzAUjjHDa67BM19uOk/x+qH5N8bvwrVRF5/12na0eHv8AjH0bWIvmGRk0TJYnB7HtDmuHIg8ivpfNH2/qLH+3bahadlujnXasa2puNQTFbqLewZ5McSfBjc5cfYOZCns8sUEEk80jY4o2l73uOA1oGSSfBc09v+0Op2k7SK+994/62wuNPbIjkBlO0nddg8nO+UfM46BStLg89fn0hoz5fN15dUb11qy/a21LU6g1HXvrK6c4yeDY2DkxjeTWjPADzPMkqxIivYiIjaFVMzM7yIs/7CuzRftc0MF/1NVS2GxzAPgaGA1NUw/OaDwY09HOBz0aQQVs3prs77I7HBuN0pDcJSAHTXCV87nY64J3R7mhRMutx4526pFNLe8b9HOVF0hv2wHZHeKTuJdGUVKRxbJROfA9p8csIz7CCFrTt27MV30fQ1GoNG1M97s8IL6imkaPSqZg+dw4SNHUgAjwIyQxa7Hedp5F9Lesbxza6KV7LNe37Z1qyn1BYagtc0htRTuP2upizxjePA9DzB4hRRZg2R9nnXuvhFXSU31gszyD6bXRkOkb4xxcHP8Aad1p8VIy2pWvr9GnHFpt6vVvbs11laNe6NodT2V5NPVM9eNxG/DIPlRux1B+PAjgQpGSACScAcyoLsZ2XWDZZYJ7VY6ivqXVUglqpqqbe7x4GMhgw1nDhwGSAMk4C9du14qLDsc1XdKR7o6iK2TNie3mx727jXDzBcD7lz01ib7V6LiJmK72aQ9qLanVbRtfVEFHVOOnLXK6C3xNd6kpBw6c45l3Q9G4884iRF0WOkUrFYU17Ted5EWa+yVsptG03V1xfqF8jrTaIY5JqaJ5Y6ofIXBjS4cQ31XE4IPLiFulSbKNmFNA2GPZ7pZzWjAMtqhkd73OaSfeVGzaymK3Z23lvxaa2Sva3cwkXSrUOwzZNfIHRVOh7TTZ5PoY/RXDzHdFqwbtM7IIbHLW7Pr69zhlwt9zI48eTJmgewBzfa5Ypr8Vp2nkzbSXjpzajqfbBdE6i1ztHt9v07U1NA+nkFRUXGElpo42ni8EfO6NHUkdMkWKs0Tqyj1lFo6qsFdDfpZRFFROjw97icAtPItOD6wO7gE5wuhewLZhbdl2iY7VDuT3Sq3ZrnVgf+LLj5I/AbxDR7TzJXrVaiMdOXWWMGGb259IZBgjMUEcRkfKWNDS9+N52BzOOGStSvqi37RP5Q/sy24Wo/1Rb9on8of2ZVmi/Hr+v0TdT+FLUdERXypdFOx1+xx0t/HP6ZOsuLEfY6/Y46W/jn9MnWXFzmf8W3xlc4vYr8BERamwREQEREBERAREQEREBERAREQEREBERAREQFq32v8AWUlZfqXRlHN/i1C1tRWBp+VM4eq0/vWnP8PyW0hIAyTgBc9dbXh1/wBX3e9Oe54rayWZpPRpcd0e4YHuXQeTumjLqJyT/wAx85+5UPlBqZxaeMcf9fSPuFoREXcOKFvtsft9NbNl2mqWkbGIzbYZSWcnPkYHud73OJ960JW2XZf2j2666XpNIXOrjgu1A3uqZsjsekQj5Ib4uaOGOeAD4rnvKPDkyaetq9Inn/a/8nstKZ7Vt1mOX9M3qlvFDTXS01dtrWNfTVUL4ZWuGQWuBB/KqpeNdTiroZ6UySRCaN0ZfGcObkYyPMZXE1nad3ZzG8bOciKZ7Wdnl32fX80dYDPQTEmjrGtw2VvgfBw6j8yhi+p4stM1IvSd4l8xy4r4bzS8bTAr5ofSt41jqCCy2WnMs8nF7zwZCzq956Af3DJKaH0reNY6ggstlpzLPJxe88GQs6veegH9wySt2NlugrPoDT7bdbmiWpkw6rq3Nw+d/wCZo44b08ySTWcV4rTRU7Ned56R4e+VlwvhdtZbtW5Uj5+6DZboKz6A0+23W5olqZMOq6tzcPnf+Zo44b08ySTgztW9oFtjbVaG0NWB11IMdxuMTuFIORjjP7p4u+byHrfJdq3tAtsbarQ2hqwOupBjuNxidwpByMcZ/dPF3zeQ9b5OmDnOc4ucS5xOSSeJK5PBgvmv57Nzmfm67JkrhrGLFG2w5znOLnEucTkkniSrto/Ul50lqKkv9grZKOvpX70cjeRHVrhyLSOBB5q0IrKYiY2lCiZid4dI9gG1+zbU9O95H3dHfaVg9PoN7i08u8ZniWE/DkehMq1Xp9tc11ZRtDaoD1m8hIP0rmTo/Ul50lqKkv8AYK2Sjr6V+9HI3kR1a4ci0jgQea6GbANr9m2p6d7yPu6O+0rB6fQb3Fp5d4zPEsJ+HI9CanNhvpr+cx9E6tqamnm8nVbXNc1xa4FrgcEEYIKuenrNPdqnAyynYftkmOXkPNS+/abp7nUsqGP7iTI70gfLH6fNXWCKkttDuM3IKeFpJJOAAOZJ/Ot2TiETSOx1n5IOLhkxknzk+rHzIIqS20O4zcgp4Wkkk4AA5kn86wNta2iSX+V9ns8jo7Ux2JJBwNSR/V8B15lNrW0SS/yvs9nkdHamOxJIOBqSP6vgOvMrG66LgnBPNbajUR63dHh759/0+PTh/Kjyo89vo9HPqdJmO/3R7vr8OpZ07N0LW6cudQHO3n1YYRngA1gPL+EVgtZC2Kaxp9OXaaguUnd0FcW/bTyikHJx8jnBPs81accwZM+ivXHG88p/aVF5K6vDpeJ475p2id438N45Nh0XzG9kkbZI3texwy1zTkEeIKodQXm3WG2SXC51LYIWDhn5Tz0a0dSV80rS17RWsbzL7dfJTHSb3naI72ve22khpNotf3A3RM1kzgOjnNGfiePvUKVz1XeJr/qKtvE7dx1TJvBv3LQAGj3NACti+saPHbFp6Uv1iIif2fn3iefHqNZly4/ZtaZj4TLZXYrczc9n1CHvDpKQupXY6bvyR/NLVNFijs2yk2C6wdGVTX/FmP6qyuvm3F8UYtbkrHj9eb7b5P57Z+GYL269mI/bl/DEfa71O/TGwu8up5Wx1VzLLbCSefeE95jz7tsi51rcv6obcRFpbSdp3uNTXT1GMHj3TGt//r9K00UrQV2xb+Lbq7b5NvAWc+x5svp9e66lu97pu+sVj3JZI3g7tROT9rjPQtGC5w8mg8HLBi6A9iO0U9u2CW+uiYBLdaypqpndSWyGEfREOH6V71mSceLl38nnTUi+Tmze0BoDWgADgAOiIsd9oXaBX7NNnjtTW6gpq6ZtXFB3U5cG4fnJ4cc8FR1rNpiIWkzFY3lkRDxGCtLPsx9WfehZP9rL+lPsx9WfehZP9rL+lSfQs3g0ek4vFsZpzYjs3sWr63VNLp+Ga41NQZ2ekHfjpnHie6Z8lvHJzgkZ4EDgsjrSz7MfVn3oWT/ay/pT7MfVn3oWT/ay/pWbaTUW6x82I1GGOkt01Au0RQTXLYfrClga50n1rllDWjJPdjfIA9jVjTs5doC+bUNez6cuNht1BDHb5KoS073lxLXsbj1jjHrn4LYWaKOaF8MzGyRyNLXtcMhwPAgrRalsN4i3VurauSvJySRZH7QWzG4bMtdVFvdFI+zVT3S2upIO6+LPyCfu2ZAPuPULHC6Gl4vWLQp7Vms7SnmxTajfdlmppLvaIoqunqYxFWUcxIZOwHI4j5LhxweOMngcrbjSHau2Z3aFgvX1y0/UHAc2enM0efJ8eSR5loWhaLRm0uPLO89W3HqL442jo6j6b2jaC1G9sdk1hZK2VwyIY6xne/zCQ76FKRxGQuR6luj9pevtIlg09qy60UTG7rYO/MkAH/6n5Z9CiX4b+WyRXW/mh04qLZbqi5UtznoaaWtpA9tPUPjBkiDhhwa7mAeqq1p7sy7XtdFNFRbQbLFUQkhpuFubuPaOAy+InDupJaW+TStrNJaksWrLJDetO3OnuNBN8mWF2cHq1w5tcOoOCFBy4L4vahKx5a39mV2Wo/1Rb9on8of2ZbcLUf6ot+0T+UP7Mtmi/Hr+v0eNT+FLUdERXypdFOx1+xx0t/HP6ZOsuLEfY6/Y46W/jn9MnWXFzmf8W3xlc4vYr8BERamwREQEREBERAREQEREBERAREQEREBERAREQUt4MgtNYYhmQQP3fbunC50LpA9rXsLHDLXDBHiFzw1Ra32TUtzs8geHUVXLT+uOJ3XEA+/GV1fkxaN8le/l/Ll/KWs7Y7d3P+FuREXWuUF+tc5jg5ri1wOQQcEFfiIJRDtE15DRGij1hfGw4xj01+QPAOzke4rKPZ/21T2epj03rGtkntsz8U9fM8udTOJ+S9x4mMnqfk+zlgZFC1HD9PnxzS1Yjfw+qZg1+fBki8WmdvH6OhGrdO2bV+nprPeKdlTR1DctcD6zD817HdCOh/MtRtRbE9X2/aBDpihpnVkFWS+mr90iLugeLnn5pbkZHmMZyFOuyptFvktxi0NXU1TcqERudS1DRvOo2gfJeT/m+g6gkAZBAGzC5GM+p4Nlthid4n7iXWzg03F8VcsxtMfcwiWy3QVn0Bp9tutzRLUyYdV1bm4fO/8AM0ccN6eZJJwZ2re0C2xtqtDaGrA66kGO43GJ3CkHIxxn908XfN5D1vku1b2gW2NtVobQ1YHXUgx3G4xO4Ug5GOM/uni75vIet8nTBznOcXOJc4nJJPElR8GC+a/ns3OZ+aXkyVw1jFijbYc5znFziXOJySTxJX4iKzQREWy3ZG2E23WdEdb6xgdPaI5jHQUW9htU5hw58mOO4DwDc8SDngMHXly1xV7VnvHjnJbaGtKzN2TtBay1PtDpb7p2uqLLb7VMHVlza3hjmYGg8HucOBByADk9Ad+LfYLFbqBlvoLLbqSkY3dbBDTMZGB4boGF62y3WuyW80tsoaS3UbHPkMVPE2KMFxLnOw0AZJJJKrcnEO1WaxVNppOzaJmVaoftasV4v+lX0tnq3RyMdvyU4wBUtHzM9D1HQ9fEar7fO0zerjqunotnVwkobTbKgSelhvGvkaeoP+a/BPyuZ6AbF7ANr9m2p6d7yPu6O+0rB6fQb3Fp5d4zPEsJ+HI9CdWKubSWrniOnP8A+mpph1uK+ntM7Wjbly/b7+TAssckUr4pWOjkY4texwwWkcwR0K+VsDta2dx3+J94s8bY7sxuZIxwFSB08n+B68j0IwBLHJFK+KVjo5GOLXscMFpHMEdCvo3DeJYtfi7dOUx1jw/8fEuNcFz8Jz+byc6z0numP78Y/h8oiKwUy62nUd/tUfdW68V1NHj/AMNkzgz+byVJc7lcLnP39xrqmskHJ00peR7M8lSotcYscW7cVjfx2branNanm7Xma+G87fsIiLY0s6dm6Et07dKjBw+rDPL1WA/1llVRHZBanWnQFuilZuy1DTUyDGD65yP/AI7qly+WcVyxm1mS8dN/pyffOAae2n4bhx269mPnz/lqh9USo5H2vRlwB+1wz1kLhjq9sJH/ACytPlvx25bBJd9ibrjC0l9nr4ap2G5JjdmJ3uzI0n96tB1M0Ft8O3g96uNsm4uiXY5rRWdnnTjS/ffTuqYX8OWKiQgfzS1c7VtZ2B9fU9FXXPZ7cJ2xmtkNdbt443pQ0CWMeZa1rgPwXJrqTbFvHcaS0Vyc+9uIsEduj/ITJ/rOn/rLO6xl2ltB3raNszfpuwy0cdY6sin3qqRzGbrc54hpOePgqjDMVyVmfFY5ImaTEObiLYP7Ebah/wCf0x/vkv8A0k+xG2of+f0x/vkv/SV56Vh/MqvMZPBr4i97hSyUVfUUUxaZKeV0Ty05GWkg48uC8Fv6tTYPsEf5a6z/AFHP/wA2Fb2rRLsEf5a6z/Uc/wDzYVvaqTX/AIy00n4axa60jp7W2n5rFqW2xV1FJxAdwdG7HB7HDi1wzzH5Fp9tS7JuqrPLLWaGq2agoM5bSzPbFVsHhxwx/tBafwVurdLhQ2qglr7nWU9FSQgGSeeQMjYCQBlx4DiQFUtIcA5pBB4gjqtOHUZMXstmTFXJ1co9R6dv+m6z0PUFluFqnJIDKundEXY5kbwGRy4jxVrXWqtpKWtp3U1bTQ1MLvlRzRh7T7QeCx3qPYPskvrMVWibbSuzkOoA6kIPsiLQfeCp1OIx/wBVRbaKf+Zc2UW6Wsex7pmrZJLpTUtxtkxOWw1jG1EQ8gRuuHtJctXdqmzfVWzW9x2vU9GyPv2l1NUwP34KhoxksdgHhkZBAIyOHEZmYtTjy8qzzR8mC+PnMIesg7CtqF42X6whudLJNPapnhlyoQ71Z4+pAPAPbzafHgeBKx8i23pF47NujXW01neHWe1V9HdbXS3O3zsqKOrhZPBKw5a9jgC1w8iCFqh9UW/aJ/KH9mWVOxndZrpsBszJ5HSPoZp6QOdz3WyEtHua4D3LFf1Rb9on8of2ZU2mr2NTFfDf+Vlnt2sO/wAGo6Iiu1W6Kdjr9jjpb+Of0ydZcWI+x1+xx0t/HP6ZOsuLnM/4tvjK5xexX4CIi1NgiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgLUztcaQfadZxaopoj6Hd2hspA4NqGDBH8JoB8yHLbNWLXul7drHS1ZYLm37VUN9SQDLopB8l7fMH4jI6qw4ZrPQ9RGTu6T8EHiOjjV4Jx9/WPi59or7rrSt30bqOosl4gMc0RzHIB6kzM8HtPUH6OIPEKxL6NS9clYtWd4l88vS2O01tG0wIiL08ivmh9K3jWOoILLZacyzycXvPBkLOr3noB/cMkpofSt41jqCCy2WnMs8nF7zwZCzq956Af3DJK3Y2W6Cs+gNPtt1uaJamTDqurc3D53/AJmjjhvTzJJNRxXitNFTs153npHh75W3C+F21lu1blSPn7oNlugrPoDT7bdbmiWpkw6rq3Nw+d/5mjjhvTzJJODO1b2gW2NtVobQ1YHXUgx3G4xO4Ug5GOM/uni75vIet8l2re0C2xtqtDaGrA66kGO43GJ3CkHIxxn908XfN5D1vk6YOc5zi5xLnE5JJ4krk8GC+a/ns3OZ+brsmSuGsYsUbbDnOc4ucS5xOSSeJK/ERWaCIiIC6Wdmp1G7YRo80RZ3QtzA7dPDvAT3nv395c01sT2T9vFLoKN2kNWvkGn5pTLTVbGl5opHfKDmjiY3Hjw4g5ODk4h63FbJj9XuSdLkilufe3nQ8BkqPW7XWirjbvrhRatsU9IBkytr4t1vt9bh71gTtJ9o6wUenKzS+gbjHdLpWxOhmuFO7MFLG4YcWPHy3kcAW8BnOcjCqMeG+S3ZiFjfJWkbzLT/AFc+ifqy8PtpYaJ1dOaYs+T3feO3ceWML70fqS86S1FSX+wVslHX0r96ORvIjq1w5FpHAg81aEXQ9mNtpU2877w6R7ANr9m2p6d7yPu6O+0rB6fQb3Fp5d4zPEsJ+HI9CfXa1s7jv8T7xZ42x3ZjcyRjgKkDp5P8D15HoRzu0fqS86S1FSX+wVslHX0r96ORvIjq1w5FpHAg810M2AbX7NtT073kfd0d9pWD0+g3uLTy7xmeJYT8OR6E1/8At4fljNhn78J9zdqNPg4ngnT6iN9/vePf99GBZY5IpXxSsdHIxxa9jhgtI5gjoV8rYHa1s7jv8T7xZ42x3ZjcyRjgKkDp5P8AA9eR6EYAljkilfFKx0cjHFr2OGC0jmCOhXe8N4li1+Lt05THWPD/AMfG+NcFz8Jz+byc6z0numP78Y/h8oiKwUwpLs101JqfVNPRFhNJEe9qndBGDy9p5e/yVmstsrrxcobdboHT1MzsNaPpJPQDxWzGzvSdLpKxNo4y2Wrlw+qmA+W7wH4I6e89VS8a4pXRYZrWfXt093v/AK97qPJfgV+JamMl4/1Vnn7/AHf37v0SRrQ1oa0ANAwABwC/URfNn2tbtUWai1Fpy5WG4sL6O4U0lNMAcHde0tJHgePBcutdabuGj9YXTTN0bu1duqHQvOMB45tePJzSHDyIXVZa/drvYvJru0N1Xpun39R26LdkgYONbAOO7+/bxLfEEjj6uJuizxjttbpKNqcXbrvHWGiCqLZXVlsuNPcbfUSU1XTStlhmjdh0b2nIcD4grxlY+KR0UrHMewlrmuGC0jmCPFfKu+qs6N59hHaa07qWhp7Prmpgsl8YAz0qQ7tLVn7re5Ru8Q7A8DxwNhaeeGpgZPTzRzRPGWPjcHNcPEEc1yTV0smo9Q2Nr2WW/XS2Ned54o6uSEOPLJ3SMquy8Prad6TsmU1kxG1o3dXFjbahtu2faApZRcLzDX3Jo9S3ULxLMXeDsHDPa4j3rnrctZavudM6muWqr7WwPaWuiqLhLI0g8wQ5xGFYl5pw6N/Wlm2s5erCqu1X6fdauu7vu/SZ3y7mc7u84nGevNUqIrOI2Qp5tg+wR/lrrP8AUc//ADYVvatRewls41BQ3ap2iXGL0O2VNC+koo5GkSVO89jjIB0YNzAPXPDgMrKPa62mV2z3Z8yms0czLtenPpoKoMO5TMA9d+9y38HDRnPEu+aqXVR53P2arLBPm8W9mCu2ltc/wlvx0FYKous9rlzXSxu9WpqW8N3hzazl5uyfmgq1bBe0nfdCU0Nh1PDUX6wRjdhIePSqVvgwu4PaOjXEY6EAYWAkVlGmx+b83MIU579vtw6g7Ptpmh9eUrZdM6ho6qYty6lc7u6hnQ70TsO9+MHoSpeuSMb3xva9jnNe0gtc04IPiFMrHtY2l2VoZbtc36OMYxHJWPlYMeDXkge4KFfh0/8AMpNdZH/UOni1K7fmsNP1dss2jaSeKqvFNWGsqe7Id6Mzu3NDHHo5xcDu+DMnGRnAF82x7Ub1TejV+ur2Yj8psNQYA4ceB7vdyOPIqCyPfI9z3uc57iS5zjkk+JWzT6Gcd4taejzm1UXr2aw+URXTSVgueqdS2/T1mg7+vr52wwt44yebjjk0DJJ6AEqwmYiN5Q4jflDfHsT0MlHsBtczw4emVdTO3Ph3hZ/UWMvqi37RP5Q/sy2h0XYaTS+krVpyhyae20kdMxx5u3WgFx8yck+1avfVFv2ifyh/ZlS6a3b1Pa8d/wCVnmr2cG3wajoiK7Vbop2Ov2OOlv45/TJ1lxYj7HX7HHS38c/pk6y4ucz/AItvjK5xexX4CIi1NgiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiIIxtF0NYNd2U269U/rsyaepjwJYHHq0+HLIPArU/aRsX1ho+WWoipH3i1tOW1dIwuLR+Gzm328R5rddFZ6DiufR8q86+E/x4K7XcLwaznblbxhzeV80PpW8ax1BBZbLTmWeTi954MhZ1e89AP7hklbwaj0DovUMj5bxpq21Uzxh03chkp/htw76V66K0XpnRlNPT6btcdEyofvynfc97iOQLnEuwOgz1PirzJ5TUnFPYpMW+X3+ikx+TdoyR27xNfmotlugrPoDT7bdbmiWpkw6rq3Nw+d/5mjjhvTzJJODO1b2gW2NtVobQ1YHXUgx3G4xO4Ug5GOM/uni75vIet8nZi5UkdfQT0Usk0cc8Zje6GV0bwCMHdc0gtPmCCOixK7szbG3OLnaZqHOJySbnU5J/nrmqZq3yTkz7zLpZxTTHFMW0Q55Oc5zi5xLnE5JJ4kr8XQ37GTY197E/wCMqn9dPsZNjX3sT/jKp/XU/wDyGLwn7/VE9Dv4w55Iuhv2Mmxr72J/xlU/rp9jJsa+9if8ZVP66f5HF4T9/qeh38Yc8kXQ37GTY197E/4yqf10+xk2NfexP+Mqn9dP8ji8J+/1PQ7+MOeSLob9jJsa+9if8ZVP66fYybGvvYn/ABlU/rp/kcXhP3+p6HfxhzyRdDfsZNjX3sT/AIyqf10+xk2NfexP+Mqn9dP8ji8J+/1PQ7+MOeSLob9jJsa+9if8ZVP66fYybGvvYn/GVT+un+RxeE/f6nod/GHPJXfR+pLzpLUVJf7BWyUdfSv3o5G8iOrXDkWkcCDzW+32Mmxr72J/xlU/rp9jJsa+9if8ZVP66xPEMUxtMT9/qRpMkTvEwu2wDa/Ztqene8j7ujvtKwen0G9xaeXeMzxLCfhyPQn12tbO47/E+8WeNsd2Y3MkY4CpA6eT/A9eR6EeOktg+zTSl/pr7p60VtBcKZ2Y5o7lUH2ggvw4HqCCCsnKJh1dtLnjLp52+P0+D3rOH4tfp5wamN4n5e+PCfvo04ljkilfFKx0cjHFr2OGC0jmCOhUr0ds+1FqR7JIqV1HRHnVVDS1uPwRzd7uHmFsS7T1ifdXXV9pon1zsZndCC7IGM5PXHVXNdDqPKq9qbYabT4zz/aPv4OK0fkDjpk7Wpydqu/KIjbePfP9fujuiNHWjSdEYqCMyVEg+3VMg9d/l5DyH0qRIi5XLmvmvN8k7zLvtPp8WnxxixVitY6RAiItbcIiIMEdoLs6WXaDLNf9PSQ2bUjgS9xbinrD07wAZa78Me8O4Y0s1/oLV2hLk6h1RZKqgdvbscxbvQzebJB6ruXQ58cLqUqe40NFcqOSiuNHT1lLKMSQzxCRjx4FpBBUzBrb4o2nnCPl01b845S5LouhmruzRsm1A+SaOyz2Wd/OS2VBiA9jHbzB7mqC1fY30s6TNJrC8xM8JYIpD8Ru/kU+uvxT15Ik6TJHRpai3Oh7G2mxIDNrS7PZ1DaWNpPvyfyKW6Y7Kuyq0PbJXQXW+PDg4em1e6weW7EGZHkcpOvxR0I0mSWjGmdPX3U10jten7TWXOskIAipoi8gE4y7HBrePFxwB1K202E9lents0F+2lGCtqG4fFZ4zvQsP/vO5P8A3o9XxLhwWyunNP2LTlAKCwWegtdKDnuqSBsTSfE7o4nzKuahZtde8bV5Qk4tLWvOeb8jYyONscbGsY0ANa0YAA5ABWzVWnrLqmxVNjv9uguFvqW4khlbkeRB5hw5gjiDyV0RQYnbmlNINs3ZY1HYZ57poMyX21E7wojj0uAeA6SjzGHeR5rXWupKqhq5aOuppqWpiduyQzRlj2HwLTxBXWlR/V+idI6uhEWptO226bowx9RADIwfgv8AlN9xCsMXELV5XjdDyaSs868nK9FvrqHsnbLLi7ft5vVmPRtNWd4z3iVrz9KjE3Y202ZCYdaXZjOgdSxuI9+R+RS41+GWidJkaYotzoextpsSAza0uz2dQ2ljaT78n8ilumOyrsqtD2yV0F1vjw4OHptXusHluxBmR5HKTr8UdCNJklpBovSWo9ZXhlp0zaKq5VTiMiJnqxg/Oe7kweZIC3s7Nmw2h2X0LrrdJYbhqeqj3JZ2D7XTMPExx54njzdwzjkBzyvp2w2TTtubbrDaaK10bTkQ0sDY258cAcT5q4qBqNZbLHZjlCVh09cfOeci1H+qLftE/lD+zLbhY620bH9M7V/rT/hFXXel+tffdx6BLGze73c3t7fY7P8A4bcYxzPNatNkjHli1ujZmpN6TWHNRFvN9h9s0/05q7/e6f8A6CfYfbNP9Oau/wB7p/8AoK19PwoHomRLux1+xx0t/HP6ZOsuKO7NdH2zQOirfpOzz1k9DQ953UlW9rpTvyOkO8WtaObzjAHDCkSpstotebR3ysqRNaxEiIi8PQiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIitxv1jBIN5twI5j0pn6UFxRW36/2L/TVt/3pn6VcY3skY2SNzXscAWuacgg9Qg/UREBERAREQEREBERAREQEREBEXzLJHFG6WV7WMYMuc44AHiSg+kXjR1VNWU4qKSeOeJ3J8bg4H3heyAiIgIiICIiAip566ip6iOnnrKeKaU4jjfIGufxxwB4niqhAREQERUYutuN0+tfpkXpu7vdzn1sYz8ccceCCsREQEREBERAREQERUVVd7TSzugqrnRQStxvMkna1wyMjIJQVqK2/X+xf6atv+9M/Sqykqqash76kqIaiPON+J4c3PhkIPZERARFTwV1FUVElPBWU8s0RxJGyQOczjjiBxHFBUIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiD8cN5pbkjIxkcwsZ7QNMWOx2IVNJHMKiSZsbN6UkdSeHsCyasd7V3urbxZ7NG71pHbxA/DcGtP0OWYYlU2DQtknsVHVV0c3fyQtkkPeloGRn3Koq9f2ekl9EoaWprGQjd34gAzA4cPEeeFW7SJn0WjKltMNwO3IuHzWkgH6OHvXrs9oaWj0rRPp2N354xJK8c3OPifLl7kFTpnUdt1BE91E57ZI8d5FIMObnr4EexU+otW26x3OGhrGTF0jA8vYAQxpJHHjnoeSjemBC/apc329oFM1jw/c+Tn1Qf/llfdBHHedq9bNKxskNAzDQ4ZAc3Df8AiLj7kN1wo9oVomuApZ6eppGOPqyzAAeRIzwC+H7RrQ2sbGaWs9HccCcsABHiBnOPp8lQ6vhiu20q02xzGvZExrpQRnIyXlp8sAfFem1rdnNntMLWiSaY7uB8kcGgew5+hBN6qspaWifW1E7I6djd8yE8MKHy7SLWJXd1b62SBpwZQAPoyqba24x0tntrZDHTSSO3z4bu6Bn2BxUzbTW+32c0/dxRUMURDmkeru4458UCy3SivFA2toZe8iccEEYLT1BHQqxXHXVooLnV0M8VTv02QXNaCHuGPVHHnx6+BVo2Pl0VDdqgktpBI3cz0IDi76C1fuyqljrqq6X2oha+WSoIjc4ZLCcudjz9YJsbpA/VVJFpaPUE1NOyGR26yLhvn1iPZ0JVPaNa2663Wlt1FT1L5J2lznEANjw0kg8eJ4K17W5HVAtNniPr1NRvew8Gj/iPwUukihtVkmbQwsjbTwOdGxo4ZDSUFo1DrS1WirNEGzVdUODo4QCGnwJ8fIZX7pvWVsvVX6E1k1LVcd2OYD1scwCOvkrNsgpYJKGsukhbLWvnLHPdxc0YB+kk+3Cp9biKTaLZY6ID0sPjMxZzA38jPuyfYglt11BTW++UVplgmdLWY3HtxujJxx4r51VqSh09DC+rZLK+ZxDI48ZwOZ4nly+Kjm0pzafU+m6x5a1rZ8uLjgANew8firLeYpdTUt71JJvimpmtiogR0DwSfhn3u8k2N2RrreKS22V11qN7uQxrg0fKdvYwB58VbblWMvmipqhlsrpGVTMMgYWiQ8cB3XAzx68Oih76iTVlVYtPwPJpaemjkq3t+6DBvfAcPa4rKMUbIomxRtDWMaGtaOQA5BOgiFmdTaF0lH9dXuM80pkMUfrEvIHqjpwAGTyX7Br+gFRHHX26voWSfIkkj9X2+OPZlVOvdPTX6KldRVMcVZSFz42vPBwOM+z5IwrPR6iutLdaSzautcT+9kb3U+6D62fVdwyDxxyxhBPwQRkclS3a4UtroJK6tk7uGMcTjJJPAADxVUrLrKzi+2V1vbUNhlLw+Iu5FwzwPuysMrK3aFQjclmtVxipXnDZiwYP0/kKlTbhROtguXpDBSGPvO9dwG748VAHXjUGmqeK3aktsNbbCBC17QDloHLwPDoQCcKs2u1Tm6foIKfLaeeTeO6MAgNy0ezjnHkssbveo2j2tsrhBQ1s8LTgygAD24P58KT2G8UN6oRV0EhczO65rhhzD4EL9t1FQW2zspIWxNpI4vWJA3XDHFx8c8yoZslDfTb3NTgtozI3u88sZeR8BhB9VH/em16Jnyo7fECfc3P/ABPHwUmqdRUsOp4LAIZn1Erd7fbjdbwJ48c8hlRrZiPT77fL24E97JusPk5xcR8A1fmlP+89pd4uJ4spw6Nh88hgPwaUEo1Tf6XT9FHU1Ucsokk7trY8Z5E54nlw+lW3W+p4rRbGw91MKqsp391u4+1HAAJ4+J6eCtO0PFy1dYrKDvN3w+QeTnDP0NPxVXteqjFp2Gkb8qpnAx4hoJ/LuoPHZVe/S6aS2SmrnqWb00k0r95uMgBoJOf/AKVWaefYrrrC4V9JRTitpSWPme71CeLMtGeoB9yvbA2yaXGcYoqPj5lrP7lE9msctHo66XUAumkMj2nmXbjeH07yC86h1parRVmiDJquqacOZCBhp8CT18hlfWm9ZWy9VfoTWTUtVx3Y5gPWxzwR18lZ9kFJTvt1XdH4krJJyxz3cXNGAfpJJ8+CptZiKXaRZo6ED0tr4zMW+Adnj7G592EEu1TqCk09SRVFVFLKJZNxrY8Z5E54nl+lWKq2jWqGQd3RVk0OcGUNAGfLJ4qk1+Bc9aWOzEb0YIkkb0Ic7j9DD8VcdqUkFJox1MyNjGyyxxxta0ANwd7gOnBv0oJDDdaGWzi7icNozH3m+4ch1yPHphRg7QqHjKy1XF9I12DOGDH5cfSq+lsrajZ/T2aWYwOlpmDe+5eSHY8+PRRqOs1ToyjZTV9FBXWph3Q5p4AE8s8xz+cEGQLTcKW6UEddRSF8Mmd0lpB4HBGD5qqVHZJqWptFLPQxCKmkia6NgaBujHLA8FWLDIolq3S9jfBcb3VxzumETpXYlIBIbwH0AKWqK7VKv0XSMsYOHVMjIh8d4/Q1IYlGNnmk7debNLW3GOUkzFke68t4ADj8SfgpDU6gsGkImWWjinqZIySYozvFpJz6xPXjyVfpOF1r0JTOazMjaV0+McSXAvx9OFYdkFNBNTV11lxLWvnLC93FwGASfeSfgsi9ad1na7xWCh7uakqjndZMBh3kCOvkVdb9eKCyURq6+UsYTuta0Zc8+AChWvhFJryyR0YHpu+wylo4gb43c+wZPsX7q4Mue0q12ysOaVjWncJ4OJy4/HACbC40e0S1SygVFJV0sTs7krmgtPtx/eqbZJG6aK63eX5dTUbuT0xlx/4h8FetoksFNo2sD44yHNbHG0gYBJAGPYMn3KxRtltGyBz48tlmi3iR4SPAz/NIQV9x2g2qnrX01JTVNduHDpIgN33ePtVRQa4tVfcaKho4qmSSqH3IHdnjkO49MZ4ZX7szoqWm0pTTwNaZagF8rxzJyRj3cvirJpyKGu2q3OshjY2KlD8boAG/gMJ9p9YoJQ3UdKdUu086GZtQG7wecbjvV3uHHPL8i9tTX2jsFA2rqw9++8MZGzG84+/wCiesC23bSbLcXODI5Wtjc4nAHEtJJ8MOC+Lex2tNYuuErSbRbjuxNI4SHp8TxPlgJsbp3bqk1lDDVGCSDvWB4jkxvNB5ZwqhEWGRERAREQEREBERAREQEREBERAREQEREBERAREQFGqzTD6rWcN/lrGmKEDdg7vjwaccc/dHPJSVEFNdKGmuVBNQ1bN+GVu64dfIjzB4qFx6HvVLG+joNTTQ0TifUw4EA8+AOPyZU9RDZZ9LaeotP0ToKbMkkhzLM4es89PYB4Km0lpx9lq7hVz1bamaseHEhm7u8ST1PMn6FIUQR6h04+HWNVqCarbL3zC1kQZgs4NA458Bj3pdNOPr9WUV6kq2iKkaA2Dc4kgk5znxI6dFIUQWnVNhpNQW8UtS50bmO3o5W82H848lGDoe8zwMoazU0slA3H2sNccgchgnH5cKeom5stX1khp9NS2W2u9GY+F0bXkbxBcMFx8TxX5pKzCw2ZlB3omcHue94bu7xJ8PZgK7Igj1004+v1ZRXqSraIqRoDYNziSCTnOfEjp0UgcA5pa4AgjBB6r9RBB5dDVtFWyz6fvktBFL8qI54eWQeIGeGRkeKueldJQWaqfcKmqkrrg/OZnj5OeeOJOT4k/BSVFndjZHdb6adqOCmjZVimdA5xyWb2QQPMeCq3WKBmlH2GncI2GnMQeW59Y83Ee3iruiwyjuidLx6chn3pxUTzOGZAzdw0chjJ65/wDoUiREEY1Hpaor7sLvbbvUUNYGBnMlpA6DjwHiOI8l4W7SNZJeYLpfru64SU5BhYGbrQRxB+PHgFLkWd2NhWDVmnPr46nnhuFRRVVNkxPYSWjPlkYPmD8Vf0WGUJdo263GaBt/v76ylhdvCJjMbx8z+fiVI9RWSjvdqNBUgsaCHRvZzjcOAI/QrmiGyBDQ97fTtt82p5XUA4d2Gu4t8MZx7uSlNHZae3WCS1W09xvRuaJHDJLyMb58Sroibmyy6NsQ09aXUXfid75TI54bu5yAOXsCsE2h6+C8z11nvj6Jk7i5wDTvAE5I4HiPapyibsbIhY9Fm3ambeJLlJV7oOBK3Ly4twSXZ8yqzXOmTqOCm7uqFPNTlxaS3IIdjP5ApGibs7I4bBcJNIS2WouzpqiXgamRpdhuQccTk8Bj3q5aetbLTY6e2bwlETSHO3cBxJJPD3q4ogg0mhq2irZptP3yWhil5xEHh5ZB446ZHBXTSmkqezVL6+oqX11wkzmZ45Z544nifElSVFndjZHmacf/AIav1FNVteAzdih3MFnq7vPPt+Kaz07JqFtHF6WIIYHl72lmd/OPMY4Z+KkKLDOyzaqsEd9oY6f0qalfC7fidGeAd0y3r+ZWCbR19romUd11NJPRNcCWBnrOx4k/nzhThE3Nkc1Vpk3Wx0tqoqr0OKnc3DSCWuaBgA+xXy3U5pLfT0pldMYYmx947m7Axkr3RAUd1tpybUcVLCytbTRwuc5wMe9vE4A6jGOPxUiRB8xxsZE2JrQGNaGgeShM+h6ukr5ajT96lt8c3yosHA8sg8R4ZHDxU4RBGdLaRhtFY65VdVJX3B+ftzx8nPPGcnPmvzWekmX6eGtp6s0lZCA0P3chwByOXEEHqpOibmyA12hLpcadguGo5aiVjvV32lzGjHQE8zw4qYVVrpaqym0zNJpzCIsDgQABgjzGAVXIhsgdv0NdaJz6aHUs8NA92XsiBa5w+OAfNXfRWmRpqOsfLVtndOWkv3N0NDc+Z8SpKvOphjqaaSnmaXRysLHgOIyCMHiOIWd2NmONpFXRaguFstlolZWVYe4b0TssAdjhkezJ8MKd2C1QWezw2+n5Mb67wOLnHm7/AO+S8bJpyzWaV01BRiOVwwXucXOx4Ak8PcrsgjWjNMz2CetmnuDqp1S4Y9UjkT6xyeJOVJURYZEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQf//Z" alt="GSI" />
-        <p class="footer-tag">Tomorrow&rsquo;s solutions. Today. RapidReconciler is part of the GSI suite of enterprise solutions for JD Edwards.</p>
-        <a href="mailto:rrsupport@getgsi.com" class="footer-cta">Contact Support &rarr;</a>
-      </div>
-      <div class="footer-col">
-        <h4>Modules</h4>
-        <a href="rapidreconciler-university.html#getting-started">Getting Started</a>
-        <a href="rapidreconciler-university.html#inventory">Inventory</a>
-        <a href="rapidreconciler-university.html#in-transit">In Transit</a>
-        <a href="rapidreconciler-university.html#po-receipts">PO Receipts</a>
-        <a href="rapidreconciler-university.html#reference">Reference</a>
-      </div>
-      <div class="footer-col">
-        <h4>Resources</h4>
-        <a href="#">Release notes</a>
-        <a href="#">Submit a ticket</a>
-        <a href="#">Training videos</a>
-        <a href="#">FAQs</a>
-      </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <a href="https://www.getgsi.com" target="_blank">getgsi.com</a>
-        <a href="mailto:rrsupport@getgsi.com">Email support</a>
-        <a href="#">Privacy policy</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>&copy; 2026 GSI &middot; RapidReconciler University</span>
-      <span>Knowledge Base &middot; v7</span>
-    </div>
-  </div>
+<footer class="gsi-footer">
+<div class="footer-deco" aria-hidden="true"></div>
+<div class="footer-inner">
+<div class="footer-brand"><img src="../Images/gsi-logo.png" alt="GSI" />
+<p>RapidReconciler is a GSI product that automates JD Edwards inventory, in-transit, and PO receipts reconciliation.</p>
+<p style="font-size:12px;color:#7a8aa3;margin:0">Tomorrow's solutions. Today.</p></div>
+<div class="footer-col"><h4>University</h4><ul>
+<li><a href="index.html">Home</a></li><li><a href="index.html#inventory">Inventory</a></li><li><a href="index.html#in-transit">In Transit</a></li><li><a href="index.html#po-receipts">PO Receipts</a></li><li><a href="index.html#reference">Reference</a></li></ul></div>
+<div class="footer-col"><h4>Product</h4><ul>
+<li><a href="getting-started-with-rapidreconciler.html">Getting Started</a></li><li><a href="complex-password.html">Account &amp; Security</a></li><li><a href="administrator-walkthrough.html">Administrator Guide</a></li></ul></div>
+<div class="footer-col"><h4>Support</h4><ul>
+<li><a href="mailto:support@getgsi.com">Contact Support</a></li><li><a href="https://www.getgsi.com">getgsi.com</a></li></ul></div>
+</div>
+<div class="footer-bottom"><span>© 2026 GSI, Inc. All rights reserved.</span><span>RapidReconciler University · JD Edwards Reconciliation</span></div>
 </footer>
-
-</body>
-</html>
+</body></html>
