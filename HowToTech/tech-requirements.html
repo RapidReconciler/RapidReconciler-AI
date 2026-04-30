@@ -3,570 +3,1581 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Technical Requirements — RapidReconciler</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>RapidReconciler — Technical Requirements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* GSI RAPIDRECONCILER — DOCUMENT TEMPLATE v1.0 */
-:root {
-  --navy:      #1e3a5f;
-  --blue:      #1a56a0;
-  --blue-mid:  #2b5ea7;
-  --blue-lt:   #dce8f7;
-  --blue-pale: #f0f5ff;
-  --orange:    #f07820;
-  --orange-lt: #fef0e0;
-  --rule:      #d0e4f7;
-  --text:      #1e3a5f;
-  --muted:     #5a7a9a;
-  --white:     #ffffff;
-  --amber-lt:  #fffbeb;
-  --amber:     #d97706;
-  --red-lt:    #fff5f5;
-  --red:       #c0392b;
-  --green-lt:  #f0faf4;
-  --green:     #1a7a4a;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'DM Sans',sans-serif; font-weight:300; background:#e8edf5; color:var(--text); padding:48px 24px 80px; min-height:100vh; line-height:1.7; }
-.page { max-width:860px; margin:0 auto; background:var(--white); box-shadow:0 8px 48px rgba(30,58,95,0.12); }
+  :root {
+    --blue: #4d77b4;
+    --blue-dark: #3d5f93;
+    --yellow: #f5cb35;
+    --yellow-dark: #e0b820;
+    --beige: #e0d8c3;
+    --paper: #ffffff;
+    --ink: #333333;
+    --ink-soft: #555555;
+    --muted: #888888;
+    --rule: #e0e0e0;
+    --link: #4d77b4;
+    --table-border: #d6d2c4;
+    --warning-bg: #fdf6e3;
+    --tip-bg: #f0f4ec;
+    --tip-border: #6b8e4e;
+    --code-bg: #f4f1e8;
+    --important-bg: #fbe9e3;
+    --important-border: #c75a3a;
+  }
 
-/* MASTHEAD */
-.masthead { background:var(--navy); padding:32px 48px 0; position:relative; overflow:hidden; }
-.masthead::after { content:''; position:absolute; top:-80px; right:-80px; width:300px; height:300px; border-radius:50%; background:rgba(255,255,255,0.03); pointer-events:none; }
-.masthead-logo { display:flex; align-items:center; gap:10px; margin-bottom:28px; position:relative; z-index:1; }
-.logo-gsi { font-family:'DM Sans',sans-serif; font-weight:600; font-size:20px; color:#fff; letter-spacing:0.02em; }
-.logo-pipe { width:1px; height:28px; background:rgba(255,255,255,0.2); }
-.logo-rr { display:flex; flex-direction:column; gap:1px; }
-.logo-rr-name { font-family:'DM Sans',sans-serif; font-weight:600; font-size:16px; color:#fff; letter-spacing:0.01em; line-height:1; }
-.logo-rr-tag { font-size:9px; font-weight:400; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.4); line-height:1; }
-.logo-orange-line { width:52px; height:2px; background:var(--orange); border-radius:1px; margin-top:4px; }
-.masthead-meta { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; position:relative; z-index:1; }
-.masthead-title-block { flex:1; }
-.doc-type { font-size:10px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--orange); margin-bottom:8px; }
-.masthead h1 { font-family:'Instrument Serif',serif; font-size:28px; font-weight:400; color:#fff; line-height:1.2; margin-bottom:10px; }
-.masthead-summary { font-size:12.5px; color:rgba(255,255,255,0.65); line-height:1.65; max-width:480px; padding-bottom:28px; }
-.masthead-attrs { display:flex; flex-direction:column; gap:10px; flex-shrink:0; padding-bottom:28px; }
-.attr { text-align:right; }
-.attr-label { font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:rgba(255,255,255,0.35); display:block; margin-bottom:1px; }
-.attr-value { font-family:'DM Mono',monospace; font-size:11px; color:rgba(255,255,255,0.75); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
 
-/* TOC STRIP */
-.toc-strip { background:var(--blue-mid); padding:0 48px; display:flex; gap:0; overflow-x:auto; border-top:1px solid rgba(255,255,255,0.08); }
-.toc-item { font-size:10px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.55); padding:10px 16px 10px 0; text-decoration:none; white-space:nowrap; border-bottom:2px solid transparent; transition:color 0.15s,border-color 0.15s; }
-.toc-item:hover { color:rgba(255,255,255,0.9); border-bottom-color:var(--orange); }
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: var(--beige);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
 
-/* CONTENT */
-.content { padding:0 48px 48px; }
-.section { padding-top:40px; }
-.section-label { font-size:9px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--orange); margin-bottom:4px; display:flex; align-items:center; gap:8px; }
-.section-label::after { content:''; flex:1; height:1px; background:var(--rule); }
-h2 { font-family:'Instrument Serif',serif; font-size:22px; font-weight:400; color:var(--navy); margin-bottom:14px; line-height:1.2; }
-h3 { font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:var(--navy); margin:22px 0 8px; letter-spacing:0.01em; }
-p { font-size:13px; color:var(--muted); line-height:1.75; margin-bottom:12px; }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
 
-/* TABLES */
-.tbl-wrap { overflow-x:auto; margin:10px 0 4px; }
-table { width:100%; border-collapse:collapse; font-size:12px; }
-thead tr { background:var(--navy); }
-thead th { font-family:'DM Mono',monospace; font-size:9px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.7); padding:9px 14px; text-align:left; }
-tbody tr { border-bottom:1px solid var(--rule); }
-tbody tr:last-child { border-bottom:none; }
-tbody tr:hover { background:var(--blue-pale); }
-tbody td { padding:10px 14px; font-size:12px; color:var(--muted); vertical-align:top; line-height:1.5; }
-tbody td:first-child { font-family:'DM Mono',monospace; font-size:11px; color:var(--navy); font-weight:500; }
-table.plain-first tbody td:first-child { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; }
+  /* ==================== HEADER ==================== */
+  .blue-header {
+    background: var(--blue);
+    color: white;
+    text-align: center;
+    padding: 36px 20px 30px;
+    border-bottom: 1px solid var(--blue-dark);
+  }
 
-/* CALLOUTS */
-.callout { padding:14px 16px 14px 20px; border-radius:0 4px 4px 0; margin:16px 0; font-size:12.5px; line-height:1.65; position:relative; }
-.callout::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
-.callout-label { font-size:9px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; margin-bottom:4px; display:block; }
-.callout p { margin:0; font-size:12.5px; }
-.callout-note      { background:var(--amber-lt); border:1px solid #fde68a; color:#92400e; }
-.callout-note::before { background:var(--amber); }
-.callout-note .callout-label { color:var(--amber); }
-.callout-important { background:var(--red-lt); border:1px solid #fecaca; color:#7f1d1d; }
-.callout-important::before { background:var(--red); }
-.callout-important .callout-label { color:var(--red); }
-.callout-info      { background:var(--blue-pale); border:1px solid var(--rule); color:var(--navy); }
-.callout-info::before { background:var(--blue); }
-.callout-info .callout-label { color:var(--blue); }
+  .blue-header h1 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
 
-/* NUMBERED PROCESS LIST */
-ol.process-list { list-style:none; counter-reset:step-counter; margin:10px 0; }
-ol.process-list li { counter-increment:step-counter; display:flex; gap:12px; align-items:flex-start; padding:7px 0; border-bottom:1px solid var(--rule); font-size:12.5px; color:var(--muted); line-height:1.55; }
-ol.process-list li:last-child { border-bottom:none; }
-ol.process-list li::before { content:counter(step-counter); width:22px; height:22px; border-radius:50%; background:var(--blue-lt); color:var(--blue); font-family:'DM Mono',monospace; font-size:10px; font-weight:500; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .blue-header .tagline {
+    font-size: 15px;
+    opacity: 0.95;
+  }
 
-/* DARK EXAMPLE BOX */
-.example-box { background:var(--navy); border-radius:4px; padding:14px 16px; margin:10px 0; }
-.example-label { font-size:8.5px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:8px; }
-.example-box table thead th { background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.5); font-size:8.5px; padding:6px 12px; }
-.example-box table tbody tr { border-bottom:1px solid rgba(255,255,255,0.07); }
-.example-box table tbody tr:hover { background:rgba(255,255,255,0.04); }
-.example-box table tbody td { padding:7px 12px; color:rgba(255,255,255,0.75); font-family:'DM Mono',monospace; font-size:11px; }
-.example-box table tbody td:first-child { color:#93c5fd; }
+  /* ==================== YELLOW BAR ==================== */
+  .yellow-bar {
+    background: var(--yellow);
+    border-bottom: 1px solid var(--yellow-dark);
+    padding: 14px 20px;
+  }
 
-/* RELATED DOCS */
-.related-list { list-style:none; display:flex; flex-direction:column; gap:6px; margin-top:8px; }
-.related-list li a { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--blue); text-decoration:none; padding:8px 12px; border:1px solid var(--rule); border-radius:4px; transition:background 0.15s,border-color 0.15s; }
-.related-list li a:hover { background:var(--blue-pale); border-color:var(--blue); }
-.related-list li a::before { content:'↗'; font-size:12px; color:var(--muted); }
+  .yellow-bar-inner {
+    width: 100%;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
 
-/* INLINE CODE */
-code { font-family:'DM Mono',monospace; font-size:11px; background:var(--blue-pale); color:var(--blue); padding:1px 5px; border-radius:3px; border:1px solid var(--rule); }
+  .home-btn {
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(0,0,0,0.18);
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset;
+  }
+  .home-btn:hover { background: rgba(255,255,255,0.85); text-decoration: none; }
 
-/* Fillable form inputs (for customer-recorded values) */
-.fill-input { font-family:'DM Mono',monospace; font-size:11px; color:var(--navy); width:100%; padding:4px 8px; border:none; border-bottom:1px dashed var(--rule); background:transparent; outline:none; transition:border-color 0.15s, background 0.15s; }
-.fill-input:hover { border-bottom-color:var(--blue); }
-.fill-input:focus { border-bottom-color:var(--orange); background:var(--orange-lt); }
-.fill-cell { background:#fafcff; }
-@media print {
-  .fill-input { border-bottom:1px solid var(--navy); background:transparent !important; }
-  .fill-cell { background:transparent !important; }
-}
+  .corner-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.65);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--yellow);
+    font-family: 'Bitter', serif;
+    font-weight: 700;
+    font-size: 13px;
+  }
 
-/* ── EXTENDED COMPONENTS (specific to this document) ── */
+  /* ==================== LAYOUT ==================== */
+  .page-wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 30px 20px 80px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 30px;
+    align-items: start;
+  }
 
-/* Spec row — key/value pair for quick-scan requirement lists */
-.spec-list { list-style:none; margin:8px 0 14px; border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
-.spec-row { display:flex; border-bottom:1px solid var(--rule); font-size:12px; }
-.spec-row:last-child { border-bottom:none; }
-.spec-key { font-family:'DM Mono',monospace; font-size:11px; font-weight:500; color:var(--navy); background:var(--blue-pale); padding:8px 14px; width:200px; flex-shrink:0; display:flex; align-items:center; }
-.spec-val { padding:8px 14px; color:var(--muted); flex:1; display:flex; align-items:center; line-height:1.4; }
+  /* ==================== SIDEBAR ==================== */
+  .sidebar {
+    padding: 8px 0;
+    position: sticky;
+    top: 20px;
+  }
 
-/* Network access two-column panel */
-.net-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:10px 0; }
-.net-panel { border:1px solid var(--rule); border-radius:4px; overflow:hidden; }
-.net-head { background:var(--navy); padding:8px 14px; font-family:'DM Mono',monospace; font-size:9px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.7); }
-.net-body { padding:12px 14px; display:flex; flex-direction:column; gap:8px; }
-.net-item { font-size:11.5px; }
-.net-url  { font-family:'DM Mono',monospace; font-size:11px; color:var(--blue); display:block; margin-bottom:1px; }
-.net-ip   { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
-.net-note { font-size:10px; color:var(--muted); font-style:italic; }
-.net-range { font-family:'DM Mono',monospace; font-size:12px; color:var(--navy); font-weight:500; }
+  .sidebar-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    text-align: right;
+    padding: 6px 14px 6px 0;
+    line-height: 1.3;
+  }
 
-/* Storage estimate callout */
-.storage-card { background:var(--navy); border-radius:4px; padding:16px 20px; margin:12px 0; display:flex; gap:24px; align-items:flex-start; }
-.storage-stat { flex-shrink:0; text-align:center; }
-.storage-num  { font-family:'Instrument Serif',serif; font-size:36px; color:var(--orange); line-height:1; }
-.storage-unit { font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.45); margin-top:2px; }
-.storage-divider { width:1px; background:rgba(255,255,255,0.1); align-self:stretch; flex-shrink:0; }
-.storage-detail { font-size:12px; color:rgba(255,255,255,0.7); line-height:1.65; }
-.storage-detail strong { color:rgba(255,255,255,0.9); font-weight:500; }
+  .sidebar-nav { list-style: none; margin-top: 4px; }
 
-/* Appendix sub-section label */
-.appendix-tag { display:inline-block; font-family:'DM Mono',monospace; font-size:9px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; background:var(--blue-lt); color:var(--blue); padding:3px 8px; border-radius:2px; margin-bottom:10px; }
+  .sidebar-nav li button {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    border-right: 2px solid transparent;
+    text-align: right;
+    padding: 6px 14px 6px 0;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--link);
+    cursor: pointer;
+    line-height: 1.4;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
 
-/* FOOTER */
-.doc-footer { background:var(--navy); padding:16px 48px; display:flex; align-items:center; justify-content:space-between; }
-.footer-brand { display:flex; align-items:center; gap:8px; }
-.footer-name { font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; color:rgba(255,255,255,0.8); }
-.footer-dot { color:var(--orange); }
-.footer-right { font-size:10px; color:rgba(255,255,255,0.35); text-align:right; line-height:1.7; }
-.footer-right a { color:#93c5fd; text-decoration:none; }
+  .sidebar-nav li button:hover { text-decoration: underline; }
 
-@media print { body{background:white;padding:0;} .page{box-shadow:none;} }
+  .sidebar-nav li.active button {
+    color: var(--ink);
+    font-weight: 600;
+    border-right-color: var(--yellow);
+    text-decoration: none;
+  }
+
+  /* ==================== CONTENT CARD ==================== */
+  .content-card {
+    background: var(--paper);
+    padding: 36px 44px 48px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border-radius: 2px;
+    min-height: 600px;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ==================== TYPOGRAPHY ==================== */
+  .content-card h1 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 32px;
+    color: var(--ink);
+    margin-bottom: 18px;
+    line-height: 1.2;
+  }
+
+  .content-card h2 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 24px;
+    color: var(--ink);
+    margin-top: 36px;
+    margin-bottom: 14px;
+    line-height: 1.25;
+  }
+
+  .content-card h3 {
+    font-family: 'Bitter', serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+
+  .content-card h4 {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    margin-top: 18px;
+    margin-bottom: 8px;
+  }
+
+  .content-card p {
+    margin-bottom: 14px;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .content-card p strong { font-weight: 600; }
+
+  .content-card ul,
+  .content-card ol {
+    margin: 12px 0 18px 28px;
+  }
+
+  .content-card li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .content-card code {
+    font-family: 'Source Code Pro', monospace;
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    color: #b04a2e;
+  }
+
+  /* ==================== DIAMOND DIVIDER ==================== */
+  .diamond-divider {
+    display: flex;
+    align-items: center;
+    margin: 28px 0;
+    gap: 12px;
+  }
+  .diamond-divider::before,
+  .diamond-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  .diamond-divider .diamond {
+    width: 8px;
+    height: 8px;
+    background: var(--yellow);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ==================== TABLES ==================== */
+  .content-card table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    border: 1px solid var(--table-border);
+    background: #fffdf6;
+  }
+
+  .content-card thead th {
+    background: var(--paper);
+    font-weight: 700;
+    color: var(--ink);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 2px solid var(--yellow);
+  }
+
+  .content-card td {
+    padding: 10px 14px;
+    border-top: 1px solid var(--table-border);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .content-card tbody tr:hover { background: #fdf6e3; }
+
+  .content-card td:first-child {
+    font-weight: 600;
+    color: var(--link);
+  }
+
+  .doc-table td:first-child a { font-weight: 400; color: var(--link); }
+  .doc-table td:first-child { font-weight: 400; }
+
+  .plain-first td:first-child { color: var(--ink); font-weight: 600; }
+
+  /* ==================== CALLOUTS ==================== */
+  .callout {
+    margin: 22px 0;
+    padding: 14px 18px;
+    border-left: 4px solid var(--yellow);
+    background: var(--warning-bg);
+    border-radius: 2px;
+  }
+
+  .callout-label {
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #8a6d1a;
+    margin-bottom: 4px;
+  }
+
+  .callout p { margin-bottom: 0; font-size: 14.5px; }
+
+  .callout.warning {
+    border-left-color: var(--important-border);
+    background: var(--important-bg);
+  }
+  .callout.warning .callout-label { color: #8a3520; }
+
+  .callout.tip {
+    border-left-color: var(--tip-border);
+    background: var(--tip-bg);
+  }
+  .callout.tip .callout-label { color: #4a6b3a; }
+
+  .callout.info {
+    border-left-color: var(--blue);
+    background: #eef3fa;
+  }
+  .callout.info .callout-label { color: var(--blue-dark); }
+
+  /* ==================== TOPIC FOOTER NAV ==================== */
+  .topic-footer-nav {
+    margin-top: 56px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .back-btn {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--link);
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .back-btn:hover {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+  }
+
+  .next-btn {
+    background: var(--blue);
+    border: 1px solid var(--blue-dark);
+    color: white;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.15s ease;
+  }
+  .next-btn:hover { background: var(--blue-dark); }
+
+  /* ==================== PAGE FOOTER ==================== */
+  .page-footer {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 20px 30px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 30px;
+  }
+
+  .footer-left {
+    text-align: right;
+    padding-right: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .footer-left a { color: var(--link); }
+
+  /* ==================== SPEC LIST ==================== */
+  .spec-list {
+    list-style: none;
+    margin: 14px 0 18px;
+    border: 1px solid var(--table-border);
+    border-radius: 3px;
+    overflow: hidden;
+    background: #fffdf6;
+  }
+  .spec-row {
+    display: flex;
+    border-bottom: 1px solid var(--table-border);
+    font-size: 14px;
+  }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row:hover { background: #fdf6e3; }
+  .spec-key {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    color: var(--blue-dark);
+    background: var(--paper);
+    padding: 10px 14px;
+    width: 220px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid var(--table-border);
+  }
+  .spec-val {
+    padding: 10px 14px;
+    color: var(--ink);
+    flex: 1;
+    line-height: 1.55;
+  }
+
+  /* ==================== TOPOLOGY DIAGRAM ==================== */
+  .topology-figure {
+    margin: 18px 0 22px;
+    padding: 14px;
+    background: #fdf6e3;
+    border: 1px solid var(--table-border);
+    border-radius: 4px;
+  }
+  .topology-figure svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+  }
+  .topology-caption {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .topology-caption strong {
+    font-style: normal;
+    color: var(--blue-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 11px;
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  /* ==================== TOPOLOGY COMPARISON CARDS ==================== */
+  .topo-compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .topo-compare-card {
+    border: 1.5px solid var(--table-border);
+    border-radius: 3px;
+    padding: 16px 18px;
+    background: var(--paper);
+  }
+  .topo-compare-name {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 4px;
+  }
+  .topo-compare-title {
+    font-family: 'Bitter', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .topo-compare-desc {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+  .topo-compare-tag {
+    display: inline-block;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--yellow);
+    color: #8a6d1a;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+  .topo-compare-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--rule);
+    padding-top: 10px;
+  }
+  .topo-compare-list li {
+    font-size: 12.5px;
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 3px 0 3px 14px;
+    margin: 0;
+    position: relative;
+  }
+  .topo-compare-list li::before {
+    content: '•';
+    color: var(--yellow-dark);
+    font-weight: 700;
+    position: absolute;
+    left: 2px;
+  }
+  @media (max-width: 800px) {
+    .topo-compare-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ==================== NETWORK ACCESS PANELS ==================== */
+  .net-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 14px 0;
+  }
+  .net-panel {
+    border: 1px solid var(--table-border);
+    border-radius: 3px;
+    overflow: hidden;
+    background: #fffdf6;
+  }
+  .net-head {
+    background: var(--blue);
+    padding: 9px 14px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: white;
+  }
+  .net-body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .net-item { font-size: 13px; }
+  .net-mini-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .net-url {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 12.5px;
+    color: var(--blue);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .net-ip {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+  }
+  .net-note {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    display: block;
+    margin-top: 2px;
+  }
+  .net-range {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 14px;
+    color: var(--blue-dark);
+    font-weight: 600;
+  }
+  @media (max-width: 720px) {
+    .net-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ==================== LICENSE TABLE STYLING ==================== */
+  .license-resp {
+    display: inline-block;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .license-resp.customer {
+    background: var(--yellow);
+    color: #8a6d1a;
+  }
+  .license-resp.gsi {
+    background: var(--blue);
+    color: white;
+  }
+  .license-resp.either {
+    background: var(--tip-bg);
+    color: var(--tip-border);
+    border: 1px solid var(--tip-border);
+  }
+
+  /* ==================== STORAGE CARD ==================== */
+  .storage-card {
+    background: var(--blue);
+    color: white;
+    border-radius: 3px;
+    padding: 18px 22px;
+    margin: 14px 0;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .storage-stat {
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .storage-num {
+    font-family: 'Bitter', serif;
+    font-size: 40px;
+    color: var(--yellow);
+    line-height: 1;
+    font-weight: 500;
+  }
+  .storage-unit {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+    margin-top: 4px;
+  }
+  .storage-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.18);
+    align-self: stretch;
+    flex-shrink: 0;
+  }
+  .storage-detail {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.65;
+  }
+  .storage-detail strong { color: white; font-weight: 700; }
+
+  /* ==================== RESPONSIVE ==================== */
+  @media (max-width: 800px) {
+    .page-wrap, .page-footer {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .sidebar {
+      position: static;
+      padding: 12px;
+      background: var(--paper);
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+    .sidebar-title, .sidebar-nav li button {
+      text-align: left;
+      border-right: none;
+      padding: 6px 0 6px 12px;
+      border-left: 2px solid transparent;
+    }
+    .sidebar-nav li.active button {
+      border-left-color: var(--yellow);
+      border-right-color: transparent;
+    }
+    .footer-left { text-align: left; padding-right: 0; }
+    .content-card { padding: 24px 22px 36px; }
+    .blue-header h1 { font-size: 28px; }
+    .content-card table { font-size: 12.5px; }
+    .content-card th, .content-card td { padding: 8px 10px; }
+    .spec-key { width: 140px; padding: 8px 10px; }
+    .spec-val { padding: 8px 10px; }
+  }
+
+  @media print {
+    body { background: white; }
+    .yellow-bar, .sidebar, .topic-footer-nav { display: none; }
+    .page-wrap { display: block; padding: 0; }
+    .content-card { box-shadow: none; padding: 24px; }
+    .view { display: block !important; page-break-after: always; }
+  }
 </style>
 </head>
 <body>
-<div class="page">
 
-<!-- MASTHEAD -->
-<div class="masthead">
-  <div class="masthead-logo">
-    <svg viewBox="0 0 40 40" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
-      <path d="M32,31 H10 a10,10 0 0,1 -2,-19 a13,13 0 0,1 25,-2 a8,8 0 0,1 -1,17 Z" fill="#2b5ea7"/>
-      <path d="M33,26 H13 a8,8 0 0,1 -1,-15 a10,10 0 0,1 20,-2 a6,6 0 0,1 -1,13 Z" fill="#4a90d9" opacity="0.85"/>
-      <circle cx="20" cy="19" r="3.5" fill="white" opacity="0.95"/>
-      <circle cx="20" cy="19" r="2"   fill="#1e3a5f"/>
-      <circle cx="11" cy="26" r="2.5" fill="white" opacity="0.9"/>
-      <circle cx="11" cy="26" r="1.4" fill="#4a90d9"/>
-      <circle cx="29" cy="26" r="2.5" fill="white" opacity="0.9"/>
-      <circle cx="29" cy="26" r="1.4" fill="#4a90d9"/>
-      <circle cx="20" cy="11" r="2"   fill="white" opacity="0.85"/>
-      <line x1="20" y1="19" x2="11" y2="26" stroke="white" stroke-width="1.3" opacity="0.9"/>
-      <line x1="20" y1="19" x2="29" y2="26" stroke="white" stroke-width="1.3" opacity="0.9"/>
-      <line x1="20" y1="19" x2="20" y2="11" stroke="white" stroke-width="1.1" opacity="0.8"/>
-    </svg>
-    <span class="logo-gsi">GSI</span>
-    <div class="logo-pipe"></div>
-    <div class="logo-rr">
-      <span class="logo-rr-name">RapidReconciler</span>
-      <span class="logo-rr-tag">Inventory Intelligence</span>
-      <span class="logo-orange-line"></span>
-    </div>
-  </div>
-  <div class="masthead-meta">
-    <div class="masthead-title-block">
-      <div class="doc-type">Installation Guide</div>
-      <h1>Technical Requirements</h1>
-      <div class="masthead-summary">Server, network, and software prerequisites for RapidReconciler deployments. Covers the database server, Integration Services, application server, end-user workstations, and JD Edwards connection details.</div>
-    </div>
-    <div class="masthead-attrs">
-      <div class="attr">
-        <span class="attr-label">Owner</span>
-        <span class="attr-value">GSI Operations</span>
-      </div>
-      <div class="attr">
-        <span class="attr-label">Audience</span>
-        <span class="attr-value">GSI Staff / I/T</span>
-      </div>
-      <div class="attr">
-        <span class="attr-label">Min SQL Server</span>
-        <span class="attr-value">2019</span>
-      </div>
-    </div>
+<!-- ==================== TOP BLUE HEADER ==================== -->
+<header class="blue-header">
+  <h1>GSI RapidReconciler Knowledge Base</h1>
+  <div class="tagline">Technical Requirements — Plan. Specify. Decide.</div>
+</header>
+
+<!-- ==================== YELLOW ACTION BAR ==================== -->
+<div class="yellow-bar">
+  <div class="yellow-bar-inner">
+    <button class="home-btn" onclick="goHome()">← Back to Index</button>
+    <span class="corner-icon">RR</span>
   </div>
 </div>
 
-<!-- TOC STRIP -->
-<div class="toc-strip">
-  <a class="toc-item" href="#db-server">Database Server</a>
-  <a class="toc-item" href="#int-services">Integration Services</a>
-  <a class="toc-item" href="#app-server">App Server</a>
-  <a class="toc-item" href="#end-user">End User PC</a>
-  <a class="toc-item" href="#jde">JD Edwards</a>
-  <a class="toc-item" href="#appendix-a">Appendix A</a>
-  <a class="toc-item" href="#appendix-b">Appendix B</a>
-</div>
+<!-- ==================== MAIN PAGE ==================== -->
+<div class="page-wrap">
 
-<div class="content">
-
-  <!-- ── DATABASE SERVER ──────────────────────────────────── -->
-  <div class="section" id="db-server">
-    <div class="section-label">Database Server</div>
-    <h2>RR Database Server</h2>
-    <p>In most cases, existing servers running Microsoft SQL Server will meet the minimum requirements. If a new server needs to be built, use the guidelines below.</p>
-
-    <ul class="spec-list">
-      <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2019 or later</span></li>
-      <li class="spec-row"><span class="spec-key">Processor</span><span class="spec-val">Quad-core minimum</span></li>
+  <aside class="sidebar">
+    <div class="sidebar-title">Technical<br>Requirements</div>
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li data-target="home"><button onclick="showView('home')">Index</button></li>
+      <li data-target="about"><button onclick="showView('topic-about')">About RapidReconciler</button></li>
+      <li data-target="architecture"><button onclick="showView('topic-architecture')">Deployment Architecture</button></li>
+      <li data-target="servers"><button onclick="showView('topic-servers')">Server Requirements</button></li>
+      <li data-target="source"><button onclick="showView('topic-source')">Source Platform</button></li>
+      <li data-target="endusers"><button onclick="showView('topic-endusers')">End-User Workstations</button></li>
+      <li data-target="licensing"><button onclick="showView('topic-licensing')">Software &amp; Licensing</button></li>
+      <li data-target="network"><button onclick="showView('topic-network')">Network Requirements</button></li>
+      <li data-target="security"><button onclick="showView('topic-security')">Security Posture</button></li>
+      <li data-target="next"><button onclick="showView('topic-next')">Next Steps</button></li>
     </ul>
+  </aside>
 
-    <h3>Microsoft SQL Server</h3>
-    <div class="tbl-wrap">
+  <main class="content-card">
+
+    <!-- ============ HOME / INDEX ============ -->
+    <section id="home" class="view active">
+      <h1>Technical Requirements</h1>
+      <p>This document outlines the technical requirements for hosting RapidReconciler in your environment. It is intended to help you plan your deployment, identify the servers and software you'll need, and confirm your existing infrastructure can support the application before installation begins.</p>
+      <p>Use this document to: choose a deployment topology, identify candidate servers, confirm your JD Edwards source platform is supported, scope licensing requirements, and prepare your network and security teams for what's needed.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Audience</h2>
+      <p>This document is written for the customer's IT and infrastructure teams, with sections that may also be useful for procurement (Software &amp; Licensing) and JD Edwards administrators (Source Platform). Read straight through, or jump to specific sections from the sidebar.</p>
+
+      <h2>Sections</h2>
+      <table class="doc-table">
+        <thead>
+          <tr><th>Section</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-about')">About RapidReconciler</a></td>
+            <td>What the application does, what it integrates with, and how it fits into your stack.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-architecture')">Deployment Architecture</a></td>
+            <td>The three supported deployment topologies, with tradeoffs to help you pick the right one.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-servers')">Server Requirements</a></td>
+            <td>Hardware, operating system, and SQL Server specifications for each server role.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-source')">Source Platform</a></td>
+            <td>Supported JD Edwards source platforms and the connectivity each requires.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-endusers')">End-User Workstations</a></td>
+            <td>Specifications for the workstations that will access the application.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-licensing')">Software &amp; Licensing</a></td>
+            <td>Software components needed, with a clear breakdown of which licenses are customer-provided versus GSI-provided.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-network')">Network Requirements</a></td>
+            <td>Connectivity, ports, and outbound access your network team will need to allow.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-security')">Security Posture</a></td>
+            <td>Service accounts, antivirus exclusions, firewall scoping, and time-sync expectations.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-next')">Next Steps</a></td>
+            <td>What happens after these requirements are reviewed and confirmed.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <div class="callout-label">Reading order</div>
+        <p>If you're reviewing for the first time, read <strong>About</strong>, <strong>Deployment Architecture</strong>, and <strong>Software &amp; Licensing</strong> first — those three sections give you enough context to decide whether to move forward. The remaining sections are detailed reference material for the teams who will plan and approve the deployment.</p>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: ABOUT ============ -->
+    <section id="topic-about" class="view">
+      <h1>About RapidReconciler</h1>
+      <p>What RapidReconciler is, what it does, and where it sits in your environment.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>What It Does</h2>
+      <p>RapidReconciler is an inventory reconciliation application for organizations running JD Edwards. It compares perpetual inventory balances, end-of-day positions, and cardex transactions against the underlying JD Edwards data, surfaces variances by company and document type, and supports the period-end close by generating suggested journal entries for those variances.</p>
+      <p>The application is delivered as a web application that customer users access through a browser. It reads from JD Edwards on a scheduled basis, stores its working data in a dedicated SQL Server database, and presents reconciliation views to end users without requiring them to query JD Edwards directly.</p>
+
+      <h2>How It Integrates</h2>
+      <p>RapidReconciler is a read-mostly companion to JD Edwards. It does not write back to JDE. The application reads from your JDE source on a schedule, transforms the data into a reconciliation-friendly model, and stores the results in its own SQL Server database. Customer users interact only with the RapidReconciler web interface.</p>
+
+      <table>
+        <thead>
+          <tr><th>Component</th><th>Role</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>JD Edwards source</td><td>Customer's existing JDE system. RapidReconciler reads inventory and transaction tables from here on a schedule.</td></tr>
+          <tr><td>SQL Server Integration Services (SSIS)</td><td>Extracts data from JDE and loads it into the RapidReconciler database. Runs on a schedule defined during install.</td></tr>
+          <tr><td>RapidReconciler database</td><td>Dedicated SQL Server database that holds the reconciliation working set, configuration, and user data.</td></tr>
+          <tr><td>RapidReconciler application</td><td>Web application that customer users access through a browser. Reads from the RR database to render reconciliation views and reports.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>What's Included with the Application</h2>
+      <ul>
+        <li>The RapidReconciler web application itself, licensed by GSI on a per-company basis</li>
+        <li>The SSIS packages that extract data from JD Edwards into the RR database</li>
+        <li>Database schema, stored procedures, and seed data delivered during installation</li>
+        <li>Installation, configuration, and post-install support from GSI</li>
+      </ul>
+
+      <h2>What's Not Included</h2>
+      <p>RapidReconciler does not include the underlying infrastructure software it runs on. The customer is responsible for providing servers, operating systems, SQL Server licensing, and source platform connectivity software. See <a href="javascript:void(0)" onclick="showView('topic-licensing')">Software &amp; Licensing</a> for the full breakdown.</p>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-architecture')">Next: Deployment Architecture →</button>
+      </div>
+    </section>
+
+
+    <!-- ============ TOPIC: DEPLOYMENT ARCHITECTURE ============ -->
+    <section id="topic-architecture" class="view">
+      <h1>Deployment Architecture</h1>
+      <p>RapidReconciler can be deployed in three supported topologies. The hardware specifications for each server role are the same across all three; the difference is how the components are distributed across machines.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>The Three Topologies</h2>
+
+      <div class="topology-figure">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 620" role="img" aria-label="Three RapidReconciler deployment topology configurations" style="font-family:'Open Sans', Arial, sans-serif;">
+          <defs>
+            <marker id="arrow-head-tr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#666"/>
+            </marker>
+          </defs>
+
+          <!-- Configuration 1: Co-located -->
+          <rect x="10" y="10" width="920" height="170" rx="4" fill="#fdf6e3" stroke="#d6d2c4" stroke-width="1"/>
+          <text x="24" y="34" font-size="13" font-weight="700" fill="#3d5f93" letter-spacing="0.5">CONFIGURATION 1 &#183; CO-LOCATED</text>
+          <text x="24" y="52" font-size="11" font-style="italic" fill="#666">Database, application services, and SSIS all on a single dedicated server. Simplest setup.</text>
+
+          <rect x="120" y="72" width="160" height="92" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="200" y="96" font-size="12" font-weight="700" fill="#555" text-anchor="middle">JDE Server</text>
+          <text x="200" y="118" font-size="10" font-style="italic" fill="#888" text-anchor="middle">Customer's existing</text>
+          <text x="200" y="132" font-size="10" font-style="italic" fill="#888" text-anchor="middle">system &#8212; not part</text>
+          <text x="200" y="146" font-size="10" font-style="italic" fill="#888" text-anchor="middle">of RR install</text>
+
+          <line x1="288" y1="118" x2="358" y2="118" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="366" y="72" width="300" height="92" rx="4" fill="#4d77b4" stroke="#3d5f93" stroke-width="1.5"/>
+          <text x="516" y="93" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">Dedicated RR Server</text>
+          <text x="516" y="111" font-size="11" fill="#ffffff" text-anchor="middle">SQL Server + RR Database</text>
+          <text x="516" y="125" font-size="11" fill="#ffffff" text-anchor="middle">SSIS / Integration Services</text>
+          <text x="516" y="139" font-size="11" fill="#ffffff" text-anchor="middle">Application services</text>
+          <text x="516" y="156" font-size="10" font-style="italic" fill="#dde6f1" text-anchor="middle">+ SSMS, VS Community (optional)</text>
+
+          <!-- Configuration 2: Separate DB and App -->
+          <rect x="10" y="200" width="920" height="190" rx="4" fill="#fdf6e3" stroke="#d6d2c4" stroke-width="1"/>
+          <text x="24" y="224" font-size="13" font-weight="700" fill="#3d5f93" letter-spacing="0.5">CONFIGURATION 2 &#183; SEPARATE DATABASE AND APPLICATION SERVERS</text>
+          <text x="24" y="242" font-size="11" font-style="italic" fill="#666">Most common enterprise pattern. SSIS runs on the database server.</text>
+
+          <rect x="20" y="266" width="160" height="100" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="100" y="292" font-size="12" font-weight="700" fill="#555" text-anchor="middle">JDE Server</text>
+          <text x="100" y="316" font-size="10" font-style="italic" fill="#888" text-anchor="middle">Customer's existing</text>
+          <text x="100" y="330" font-size="10" font-style="italic" fill="#888" text-anchor="middle">system &#8212; not part</text>
+          <text x="100" y="344" font-size="10" font-style="italic" fill="#888" text-anchor="middle">of RR install</text>
+
+          <line x1="188" y1="316" x2="248" y2="316" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="256" y="266" width="320" height="100" rx="4" fill="#4d77b4" stroke="#3d5f93" stroke-width="1.5"/>
+          <text x="416" y="289" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">Database Server</text>
+          <text x="416" y="309" font-size="11" fill="#ffffff" text-anchor="middle">SQL Server + RR Database</text>
+          <text x="416" y="325" font-size="11" fill="#ffffff" text-anchor="middle">SSIS / Integration Services</text>
+          <text x="416" y="350" font-size="10" font-style="italic" fill="#dde6f1" text-anchor="middle">+ SSMS, VS Community (optional)</text>
+
+          <line x1="584" y1="316" x2="644" y2="316" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="652" y="266" width="270" height="100" rx="4" fill="#f5cb35" stroke="#e0b820" stroke-width="1.5"/>
+          <text x="787" y="289" font-size="12" font-weight="700" fill="#3d5f93" text-anchor="middle">Application Server</text>
+          <text x="787" y="319" font-size="11" fill="#3d5f93" text-anchor="middle">Application services</text>
+          <text x="787" y="350" font-size="10" font-style="italic" fill="#5a4815" text-anchor="middle">+ SSMS, VS Community (optional)</text>
+
+          <!-- Configuration 3: Separate SSIS Server -->
+          <rect x="10" y="410" width="920" height="200" rx="4" fill="#fdf6e3" stroke="#d6d2c4" stroke-width="1"/>
+          <text x="24" y="434" font-size="13" font-weight="700" fill="#3d5f93" letter-spacing="0.5">CONFIGURATION 3 &#183; SEPARATE SSIS SERVER</text>
+          <text x="24" y="452" font-size="11" font-style="italic" fill="#666">Uncommon. SSIS runs on a third dedicated server, separate from the database.</text>
+
+          <rect x="20" y="478" width="140" height="110" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="90" y="506" font-size="12" font-weight="700" fill="#555" text-anchor="middle">JDE Server</text>
+          <text x="90" y="532" font-size="10" font-style="italic" fill="#888" text-anchor="middle">Customer's existing</text>
+          <text x="90" y="546" font-size="10" font-style="italic" fill="#888" text-anchor="middle">system &#8212; not part</text>
+          <text x="90" y="560" font-size="10" font-style="italic" fill="#888" text-anchor="middle">of RR install</text>
+
+          <line x1="168" y1="533" x2="208" y2="533" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="216" y="478" width="160" height="110" rx="4" fill="#dce5f1" stroke="#b3cce8" stroke-width="1.5"/>
+          <text x="296" y="510" font-size="12" font-weight="700" fill="#3d5f93" text-anchor="middle">SSIS Server</text>
+          <text x="296" y="540" font-size="11" fill="#3d5f93" text-anchor="middle">Integration Services</text>
+
+          <line x1="384" y1="533" x2="424" y2="533" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="432" y="478" width="240" height="110" rx="4" fill="#4d77b4" stroke="#3d5f93" stroke-width="1.5"/>
+          <text x="552" y="510" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">Database Server</text>
+          <text x="552" y="540" font-size="11" fill="#ffffff" text-anchor="middle">SQL Server + RR Database</text>
+          <text x="552" y="568" font-size="10" font-style="italic" fill="#dde6f1" text-anchor="middle">+ SSMS, VS Community (optional)</text>
+
+          <line x1="680" y1="533" x2="720" y2="533" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="728" y="478" width="200" height="110" rx="4" fill="#f5cb35" stroke="#e0b820" stroke-width="1.5"/>
+          <text x="828" y="510" font-size="12" font-weight="700" fill="#3d5f93" text-anchor="middle">Application Server</text>
+          <text x="828" y="540" font-size="11" fill="#3d5f93" text-anchor="middle">Application services</text>
+          <text x="828" y="568" font-size="10" font-style="italic" fill="#5a4815" text-anchor="middle">+ SSMS, VS Community (optional)</text>
+        </svg>
+        <div class="topology-caption"><strong>Deployment options</strong>Arrows show data flow from the JDE source through SSIS into the RapidReconciler database and on to the application. SSMS and Visual Studio Community are required somewhere in the environment but their placement is flexible.</div>
+      </div>
+
+      <h2>Comparison</h2>
+      <p>Each configuration has tradeoffs. Use the cards below to weigh which fits your environment.</p>
+
+      <div class="topo-compare-grid">
+        <div class="topo-compare-card">
+          <div class="topo-compare-name">Configuration 1</div>
+          <div class="topo-compare-title">Co-located</div>
+          <span class="topo-compare-tag">Simplest</span>
+          <div class="topo-compare-desc">Database, application services, and SSIS all on a single dedicated server.</div>
+          <ul class="topo-compare-list">
+            <li>1 server to provision and license</li>
+            <li>No cross-machine authentication or firewall complexity</li>
+            <li>Best for small or pilot deployments</li>
+            <li>Less flexibility for scaling components independently</li>
+          </ul>
+        </div>
+        <div class="topo-compare-card">
+          <div class="topo-compare-name">Configuration 2</div>
+          <div class="topo-compare-title">Separate DB &amp; App</div>
+          <span class="topo-compare-tag">Most common</span>
+          <div class="topo-compare-desc">Database and SSIS on one server, application services on a second.</div>
+          <ul class="topo-compare-list">
+            <li>2 servers to provision and license</li>
+            <li>Aligns with most enterprise deployment patterns</li>
+            <li>Database can be shared with other workloads if policy allows</li>
+            <li>Cross-machine authentication and firewall scoping required</li>
+          </ul>
+        </div>
+        <div class="topo-compare-card">
+          <div class="topo-compare-name">Configuration 3</div>
+          <div class="topo-compare-title">Separate SSIS</div>
+          <span class="topo-compare-tag">Specialized</span>
+          <div class="topo-compare-desc">Database, SSIS, and application services on three separate servers.</div>
+          <ul class="topo-compare-list">
+            <li>3 servers to provision and license</li>
+            <li>Useful when SSIS workloads must be isolated from the database</li>
+            <li>Greatest flexibility for resource scaling</li>
+            <li>Adds a second cross-machine boundary requiring careful service-account planning</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-label">Most customers choose Configuration 2</div>
+        <p>For most enterprise deployments, Configuration 2 is the right balance — separation of database and application services without the operational overhead of a dedicated SSIS host. Configuration 1 fits small or pilot deployments where cost of provisioning a second server isn't justified. Configuration 3 is appropriate only when there is a specific organizational reason to isolate SSIS.</p>
+      </div>
+
+      <h2>What to Provide</h2>
+      <p>Once you've selected a topology, you'll need to identify or provision the corresponding servers. Hostnames or fully-qualified DNS names for each server role will be captured during installation prep.</p>
+      <table>
+        <thead>
+          <tr><th>Topology</th><th>Servers Needed</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Configuration 1</td><td>1 dedicated RapidReconciler server</td></tr>
+          <tr><td>Configuration 2</td><td>1 database server, 1 application server</td></tr>
+          <tr><td>Configuration 3</td><td>1 database server, 1 SSIS server, 1 application server</td></tr>
+        </tbody>
+      </table>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-about')">← Back: About</button>
+        <button class="next-btn" onclick="showView('topic-servers')">Next: Server Requirements →</button>
+      </div>
+    </section>
+
+
+    <!-- ============ TOPIC: SERVER REQUIREMENTS ============ -->
+    <section id="topic-servers" class="view">
+      <h1>Server Requirements</h1>
+      <p>Hardware, operating system, and SQL Server specifications for each server role. The same specs apply regardless of which topology you choose — a "database server" in Configuration 2 has the same requirements as the database role of the co-located server in Configuration 1.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Database Server</h2>
+      <p>The database server hosts SQL Server and the RapidReconciler database. In most environments, an existing SQL Server instance will meet the requirements; a new instance can be provisioned if needed.</p>
+
+      <h3>Hardware &amp; OS</h3>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2019 or later</span></li>
+        <li class="spec-row"><span class="spec-key">Processor</span><span class="spec-val">Quad-core minimum</span></li>
+        <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">16 GB minimum allocated to SQL Server</span></li>
+      </ul>
+
+      <h3>SQL Server</h3>
       <table>
         <thead><tr><th>Requirement</th><th>Specification</th></tr></thead>
         <tbody>
           <tr><td>Version</td><td>2019 or later</td></tr>
-          <tr><td>RAM</td><td>16 GB minimum</td></tr>
           <tr><td>Edition</td><td>Standard or higher</td></tr>
           <tr><td>Authentication</td><td>Mixed mode</td></tr>
           <tr><td>Initial data file size</td><td>20 GB</td></tr>
           <tr><td>Initial log file size</td><td>10 GB</td></tr>
+          <tr><td>Administrative access</td><td>Required for the GSI installer</td></tr>
         </tbody>
       </table>
-    </div>
 
-    <div class="callout callout-info">
-      <span class="callout-label">Additional Requirements</span>
-      <p>SQL administrative access to the server instance is required. A SQL-based login and role will be created during installation for user connectivity. SQL Server 2019 and later requires creating an Integration Services Catalog — see <a href="#appendix-a" style="color:var(--blue);">Appendix A</a>.</p>
-    </div>
-
-    <h3>Storage Estimates</h3>
-    <div class="storage-card">
-      <div class="storage-stat">
-        <div class="storage-num">100</div>
-        <div class="storage-unit">GB per 1M<br>records/month</div>
+      <h3>Storage Planning</h3>
+      <p>Plan storage based on your expected JD Edwards transaction volume. The figure below reflects one year of cardex (F4111) data; older records can be purged after year-end close to reclaim space.</p>
+      <div class="storage-card">
+        <div class="storage-stat">
+          <div class="storage-num">100</div>
+          <div class="storage-unit">GB per 1M<br>records/month</div>
+        </div>
+        <div class="storage-divider"></div>
+        <div class="storage-detail">
+          Estimate covers <strong>1 year of cardex (F4111) data</strong>. Records may be purged after year-end close to reclaim space.<br><br>
+          <strong>Example:</strong> 2,000,000 cardex records per month requires <strong>200 GB</strong> of allocated disk space.
+        </div>
       </div>
-      <div class="storage-divider"></div>
-      <div class="storage-detail">
-        Estimate covers <strong>1 year of cardex (F4111) data</strong>. Records may be purged after year-end close to reclaim space.<br><br>
-        <strong>Example:</strong> 2,000,000 cardex records per month requires <strong>200 GB</strong> of allocated disk space.
+
+      <h2>Application Server</h2>
+      <p>The application server hosts the RapidReconciler web application. This role is required as a dedicated machine in Configurations 2 and 3, and is co-located with the database server in Configuration 1.</p>
+
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2019 or later</span></li>
+        <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">16 GB minimum</span></li>
+        <li class="spec-row"><span class="spec-key">IP Address</span><span class="spec-val">Static</span></li>
+        <li class="spec-row"><span class="spec-key">Browser</span><span class="spec-val">Microsoft Edge or Google Chrome (for administrator access on the host itself)</span></li>
+        <li class="spec-row"><span class="spec-key">Administrative Credentials</span><span class="spec-val">Required during installation</span></li>
+      </ul>
+
+      <div class="callout">
+        <div class="callout-label">Recommendation</div>
+        <p>A dedicated server is strongly recommended for the RapidReconciler application. Sharing the host with other web applications is supported but adds complexity to firewall and antivirus configuration.</p>
       </div>
-    </div>
 
-    <h3>Network Information to Note</h3>
-    <ul class="spec-list">
-      <li class="spec-row"><span class="spec-key">Database Server IP</span><span class="spec-val">Record the IP address of the database server</span></li>
-      <li class="spec-row"><span class="spec-key">Named Instance Port</span><span class="spec-val">If using a named instance, note the listening port number</span></li>
-    </ul>
-  </div>
+      <h2>SSIS Server</h2>
+      <p>SQL Server Integration Services moves data from JD Edwards into the RapidReconciler database. In Configurations 1 and 2, SSIS runs on the database server using its existing infrastructure. In Configuration 3, SSIS runs on its own dedicated host.</p>
+
+      <h3>If SSIS Runs on a Dedicated Host (Configuration 3 only)</h3>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2019 or later</span></li>
+        <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">16 GB minimum</span></li>
+        <li class="spec-row"><span class="spec-key">Network Latency</span><span class="spec-val">Gigabit LAN to the database server. WAN-separated configurations are not supported.</span></li>
+      </ul>
+
+      <h2>Management Tools</h2>
+      <p>Two Microsoft tools must be installed somewhere in the environment, but their placement is flexible — they can live on the database server, the application server, or an administrator workstation. Most customers install them on the database server for convenience.</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">SQL Server Management Studio</span><span class="spec-val">Latest version. Used during install and for ongoing administration.</span></li>
+        <li class="spec-row"><span class="spec-key">Visual Studio Community</span><span class="spec-val">2019 or later, with the SQL Server Integration Services extension. Used by GSI during install to deploy and configure SSIS packages.</span></li>
+      </ul>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-architecture')">← Back: Architecture</button>
+        <button class="next-btn" onclick="showView('topic-source')">Next: Source Platform →</button>
+      </div>
+    </section>
 
 
-  <!-- ── INTEGRATION SERVICES ─────────────────────────────── -->
-  <div class="section" id="int-services">
-    <div class="section-label">Integration Services</div>
-    <h2>Integration Services</h2>
-    <p>Integration Services is typically installed and run on the database server. In certain cases it may be preferable to run on an alternate server. The OLE DB provider must be installed on the server running the services.</p>
+    <!-- ============ TOPIC: SOURCE PLATFORM ============ -->
+    <section id="topic-source" class="view">
+      <h1>JD Edwards Source Platform</h1>
+      <p>RapidReconciler reads from your JD Edwards database on a schedule. Three source platforms are supported. Each requires specific connectivity software on the host that runs SSIS.</p>
 
-    <h3>Alternate Server Requirements</h3>
-    <ul class="spec-list">
-      <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2019 or later</span></li>
-      <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">16 GB minimum</span></li>
-    </ul>
+      <div class="diamond-divider"><span class="diamond"></span></div>
 
-    <h3>SQL Server Management Tools</h3>
-    <ul class="spec-list">
-      <li class="spec-row"><span class="spec-key">SSMS</span><span class="spec-val">SQL Server Management Studio</span></li>
-      <li class="spec-row"><span class="spec-key">Visual Studio</span><span class="spec-val">Community 2019 or later</span></li>
-    </ul>
-
-    <h3>OLE DB Provider Configuration</h3>
-
-    <div class="tbl-wrap">
-      <table class="plain-first">
-        <thead><tr><th>Data Source</th><th>Configuration Required</th></tr></thead>
+      <h2>Supported Platforms</h2>
+      <table>
+        <thead>
+          <tr><th>Platform</th><th>Connectivity Required</th><th>Customer Provides</th></tr>
+        </thead>
         <tbody>
-          <tr>
-            <td>AS/400 (I-Series)</td>
-            <td>Install I-Series Access (Client Access). Ensure the OLE DB component is installed. Verify OLE DB drivers are selected — this is not enabled by default.</td>
-          </tr>
           <tr>
             <td>Oracle</td>
-            <td>Install Oracle 32-bit client using the <strong>Administrator</strong> option. Make applicable <code>tnsnames.ora</code> entries. Both versions must reside in the same Oracle home.</td>
+            <td>Oracle Provider for OLE DB (delivered with the Oracle Database Client or ODAC)</td>
+            <td>Oracle client software, both 32-bit and 64-bit, in a shared Oracle home</td>
           </tr>
           <tr>
-            <td>SQL Server</td>
-            <td>No additional configuration required.</td>
+            <td>AS/400 (I-Series)</td>
+            <td><code>IBMDA400</code> OLE DB provider, delivered with IBM i Access</td>
+            <td>IBM i Access Client Solutions, both 32-bit and 64-bit, with the OLE DB component explicitly enabled</td>
+          </tr>
+          <tr>
+            <td>Microsoft SQL Server</td>
+            <td>Built-in — no additional driver software required</td>
+            <td>Network connectivity and read credentials for the JDE SQL Server</td>
           </tr>
         </tbody>
       </table>
-    </div>
-  </div>
+
+      <h2>What RapidReconciler Needs from the Source</h2>
+      <ul>
+        <li>Read-only access to the JDE schemas containing inventory and transaction data</li>
+        <li>Stable connectivity from the SSIS host to the JDE source — gigabit LAN preferred</li>
+        <li>A service account or SQL credentials that can be used by the SSIS execution context</li>
+        <li>Confirmation of four data dictionary settings (decimal precision for cost and quantity fields) — these are captured during installation prep</li>
+      </ul>
+
+      <p>RapidReconciler does not write back to JD Edwards. Read-only credentials are sufficient.</p>
+
+      <h2>Why Both 32-Bit and 64-Bit Drivers</h2>
+      <p>This applies only to Oracle and AS/400. SQL Server Integration Services packages are designed in Visual Studio, which historically runs as a 32-bit process — so the 32-bit driver is required at design time. SSIS executes packages in 64-bit mode by default at runtime — so the 64-bit driver is required for production. Installing both up front avoids reinstalling under pressure later.</p>
+
+      <h2>Licensing Notes</h2>
+      <ul>
+        <li><strong>IBM i Access</strong> requires a valid IBM entitlement. Confirm with your IBM administrator that the SSIS host is covered before planning installation.</li>
+        <li><strong>Oracle Database Client</strong> is generally available without separate licensing for clients connecting to a licensed Oracle Database, but confirm with your Oracle DBA or licensing contact.</li>
+        <li><strong>Microsoft SQL Server connectivity</strong> is delivered with SQL Server itself and requires no additional licensing.</li>
+      </ul>
+
+      <div class="callout info">
+        <div class="callout-label">Confirm with your JDE administrator</div>
+        <p>Your JD Edwards administrator should be able to tell you which of the three platforms hosts your production JDE database. The platform choice affects only the connectivity software to install — the RapidReconciler application itself is the same regardless of source.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-servers')">← Back: Server Requirements</button>
+        <button class="next-btn" onclick="showView('topic-endusers')">Next: End-User Workstations →</button>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: END-USER WORKSTATIONS ============ -->
+    <section id="topic-endusers" class="view">
+      <h1>End-User Workstations</h1>
+      <p>Specifications for the workstations that customer users will use to access RapidReconciler. The application is delivered through a web browser, so most modern workstations meet these requirements without additional procurement.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Workstation Specifications</h2>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows 10 or later &nbsp;/&nbsp; macOS 12 (Monterey) or later</span></li>
+        <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">8 GB minimum</span></li>
+        <li class="spec-row"><span class="spec-key">Screen Resolution</span><span class="spec-val">1280 × 800 minimum recommended</span></li>
+      </ul>
+
+      <h2>Browser Compatibility</h2>
+      <p>RapidReconciler supports the current versions of the major desktop browsers.</p>
+      <table class="plain-first">
+        <thead>
+          <tr><th>Browser</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Microsoft Edge</td><td>Recommended on Windows</td></tr>
+          <tr><td>Google Chrome</td><td>Fully supported</td></tr>
+          <tr><td>Mozilla Firefox</td><td>Fully supported</td></tr>
+          <tr><td>Apple Safari</td><td>Recommended on macOS</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Companion Software</h2>
+      <p>Two pieces of software on each user's workstation extend the application's capabilities:</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Microsoft Excel</span><span class="spec-val">2016 or later. Required for the application's export and import functionality.</span></li>
+        <li class="spec-row"><span class="spec-key">PDF Viewer</span><span class="spec-val">Adobe Acrobat Reader or equivalent. Required to view exported reports.</span></li>
+      </ul>
+
+      <h2>Network Access from Workstations</h2>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">To the application server</span><span class="spec-val">Required. End users access the RapidReconciler web application by hostname or URL on your internal network.</span></li>
+        <li class="spec-row"><span class="spec-key">To <code>rapidreconciler.getgsi.com</code></span><span class="spec-val">Optional but recommended. Allows users to reach GSI's hosted documentation and update channels.</span></li>
+      </ul>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-source')">← Back: Source Platform</button>
+        <button class="next-btn" onclick="showView('topic-licensing')">Next: Software &amp; Licensing →</button>
+      </div>
+    </section>
 
 
-  <!-- ── APPLICATION SERVER ───────────────────────────────── -->
-  <div class="section" id="app-server">
-    <div class="section-label">Application Server</div>
-    <h2>RR Application Server</h2>
+    <!-- ============ TOPIC: SOFTWARE & LICENSING ============ -->
+    <section id="topic-licensing" class="view">
+      <h1>Software &amp; Licensing</h1>
+      <p>This section breaks down every software component RapidReconciler depends on and identifies who is responsible for licensing each. Use it as a planning aid for procurement.</p>
 
-    <div class="callout callout-note">
-      <span class="callout-label">Recommendation</span>
-      <p>It is highly recommended to use a dedicated server for the RapidReconciler application.</p>
-    </div>
+      <div class="diamond-divider"><span class="diamond"></span></div>
 
-    <ul class="spec-list">
-      <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2019 or later</span></li>
-      <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">16 GB minimum</span></li>
-      <li class="spec-row"><span class="spec-key">Browser</span><span class="spec-val">Microsoft Edge or Google Chrome</span></li>
-      <li class="spec-row"><span class="spec-key">IP Address</span><span class="spec-val">Static</span></li>
-      <li class="spec-row"><span class="spec-key">Credentials</span><span class="spec-val">Local administrative credentials required for configuration</span></li>
-    </ul>
+      <h2>Licensing Model at a Glance</h2>
+      <p>RapidReconciler follows a "bring your own infrastructure" model. GSI provides the RapidReconciler application license; the customer provides the underlying server operating systems, database engine, source platform connectivity software, and end-user productivity tools.</p>
 
-    <h3>Network Access</h3>
-    <div class="net-grid">
-      <div class="net-panel">
-        <div class="net-head">Internal Access</div>
-        <div class="net-body">
-          <div class="net-item">
-            <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Port Range</div>
-            <span class="net-range">32145 – 49152</span>
+      <table>
+        <thead>
+          <tr><th>Component</th><th>Purpose</th><th>Responsibility</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>RapidReconciler application</td>
+            <td>The web application, SSIS packages, and database schema</td>
+            <td><span class="license-resp gsi">GSI provides</span></td>
+          </tr>
+          <tr>
+            <td>Windows Server</td>
+            <td>Operating system for each RR server (database, application, optional SSIS)</td>
+            <td><span class="license-resp customer">Customer provides</span></td>
+          </tr>
+          <tr>
+            <td>Microsoft SQL Server</td>
+            <td>Database engine that hosts the RapidReconciler database</td>
+            <td><span class="license-resp customer">Customer provides</span></td>
+          </tr>
+          <tr>
+            <td>SQL Server Integration Services</td>
+            <td>Extracts data from JDE; included in the SQL Server license</td>
+            <td><span class="license-resp customer">Customer provides</span></td>
+          </tr>
+          <tr>
+            <td>SQL Server Management Studio</td>
+            <td>Administrative interface for SQL Server</td>
+            <td><span class="license-resp either">Free download from Microsoft</span></td>
+          </tr>
+          <tr>
+            <td>Visual Studio Community + SSIS extension</td>
+            <td>Used during install to deploy and configure SSIS packages</td>
+            <td><span class="license-resp either">Free download from Microsoft</span></td>
+          </tr>
+          <tr>
+            <td>Oracle Database Client / ODAC</td>
+            <td>Required only if your JDE source is on Oracle</td>
+            <td><span class="license-resp customer">Customer provides</span></td>
+          </tr>
+          <tr>
+            <td>IBM i Access Client Solutions</td>
+            <td>Required only if your JDE source is on AS/400 (I-Series)</td>
+            <td><span class="license-resp customer">Customer provides</span></td>
+          </tr>
+          <tr>
+            <td>Microsoft Excel (end-user workstations)</td>
+            <td>Required for export/import functionality in the web application</td>
+            <td><span class="license-resp customer">Customer provides</span></td>
+          </tr>
+          <tr>
+            <td>PDF viewer (end-user workstations)</td>
+            <td>Required to view exported reports</td>
+            <td><span class="license-resp either">Free options available (e.g., Adobe Reader)</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Customer-Provided Licensing Notes</h2>
+
+      <h3>Microsoft SQL Server</h3>
+      <p>The customer provides the SQL Server license. Standard edition is sufficient for most deployments. Existing SQL Server licenses can typically be used — RapidReconciler does not require a dedicated instance, though a dedicated database is created during installation. Confirm with your Microsoft licensing contact whether your existing agreement covers an additional database on an existing SQL Server.</p>
+
+      <h3>Windows Server</h3>
+      <p>Windows Server 2019 or later is required for each RR server role. Existing licensed instances can be used; new instances need to be licensed by the customer.</p>
+
+      <h3>Source Platform Connectivity</h3>
+      <p>If your JDE source runs on Oracle, the Oracle Database Client (or ODAC) is required and is the customer's responsibility. The Oracle client is generally available without separate licensing for clients connecting to a properly licensed Oracle Database — confirm with your Oracle DBA. If your JDE source runs on AS/400, IBM i Access Client Solutions is required and is included with your existing IBM i entitlements; confirm with your IBM administrator that the SSIS host is covered. If your JDE source runs on Microsoft SQL Server, no additional licensing is needed.</p>
+
+      <h3>End-User Productivity Software</h3>
+      <p>Microsoft Excel 2016 or later is required on each end-user workstation that uses the application's export/import features. Most customers already have organization-wide Microsoft 365 or Office licensing that covers this.</p>
+
+      <h2>What GSI Provides</h2>
+      <ul>
+        <li>The RapidReconciler application license, scoped per the licensing terms in your agreement with GSI</li>
+        <li>Installation, configuration, and post-install support</li>
+        <li>Updates and ongoing support per your support agreement</li>
+        <li>The SSIS packages and database schema delivered during installation</li>
+      </ul>
+
+      <div class="callout info">
+        <div class="callout-label">Pricing and licensing terms</div>
+        <p>Specific RapidReconciler pricing, the number of licensed companies, and ongoing support terms are addressed in your sales agreement. Reach out to your GSI sales contact with any questions about scope or commercial terms.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-endusers')">← Back: End-User Workstations</button>
+        <button class="next-btn" onclick="showView('topic-network')">Next: Network Requirements →</button>
+      </div>
+    </section>
+
+
+    <!-- ============ TOPIC: NETWORK REQUIREMENTS ============ -->
+    <section id="topic-network" class="view">
+      <h1>Network Requirements</h1>
+      <p>Connectivity that needs to be in place before installation. Engage your network team early — firewall changes typically require a change-window and approval cycle.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Internal &amp; External Connectivity</h2>
+      <p>The following access requirements apply to whichever server hosts the RapidReconciler application services — the dedicated RR server in Configuration 1, or the application server in Configurations 2 and 3.</p>
+
+      <div class="net-grid">
+        <div class="net-panel">
+          <div class="net-head">Internal Access</div>
+          <div class="net-body">
+            <div class="net-item">
+              <div class="net-mini-label">Port Range</div>
+              <span class="net-range">32145 – 49152</span>
+              <span class="net-note">Open between application server and the user network</span>
+            </div>
+            <div class="net-item">
+              <div class="net-mini-label">URL Pattern</div>
+              <span class="net-url">rrprod-[companyname].getgsi.com</span>
+              <span class="net-note">Resolved internally to the application server's IP</span>
+            </div>
           </div>
-          <div class="net-item">
-            <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">URL Pattern</div>
-            <span class="net-url">rrprod-[companyname].getgsi.com</span>
-            <span class="net-note">Provide internal IP of the app server</span>
+        </div>
+        <div class="net-panel">
+          <div class="net-head">External Access (Port 443)</div>
+          <div class="net-body">
+            <div class="net-item">
+              <span class="net-url">rapidreconciler.getgsi.com</span>
+              <span class="net-ip">191.237.24.89</span>
+            </div>
+            <div class="net-item">
+              <span class="net-url">rr-valc-spa.cloudapp.net</span>
+              <span class="net-ip">23.96.83.121</span>
+            </div>
+            <div class="net-item">
+              <span class="net-url">rr-spa.cloudapp.net</span>
+              <span class="net-ip">52.170.255.174</span>
+            </div>
           </div>
         </div>
       </div>
-      <div class="net-panel">
-        <div class="net-head">External Access (Port 443)</div>
-        <div class="net-body">
-          <div class="net-item">
-            <span class="net-url">rapidreconciler.getgsi.com</span>
-            <span class="net-ip">191.237.24.89</span>
-          </div>
-          <div class="net-item">
-            <span class="net-url">rr-valc-spa.cloudapp.net</span>
-            <span class="net-ip">23.96.83.121</span>
-            <span class="net-note">rr-valc-spa.cloudapp.net/check-ip returns external IP</span>
-          </div>
-          <div class="net-item">
-            <span class="net-url">rr-spa.cloudapp.net</span>
-            <span class="net-ip">52.170.255.174</span>
-          </div>
-        </div>
+
+      <div class="callout">
+        <div class="callout-label">Outbound only</div>
+        <p>The external connection from the application server to GSI hosts is outbound HTTPS on port 443 only. No inbound access from GSI is required, and no exception needs to be made on your perimeter firewall for inbound traffic.</p>
       </div>
-    </div>
-  </div>
 
-
-  <!-- ── END USER PC ──────────────────────────────────────── -->
-  <div class="section" id="end-user">
-    <div class="section-label">End User</div>
-    <h2>End User PC</h2>
-
-    <ul class="spec-list">
-      <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows 10 or later &nbsp;/&nbsp; macOS 12 (Monterey) or later</span></li>
-      <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">8 GB minimum</span></li>
-      <li class="spec-row"><span class="spec-key">Screen Resolution</span><span class="spec-val">1280 × 800 minimum recommended</span></li>
-      <li class="spec-row"><span class="spec-key">Browsers</span><span class="spec-val">Microsoft Edge, Chrome, Firefox, Safari</span></li>
-      <li class="spec-row"><span class="spec-key">Microsoft Excel</span><span class="spec-val">2016 or later (required for export/import functionality)</span></li>
-      <li class="spec-row"><span class="spec-key">PDF Viewer</span><span class="spec-val">Adobe Acrobat Reader or equivalent</span></li>
-      <li class="spec-row"><span class="spec-key">Internet Access</span><span class="spec-val"><code>https://rapidreconciler.getgsi.com</code></span></li>
-      <li class="spec-row"><span class="spec-key">Network</span><span class="spec-val">Access to application server required</span></li>
-    </ul>
-  </div>
-
-
-  <!-- ── JD EDWARDS ──────────────────────────────────────── -->
-  <div class="section" id="jde">
-    <div class="section-label">JD Edwards</div>
-    <h2>JD Edwards Information</h2>
-
-    <div class="callout callout-info">
-      <span class="callout-label">For GSI Submission</span>
-      <p>The values recorded below are to be submitted to GSI for product configuration during installation.</p>
-    </div>
-
-    <h3>Data Dictionary Variables</h3>
-    <div class="tbl-wrap">
+      <h2>Cross-Server Connectivity</h2>
+      <p>For multi-server topologies (Configurations 2 and 3), additional internal connectivity is required between the RR servers themselves.</p>
       <table>
-        <thead><tr><th>Variable</th><th>Description</th><th>Typical Value</th><th>Customer Value</th></tr></thead>
+        <thead>
+          <tr><th>From → To</th><th>Port</th><th>Required For</th></tr>
+        </thead>
         <tbody>
-          <tr><td>ECST</td><td>Decimal places for extended cost</td><td>2</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Customer value for ECST"></td></tr>
-          <tr><td>UNCS</td><td>Decimal places for unit cost</td><td>4</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Customer value for UNCS"></td></tr>
-          <tr><td>PQOH</td><td>Decimal places for quantity on hand</td><td>—</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Customer value for PQOH"></td></tr>
-          <tr><td>TRQT</td><td>Decimal places for transaction quantities in cardex</td><td>—</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Customer value for TRQT"></td></tr>
+          <tr>
+            <td>Application server → Database server</td>
+            <td>TCP 1433 (or your custom SQL port)</td>
+            <td>Configurations 2 and 3</td>
+          </tr>
+          <tr>
+            <td>SSIS server → Database server</td>
+            <td>TCP 1433 (or your custom SQL port)</td>
+            <td>Configuration 3 only</td>
+          </tr>
+          <tr>
+            <td>SSIS host → JDE source</td>
+            <td>Whatever port the JDE platform uses</td>
+            <td>All configurations (host varies — see Architecture)</td>
+          </tr>
+          <tr>
+            <td>User network → Application server</td>
+            <td>HTTPS on the application port</td>
+            <td>All configurations — required for end users to reach the app</td>
+          </tr>
         </tbody>
       </table>
-    </div>
 
-    <h3>Connection Details</h3>
-    <div class="tbl-wrap">
+      <h2>Time Synchronization</h2>
+      <p>All RR servers should synchronize time to the same source — typically your domain controller or a corporate NTP server. Cross-machine Windows authentication fails when clocks differ by more than five minutes, and intermittent authentication failures of this kind are time-consuming to diagnose during install.</p>
+
+      <h2>Network Latency</h2>
+      <p>SSIS data flows are latency-sensitive. Gigabit LAN is required between the SSIS host and the database server in Configuration 3. WAN-separated configurations are not supported.</p>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-licensing')">← Back: Software &amp; Licensing</button>
+        <button class="next-btn" onclick="showView('topic-security')">Next: Security Posture →</button>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: SECURITY POSTURE ============ -->
+    <section id="topic-security" class="view">
+      <h1>Security Posture</h1>
+      <p>RapidReconciler is designed to operate within standard enterprise security practices. This section summarizes what your security team will need to plan for.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Account Model</h2>
+      <p>RapidReconciler uses a small set of well-defined accounts. The exact configuration depends on the chosen topology, but the model is consistent.</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">SQL Server Service Account</span><span class="spec-val">A dedicated AD or local service account is recommended for the SQL Server service. Set the password not to expire, or document the rotation procedure with GSI.</span></li>
+        <li class="spec-row"><span class="spec-key">Application Database User</span><span class="spec-val">A SQL-based login (<code>rruser</code>) is created during install for the application's connection to the database. Windows authentication via a domain service account in the <code>db_owner</code> role on the RapidReconciler database can be substituted if your organization prefers it.</span></li>
+        <li class="spec-row"><span class="spec-key">Source Read Account</span><span class="spec-val">A read-only account on the JDE source database, used by SSIS to extract data. Provided by the customer's JDE administrator.</span></li>
+        <li class="spec-row"><span class="spec-key">Local Administrator</span><span class="spec-val">Local administrative credentials on each RR server are required during the install meeting. These can be revoked or rotated after install.</span></li>
+      </ul>
+
+      <h2>Antivirus Considerations</h2>
+      <p>Per Microsoft guidance, real-time antivirus scanning of SQL Server data files degrades performance and can cause SQL Server to fail under load. Plan for the following exclusions on each affected server:</p>
+      <ul>
+        <li>SQL Server data and log files (<code>.mdf</code>, <code>.ldf</code>, <code>.ndf</code>) on the database server</li>
+        <li>The SQL Server backup folder on the database server</li>
+        <li>The RapidReconciler application install directory on the application server</li>
+        <li>The SSIS package folder and execution working directory on whichever host runs SSIS</li>
+      </ul>
+
+      <h2>Firewall Posture</h2>
+      <p>Firewall rules should follow the principle of least privilege — open only the ports needed, scoped to the specific source IPs that need them.</p>
+      <ul>
+        <li>Database server inbound 1433 should be scoped to the application server's static IP (and the SSIS server's static IP in Configuration 3). Block all other sources.</li>
+        <li>Application server inbound HTTPS should be scoped to the user network range that will access RapidReconciler.</li>
+        <li>The outbound connection from the application server to GSI hosts uses port 443 and is outbound-only — no inbound exception is required.</li>
+      </ul>
+
+      <h2>Authentication Between Servers</h2>
+      <p>For Configurations 2 and 3, the application server and (in Configuration 3) the SSIS server need to authenticate to the database server. SQL authentication via the <code>rruser</code> login is the default and requires no domain trust between machines. Windows authentication via a domain service account is supported as an alternative and is preferred if your security policy mandates it.</p>
+
+      <div class="callout info">
+        <div class="callout-label">Conformance with internal standards</div>
+        <p>The recommendations above reflect standard Microsoft and industry guidance for SQL Server and Integration Services deployments. If your organization has stricter internal standards — for example around password policies, firewall change procedures, or service-account governance — apply your standards in addition to what's listed here. GSI will work within your existing security framework during installation.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-network')">← Back: Network Requirements</button>
+        <button class="next-btn" onclick="showView('topic-next')">Next: Next Steps →</button>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: NEXT STEPS ============ -->
+    <section id="topic-next" class="view">
+      <h1>Next Steps</h1>
+      <p>What happens after these requirements are reviewed.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Reviewing the Requirements</h2>
+      <p>Once your IT, security, and JDE teams have reviewed this document, you should be in a position to confirm:</p>
+      <ul>
+        <li>Which deployment topology fits your environment</li>
+        <li>Which servers will host each role, or whether new servers need to be provisioned</li>
+        <li>That your JD Edwards source platform is supported and that the necessary connectivity software can be licensed</li>
+        <li>That the licensing components in scope are budgeted and available</li>
+        <li>That your network and security teams understand what changes will be needed</li>
+      </ul>
+
+      <h2>Working with GSI</h2>
+      <p>From here, your GSI sales contact will guide the engagement forward. Common next conversations include:</p>
+      <ul>
+        <li>Clarifying any open questions raised by the technical review</li>
+        <li>Aligning on commercial terms, licensed company count, and support scope</li>
+        <li>Scheduling installation when your environment is ready</li>
+      </ul>
+
+      <h2>Getting in Touch</h2>
+      <p>If your team has technical questions while reviewing these requirements, your GSI sales contact can route them to the appropriate technical resources at GSI. For general inquiries:</p>
+
       <table>
-        <thead><tr><th style="width:55%;">Item</th><th>Customer Value</th></tr></thead>
+        <thead>
+          <tr><th>Topic</th><th>Contact</th></tr>
+        </thead>
         <tbody>
-          <tr><td>Name or IP address of the JDE data server or data warehouse</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="JDE data server name or IP"></td></tr>
-          <tr><td>Database username <em>(use <code>rapidrec</code> if possible)</em></td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Database username"></td></tr>
-          <tr><td>Database password <em>(use <code>rapidrec</code> if possible)</em></td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Database password"></td></tr>
-          <tr><td>JDE server type <em>(I-Series, Oracle, or Microsoft SQL Server)</em></td><td class="fill-cell"><input class="fill-input" type="text" aria-label="JDE server type"></td></tr>
-          <tr><td>Table qualifier name <em>(e.g., <code>proddta</code>)</em></td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Table qualifier name"></td></tr>
+          <tr><td>Sales and licensing</td><td><a href="mailto:gsisales@getgsi.com">gsisales@getgsi.com</a></td></tr>
+          <tr><td>Technical support</td><td><a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> &middot; (855) 474-4377</td></tr>
+          <tr><td>Product information</td><td><a href="https://rapidreconciler.getgsi.com">rapidreconciler.getgsi.com</a></td></tr>
         </tbody>
       </table>
-    </div>
 
-    <h3>Submitted By</h3>
-    <div class="tbl-wrap">
-      <table>
-        <thead><tr><th style="width:25%;">Field</th><th>Value</th></tr></thead>
-        <tbody>
-          <tr><td>Name</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Submitter name"></td></tr>
-          <tr><td>Title</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Submitter title"></td></tr>
-          <tr><td>Email</td><td class="fill-cell"><input class="fill-input" type="email" aria-label="Submitter email"></td></tr>
-          <tr><td>Phone</td><td class="fill-cell"><input class="fill-input" type="tel" aria-label="Submitter phone"></td></tr>
-          <tr><td>Date</td><td class="fill-cell"><input class="fill-input" type="text" aria-label="Submission date"></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+      <div class="callout tip">
+        <div class="callout-label">Thank you</div>
+        <p>Thank you for considering RapidReconciler. We look forward to working with your team.</p>
+      </div>
 
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-security')">← Back: Security Posture</button>
+        <button class="next-btn" onclick="goHome()">Return to Index ↺</button>
+      </div>
+    </section>
 
-  <!-- ── APPENDIX A ───────────────────────────────────────── -->
-  <div class="section" id="appendix-a">
-    <div class="section-label">Appendix A</div>
-    <div class="appendix-tag">Appendix A</div>
-    <h2>Creating the Integration Services Catalog</h2>
+  </main>
 
-    <h3>Create the Catalog</h3>
-    <ol class="process-list">
-      <li>Open <strong>SQL Server Management Studio (SSMS)</strong> and connect to the target SQL Server instance.</li>
-      <li>In the Object Explorer, right-click the <strong>Integration Services</strong> node and select <strong>Create Catalog</strong>.</li>
-      <li>The catalog name defaults to <code>SSISDB</code> and cannot be changed.</li>
-      <li>Provide a strong password for the database master key used for encryption.</li>
-      <li>After creation, back up the database master key.</li>
-    </ol>
-
-    <div class="callout callout-note">
-      <span class="callout-label">Note</span>
-      <p>Integration Services uses CLR-based stored procedures. CLR is not enabled by default on a SQL Server instance. Ensure <strong>Enable CLR Integration</strong> is checked before creating the catalog.</p>
-    </div>
-
-    <h3>Create the Project Folder</h3>
-    <ol class="process-list">
-      <li>In SSMS, right-click the <code>SSISDB</code> catalog under the Integration Services node.</li>
-      <li>Select <strong>Create Folder</strong>.</li>
-      <li>Name the folder <code>RapidReconciler</code> and provide an optional description.</li>
-      <li>The RapidReconciler SSIS package may now be deployed to the server and scheduled.</li>
-    </ol>
-  </div>
-
-
-  <!-- ── APPENDIX B ───────────────────────────────────────── -->
-  <div class="section" id="appendix-b">
-    <div class="section-label">Appendix B</div>
-    <div class="appendix-tag">Appendix B</div>
-    <h2>Proof of Concept Requirements</h2>
-    <p>To provide data to GSI for a proof of concept, follow the steps below.</p>
-
-    <ol class="process-list">
-      <li>Create an empty database in Microsoft SQL Server 2012 or later.</li>
-      <li>Using the ETL tool of your choice, run each of the select statements in the table below.</li>
-      <li>Destination tables must use the same naming conventions as the original JDE tables.</li>
-      <li>Once complete, create a compressed backup of the database.</li>
-      <li>Email <a href="mailto:rrsupport@getgsi.com" style="color:var(--blue);">rrsupport@getgsi.com</a> for data transfer instructions.</li>
-      <li>The GSI sales team will contact you to schedule a results presentation.</li>
-    </ol>
-
-    <div class="callout callout-important">
-      <span class="callout-label">Important</span>
-      <p>Extract tables <code>F41021</code> and <code>F4111</code> as close together in time as possible, when system activity is at a minimum.</p>
-    </div>
-
-    <h3>Table Extract Statements</h3>
-    <p>All tables below are accessed by RapidReconciler in <strong style="color:var(--navy);">read-only</strong> mode. The Select Statement column is provided for proof of concept extracts; tables without a Select Statement are referenced by RapidReconciler but are not part of the proof of concept extract.</p>
-    <div class="tbl-wrap">
-      <table>
-        <thead><tr><th>Table</th><th>Description</th><th>Select Statement for Proof of Concept</th></tr></thead>
-        <tbody>
-          <tr><td>F0006</td><td>Business Unit Master</td><td><code>SELECT * FROM F0006</code></td></tr>
-          <tr><td>F0008</td><td>Fiscal Date Patterns</td><td><code>SELECT * FROM F0008</code></td></tr>
-          <tr><td>F0010</td><td>Company Master</td><td><code>SELECT * FROM F0010</code></td></tr>
-          <tr><td>F0011</td><td>Batch Headers</td><td><code>SELECT * FROM F0011 WHERE ICDICJ >= 125001</code></td></tr>
-          <tr><td>F0013</td><td>Currency Codes</td><td><code>SELECT * FROM F0013</code></td></tr>
-          <tr><td>F0015</td><td>Currency Exchange Rates</td><td><code>SELECT * FROM F0015 WHERE CXEFT >= 125001</code></td></tr>
-          <tr><td>F0101</td><td>Address Book (Vendor Names Only)</td><td><code>SELECT ABAN8, ABALPH FROM F0101</code></td></tr>
-          <tr><td>F0901</td><td>Account Master</td><td><code>SELECT * FROM F0901</code></td></tr>
-          <tr><td>F0902</td><td>Account Balances</td><td><code>SELECT GBAID, GBCO, GBFY, GBLT, SUM(GBAPYC), SUM(GBAN01–GBAN14) FROM F0902 WHERE GBFY BETWEEN 11 AND 40 AND GBLT = 'AA' GROUP BY GBAID, GBCO, GBFY, GBLT</code></td></tr>
-          <tr><td>F0911</td><td>Account Ledger</td><td><code>SELECT * FROM F0911 WHERE GLLT = 'AA' AND GLDGJ >= 125001</code></td></tr>
-          <tr><td>F1113</td><td>Currency Restatement Rates</td><td><code>SELECT * FROM F1113 WHERE C1EFT >= 125001</code></td></tr>
-          <tr><td>F30026</td><td>Cost Components</td><td><code>SELECT * FROM F30026 WHERE IELEDG = '07'</code></td></tr>
-          <tr><td>F3106</td><td>Work Order Cross Ref</td><td><code>SELECT * FROM F3106 WHERE SDDICJ >= 125001</code></td></tr>
-          <tr><td>F4095</td><td>D/M Accounting Instructions</td><td><code>SELECT * FROM F4095</code></td></tr>
-          <tr><td>F4096</td><td>Flex Accounting Instructions</td><td><code>SELECT * FROM F4096</code></td></tr>
-          <tr><td>F41001</td><td>Inventory Constants</td><td><code>SELECT * FROM F41001</code></td></tr>
-          <tr><td>F41002</td><td>UOM Conversions</td><td><code>SELECT * FROM F41002</code></td></tr>
-          <tr><td>F41003</td><td>Standard Conversions</td><td><code>SELECT * FROM F41003</code></td></tr>
-          <tr><td>F4101</td><td>Item Master</td><td><code>SELECT * FROM F4101</code></td></tr>
-          <tr><td>F4102</td><td>Item Branch Plant</td><td><code>SELECT * FROM F4102</code></td></tr>
-          <tr><td>F41021</td><td>Item Location / Balances</td><td><code>SELECT * FROM F41021</code></td></tr>
-          <tr><td>F4105</td><td>Cost Ledger</td><td><code>SELECT * FROM F4105 WHERE COCSIN = 'I'</code></td></tr>
-          <tr><td>F4108</td><td>Lot Master</td><td></td></tr>
-          <tr><td>F4111</td><td>Item Ledger</td><td><code>SELECT * FROM F4111 WHERE ILCRDJ >= 124350</code></td></tr>
-          <tr><td>F4211</td><td>Sales Order Details</td><td><code>SELECT * FROM F4211 WHERE SDUPMJ >= 124350</code></td></tr>
-          <tr><td>F42119</td><td>Sales Order History</td><td><code>SELECT * FROM F42119 WHERE SDUPMJ >= 124350</code></td></tr>
-          <tr><td>F4311</td><td>Purchase Order Details</td><td><code>SELECT * FROM F4311 WHERE PDTRDJ >= 124350</code></td></tr>
-          <tr><td>F43121</td><td>Purchase Order Receipts</td><td><code>SELECT * FROM F43121</code></td></tr>
-          <tr><td>F4801</td><td>Work Order Headers</td><td><code>SELECT * FROM F4801 WHERE WAUPMJ >= 125001</code></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-</div><!-- /content -->
-
-<!-- FOOTER -->
-<div class="doc-footer">
-  <div class="footer-brand">
-    <svg viewBox="0 0 28 28" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
-      <path d="M22,22 H7 a7,7 0 0,1 -1,-13 a9,9 0 0,1 17,-2 a5,5 0 0,1 -1,11 Z" fill="#2b5ea7"/>
-      <path d="M23,18 H9 a5,5 0 0,1 -1,-10 a7,7 0 0,1 14,-1 a4,4 0 0,1 0,9 Z" fill="#4a90d9" opacity="0.85"/>
-      <circle cx="14" cy="13" r="2.5" fill="white" opacity="0.95"/>
-      <circle cx="14" cy="13" r="1.4" fill="#1e3a5f"/>
-      <circle cx="8"  cy="17" r="1.8" fill="white" opacity="0.9"/>
-      <circle cx="20" cy="17" r="1.8" fill="white" opacity="0.9"/>
-      <line x1="14" y1="13" x2="8"  y2="17" stroke="white" stroke-width="1" opacity="0.9"/>
-      <line x1="14" y1="13" x2="20" y2="17" stroke="white" stroke-width="1" opacity="0.9"/>
-    </svg>
-    <span class="footer-name">GSI <span class="footer-dot">·</span> RapidReconciler</span>
-  </div>
-  <div class="footer-right">
-    <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> &nbsp;·&nbsp; (855) 474-4377<br>
-    <a href="https://rapidreconciler.getgsi.com">rapidreconciler.getgsi.com</a>
-  </div>
 </div>
 
-</div><!-- /page -->
+<!-- ==================== PAGE FOOTER ==================== -->
+<footer class="page-footer">
+  <div class="footer-left">
+    Project maintained by<br>
+    <a href="#">RapidReconciler</a>
+  </div>
+  <div class="footer-left" style="text-align:left; padding-right:0;">
+    <a href="mailto:gsisales@getgsi.com">gsisales@getgsi.com</a> · (855) 474-4377<br>
+    <a href="https://rapidreconciler.getgsi.com">rapidreconciler.getgsi.com</a>
+  </div>
+</footer>
+
+<script>
+  // Sidebar / view switching — same pattern as the install prep document
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+    var target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      var slug = id === 'home' ? 'home' : id.replace('topic-', '');
+      document.querySelectorAll('#sidebar-nav li').forEach(function(li) {
+        li.classList.toggle('active', li.dataset.target === slug);
+      });
+
+      try {
+        if (window.location.protocol !== 'about:') {
+          history.replaceState(null, '', slug === 'home' ? ' ' : '#' + slug);
+        }
+      } catch (e) { /* sandboxed context — navigation still works without URL hash */ }
+    }
+  }
+
+  function goHome() { showView('home'); }
+
+  document.querySelectorAll('#sidebar-nav li[data-target="home"]').forEach(function(li) {
+    li.classList.add('active');
+  });
+
+  window.addEventListener('DOMContentLoaded', function() {
+    try {
+      var hash = window.location.hash.replace('#', '');
+      if (hash && hash !== 'home') showView('topic-' + hash);
+    } catch (e) { /* ignore */ }
+  });
+
+  window.addEventListener('popstate', function() {
+    try {
+      var hash = window.location.hash.replace('#', '');
+      showView(hash && hash !== 'home' ? 'topic-' + hash : 'home');
+    } catch (e) { /* ignore */ }
+  });
+</script>
+
 </body>
 </html>

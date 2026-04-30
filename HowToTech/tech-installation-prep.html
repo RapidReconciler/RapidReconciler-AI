@@ -1,0 +1,2976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RapidReconciler — Installation Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #4d77b4;
+    --blue-dark: #3d5f93;
+    --yellow: #f5cb35;
+    --yellow-dark: #e0b820;
+    --beige: #e0d8c3;
+    --paper: #ffffff;
+    --ink: #333333;
+    --ink-soft: #555555;
+    --muted: #888888;
+    --rule: #e0e0e0;
+    --link: #4d77b4;
+    --table-border: #d6d2c4;
+    --warning-bg: #fdf6e3;
+    --tip-bg: #f0f4ec;
+    --tip-border: #6b8e4e;
+    --code-bg: #f4f1e8;
+    --important-bg: #fbe9e3;
+    --important-border: #c75a3a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: var(--beige);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ==================== HEADER ==================== */
+  .blue-header {
+    background: var(--blue);
+    color: white;
+    text-align: center;
+    padding: 36px 20px 30px;
+    border-bottom: 1px solid var(--blue-dark);
+  }
+
+  .blue-header h1 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+
+  .blue-header .tagline {
+    font-size: 15px;
+    opacity: 0.95;
+  }
+
+  /* ==================== YELLOW BAR ==================== */
+  .yellow-bar {
+    background: var(--yellow);
+    border-bottom: 1px solid var(--yellow-dark);
+    padding: 14px 20px;
+  }
+
+  .yellow-bar-inner {
+    width: 100%;
+    max-width: 1040px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  .home-btn {
+    background: rgba(255,255,255,0.55);
+    border: 1px solid rgba(0,0,0,0.18);
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset;
+  }
+  .home-btn:hover { background: rgba(255,255,255,0.85); text-decoration: none; }
+
+  .corner-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.65);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--yellow);
+    font-family: 'Bitter', serif;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* ==================== LAYOUT ==================== */
+  .page-wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 30px 20px 80px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 30px;
+    align-items: start;
+  }
+
+  /* ==================== SIDEBAR ==================== */
+  .sidebar {
+    padding: 8px 0;
+    position: sticky;
+    top: 20px;
+  }
+
+  .sidebar-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    text-align: right;
+    padding: 6px 14px 6px 0;
+    line-height: 1.3;
+  }
+
+  .sidebar-nav { list-style: none; margin-top: 4px; }
+
+  .sidebar-nav li button {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    border-right: 2px solid transparent;
+    text-align: right;
+    padding: 6px 14px 6px 0;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--link);
+    cursor: pointer;
+    line-height: 1.4;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .sidebar-nav li button:hover { text-decoration: underline; }
+
+  .sidebar-nav li.active button {
+    color: var(--ink);
+    font-weight: 600;
+    border-right-color: var(--yellow);
+    text-decoration: none;
+  }
+
+  /* ==================== CONTENT CARD ==================== */
+  .content-card {
+    background: var(--paper);
+    padding: 36px 44px 48px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border-radius: 2px;
+    min-height: 600px;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ==================== TYPOGRAPHY ==================== */
+  .content-card h1 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 32px;
+    color: var(--ink);
+    margin-bottom: 18px;
+    line-height: 1.2;
+  }
+
+  .content-card h2 {
+    font-family: 'Bitter', serif;
+    font-weight: 400;
+    font-size: 24px;
+    color: var(--ink);
+    margin-top: 36px;
+    margin-bottom: 14px;
+    line-height: 1.25;
+  }
+
+  .content-card h3 {
+    font-family: 'Bitter', serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+
+  .content-card h4 {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+    margin-top: 18px;
+    margin-bottom: 8px;
+  }
+
+  .content-card p {
+    margin-bottom: 14px;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .content-card p strong { font-weight: 600; }
+
+  .content-card ul,
+  .content-card ol {
+    margin: 12px 0 18px 28px;
+  }
+
+  .content-card li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .content-card code {
+    font-family: 'Source Code Pro', monospace;
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    color: #b04a2e;
+  }
+
+  /* ==================== DIAMOND DIVIDER ==================== */
+  .diamond-divider {
+    display: flex;
+    align-items: center;
+    margin: 28px 0;
+    gap: 12px;
+  }
+  .diamond-divider::before,
+  .diamond-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  .diamond-divider .diamond {
+    width: 8px;
+    height: 8px;
+    background: var(--yellow);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ==================== TABLES ==================== */
+  .content-card table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    border: 1px solid var(--table-border);
+    background: #fffdf6;
+  }
+
+  .content-card thead th {
+    background: var(--paper);
+    font-weight: 700;
+    color: var(--ink);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 14px;
+    border-bottom: 2px solid var(--yellow);
+  }
+
+  .content-card td {
+    padding: 10px 14px;
+    border-top: 1px solid var(--table-border);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .content-card tbody tr:hover { background: #fdf6e3; }
+
+  .content-card td:first-child {
+    font-weight: 600;
+    color: var(--link);
+  }
+
+  .doc-table td:first-child a { font-weight: 400; color: var(--link); }
+  .doc-table td:first-child { font-weight: 400; }
+
+  /* Plain-first table — first column not styled as a link */
+  .plain-first td:first-child { color: var(--ink); font-weight: 600; }
+
+  /* ==================== CALLOUTS ==================== */
+  .callout {
+    margin: 22px 0;
+    padding: 14px 18px;
+    border-left: 4px solid var(--yellow);
+    background: var(--warning-bg);
+    border-radius: 2px;
+  }
+
+  .callout-label {
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #8a6d1a;
+    margin-bottom: 4px;
+  }
+
+  .callout p { margin-bottom: 0; font-size: 14.5px; }
+
+  .callout.warning {
+    border-left-color: var(--important-border);
+    background: var(--important-bg);
+  }
+  .callout.warning .callout-label { color: #8a3520; }
+
+  .callout.tip {
+    border-left-color: var(--tip-border);
+    background: var(--tip-bg);
+  }
+  .callout.tip .callout-label { color: #4a6b3a; }
+
+  .callout.info {
+    border-left-color: var(--blue);
+    background: #eef3fa;
+  }
+  .callout.info .callout-label { color: var(--blue-dark); }
+
+  /* ==================== TOPIC FOOTER NAV ==================== */
+  .topic-footer-nav {
+    margin-top: 56px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .back-btn {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--link);
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .back-btn:hover {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+  }
+
+  .next-btn {
+    background: var(--blue);
+    border: 1px solid var(--blue-dark);
+    color: white;
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.15s ease;
+  }
+  .next-btn:hover { background: var(--blue-dark); }
+  .next-btn:disabled,
+  .next-btn[disabled] {
+    background: #b8b8b8;
+    border-color: #a4a4a4;
+    color: #f0f0f0;
+    cursor: not-allowed;
+  }
+  .next-btn:disabled:hover,
+  .next-btn[disabled]:hover { background: #b8b8b8; }
+
+  /* Warning message that appears next to a gated Next button. Tells the user
+     exactly what's missing so the disabled state isn't a black box. */
+  .next-gate-warning {
+    flex: 1 1 100%;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: var(--warning-bg);
+    border-left: 3px solid var(--yellow-dark);
+    border-radius: 2px;
+    font-size: 13px;
+    color: #8a6d1a;
+    font-style: italic;
+    line-height: 1.5;
+    display: none;
+  }
+  .next-gate-warning.show { display: block; }
+  .next-gate-warning::before {
+    content: '⚠ ';
+    font-style: normal;
+    margin-right: 4px;
+  }
+
+  /* ==================== PAGE FOOTER ==================== */
+  .page-footer {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 20px 30px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 30px;
+  }
+
+  .footer-left {
+    text-align: right;
+    padding-right: 14px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .footer-left a { color: var(--link); }
+
+  /* ==================== PROCESS OVERVIEW (top of overview page) ==================== */
+  .process-overview {
+    margin: 18px 0 22px;
+    padding: 18px 22px;
+    background: #fdf6e3;
+    border: 1px solid var(--table-border);
+    border-radius: 3px;
+  }
+  .process-overview h3 {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--blue-dark);
+    margin: 0 0 10px;
+  }
+  .process-overview ol {
+    margin: 0;
+    padding-left: 22px;
+  }
+  .process-overview ol li {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+  .process-overview ol li strong { color: var(--blue-dark); }
+
+  /* ==================== SPEC LIST (key/value pairs) ==================== */
+  .spec-list {
+    list-style: none;
+    margin: 14px 0 18px;
+    border: 1px solid var(--table-border);
+    border-radius: 3px;
+    overflow: hidden;
+    background: #fffdf6;
+  }
+  .spec-row {
+    display: flex;
+    border-bottom: 1px solid var(--table-border);
+    font-size: 14px;
+  }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row:hover { background: #fdf6e3; }
+  .spec-key {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    color: var(--blue-dark);
+    background: var(--paper);
+    padding: 10px 14px;
+    width: 220px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid var(--table-border);
+  }
+  .spec-val {
+    padding: 10px 14px;
+    color: var(--ink);
+    flex: 1;
+    line-height: 1.55;
+  }
+
+  /* ==================== TOPOLOGY DIAGRAM ==================== */
+  .topology-figure {
+    margin: 18px 0 22px;
+    padding: 14px;
+    background: #fdf6e3;
+    border: 1px solid var(--table-border);
+    border-radius: 4px;
+  }
+  .topology-figure svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+  }
+  .topology-caption {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .topology-caption strong {
+    font-style: normal;
+    color: var(--blue-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 11px;
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  /* ==================== TOPOLOGY PICKER ==================== */
+  .topo-picker { margin: 22px 0; }
+  .topo-picker-prompt {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8a6d1a;
+    margin-bottom: 12px;
+  }
+  .topo-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  .topo-option {
+    position: relative;
+    display: block;
+    cursor: pointer;
+  }
+  .topo-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .topo-option-card {
+    border: 1.5px solid var(--table-border);
+    border-radius: 3px;
+    padding: 14px 16px;
+    transition: border-color 0.15s, background 0.15s;
+    background: var(--paper);
+    height: 100%;
+    box-sizing: border-box;
+  }
+  .topo-option:hover .topo-option-card {
+    border-color: var(--blue);
+  }
+  .topo-option input[type="radio"]:checked + .topo-option-card {
+    border-color: var(--blue);
+    background: #fdf6e3;
+    box-shadow: inset 0 0 0 1px var(--blue);
+  }
+  .topo-option input[type="radio"]:focus-visible + .topo-option-card {
+    outline: 2px solid var(--yellow);
+    outline-offset: 2px;
+  }
+  .topo-option-name {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 4px;
+  }
+  .topo-option-title {
+    font-family: 'Bitter', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .topo-option-desc {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  @media (max-width:720px) {
+    .topo-options { grid-template-columns: 1fr; }
+  }
+
+  /* Topology-reactive elements: hidden by default, shown via JS once topology chosen */
+  .topo-conditional { display: none; }
+  .topo-conditional.show { display: block; }
+
+  /* Server-name placeholder — text content gets filled by JS based on chosen
+     topology, so the JDE driver checklist rows name the correct server. */
+  .server-name {
+    border-bottom: 1px dashed var(--yellow-dark);
+    padding-bottom: 1px;
+    font-weight: 600;
+    color: var(--blue-dark);
+  }
+
+  /* ==================== SERVER NAME CAPTURE (topology page) ==================== */
+  .server-name-list {
+    list-style: none;
+    margin: 14px 0 18px;
+    padding: 0;
+    border: 1px solid var(--table-border);
+    border-radius: 3px;
+    overflow: hidden;
+    background: #fffdf6;
+  }
+  .server-name-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-areas:
+      "label input"
+      "hint  hint";
+    gap: 4px 14px;
+    align-items: center;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--table-border);
+    margin: 0;
+  }
+  .server-name-row:last-child { border-bottom: none; }
+  .server-name-row:hover { background: #fdf6e3; }
+  .server-name-label {
+    grid-area: label;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    color: var(--blue-dark);
+    font-size: 14px;
+  }
+  .server-name-input {
+    grid-area: input;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid var(--table-border);
+    border-radius: 3px;
+    background: var(--paper);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .server-name-input::placeholder {
+    color: var(--muted);
+    font-style: italic;
+  }
+  .server-name-input:hover { border-color: var(--blue); }
+  .server-name-input:focus {
+    border-color: var(--yellow-dark);
+    background: var(--warning-bg);
+  }
+  .server-name-hint {
+    grid-area: hint;
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    padding-left: 0;
+  }
+  @media (max-width: 600px) {
+    .server-name-row {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "label"
+        "input"
+        "hint";
+    }
+  }
+  @media print {
+    .server-name-input {
+      border: none;
+      border-bottom: 1px solid var(--ink);
+      background: transparent !important;
+      border-radius: 0;
+    }
+  }
+
+  /* ==================== STEP COMPLETION TOGGLE ==================== */
+  .step-complete-block {
+    margin: 32px 0 0;
+    padding: 14px 18px;
+    background: #fdf6e3;
+    border: 1px solid var(--table-border);
+    border-left: 4px solid var(--yellow);
+    border-radius: 3px;
+  }
+  .step-complete-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .step-complete-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--blue);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0;
+  }
+  .step-complete-label {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .step-complete-checkbox:checked ~ .step-complete-label {
+    color: var(--blue-dark);
+  }
+  .step-complete-checkbox:checked ~ .step-complete-label::after {
+    content: ' ✓';
+    color: var(--tip-border);
+    font-weight: 700;
+  }
+  @media print {
+    .step-complete-checkbox {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid var(--ink);
+      border-radius: 2px;
+      background: transparent;
+    }
+  }
+
+  /* Source-platform-reactive elements — same pattern as topo-conditional but for the source platform */
+  .source-conditional { display: none; }
+  .source-conditional.show { display: block; }
+  /* Special: a flex/checklist row variant. We need both an explicit hide rule
+     (more specific than the base `.checklist-row { display: flex }`) AND a
+     show rule that re-enables flex when the row matches the selection. Without
+     the explicit hide rule, the later-defined .checklist-row rule wins on
+     specificity ties and the rows stay visible. */
+  .checklist-row.source-conditional { display: none; }
+  .checklist-row.source-conditional.show { display: flex; }
+  /* Inverse: a placeholder checklist row shown only when no source is selected */
+  .source-pending-row { display: flex; }
+  .source-pending-row.hide { display: none; }
+
+  /* Highlight the selected source-platform row inside reference tables */
+  .source-row-highlight { background: #fdf6e3; }
+  .source-row-highlight td:first-child::before {
+    content: '▸ ';
+    color: var(--yellow-dark);
+    font-weight: 700;
+  }
+
+  /* Inline notice when source platform not yet chosen */
+  .source-pending {
+    margin: 14px 0;
+    padding: 12px 16px;
+    background: var(--warning-bg);
+    border: 1px dashed var(--yellow-dark);
+    border-radius: 3px;
+    font-size: 13.5px;
+    color: #8a6d1a;
+    font-style: italic;
+  }
+  .source-pending::before { content: '↑ '; font-style: normal; }
+
+  /* Inline notice when topology not yet chosen */
+  .topo-pending {
+    margin: 14px 0;
+    padding: 12px 16px;
+    background: var(--warning-bg);
+    border: 1px dashed var(--yellow-dark);
+    border-radius: 3px;
+    font-size: 13.5px;
+    color: #8a6d1a;
+    font-style: italic;
+  }
+  .topo-pending::before { content: '↑ '; font-style: normal; }
+
+  /* ==================== STORAGE CARD ==================== */
+  .storage-card {
+    background: var(--blue);
+    color: white;
+    border-radius: 3px;
+    padding: 18px 22px;
+    margin: 14px 0;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .storage-stat {
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .storage-num {
+    font-family: 'Bitter', serif;
+    font-size: 40px;
+    color: var(--yellow);
+    line-height: 1;
+    font-weight: 500;
+  }
+  .storage-unit {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+    margin-top: 4px;
+  }
+  .storage-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.18);
+    align-self: stretch;
+    flex-shrink: 0;
+  }
+  .storage-detail {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.65;
+  }
+  .storage-detail strong { color: white; font-weight: 700; }
+
+  /* ==================== NETWORK ACCESS PANELS ==================== */
+  .net-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 14px 0;
+  }
+  .net-panel {
+    border: 1px solid var(--table-border);
+    border-radius: 3px;
+    overflow: hidden;
+    background: #fffdf6;
+  }
+  .net-head {
+    background: var(--blue);
+    padding: 9px 14px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: white;
+  }
+  .net-body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .net-item { font-size: 13px; }
+  .net-mini-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .net-url {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 12.5px;
+    color: var(--blue);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .net-ip {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+  }
+  .net-note {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    display: block;
+    margin-top: 2px;
+  }
+  .net-range {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 14px;
+    color: var(--blue-dark);
+    font-weight: 600;
+  }
+  @media (max-width: 720px) {
+    .net-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ==================== TAGS (Baseline / Config) ==================== */
+  .scope-tag {
+    display: inline-block;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--yellow);
+    color: #8a6d1a;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .scope-tag.config {
+    background: var(--blue);
+    color: white;
+  }
+
+  /* ==================== CHECKLIST ==================== */
+  .checklist-group {
+    margin: 16px 0 18px;
+    border: 1px solid var(--table-border);
+    border-radius: 3px;
+    overflow: hidden;
+    background: #fffdf6;
+  }
+  .checklist-head {
+    background: var(--paper);
+    padding: 10px 14px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+    border-bottom: 2px solid var(--yellow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .checklist-head .scope-tag {
+    margin-left: 0;
+  }
+  .checklist-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--table-border);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .checklist-row:last-child { border-bottom: none; }
+  .checklist-row:hover { background: #fdf6e3; }
+  .checklist-row input[type="checkbox"] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    accent-color: var(--blue);
+    cursor: pointer;
+  }
+  .checklist-row label {
+    flex: 1;
+    cursor: pointer;
+  }
+  .checklist-row label .ref {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 6px;
+    font-style: italic;
+  }
+  .checklist-row label .ref a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .checklist-row label .ref a:hover { text-decoration: underline; }
+  @media print {
+    .checklist-row input[type="checkbox"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 13px;
+      height: 13px;
+      border: 1.5px solid var(--ink);
+      border-radius: 2px;
+      background: transparent;
+    }
+  }
+
+  /* ==================== JDE SUBMISSION ==================== */
+  .fill-input {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    width: 100%;
+    padding: 5px 8px;
+    border: none;
+    border-bottom: 1px dashed var(--table-border);
+    background: transparent;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .fill-input:hover { border-bottom-color: var(--blue); }
+  .fill-input:focus {
+    border-bottom-color: var(--yellow-dark);
+    background: var(--warning-bg);
+  }
+  .fill-cell { background: #fafcf3; }
+  @media print {
+    .fill-input { border-bottom: 1px solid var(--ink); background: transparent !important; }
+    .fill-cell { background: transparent !important; }
+  }
+
+  /* ==================== SUBMIT PANEL ==================== */
+  .submit-panel {
+    margin: 22px 0 6px;
+    padding: 20px 22px;
+    background: var(--blue);
+    border-radius: 3px;
+  }
+  .submit-panel-head {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 6px;
+  }
+  .submit-panel-text {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.6;
+    margin: 0 0 14px;
+  }
+  .submit-panel-text strong { color: white; }
+  .submit-panel-text code {
+    background: rgba(0,0,0,0.2);
+    color: var(--yellow);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+  .submit-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .submit-btn {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 9px 18px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.05s;
+    letter-spacing: 0.02em;
+  }
+  .submit-btn:active:not(:disabled) { transform: translateY(1px); }
+  .submit-btn-primary {
+    background: var(--yellow);
+    color: var(--blue-dark);
+    border-color: var(--yellow-dark);
+  }
+  .submit-btn-primary:hover:not(:disabled) { background: var(--yellow-dark); }
+  .submit-btn-primary:disabled {
+    background: rgba(245,203,53,0.35);
+    cursor: not-allowed;
+    color: rgba(255,255,255,0.55);
+    border-color: transparent;
+  }
+  .submit-btn-secondary {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border-color: rgba(255,255,255,0.22);
+  }
+  .submit-btn-secondary:hover { background: rgba(255,255,255,0.22); }
+  .submit-status {
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    font-style: italic;
+    margin-left: 6px;
+    min-width: 1px;
+  }
+  .submit-status.ok { color: #c4e89c; }
+  .submit-status.warn { color: var(--yellow); }
+  @media print { .submit-panel { display: none; } }
+
+  /* ==================== RESPONSIVE ==================== */
+  @media (max-width: 800px) {
+    .page-wrap, .page-footer {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .sidebar {
+      position: static;
+      padding: 12px;
+      background: var(--paper);
+      border-radius: 3px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    }
+    .sidebar-title, .sidebar-nav li button {
+      text-align: left;
+      border-right: none;
+      padding: 6px 0 6px 12px;
+      border-left: 2px solid transparent;
+    }
+    .sidebar-nav li.active button {
+      border-left-color: var(--yellow);
+      border-right-color: transparent;
+    }
+    .footer-left { text-align: left; padding-right: 0; }
+    .content-card { padding: 24px 22px 36px; }
+    .blue-header h1 { font-size: 28px; }
+    .content-card table { font-size: 12.5px; }
+    .content-card th, .content-card td { padding: 8px 10px; }
+    .spec-key { width: 140px; padding: 8px 10px; }
+    .spec-val { padding: 8px 10px; }
+  }
+
+  @media print {
+    body { background: white; }
+    .yellow-bar, .sidebar, .topic-footer-nav { display: none; }
+    .page-wrap { display: block; padding: 0; }
+    .content-card { box-shadow: none; padding: 24px; }
+    .view { display: block !important; page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== TOP BLUE HEADER ==================== -->
+<header class="blue-header">
+  <h1>GSI RapidReconciler Knowledge Base</h1>
+  <div class="tagline">Installation Prep Guide — Plan. Provision. Submit.</div>
+</header>
+
+<!-- ==================== YELLOW ACTION BAR ==================== -->
+<div class="yellow-bar">
+  <div class="yellow-bar-inner">
+    <button class="home-btn" onclick="goHome()">← Back to Index</button>
+    <span class="corner-icon">RR</span>
+  </div>
+</div>
+
+<!-- ==================== MAIN PAGE ==================== -->
+<div class="page-wrap">
+
+  <aside class="sidebar">
+    <div class="sidebar-title">Installation<br>Prep</div>
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li data-target="home"><button onclick="showView('home')">Index</button></li>
+      <li data-target="overview"><button onclick="showView('topic-overview')">Overview</button></li>
+      <li data-target="topology"><button onclick="showView('topic-topology')">1. Topology</button></li>
+      <li data-target="source"><button onclick="showView('topic-source')">2. Source Platform</button></li>
+      <li data-target="servers"><button onclick="showView('topic-servers')">3. Server Requirements</button></li>
+      <li data-target="security"><button onclick="showView('topic-security')">4. Windows Security</button></li>
+      <li data-target="checklist"><button onclick="showView('topic-checklist')">5. Pre-Install Checklist</button></li>
+      <li data-target="submit"><button onclick="showView('topic-submit')">6. JDE Info &amp; Submit</button></li>
+    </ul>
+  </aside>
+
+  <main class="content-card">
+
+    <!-- ============ HOME / INDEX ============ -->
+    <section id="home" class="view active">
+      <h1>Installation Prep Guide</h1>
+      <p>A guided walk-through to prepare your environment for RapidReconciler. Choose a topology, provision the required servers, apply Windows security and network rules, and submit your JD Edwards connection details to GSI in a single email.</p>
+      <p>This document is the <strong>customer IT</strong> companion guide for pre-installation. The customer's IT team is responsible for the steps below; GSI handles the install meeting itself once your information is submitted.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Topics</h2>
+      <p>Select a section below to view its content. Sections are designed to be worked through in order, but each is self-contained and can be revisited from the sidebar at any time.</p>
+
+      <table class="doc-table">
+        <thead>
+          <tr><th>Section</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-overview')">Overview</a></td>
+            <td>What you'll do, who's responsible for each step, and how the pre-install process flows.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-topology')">1. Topology</a></td>
+            <td>Choose one of three supported deployment configurations. Your selection drives which requirements apply.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-source')">2. Source Platform</a></td>
+            <td>Identify your JD Edwards source database platform. Determines which connectivity drivers SSIS will need.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-servers')">3. Server Requirements</a></td>
+            <td>Hardware, OS, SQL Server, Integration Services, and application server specifications.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-security')">4. Windows Security</a></td>
+            <td>Service accounts, antivirus exclusions, firewall rules, and outbound access requirements.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-checklist')">5. Pre-Install Checklist</a></td>
+            <td>Track environment readiness as you complete each step. Items are filtered to your chosen topology and source platform.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-submit')">6. JDE Info &amp; Submit</a></td>
+            <td>Gather JD Edwards connection details and submit your selections, checklist results, and JDE info to GSI.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <div class="callout-label">Where to begin</div>
+        <p>If this is your first pass, work through the topics in order. Your topology selection in section 1 will filter the requirements shown in sections 2–4 to only those that apply to your chosen configuration.</p>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Database installation is a separate step</div>
+        <p>Creating the RapidReconciler database itself is documented separately. This guide covers only the infrastructure preparation — hardware, software, security, and network — that must be in place before that install can proceed.</p>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: OVERVIEW ============ -->
+    <section id="topic-overview" class="view">
+      <h1>Overview</h1>
+      <p>Orientation for the pre-install process — what you'll do, what GSI handles, and how the steps flow together.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>What You'll Do</h2>
+      <p>This document walks you through preparing your environment for RapidReconciler installation. The customer's IT team is responsible for steps 1–5; GSI handles the install meeting itself once you submit your information.</p>
+
+      <div class="process-overview">
+        <h3>Pre-Install Process</h3>
+        <ol>
+          <li><strong>Choose a deployment topology.</strong> Three options are supported; pick the one that best fits your environment.</li>
+          <li><strong>Identify your JD Edwards source platform.</strong> Oracle, AS/400 (I-Series), or Microsoft SQL Server. Determines which connectivity drivers SSIS will need.</li>
+          <li><strong>Provision and configure the required servers.</strong> Hardware, OS, SQL Server, Integration Services, and the supporting tools.</li>
+          <li><strong>Apply Windows security and network rules.</strong> Service accounts, antivirus exclusions, firewall rules, and outbound access to GSI hosts.</li>
+          <li><strong>Work through the pre-install checklist</strong> as you complete each step. Mark items as done.</li>
+          <li><strong>Gather JD Edwards connection details and submit them to GSI</strong> using the email button at the end of this document, along with your topology and source platform selections and checklist results. GSI will then schedule the install meeting.</li>
+        </ol>
+      </div>
+
+      <h2>Who Does What</h2>
+      <table>
+        <thead>
+          <tr><th>Owner</th><th>Responsibilities</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Customer IT</td><td>Server provisioning, OS install, SQL Server install, source platform driver installation on the SSIS server, network and firewall configuration, antivirus exclusions, gathering JDE connection details.</td></tr>
+          <tr><td>JDE Owner</td><td>Provide the database server name or IP, credentials, server type, and table qualifier. Confirm data dictionary decimal settings (ECST, UNCS, PQOH, TRQT).</td></tr>
+          <tr><td>GSI</td><td>Database creation, SSIS package deployment, application install and configuration, end-to-end smoke test, and post-install handoff.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip">
+        <div class="callout-label">Concurrent work is fine</div>
+        <p>Your JDE owner can begin gathering connection details (section 5) while IT provisions servers (section 2). The submit step at the end consolidates everything into a single message.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-topology')">Next: Topology →</button>
+      </div>
+    </section>
+
+
+    <!-- ============ TOPIC: TOPOLOGY ============ -->
+    <section id="topic-topology" class="view">
+      <h1>Choose Your Deployment Topology</h1>
+      <p>RapidReconciler components can be arranged in three supported configurations. Hardware specifications for each server role are the same across all three topologies; the difference is which servers are involved.</p>
+      <p>Once you make a selection below, the rest of this document will show only the requirements relevant to your chosen configuration.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>The Three Configurations</h2>
+
+      <div class="topology-figure">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 620" role="img" aria-label="Three RapidReconciler deployment topology configurations" style="font-family:'Open Sans', Arial, sans-serif;">
+          <defs>
+            <marker id="arrow-head-tr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#666"/>
+            </marker>
+          </defs>
+
+          <!-- ======== Configuration 1: Co-located ======== -->
+          <rect x="10" y="10" width="920" height="170" rx="4" fill="#fdf6e3" stroke="#d6d2c4" stroke-width="1"/>
+          <text x="24" y="34" font-size="13" font-weight="700" fill="#3d5f93" letter-spacing="0.5">CONFIGURATION 1 &#183; CO-LOCATED</text>
+          <text x="24" y="52" font-size="11" font-style="italic" fill="#666">Database, application services, and SSIS all on a single dedicated server. Simplest setup.</text>
+
+          <rect x="120" y="72" width="160" height="92" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="200" y="96" font-size="12" font-weight="700" fill="#555" text-anchor="middle">JDE Server</text>
+          <text x="200" y="118" font-size="10" font-style="italic" fill="#888" text-anchor="middle">Customer's existing</text>
+          <text x="200" y="132" font-size="10" font-style="italic" fill="#888" text-anchor="middle">system &#8212; not part</text>
+          <text x="200" y="146" font-size="10" font-style="italic" fill="#888" text-anchor="middle">of RR install</text>
+
+          <line x1="288" y1="118" x2="358" y2="118" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="366" y="72" width="300" height="92" rx="4" fill="#4d77b4" stroke="#3d5f93" stroke-width="1.5"/>
+          <text x="516" y="93" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">Dedicated RR Server</text>
+          <text x="516" y="111" font-size="11" fill="#ffffff" text-anchor="middle">SQL Server + RR Database</text>
+          <text x="516" y="125" font-size="11" fill="#ffffff" text-anchor="middle">SSIS / Integration Services</text>
+          <text x="516" y="139" font-size="11" fill="#ffffff" text-anchor="middle">Application services</text>
+          <text x="516" y="156" font-size="10" font-style="italic" fill="#dde6f1" text-anchor="middle">+ SSMS, VS Community (optional)</text>
+
+          <!-- ======== Configuration 2: Separate DB and App ======== -->
+          <rect x="10" y="200" width="920" height="190" rx="4" fill="#fdf6e3" stroke="#d6d2c4" stroke-width="1"/>
+          <text x="24" y="224" font-size="13" font-weight="700" fill="#3d5f93" letter-spacing="0.5">CONFIGURATION 2 &#183; SEPARATE DATABASE AND APPLICATION SERVERS</text>
+          <text x="24" y="242" font-size="11" font-style="italic" fill="#666">Most common enterprise pattern. SSIS runs on the database server.</text>
+
+          <rect x="20" y="266" width="160" height="100" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="100" y="292" font-size="12" font-weight="700" fill="#555" text-anchor="middle">JDE Server</text>
+          <text x="100" y="316" font-size="10" font-style="italic" fill="#888" text-anchor="middle">Customer's existing</text>
+          <text x="100" y="330" font-size="10" font-style="italic" fill="#888" text-anchor="middle">system &#8212; not part</text>
+          <text x="100" y="344" font-size="10" font-style="italic" fill="#888" text-anchor="middle">of RR install</text>
+
+          <line x1="188" y1="316" x2="248" y2="316" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="256" y="266" width="320" height="100" rx="4" fill="#4d77b4" stroke="#3d5f93" stroke-width="1.5"/>
+          <text x="416" y="289" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">Database Server</text>
+          <text x="416" y="309" font-size="11" fill="#ffffff" text-anchor="middle">SQL Server + RR Database</text>
+          <text x="416" y="325" font-size="11" fill="#ffffff" text-anchor="middle">SSIS / Integration Services</text>
+          <text x="416" y="350" font-size="10" font-style="italic" fill="#dde6f1" text-anchor="middle">+ SSMS, VS Community (optional)</text>
+
+          <line x1="584" y1="316" x2="644" y2="316" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="652" y="266" width="270" height="100" rx="4" fill="#f5cb35" stroke="#e0b820" stroke-width="1.5"/>
+          <text x="787" y="289" font-size="12" font-weight="700" fill="#3d5f93" text-anchor="middle">Application Server</text>
+          <text x="787" y="319" font-size="11" fill="#3d5f93" text-anchor="middle">Application services</text>
+          <text x="787" y="350" font-size="10" font-style="italic" fill="#5a4815" text-anchor="middle">+ SSMS, VS Community (optional)</text>
+
+          <!-- ======== Configuration 3: Separate SSIS Server ======== -->
+          <rect x="10" y="410" width="920" height="200" rx="4" fill="#fdf6e3" stroke="#d6d2c4" stroke-width="1"/>
+          <text x="24" y="434" font-size="13" font-weight="700" fill="#3d5f93" letter-spacing="0.5">CONFIGURATION 3 &#183; SEPARATE SSIS SERVER</text>
+          <text x="24" y="452" font-size="11" font-style="italic" fill="#666">Uncommon. SSIS runs on a third dedicated server, separate from the database.</text>
+
+          <rect x="20" y="478" width="140" height="110" rx="4" fill="#f5f5f5" stroke="#aaa" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="90" y="506" font-size="12" font-weight="700" fill="#555" text-anchor="middle">JDE Server</text>
+          <text x="90" y="532" font-size="10" font-style="italic" fill="#888" text-anchor="middle">Customer's existing</text>
+          <text x="90" y="546" font-size="10" font-style="italic" fill="#888" text-anchor="middle">system &#8212; not part</text>
+          <text x="90" y="560" font-size="10" font-style="italic" fill="#888" text-anchor="middle">of RR install</text>
+
+          <line x1="168" y1="533" x2="208" y2="533" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="216" y="478" width="160" height="110" rx="4" fill="#dce5f1" stroke="#b3cce8" stroke-width="1.5"/>
+          <text x="296" y="510" font-size="12" font-weight="700" fill="#3d5f93" text-anchor="middle">SSIS Server</text>
+          <text x="296" y="540" font-size="11" fill="#3d5f93" text-anchor="middle">Integration Services</text>
+
+          <line x1="384" y1="533" x2="424" y2="533" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="432" y="478" width="240" height="110" rx="4" fill="#4d77b4" stroke="#3d5f93" stroke-width="1.5"/>
+          <text x="552" y="510" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">Database Server</text>
+          <text x="552" y="540" font-size="11" fill="#ffffff" text-anchor="middle">SQL Server + RR Database</text>
+          <text x="552" y="568" font-size="10" font-style="italic" fill="#dde6f1" text-anchor="middle">+ SSMS, VS Community (optional)</text>
+
+          <line x1="680" y1="533" x2="720" y2="533" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-head-tr)"/>
+
+          <rect x="728" y="478" width="200" height="110" rx="4" fill="#f5cb35" stroke="#e0b820" stroke-width="1.5"/>
+          <text x="828" y="510" font-size="12" font-weight="700" fill="#3d5f93" text-anchor="middle">Application Server</text>
+          <text x="828" y="540" font-size="11" fill="#3d5f93" text-anchor="middle">Application services</text>
+          <text x="828" y="568" font-size="10" font-style="italic" fill="#5a4815" text-anchor="middle">+ SSMS, VS Community (optional)</text>
+        </svg>
+        <div class="topology-caption"><strong>Deployment options</strong>Arrows show data flow from the JDE source through SSIS into the RapidReconciler database and on to the application. SSMS and Visual Studio Community are required somewhere in the environment but their placement is flexible.</div>
+      </div>
+
+      <h2>Make Your Selection</h2>
+      <p>Choose the configuration that best matches your planned deployment. The remainder of this document will adapt to show only the requirements that apply.</p>
+
+      <div class="topo-picker">
+        <div class="topo-picker-prompt">Select a Configuration</div>
+        <div class="topo-options">
+          <label class="topo-option">
+            <input type="radio" name="topology-choice" value="1">
+            <div class="topo-option-card">
+              <div class="topo-option-name">Configuration 1</div>
+              <div class="topo-option-title">Co-located</div>
+              <div class="topo-option-desc">Database, application services, and SSIS all on a single dedicated server. Simplest to set up.</div>
+            </div>
+          </label>
+          <label class="topo-option">
+            <input type="radio" name="topology-choice" value="2">
+            <div class="topo-option-card">
+              <div class="topo-option-name">Configuration 2</div>
+              <div class="topo-option-title">Separate DB &amp; App</div>
+              <div class="topo-option-desc">Most common pattern. Database + SSIS on one server, application services on a second server.</div>
+            </div>
+          </label>
+          <label class="topo-option">
+            <input type="radio" name="topology-choice" value="3">
+            <div class="topo-option-card">
+              <div class="topo-option-name">Configuration 3</div>
+              <div class="topo-option-title">Separate SSIS</div>
+              <div class="topo-option-desc">Uncommon. Database, SSIS, and application services on three separate servers.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="topo-conditional" data-topology="1 2 3">
+        <h2>Server Names</h2>
+        <p>Record the hostname or fully-qualified DNS name of each server in your chosen topology. These names will be included in your submission to GSI and used during the install meeting to confirm we're working against the right machines.</p>
+
+        <div class="topo-conditional" data-topology="1">
+          <ul class="server-name-list">
+            <li class="server-name-row">
+              <span class="server-name-label">Dedicated RR Server</span>
+              <input class="server-name-input" type="text" id="srv-rr" aria-label="Dedicated RR server name" placeholder="e.g., RRPROD01.contoso.local">
+              <span class="server-name-hint">Hosts SQL Server, SSIS, and the RR application</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="topo-conditional" data-topology="2">
+          <ul class="server-name-list">
+            <li class="server-name-row">
+              <span class="server-name-label">Database Server</span>
+              <input class="server-name-input" type="text" id="srv-db-c2" aria-label="Database server name" placeholder="e.g., RRDB01.contoso.local">
+              <span class="server-name-hint">Hosts SQL Server and SSIS</span>
+            </li>
+            <li class="server-name-row">
+              <span class="server-name-label">Application Server</span>
+              <input class="server-name-input" type="text" id="srv-app-c2" aria-label="Application server name" placeholder="e.g., RRAPP01.contoso.local">
+              <span class="server-name-hint">Hosts the RR web application</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="topo-conditional" data-topology="3">
+          <ul class="server-name-list">
+            <li class="server-name-row">
+              <span class="server-name-label">Database Server</span>
+              <input class="server-name-input" type="text" id="srv-db-c3" aria-label="Database server name" placeholder="e.g., RRDB01.contoso.local">
+              <span class="server-name-hint">Hosts SQL Server only</span>
+            </li>
+            <li class="server-name-row">
+              <span class="server-name-label">SSIS Server</span>
+              <input class="server-name-input" type="text" id="srv-ssis-c3" aria-label="SSIS server name" placeholder="e.g., RRSSIS01.contoso.local">
+              <span class="server-name-hint">Hosts Integration Services</span>
+            </li>
+            <li class="server-name-row">
+              <span class="server-name-label">Application Server</span>
+              <input class="server-name-input" type="text" id="srv-app-c3" aria-label="Application server name" placeholder="e.g., RRAPP01.contoso.local">
+              <span class="server-name-hint">Hosts the RR web application</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-label">Not sure which to choose?</div>
+        <p>Configuration 2 — separate database and application servers — is the most common enterprise pattern and a safe default for most customers. Choose Configuration 1 only if you're standing up a small or pilot deployment, and Configuration 3 only if your organization specifically requires SSIS to run on its own host.</p>
+      </div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="topology">
+          <span class="step-complete-label">Mark step 1 (Topology) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-overview')">← Back: Overview</button>
+        <button class="next-btn" id="next-topology" onclick="if (!this.disabled) showView('topic-source')">Next: Source Platform →</button>
+        <div class="next-gate-warning" id="next-topology-warning"></div>
+      </div>
+    </section>
+
+
+    <!-- ============ TOPIC: SOURCE PLATFORM ============ -->
+    <section id="topic-source" class="view">
+      <h1>JD Edwards Source Platform</h1>
+      <p>Identify the database platform your JD Edwards system runs on. Integration Services connects directly to that platform, so the right driver software must be installed on the server that will run SSIS — the database server in Configurations 1 and 2, or the dedicated SSIS server in Configuration 3.</p>
+      <p>Your selection drives which driver guidance is shown below, which item appears in the pre-install checklist, and which value is pre-filled in the JDE submission form.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Make Your Selection</h2>
+      <p>Choose the platform that hosts your production JDE database. If you are not sure, your JDE administrator or DBA will know.</p>
+
+      <div class="topo-picker">
+        <div class="topo-picker-prompt">Select Your Source Platform</div>
+        <div class="topo-options">
+          <label class="topo-option">
+            <input type="radio" name="source-choice" value="oracle">
+            <div class="topo-option-card">
+              <div class="topo-option-name">Source Option A</div>
+              <div class="topo-option-title">Oracle</div>
+              <div class="topo-option-desc">Oracle Database (10g/11g/12c/19c or later) hosting JDE tables. Common in larger enterprise deployments.</div>
+            </div>
+          </label>
+          <label class="topo-option">
+            <input type="radio" name="source-choice" value="as400">
+            <div class="topo-option-card">
+              <div class="topo-option-name">Source Option B</div>
+              <div class="topo-option-title">AS/400 (I-Series)</div>
+              <div class="topo-option-desc">IBM i / AS/400 with DB2 for i. Common in long-established JDE World and EnterpriseOne deployments.</div>
+            </div>
+          </label>
+          <label class="topo-option">
+            <input type="radio" name="source-choice" value="sqlserver">
+            <div class="topo-option-card">
+              <div class="topo-option-name">Source Option C</div>
+              <div class="topo-option-title">Microsoft SQL Server</div>
+              <div class="topo-option-desc">JDE EnterpriseOne running on Microsoft SQL Server. Simplest connectivity since drivers are already installed with SQL Server.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="source-pending">Choose a source platform above to see the specific driver guidance for connecting SSIS to your JDE source.</div>
+
+      <!-- ============ ORACLE driver guidance ============ -->
+      <div class="source-conditional" data-source="oracle">
+        <h2>Oracle — Driver Guidance</h2>
+        <p>SSIS connects to Oracle through the <strong>Oracle Provider for OLE DB</strong>, which is delivered with the Oracle client software. The provider is installed by the Oracle client installer; it is not part of Windows or SQL Server.</p>
+
+        <h3>What to Install</h3>
+        <ul class="spec-list">
+          <li class="spec-row"><span class="spec-key">Oracle Client</span><span class="spec-val">Install the Oracle Database Client (or Oracle Data Access Components — ODAC) using the <strong>Administrator</strong> install option, which includes the OLE DB provider. Match the client major version to your Oracle server version where possible.</span></li>
+          <li class="spec-row"><span class="spec-key">Architecture</span><span class="spec-val">Install <strong>both 32-bit and 64-bit</strong> versions on the SSIS server. The 32-bit client is required by Visual Studio at design time; the 64-bit client is required when packages execute under the 64-bit SQL Agent runtime.</span></li>
+          <li class="spec-row"><span class="spec-key">Oracle Home</span><span class="spec-val">Install both architectures into the <strong>same Oracle home</strong> (or symmetric homes with the same name on each architecture). Mixing homes is a frequent source of "provider not registered" errors.</span></li>
+          <li class="spec-row"><span class="spec-key">Provider Name</span><span class="spec-val">In SSIS connection managers the provider appears as <code>Oracle Provider for OLE DB</code> (registered as <code>OraOLEDB.Oracle</code>). Do not use the legacy <code>Microsoft OLE DB Provider for Oracle</code> — it is deprecated and based on Oracle Call Interface version 7.</span></li>
+        </ul>
+
+        <h3>Configuration After Install</h3>
+        <ol>
+          <li>Add an entry for your JDE Oracle instance to <code>tnsnames.ora</code>. The file lives under the network/admin folder of each Oracle home — typically <code>%ORACLE_HOME%\network\admin\tnsnames.ora</code>. Both the 32-bit and 64-bit homes need the entry (or a shared <code>TNS_ADMIN</code> environment variable pointing to a single file).</li>
+          <li>Set the <code>TNS_ADMIN</code> environment variable if you want both homes to read from one file.</li>
+          <li>Restart the server (or at minimum the SQL Server and SSIS services) after install so that the registered providers are picked up.</li>
+          <li>Test the connection from SSMS or the SSIS designer using the TNS alias before the install meeting.</li>
+        </ol>
+
+        <div class="callout">
+          <div class="callout-label">Coordinate with your Oracle DBA</div>
+          <p>Your Oracle DBA or JDE administrator should provide the TNS alias contents (host, port, and service name) and the read-only credentials RapidReconciler will use. Read-only access to the JDE schemas is sufficient — the package does not write back to JDE.</p>
+        </div>
+      </div>
+
+      <!-- ============ AS/400 driver guidance ============ -->
+      <div class="source-conditional" data-source="as400">
+        <h2>AS/400 (I-Series) — Driver Guidance</h2>
+        <p>SSIS connects to DB2 for i through the <strong>IBMDA400 OLE DB provider</strong>, delivered with IBM i Access (formerly Client Access). IBM i Access also installs an ODBC driver, which is a supported alternative if OLE DB is not viable in your environment.</p>
+
+        <h3>What to Install</h3>
+        <ul class="spec-list">
+          <li class="spec-row"><span class="spec-key">IBM i Access</span><span class="spec-val">Install <strong>IBM i Access Client Solutions</strong> (or the older <strong>IBM i Access for Windows / Client Access</strong>, depending on what your IBM environment supports). This is the package that ships the OLE DB provider and ODBC driver.</span></li>
+          <li class="spec-row"><span class="spec-key">OLE DB Component</span><span class="spec-val">During the IBM i Access install, the OLE DB provider component is <strong>not selected by default</strong>. Use the custom/feature selection screen to explicitly include it, or the IBMDA400 provider will be missing afterward.</span></li>
+          <li class="spec-row"><span class="spec-key">Architecture</span><span class="spec-val">Install <strong>both 32-bit and 64-bit</strong> versions on the SSIS server. The 32-bit driver is required at SSIS design time in Visual Studio; the 64-bit driver is required for runtime execution under SQL Agent.</span></li>
+          <li class="spec-row"><span class="spec-key">Provider Name</span><span class="spec-val">In SSIS connection managers the OLE DB provider appears as <code>IBM DB2 UDB for iSeries IBMDA400 OLE DB Provider</code>. The ODBC driver appears as <code>IBM i Access ODBC Driver</code>.</span></li>
+        </ul>
+
+        <h3>Configuration After Install</h3>
+        <ol>
+          <li>Confirm the SSIS server can reach the IBM i system over the network — the standard IBM i ports must be open through any firewall between the two systems.</li>
+          <li>If using ODBC, create a system DSN that points at your IBM i system. Use the same DSN name on both 32-bit and 64-bit ODBC Administrator consoles.</li>
+          <li>Set the default library or collection to the JDE production library (for example, <code>PRODDTA</code>) on the connection so unqualified table references resolve correctly.</li>
+          <li>Test the connection using IBM i Access System i Navigator before configuring SSIS.</li>
+        </ol>
+
+        <div class="callout">
+          <div class="callout-label">Licensing reminder</div>
+          <p>IBM i Access Client Solutions requires a valid IBM entitlement. Confirm with your IBM administrator that the SSIS server is covered under your existing IBM i licensing before installing.</p>
+        </div>
+      </div>
+
+      <!-- ============ SQL Server driver guidance ============ -->
+      <div class="source-conditional" data-source="sqlserver">
+        <h2>Microsoft SQL Server — Driver Guidance</h2>
+        <p>If your JDE database runs on Microsoft SQL Server, no additional driver software needs to be installed. The OLE DB provider used by SSIS is the same one already installed on every SQL Server host — either the legacy <code>SQLNCLI</code> (SQL Server Native Client) or the modern <code>MSOLEDBSQL</code> (Microsoft OLE DB Driver for SQL Server). Both are supported.</p>
+
+        <h3>What to Install</h3>
+        <ul class="spec-list">
+          <li class="spec-row"><span class="spec-key">Driver Software</span><span class="spec-val"><strong>None required.</strong> The SQL Server OLE DB provider is delivered with SQL Server and SQL Server Management Studio. It is already present on the SSIS server.</span></li>
+          <li class="spec-row"><span class="spec-key">Recommended Provider</span><span class="spec-val">Use the modern <code>MSOLEDBSQL</code> driver where available (SQL Server 2019 and later install it by default). It supersedes the legacy SQL Server Native Client and receives current security updates from Microsoft.</span></li>
+          <li class="spec-row"><span class="spec-key">Optional Update</span><span class="spec-val">If the SSIS server is on an older SQL Server build and does not have <code>MSOLEDBSQL</code>, download the latest <strong>Microsoft OLE DB Driver for SQL Server</strong> from Microsoft and install it. This is optional — the legacy Native Client is still supported.</span></li>
+        </ul>
+
+        <h3>Configuration After Install</h3>
+        <ol>
+          <li>Confirm the SSIS server can reach the JDE SQL Server over TCP 1433 (or your custom SQL port) through any firewalls.</li>
+          <li>Confirm whether your environment uses Windows authentication or SQL authentication, and gather the appropriate credentials.</li>
+          <li>Test the connection to the JDE SQL Server from SSMS on the SSIS server before the install meeting.</li>
+        </ol>
+
+        <div class="callout tip">
+          <div class="callout-label">Simplest path</div>
+          <p>Of the three source platforms, SQL Server is the simplest to set up. Beyond verifying network connectivity and credentials, no additional driver work is needed before the install meeting.</p>
+        </div>
+      </div>
+
+      <h2>Where the Driver Gets Installed</h2>
+      <p>Regardless of which source platform you chose, the driver software is installed on whichever server runs SSIS:</p>
+      <table>
+        <thead>
+          <tr><th>Topology</th><th>Where to Install Source Drivers</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Configuration 1 (Co-located)</td><td>The single dedicated RapidReconciler server.</td></tr>
+          <tr><td>Configuration 2 (Separate DB &amp; App)</td><td>The database server, which also hosts SSIS.</td></tr>
+          <tr><td>Configuration 3 (Separate SSIS)</td><td>The dedicated SSIS server only — not the database server, and not the application server.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info">
+        <div class="callout-label">Why both 32-bit and 64-bit?</div>
+        <p>This applies to Oracle and AS/400 only. SQL Server Integration Services packages are designed in Visual Studio, which historically runs as a 32-bit process — so the 32-bit driver is required for design and debugging. SSIS executes packages in 64-bit mode by default at runtime — so the 64-bit driver is required for production. Installing both up front avoids reinstalling under pressure later.</p>
+      </div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="source">
+          <span class="step-complete-label">Mark step 2 (Source Platform) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-topology')">← Back: Topology</button>
+        <button class="next-btn" id="next-source" onclick="if (!this.disabled) showView('topic-servers')">Next: Server Requirements →</button>
+        <div class="next-gate-warning" id="next-source-warning"></div>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: SERVER REQUIREMENTS ============ -->
+    <section id="topic-servers" class="view">
+      <h1>Server Requirements</h1>
+      <p>Hardware, operating system, and software specifications for each server role. Sections marked as configuration-specific only apply to certain topologies; choose a topology in <a href="javascript:void(0)" onclick="showView('topic-topology')">section 1</a> to filter to just what you need.</p>
+
+      <div class="topo-pending">Choose a topology to see configuration-specific requirements.</div>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Database Server</h2>
+      <p>In most cases, existing servers running Microsoft SQL Server will meet the minimum requirements. If a new server needs to be built, use the guidelines below.</p>
+
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2019 or later</span></li>
+        <li class="spec-row"><span class="spec-key">Processor</span><span class="spec-val">Quad-core minimum</span></li>
+      </ul>
+
+      <h3>Microsoft SQL Server</h3>
+      <table>
+        <thead><tr><th>Requirement</th><th>Specification</th></tr></thead>
+        <tbody>
+          <tr><td>Version</td><td>2019 or later</td></tr>
+          <tr><td>RAM</td><td>16 GB minimum</td></tr>
+          <tr><td>Edition</td><td>Standard or higher</td></tr>
+          <tr><td>Authentication</td><td>Mixed mode</td></tr>
+          <tr><td>Initial data file size</td><td>20 GB</td></tr>
+          <tr><td>Initial log file size</td><td>10 GB</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout info">
+        <div class="callout-label">Additional Requirements</div>
+        <p>SQL administrative access to the server instance is required. A SQL-based login and role will be created during installation for user connectivity.</p>
+      </div>
+
+      <h3>Storage Estimates</h3>
+      <div class="storage-card">
+        <div class="storage-stat">
+          <div class="storage-num">100</div>
+          <div class="storage-unit">GB per 1M<br>records/month</div>
+        </div>
+        <div class="storage-divider"></div>
+        <div class="storage-detail">
+          Estimate covers <strong>1 year of cardex (F4111) data</strong>. Records may be purged after year-end close to reclaim space.<br><br>
+          <strong>Example:</strong> 2,000,000 cardex records per month requires <strong>200 GB</strong> of allocated disk space.
+        </div>
+      </div>
+
+      <h3>Network Information to Note</h3>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Database Server IP</span><span class="spec-val">Record the IP address of the database server.</span></li>
+        <li class="spec-row"><span class="spec-key">Named Instance Port</span><span class="spec-val">If using a named instance, note the listening port number.</span></li>
+      </ul>
+
+      <h2>Integration Services</h2>
+      <p>Integration Services (SSIS) reads from your JD Edwards source and loads the RapidReconciler database. In Configurations 1 and 2, SSIS runs on the database server. In Configuration 3, SSIS runs on its own dedicated server. The OLE DB provider must be installed on whichever server runs SSIS.</p>
+
+      <div class="topo-conditional" data-topology="3">
+        <h3>Dedicated SSIS Server <span class="scope-tag config">Config 3</span></h3>
+        <p style="font-size:13px;color:var(--ink-soft);margin:6px 0 8px;">Required for Configuration 3 only.</p>
+        <ul class="spec-list">
+          <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2019 or later</span></li>
+          <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">16 GB minimum</span></li>
+        </ul>
+      </div>
+
+      <h3>SQL Server Management Tools</h3>
+      <p>SSMS and Visual Studio Community must be installed somewhere in the environment. Placement is flexible — see the topology diagram for guidance.</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">SSMS</span><span class="spec-val">SQL Server Management Studio</span></li>
+        <li class="spec-row"><span class="spec-key">Visual Studio</span><span class="spec-val">Community 2019 or later, with the SQL Server Integration Services extension</span></li>
+      </ul>
+
+      <h3>OLE DB Provider Configuration</h3>
+      <p>Install the OLE DB provider that matches your JDE data source on the server running SSIS. The row matching your <a href="javascript:void(0)" onclick="showView('topic-source')">selected source platform</a> is highlighted below; full driver guidance — including which architecture to install and post-install configuration — is in the Source Platform section.</p>
+      <table class="plain-first">
+        <thead><tr><th>Data Source</th><th>Configuration Required</th></tr></thead>
+        <tbody>
+          <tr data-source="as400">
+            <td>AS/400 (I-Series)</td>
+            <td>Install I-Series Access (Client Access). Ensure the OLE DB component is installed. Verify OLE DB drivers are selected — this is not enabled by default.</td>
+          </tr>
+          <tr data-source="oracle">
+            <td>Oracle</td>
+            <td>Install Oracle 32-bit client using the <strong>Administrator</strong> option. Make applicable <code>tnsnames.ora</code> entries. Both versions must reside in the same Oracle home.</td>
+          </tr>
+          <tr data-source="sqlserver">
+            <td>SQL Server</td>
+            <td>No additional configuration required.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="topo-conditional" data-topology="2 3">
+        <h2>Application Server <span class="scope-tag config">Config 2 &amp; 3</span></h2>
+
+        <div class="callout">
+          <div class="callout-label">Recommendation</div>
+          <p>It is highly recommended to use a dedicated server for the RapidReconciler application.</p>
+        </div>
+
+        <ul class="spec-list">
+          <li class="spec-row"><span class="spec-key">Operating System</span><span class="spec-val">Windows Server 2019 or later</span></li>
+          <li class="spec-row"><span class="spec-key">RAM</span><span class="spec-val">16 GB minimum</span></li>
+          <li class="spec-row"><span class="spec-key">Browser</span><span class="spec-val">Microsoft Edge or Google Chrome</span></li>
+          <li class="spec-row"><span class="spec-key">IP Address</span><span class="spec-val">Static</span></li>
+          <li class="spec-row"><span class="spec-key">Credentials</span><span class="spec-val">Local administrative credentials required for configuration</span></li>
+        </ul>
+      </div>
+
+      <h2>Network Access</h2>
+      <p>Network access requirements apply to whichever server hosts the RapidReconciler application services — the dedicated RR server in Configuration 1, or the application server in Configurations 2 and 3. The URLs, IP addresses, and port ranges below are the same regardless of topology.</p>
+      <div class="net-grid">
+        <div class="net-panel">
+          <div class="net-head">Internal Access</div>
+          <div class="net-body">
+            <div class="net-item">
+              <div class="net-mini-label">Port Range</div>
+              <span class="net-range">32145 – 49152</span>
+            </div>
+            <div class="net-item">
+              <div class="net-mini-label">URL Pattern</div>
+              <span class="net-url">rrprod-[companyname].getgsi.com</span>
+              <span class="net-note">Provide internal IP of the application server</span>
+            </div>
+          </div>
+        </div>
+        <div class="net-panel">
+          <div class="net-head">External Access (Port 443)</div>
+          <div class="net-body">
+            <div class="net-item">
+              <span class="net-url">rapidreconciler.getgsi.com</span>
+              <span class="net-ip">191.237.24.89</span>
+            </div>
+            <div class="net-item">
+              <span class="net-url">rr-valc-spa.cloudapp.net</span>
+              <span class="net-ip">23.96.83.121</span>
+              <span class="net-note">rr-valc-spa.cloudapp.net/check-ip returns external IP</span>
+            </div>
+            <div class="net-item">
+              <span class="net-url">rr-spa.cloudapp.net</span>
+              <span class="net-ip">52.170.255.174</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="servers">
+          <span class="step-complete-label">Mark step 3 (Server Requirements) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-source')">← Back: Source Platform</button>
+        <button class="next-btn" onclick="showView('topic-security')">Next: Windows Security →</button>
+      </div>
+    </section>
+
+
+    <!-- ============ TOPIC: WINDOWS SECURITY ============ -->
+    <section id="topic-security" class="view">
+      <h1>Windows Security &amp; Network Rules</h1>
+      <p>Operating-system and network-level prerequisites that should be in place before the install meeting. The <strong>Baseline</strong> requirements apply to every topology; additional requirements are listed for each configuration.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <div class="callout">
+        <div class="callout-label">Drafted from Industry Practice</div>
+        <p>The recommendations below reflect standard SQL Server and Integration Services security practices. If your organization has stricter internal standards (for example, around service account password policies or firewall change procedures), follow your standards in addition to what is listed here.</p>
+      </div>
+
+      <h2>Baseline <span class="scope-tag">All Topologies</span></h2>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Local Administrator</span><span class="spec-val">Local administrative credentials are required on every server during the install meeting. The credentials may be revoked or rotated after install.</span></li>
+        <li class="spec-row"><span class="spec-key">UAC / Elevation</span><span class="spec-val">User Account Control is supported. The install meeting expects the SQL Server, SSIS, and Visual Studio sessions to be launched with elevation (Run as administrator).</span></li>
+        <li class="spec-row"><span class="spec-key">SQL Server Service Account</span><span class="spec-val">A dedicated AD or local service account is recommended for the SQL Server service. Set the password not to expire, or document the rotation procedure with GSI.</span></li>
+        <li class="spec-row"><span class="spec-key">Antivirus Exclusions</span><span class="spec-val">Per Microsoft guidance, exclude SQL Server data and log files (<code>.mdf</code>, <code>.ldf</code>, <code>.ndf</code>) and the SQL Server backup folder from real-time antivirus scanning. Without exclusions, performance degrades and SQL Server can fail under load.</span></li>
+        <li class="spec-row"><span class="spec-key">Outbound to GSI</span><span class="spec-val">Allow outbound HTTPS (port 443) from the application server to the GSI hosts listed in the Application Server section. The connection is outbound only; no inbound access from GSI is required.</span></li>
+      </ul>
+
+      <div class="topo-conditional" data-topology="1">
+        <h2>Configuration 1 Additions <span class="scope-tag config">Co-located</span></h2>
+        <p>Single dedicated server hosting database, SSIS, and application services.</p>
+        <ul class="spec-list">
+          <li class="spec-row"><span class="spec-key">Service Accounts</span><span class="spec-val">Because SQL Server, SSIS, and the application all run on the same machine, a single service account (or the default <code>NT Service\MSSQLSERVER</code>) is sufficient for SQL and SSIS. The application's Windows service can use Local System or a dedicated local account.</span></li>
+          <li class="spec-row"><span class="spec-key">Windows Firewall</span><span class="spec-val">No SQL Server inbound rule is required from other servers, since all components share the same machine. Inbound traffic from the user network to the application's HTTP port should be allowed.</span></li>
+          <li class="spec-row"><span class="spec-key">Antivirus</span><span class="spec-val">In addition to SQL data file exclusions, exclude the RapidReconciler application install directory from real-time scanning.</span></li>
+        </ul>
+      </div>
+
+      <div class="topo-conditional" data-topology="2">
+        <h2>Configuration 2 Additions <span class="scope-tag config">Separate DB &amp; App</span></h2>
+        <p>Database + SSIS on one server, application services on a second server.</p>
+        <ul class="spec-list">
+          <li class="spec-row"><span class="spec-key">DB ↔ App Authentication</span><span class="spec-val">The application server connects to the database server using SQL authentication via the <code>rruser</code> login created during install. No domain trust is required between the two servers, but if your organization prefers Windows authentication, a domain service account in the <code>db_owner</code> role on the RapidReconciler database can be substituted.</span></li>
+          <li class="spec-row"><span class="spec-key">DB Server Firewall</span><span class="spec-val">Allow inbound TCP 1433 (or your custom SQL port) on the database server, scoped to the application server's static IP. Block all other sources to minimize exposure.</span></li>
+          <li class="spec-row"><span class="spec-key">App Server Firewall</span><span class="spec-val">Allow inbound HTTPS from the user network on the RapidReconciler application port. Allow outbound 1433 to the database server.</span></li>
+          <li class="spec-row"><span class="spec-key">Antivirus</span><span class="spec-val">Exclude SQL data files on the database server. On the application server, exclude the RapidReconciler application install directory.</span></li>
+          <li class="spec-row"><span class="spec-key">Time Sync</span><span class="spec-val">Both servers should sync to the same time source (domain controller or NTP). Skewed clocks between servers cause intermittent authentication failures.</span></li>
+        </ul>
+      </div>
+
+      <div class="topo-conditional" data-topology="3">
+        <h2>Configuration 3 Additions <span class="scope-tag config">Separate SSIS</span></h2>
+        <p>Database, SSIS, and application services on three separate servers. This configuration adds a second cross-machine boundary that requires careful service-account planning.</p>
+        <ul class="spec-list">
+          <li class="spec-row"><span class="spec-key">SSIS ↔ DB Authentication</span><span class="spec-val">The SSIS server needs the ability to deploy and execute packages against the database server. Windows authentication is preferred — use a domain service account that has appropriate rights on the SQL Server instance. SQL authentication is also supported if Windows auth is not available.</span></li>
+          <li class="spec-row"><span class="spec-key">SSIS ↔ JDE Source</span><span class="spec-val">The SSIS server reads from the JDE source. Install the OLE DB provider for your JDE platform (AS/400, Oracle, or SQL Server) on the SSIS server, not the database server. Service account or SQL credentials for the JDE source must be available to the SSIS execution context.</span></li>
+          <li class="spec-row"><span class="spec-key">DB Server Firewall</span><span class="spec-val">Allow inbound TCP 1433 (or custom SQL port) from <em>both</em> the SSIS server's static IP <em>and</em> the application server's static IP. Block all other sources.</span></li>
+          <li class="spec-row"><span class="spec-key">SSIS Server Firewall</span><span class="spec-val">Allow outbound 1433 to the database server. Allow outbound to your JDE source on whatever port and protocol the source requires.</span></li>
+          <li class="spec-row"><span class="spec-key">Network Latency</span><span class="spec-val">SSIS reads/writes are latency-sensitive. Recommend gigabit LAN between SSIS server and database server. WAN-separated configurations are not supported.</span></li>
+          <li class="spec-row"><span class="spec-key">Antivirus</span><span class="spec-val">Exclude SQL data files on the database server. On the SSIS server, exclude the SSIS package folder and execution working directory. On the application server, exclude the RapidReconciler install directory.</span></li>
+          <li class="spec-row"><span class="spec-key">Time Sync</span><span class="spec-val">All three servers must sync to the same time source. Cross-machine Windows authentication fails when clocks differ by more than 5 minutes.</span></li>
+        </ul>
+      </div>
+
+      <div class="topo-pending">Choose a topology in section 1 to see the additional security requirements for your configuration.</div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="security">
+          <span class="step-complete-label">Mark step 4 (Windows Security) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-servers')">← Back: Server Requirements</button>
+        <button class="next-btn" onclick="showView('topic-checklist')">Next: Pre-Install Checklist →</button>
+      </div>
+    </section>
+
+
+    <!-- ============ TOPIC: CHECKLIST ============ -->
+    <section id="topic-checklist" class="view">
+      <h1>Pre-Install Checklist</h1>
+      <p>Use this checklist to track environment readiness as you complete the steps above. Items show only for your chosen topology. Mark items as you complete them; you can submit your results to GSI even if not every item is checked — unchecked items will be reported as <em>not yet done</em>, which helps GSI prepare for the install meeting.</p>
+
+      <div class="topo-pending">Choose a topology in section 1 to see configuration-specific checklist groups.</div>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <div class="checklist-group">
+        <div class="checklist-head"><span>Step Completion</span><span class="scope-tag">All</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-step-topology" class="checklist-item step-mirror-item" data-step="topology">
+          <label for="c-step-topology">Step 1 — Topology selected and server names recorded <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-topology')">Topology</a></span></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-step-source" class="checklist-item step-mirror-item" data-step="source">
+          <label for="c-step-source">Step 2 — Source platform identified and driver guidance reviewed <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-source')">Source Platform</a></span></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-step-servers" class="checklist-item step-mirror-item" data-step="servers">
+          <label for="c-step-servers">Step 3 — Server requirements reviewed <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-servers')">Server Requirements</a></span></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-step-security" class="checklist-item step-mirror-item" data-step="security">
+          <label for="c-step-security">Step 4 — Windows security and network rules reviewed <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-security')">Windows Security</a></span></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-step-checklist" class="checklist-item step-mirror-item" data-step="checklist">
+          <label for="c-step-checklist">Step 5 — Pre-install checklist worked through</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-step-submit" class="checklist-item step-mirror-item" data-step="submit">
+          <label for="c-step-submit">Step 6 — JDE connection details gathered and ready to submit <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-submit')">JDE Info &amp; Submit</a></span></label>
+        </div>
+      </div>
+
+      <div class="checklist-group" data-step="servers">
+        <div class="checklist-head"><span>Database Server</span><span class="scope-tag">All</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-db-0" class="checklist-item">
+          <label for="c-db-0">Servers identified or provisioned for the chosen topology</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-db-1" class="checklist-item">
+          <label for="c-db-1">Windows Server 2019 or later installed</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-db-2" class="checklist-item">
+          <label for="c-db-2">Quad-core processor minimum</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-db-3" class="checklist-item">
+          <label for="c-db-3">SQL Server 2019 or later, Standard edition or higher, with Mixed Mode authentication <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-servers')">Server Requirements</a></span></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-db-4" class="checklist-item">
+          <label for="c-db-4">16 GB RAM minimum allocated to SQL Server</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-db-5" class="checklist-item">
+          <label for="c-db-5">Disk space sized per the storage estimate (100 GB per 1M cardex records/month)</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-db-6" class="checklist-item">
+          <label for="c-db-6">SQL administrative access available for the GSI installer</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-db-7" class="checklist-item">
+          <label for="c-db-7">Database server IP address recorded; named-instance port noted if not 1433</label>
+        </div>
+      </div>
+
+      <div class="checklist-group topo-conditional" data-topology="2 3" data-step="servers">
+        <div class="checklist-head"><span>Application Server</span><span class="scope-tag config">Config 2 &amp; 3</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-app-1" class="checklist-item">
+          <label for="c-app-1">Dedicated Windows Server 2019 or later (recommended) <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-servers')">Server Requirements</a></span></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-app-2" class="checklist-item">
+          <label for="c-app-2">16 GB RAM minimum, static IP address assigned</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-app-3" class="checklist-item">
+          <label for="c-app-3">Local administrative credentials available for installer use</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-app-4" class="checklist-item">
+          <label for="c-app-4">Microsoft Edge or Google Chrome installed</label>
+        </div>
+      </div>
+
+      <div class="checklist-group topo-conditional" data-topology="3" data-step="servers">
+        <div class="checklist-head"><span>SSIS Server</span><span class="scope-tag config">Config 3 only</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-ssis-1" class="checklist-item">
+          <label for="c-ssis-1">Windows Server 2019 or later, 16 GB RAM minimum <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-servers')">Server Requirements</a></span></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-ssis-2" class="checklist-item">
+          <label for="c-ssis-2">SQL Server Management Studio installed</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-ssis-3" class="checklist-item">
+          <label for="c-ssis-3">Visual Studio Community 2019 or later installed with the SQL Server Integration Services extension</label>
+        </div>
+      </div>
+
+      <div class="checklist-group" data-step="servers">
+        <div class="checklist-head"><span>SQL Server Management Tools</span><span class="scope-tag">All</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-tools-1" class="checklist-item">
+          <label for="c-tools-1">SQL Server Management Studio installed somewhere in the environment</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-tools-2" class="checklist-item">
+          <label for="c-tools-2">Visual Studio Community 2019 or later with the Integration Services extension installed somewhere in the environment</label>
+        </div>
+      </div>
+
+      <div class="checklist-group" data-step="security">
+        <div class="checklist-head"><span>Windows Security — Baseline</span><span class="scope-tag">All</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-sec-1" class="checklist-item">
+          <label for="c-sec-1">Dedicated SQL Server service account configured with appropriate password policy <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-security')">Windows Security</a></span></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-sec-2" class="checklist-item">
+          <label for="c-sec-2">Antivirus exclusions in place for SQL Server data and log files (<code>.mdf</code>, <code>.ldf</code>, <code>.ndf</code>)</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-sec-4" class="checklist-item">
+          <label for="c-sec-4">Local administrator credentials available on every server for the install meeting</label>
+        </div>
+      </div>
+
+      <div class="checklist-group topo-conditional" data-topology="2" data-step="security">
+        <div class="checklist-head"><span>Windows Security — Config 2 Additions</span><span class="scope-tag config">Config 2 only</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-sec-c2-1" class="checklist-item">
+          <label for="c-sec-c2-1">Database server firewall: inbound TCP 1433 (or custom port) allowed from application server static IP</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-sec-c2-2" class="checklist-item">
+          <label for="c-sec-c2-2">Database and application server clocks synchronized to the same time source</label>
+        </div>
+      </div>
+
+      <div class="checklist-group topo-conditional" data-topology="3" data-step="security">
+        <div class="checklist-head"><span>Windows Security — Config 3 Additions</span><span class="scope-tag config">Config 3 only</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-sec-c3-1" class="checklist-item">
+          <label for="c-sec-c3-1">SSIS-to-database authentication decided (Windows auth via domain service account, or SQL auth)</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-sec-c3-2" class="checklist-item">
+          <label for="c-sec-c3-2">Database server firewall: inbound TCP 1433 from SSIS server <em>and</em> application server static IPs</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-sec-c3-3" class="checklist-item">
+          <label for="c-sec-c3-3">All three servers synchronized to the same time source (skew &lt; 5 minutes)</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-sec-c3-4" class="checklist-item">
+          <label for="c-sec-c3-4">Gigabit LAN confirmed between SSIS server and database server</label>
+        </div>
+      </div>
+
+      <div class="checklist-group" data-step="servers">
+        <div class="checklist-head"><span>Network Access</span><span class="scope-tag">All</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-net-1" class="checklist-item">
+          <label for="c-net-1">Outbound port 443 access from the application server to <code>rapidreconciler.getgsi.com</code>, <code>rr-valc-spa.cloudapp.net</code>, and <code>rr-spa.cloudapp.net</code></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-net-2" class="checklist-item">
+          <label for="c-net-2">Internal port range 32145–49152 open between application server and the user network</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-net-3" class="checklist-item">
+          <label for="c-net-3">Internal URL pattern (<code>rrprod-[companyname].getgsi.com</code>) resolvable; internal IP of the app server provided to GSI</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-net-4" class="checklist-item">
+          <label for="c-net-4">Browser test from application server to <code>https://rapidreconciler.getgsi.com</code> succeeds</label>
+        </div>
+      </div>
+
+      <div class="checklist-group" data-step="source">
+        <div class="checklist-head"><span>Source Platform Drivers</span><span class="scope-tag">All</span></div>
+        <div class="checklist-row source-conditional" data-source="oracle" data-step="source">
+          <input type="checkbox" id="c-jde-1-oracle" class="checklist-item">
+          <label for="c-jde-1-oracle">Oracle Database Client (or ODAC) installed on <span class="server-name">the SSIS server</span>, both 32-bit and 64-bit, in a shared Oracle home; <code>tnsnames.ora</code> entry created for the JDE instance <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-source')">Source Platform</a></span></label>
+        </div>
+        <div class="checklist-row source-conditional" data-source="as400" data-step="source">
+          <input type="checkbox" id="c-jde-1-as400" class="checklist-item">
+          <label for="c-jde-1-as400">IBM i Access installed on <span class="server-name">the SSIS server</span>, both 32-bit and 64-bit, with the OLE DB provider component explicitly selected during install <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-source')">Source Platform</a></span></label>
+        </div>
+        <div class="checklist-row source-conditional" data-source="sqlserver" data-step="source">
+          <input type="checkbox" id="c-jde-1-sqlserver" class="checklist-item">
+          <label for="c-jde-1-sqlserver">SQL Server OLE DB driver verified on <span class="server-name">the SSIS server</span> (built-in — no install required); network connectivity to the JDE SQL Server confirmed <span class="ref">— see <a href="javascript:void(0)" onclick="showView('topic-source')">Source Platform</a></span></label>
+        </div>
+        <div class="checklist-row source-pending-row" data-step="source">
+          <input type="checkbox" id="c-jde-1" class="checklist-item">
+          <label for="c-jde-1">OLE DB provider for the JDE data source installed on <span class="server-name">the SSIS server</span> <span class="ref">— select a <a href="javascript:void(0)" onclick="showView('topic-source')">source platform</a> for specific guidance</span></label>
+        </div>
+      </div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="checklist">
+          <span class="step-complete-label">Mark step 5 (Pre-Install Checklist) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-security')">← Back: Windows Security</button>
+        <button class="next-btn" onclick="showView('topic-submit')">Next: JDE Info &amp; Submit →</button>
+      </div>
+    </section>
+
+
+    <!-- ============ TOPIC: SUBMIT ============ -->
+    <section id="topic-submit" class="view">
+      <h1>JD Edwards Information &amp; Submission</h1>
+      <p>Final step. Fill in the JD Edwards values below, then use the <strong>Submit to GSI</strong> panel at the bottom to send your topology selection, checklist results, and JDE information to <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> in a single email. GSI will then schedule the install meeting.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Data Dictionary Variables</h2>
+      <p>These four JD Edwards data dictionary settings control decimal precision in the cardex and inventory tables. Confirm the values used in your JDE environment with whoever owns the data dictionary.</p>
+      <table>
+        <thead><tr><th>Variable</th><th>Description</th><th>Typical Value</th><th>Customer Value</th></tr></thead>
+        <tbody>
+          <tr><td>ECST</td><td>Decimal places for extended cost</td><td>2</td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="jde-ecst" aria-label="Customer value for ECST"></td></tr>
+          <tr><td>UNCS</td><td>Decimal places for unit cost</td><td>4</td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="jde-uncs" aria-label="Customer value for UNCS"></td></tr>
+          <tr><td>PQOH</td><td>Decimal places for quantity on hand</td><td>—</td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="jde-pqoh" aria-label="Customer value for PQOH"></td></tr>
+          <tr><td>TRQT</td><td>Decimal places for transaction quantities in cardex</td><td>—</td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="jde-trqt" aria-label="Customer value for TRQT"></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Connection Details</h2>
+      <p>Connection information for the JDE data source. RapidReconciler reads from JDE — it does not write back. Read-only credentials are sufficient.</p>
+      <table>
+        <thead><tr><th style="width:55%;">Item</th><th>Customer Value</th></tr></thead>
+        <tbody>
+          <tr><td>Name or IP address of the JDE data server or data warehouse</td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="jde-server" aria-label="JDE data server name or IP"></td></tr>
+          <tr><td>Database username <em>(use <code>rapidrec</code> if possible)</em></td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="jde-user" aria-label="Database username"></td></tr>
+          <tr><td>Database password <em>(use <code>rapidrec</code> if possible)</em></td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="jde-pass" aria-label="Database password"></td></tr>
+          <tr><td>JDE server type <em>(auto-fills from your <a href="javascript:void(0)" onclick="showView('topic-source')">source platform</a> selection — edit if your environment differs)</em></td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="jde-type" aria-label="JDE server type"></td></tr>
+          <tr><td>Table qualifier name <em>(e.g., <code>proddta</code>)</em></td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="jde-qualifier" aria-label="Table qualifier name"></td></tr>
+        </tbody>
+      </table>
+
+      <h2>Submitted By</h2>
+      <p>Contact information for whoever is responsible for the install on the customer side. GSI will use this to schedule the install meeting and follow up if anything is missing.</p>
+      <table>
+        <thead><tr><th style="width:25%;">Field</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Customer / Company</td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="sub-company" aria-label="Customer company name"></td></tr>
+          <tr><td>Name</td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="sub-name" aria-label="Submitter name"></td></tr>
+          <tr><td>Title</td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="sub-title" aria-label="Submitter title"></td></tr>
+          <tr><td>Email</td><td class="fill-cell"><input class="fill-input jde-field" type="email" id="sub-email" aria-label="Submitter email"></td></tr>
+          <tr><td>Phone</td><td class="fill-cell"><input class="fill-input jde-field" type="tel" id="sub-phone" aria-label="Submitter phone"></td></tr>
+          <tr><td>Date</td><td class="fill-cell"><input class="fill-input jde-field" type="text" id="sub-date" aria-label="Submission date"></td></tr>
+        </tbody>
+      </table>
+
+      <div class="submit-panel">
+        <div class="submit-panel-head">Submit to GSI</div>
+        <p class="submit-panel-text">Click <strong>Send via Email</strong> to open your email client with your topology selection, checklist results, and JDE information pre-filled in a message to <code>rrsupport@getgsi.com</code>. Review the message before sending. If your browser is not configured to open email links, use <strong>Copy to Clipboard</strong> and paste the contents into a new message. <strong>Send via Email</strong> is enabled once a topology has been selected and every JDE field has been filled in.</p>
+        <div class="submit-actions">
+          <button type="button" class="submit-btn submit-btn-primary" id="send-email-btn" onclick="sendJdeEmail()" disabled>Send via Email</button>
+          <button type="button" class="submit-btn submit-btn-secondary" onclick="copyJdeText()">Copy to Clipboard</button>
+          <span class="submit-status" id="submit-status"></span>
+        </div>
+      </div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="submit">
+          <span class="step-complete-label">Mark step 6 (JDE Info &amp; Submit) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="showView('topic-checklist')">← Back: Pre-Install Checklist</button>
+        <button class="next-btn" onclick="goHome()">Return to Index ↺</button>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<!-- ==================== PAGE FOOTER ==================== -->
+<footer class="page-footer">
+  <div class="footer-left">
+    Project maintained by<br>
+    <a href="#">RapidReconciler</a>
+  </div>
+  <div class="footer-left" style="text-align:left; padding-right:0;">
+    <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> · (855) 474-4377<br>
+    <a href="https://rapidreconciler.getgsi.com">rapidreconciler.getgsi.com</a>
+  </div>
+</footer>
+
+<script>
+  // ============================================================
+  // Sidebar / view switching
+  // ============================================================
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+    var target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      var slug = id === 'home' ? 'home' : id.replace('topic-', '');
+      document.querySelectorAll('#sidebar-nav li').forEach(function(li) {
+        li.classList.toggle('active', li.dataset.target === slug);
+      });
+
+      // Try to update hash for shareable links — fails silently in sandboxed iframes
+      try {
+        if (window.location.protocol !== 'about:') {
+          history.replaceState(null, '', slug === 'home' ? ' ' : '#' + slug);
+        }
+      } catch (e) { /* sandboxed context — navigation still works fine without URL hash */ }
+    }
+  }
+
+  function goHome() { showView('home'); }
+
+  document.querySelectorAll('#sidebar-nav li[data-target="home"]').forEach(function(li) {
+    li.classList.add('active');
+  });
+
+  window.addEventListener('DOMContentLoaded', function() {
+    try {
+      var hash = window.location.hash.replace('#', '');
+      if (hash && hash !== 'home') showView('topic-' + hash);
+    } catch (e) { /* ignore */ }
+  });
+
+  window.addEventListener('popstate', function() {
+    try {
+      var hash = window.location.hash.replace('#', '');
+      showView(hash && hash !== 'home' ? 'topic-' + hash : 'home');
+    } catch (e) { /* ignore */ }
+  });
+</script>
+
+<script>
+(function() {
+  // ============================================================
+  // Configuration
+  // ============================================================
+
+  // JDE form fields that must be filled before email submission
+  var JDE_FIELD_IDS = [
+    'jde-ecst', 'jde-uncs', 'jde-pqoh', 'jde-trqt',
+    'jde-server', 'jde-user', 'jde-pass', 'jde-type', 'jde-qualifier',
+    'sub-company', 'sub-name', 'sub-title', 'sub-email', 'sub-phone', 'sub-date'
+  ];
+
+  // Friendly labels for topologies
+  var TOPOLOGY_LABELS = {
+    '1': 'Configuration 1: Co-located',
+    '2': 'Configuration 2: Separate Database and Application Servers',
+    '3': 'Configuration 3: Separate SSIS Server'
+  };
+
+  // ============================================================
+  // Helpers
+  // ============================================================
+
+  function getField(id) { return document.getElementById(id); }
+  function getValue(id) {
+    var el = getField(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function getSelectedTopology() {
+    var radios = document.querySelectorAll('input[name="topology-choice"]');
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].checked) return radios[i].value;
+    }
+    return null;
+  }
+
+  function getSelectedSource() {
+    var radios = document.querySelectorAll('input[name="source-choice"]');
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].checked) return radios[i].value;
+    }
+    return null;
+  }
+
+  // Friendly labels for source platforms — also used to pre-fill the JDE server type field
+  var SOURCE_LABELS = {
+    'oracle':    'Oracle',
+    'as400':     'AS/400 (I-Series) — DB2 for i',
+    'sqlserver': 'Microsoft SQL Server'
+  };
+  // Short value to drop into the JDE server type form field
+  var SOURCE_JDE_TYPE = {
+    'oracle':    'Oracle',
+    'as400':     'I-Series',
+    'sqlserver': 'Microsoft SQL Server'
+  };
+  // Where SSIS runs in each topology — used to fill in .server-name spans in the
+  // Source Platform Drivers checklist so each row names the correct server
+  var TOPOLOGY_SSIS_HOST = {
+    '1': 'the dedicated RR server',
+    '2': 'the database server',
+    '3': 'the dedicated SSIS server'
+  };
+
+  // Step IDs in display order — used by the email export and the sync logic
+  var STEP_IDS = ['topology', 'source', 'servers', 'security', 'checklist', 'submit'];
+  var STEP_LABELS = {
+    'topology':  '1. Topology',
+    'source':    '2. Source Platform',
+    'servers':   '3. Server Requirements',
+    'security':  '4. Windows Security',
+    'checklist': '5. Pre-Install Checklist',
+    'submit':    '6. JDE Info & Submit'
+  };
+
+  // Server-name input fields keyed by topology — drives the email export and
+  // determines which fields are visible at any given time. IDs are suffixed
+  // with the config number where they are reused across configurations, so
+  // each input has a unique id (HTML requirement).
+  var SERVER_FIELDS_BY_TOPOLOGY = {
+    '1': [
+      { id: 'srv-rr',      label: 'Dedicated RR Server' }
+    ],
+    '2': [
+      { id: 'srv-db-c2',   label: 'Database Server' },
+      { id: 'srv-app-c2',  label: 'Application Server' }
+    ],
+    '3': [
+      { id: 'srv-db-c3',   label: 'Database Server' },
+      { id: 'srv-ssis-c3', label: 'SSIS Server' },
+      { id: 'srv-app-c3',  label: 'Application Server' }
+    ]
+  };
+
+  function countMissingJde() {
+    var n = 0;
+    for (var i = 0; i < JDE_FIELD_IDS.length; i++) {
+      if (!getValue(JDE_FIELD_IDS[i])) n++;
+    }
+    return n;
+  }
+
+  // ============================================================
+  // Step-completion sync — three-way binding:
+  //
+  //   1. Topic-page step checkbox  ↔  Step Completion mirror checkbox
+  //      (toggling either updates the other; both represent the same step)
+  //
+  //   2. Step checkbox  →  granular checklist items in that step
+  //      (checking a step bulk-checks every visible item under it; unchecking
+  //       a step bulk-unchecks them. Hidden items — those filtered out by
+  //       topology or source-platform selection — are skipped, since they're
+  //       not applicable to the current configuration.)
+  //
+  //   3. Granular item unchecked  →  step gets unchecked
+  //      (an item being unchecked invalidates the "step done" claim. Checking
+  //       a single item does NOT auto-mark the step, since the step represents
+  //       the user's deliberate sign-off rather than mere item-by-item progress.)
+  // ============================================================
+
+  // Returns whether a row/group is currently visible given topology + source filters.
+  // Used to decide which granular items participate in a step cascade.
+  function isElementApplicable(el) {
+    var topo = getSelectedTopology();
+    var src  = getSelectedSource();
+    // Walk up to find any topo-conditional ancestor (and the element itself)
+    var node = el;
+    while (node && node !== document.body) {
+      if (node.classList && node.classList.contains('topo-conditional')) {
+        var allowedTopo = (node.getAttribute('data-topology') || '').split(/\s+/);
+        if (!topo || allowedTopo.indexOf(topo) === -1) return false;
+      }
+      if (node.classList && node.classList.contains('source-conditional')) {
+        var allowedSrc = (node.getAttribute('data-source') || '').split(/\s+/);
+        if (!src || allowedSrc.indexOf(src) === -1) return false;
+      }
+      // The placeholder driver row should be considered hidden once a source is chosen
+      if (node.classList && node.classList.contains('source-pending-row') && src) return false;
+      node = node.parentElement;
+    }
+    return true;
+  }
+
+  // Return the step a granular item belongs to (looking at the row first, then
+  // the group). Returns null if the item isn't tied to any step.
+  function getStepForItem(itemEl) {
+    var row = itemEl.closest('.checklist-row');
+    if (row && row.hasAttribute('data-step')) return row.getAttribute('data-step');
+    var group = itemEl.closest('.checklist-group');
+    if (group && group.hasAttribute('data-step')) return group.getAttribute('data-step');
+    return null;
+  }
+
+  // Return all granular checklist items belonging to a given step.
+  // Excludes the step-mirror-item itself (which is in the "Step Completion" group).
+  function getItemsForStep(stepId) {
+    var items = [];
+    var allItems = document.querySelectorAll('.checklist-item');
+    for (var i = 0; i < allItems.length; i++) {
+      var item = allItems[i];
+      // Skip the step mirrors — they're step-level, not granular
+      if (item.classList.contains('step-mirror-item')) continue;
+      if (getStepForItem(item) === stepId) items.push(item);
+    }
+    return items;
+  }
+
+  // 1. Mirror sync — keep the topic-page checkbox and the Step Completion
+  //    checklist mirror in lockstep.
+  function syncStepMirrors(stepId, isChecked, originEl) {
+    var matches = document.querySelectorAll('input[type="checkbox"][data-step="' + stepId + '"]');
+    for (var i = 0; i < matches.length; i++) {
+      var el = matches[i];
+      if (el === originEl) continue;
+      // Only touch the meta-step checkboxes (topic-page or mirror) — never
+      // the granular item rows that may also carry data-step.
+      if (!el.classList.contains('step-complete-checkbox') &&
+          !el.classList.contains('step-mirror-item')) continue;
+      if (el.checked !== isChecked) el.checked = isChecked;
+    }
+  }
+
+  // 2. Cascade — propagate the step's checked state to its visible granular items.
+  function cascadeStepToItems(stepId, isChecked) {
+    var items = getItemsForStep(stepId);
+    for (var i = 0; i < items.length; i++) {
+      // Only touch items that are currently visible in the user's selected
+      // topology + source-platform configuration. Hidden items don't apply.
+      if (!isElementApplicable(items[i])) continue;
+      if (items[i].checked !== isChecked) items[i].checked = isChecked;
+    }
+  }
+
+  // 3. Bubble — when a granular item gets unchecked, uncheck its parent step
+  //    (mirrored on both the topic-page checkbox and the Step Completion mirror).
+  function bubbleItemUncheckToStep(itemEl) {
+    var stepId = getStepForItem(itemEl);
+    if (!stepId) return;
+    var stepCheckboxes = document.querySelectorAll(
+      'input.step-complete-checkbox[data-step="' + stepId + '"], ' +
+      'input.step-mirror-item[data-step="' + stepId + '"]'
+    );
+    for (var i = 0; i < stepCheckboxes.length; i++) {
+      if (stepCheckboxes[i].checked) stepCheckboxes[i].checked = false;
+    }
+  }
+
+  function wireStepSync() {
+    // Wire change events on the meta-step checkboxes (topic-page + mirror)
+    var stepCheckboxes = document.querySelectorAll(
+      'input.step-complete-checkbox[data-step], input.step-mirror-item[data-step]'
+    );
+    for (var i = 0; i < stepCheckboxes.length; i++) {
+      stepCheckboxes[i].addEventListener('change', function() {
+        var stepId = this.getAttribute('data-step');
+        if (!stepId) return;
+        // Block marking a step complete if its prerequisites aren't met
+        // (e.g., topology not picked, server names blank, source not picked).
+        // Unchecking is always allowed. Revert the user's tick and notify
+        // through the same warning shown next to the Next button.
+        if (this.checked && !isStepComplettable(stepId)) {
+          this.checked = false;
+          // Refresh the gate so the warning message is freshly visible — even
+          // if the user is on the Step Completion page, the warning lives next
+          // to the topic-page Next button which they'll see when they navigate
+          applyNavGates();
+          return;
+        }
+        // Mirror to the other meta checkbox for the same step
+        syncStepMirrors(stepId, this.checked, this);
+        // Cascade to granular items in that step (only matters for steps that
+        // map to actual checklist content; step-only steps just no-op)
+        cascadeStepToItems(stepId, this.checked);
+      });
+    }
+
+    // Wire change events on every granular checklist item (skipping the
+    // step mirrors, which we already wired above)
+    var items = document.querySelectorAll('.checklist-item');
+    for (var j = 0; j < items.length; j++) {
+      if (items[j].classList.contains('step-mirror-item')) continue;
+      items[j].addEventListener('change', function() {
+        // If the user just unchecked a granular item, the parent step can no
+        // longer be claimed as complete — bubble up and uncheck it.
+        if (!this.checked) bubbleItemUncheckToStep(this);
+      });
+    }
+  }
+
+  // Called after topology or source-platform visibility changes. If a step
+  // is currently marked complete but has visible items underneath that aren't
+  // all checked (e.g., topology change made previously-hidden items visible),
+  // uncheck the step so the user knows to revisit it.
+  function revalidateStepCompletions() {
+    var stepIds = ['source', 'servers', 'security', 'submit'];
+    for (var s = 0; s < stepIds.length; s++) {
+      var stepId = stepIds[s];
+      var topicCb  = document.querySelector('input.step-complete-checkbox[data-step="' + stepId + '"]');
+      var mirrorCb = document.querySelector('input.step-mirror-item[data-step="' + stepId + '"]');
+      // Determine "claimed complete" — true if either meta checkbox is checked
+      var claimedComplete = (topicCb && topicCb.checked) || (mirrorCb && mirrorCb.checked);
+      if (!claimedComplete) continue;
+      // Walk visible items for this step; if any are unchecked, the claim is invalid
+      var items = getItemsForStep(stepId);
+      var anyUnchecked = false;
+      for (var i = 0; i < items.length; i++) {
+        if (!isElementApplicable(items[i])) continue;
+        if (!items[i].checked) { anyUnchecked = true; break; }
+      }
+      if (anyUnchecked) {
+        if (topicCb)  topicCb.checked = false;
+        if (mirrorCb) mirrorCb.checked = false;
+      }
+    }
+  }
+
+  // ============================================================
+  // Linear-flow navigation gates
+  // ============================================================
+  // Hard-block the "Next" button on the topology and source platform topic
+  // pages until the required input has been provided. Steps after that are
+  // reference content (server requirements, security) or are already gated
+  // by their own form (the submit page). Sidebar navigation is intentionally
+  // NOT gated — it's an escape hatch for users exploring the document or
+  // returning to fix something earlier.
+
+  function applyNavGates() {
+    // ---- Step 1 → Step 2 (Topology page Next button) ----
+    var topoBtn  = document.getElementById('next-topology');
+    var topoWarn = document.getElementById('next-topology-warning');
+    if (topoBtn && topoWarn) {
+      var topo = getSelectedTopology();
+      var missing = [];
+      if (!topo) {
+        missing.push('select a topology');
+      } else if (SERVER_FIELDS_BY_TOPOLOGY[topo]) {
+        // Walk every server-name input that applies to the chosen topology and
+        // count any blank ones
+        var fields = SERVER_FIELDS_BY_TOPOLOGY[topo];
+        var blank = 0;
+        for (var i = 0; i < fields.length; i++) {
+          if (!getValue(fields[i].id)) blank++;
+        }
+        if (blank > 0) {
+          if (blank === fields.length) {
+            // Nothing filled yet
+            missing.push(fields.length === 1
+              ? 'fill in the server name'
+              : 'fill in all ' + fields.length + ' server names');
+          } else {
+            // Partial — N of M still blank
+            missing.push(blank === 1
+              ? '1 server name still needs to be filled in'
+              : blank + ' of ' + fields.length + ' server names still need to be filled in');
+          }
+        }
+      }
+      if (missing.length > 0) {
+        topoBtn.disabled = true;
+        topoWarn.textContent = capitalizeFirst(missing.join(' and ')) + ' before continuing.';
+        topoWarn.classList.add('show');
+      } else {
+        topoBtn.disabled = false;
+        topoWarn.classList.remove('show');
+      }
+    }
+
+    // ---- Step 2 → Step 3 (Source Platform page Next button) ----
+    var srcBtn  = document.getElementById('next-source');
+    var srcWarn = document.getElementById('next-source-warning');
+    if (srcBtn && srcWarn) {
+      var src = getSelectedSource();
+      if (!src) {
+        srcBtn.disabled = true;
+        srcWarn.textContent = 'Select a source platform before continuing.';
+        srcWarn.classList.add('show');
+      } else {
+        srcBtn.disabled = false;
+        srcWarn.classList.remove('show');
+      }
+    }
+  }
+
+  // Same gating logic governs whether a step can be marked complete. If
+  // step 1 has missing input, the topology step-complete and step-mirror
+  // checkboxes get blocked from being checked. Same for step 2.
+  function isStepComplettable(stepId) {
+    if (stepId === 'topology') {
+      var topo = getSelectedTopology();
+      if (!topo) return false;
+      if (SERVER_FIELDS_BY_TOPOLOGY[topo]) {
+        var fields = SERVER_FIELDS_BY_TOPOLOGY[topo];
+        for (var i = 0; i < fields.length; i++) {
+          if (!getValue(fields[i].id)) return false;
+        }
+      }
+      return true;
+    }
+    if (stepId === 'source') {
+      return !!getSelectedSource();
+    }
+    // Other steps have no input gate
+    return true;
+  }
+
+  // ============================================================
+  // Topology reactivity — show/hide based on selection
+  // ============================================================
+
+  function applyTopologyVisibility() {
+    var topo = getSelectedTopology();
+    var conditionals = document.querySelectorAll('.topo-conditional');
+    for (var i = 0; i < conditionals.length; i++) {
+      var el = conditionals[i];
+      var allowed = (el.getAttribute('data-topology') || '').split(/\s+/);
+      if (topo && allowed.indexOf(topo) !== -1) {
+        el.classList.add('show');
+      } else {
+        el.classList.remove('show');
+      }
+    }
+    // Hide "topology pending" placeholders once a topology is picked
+    var pending = document.querySelectorAll('.topo-pending');
+    for (var j = 0; j < pending.length; j++) {
+      pending[j].style.display = topo ? 'none' : '';
+    }
+    // Fill in .server-name spans (in the JDE Source Preparation checklist rows)
+    // with the name of the server that hosts SSIS in the chosen topology
+    var serverNameSpans = document.querySelectorAll('.server-name');
+    var hostText = (topo && TOPOLOGY_SSIS_HOST[topo]) ? TOPOLOGY_SSIS_HOST[topo] : 'the SSIS server';
+    for (var s = 0; s < serverNameSpans.length; s++) {
+      serverNameSpans[s].textContent = hostText;
+    }
+    // Topology change may have made previously-hidden items visible. If a step
+    // was claimed complete based on a different topology, re-evaluate it.
+    revalidateStepCompletions();
+    // Topology selection changes the input gate for step 1 → 2 navigation
+    applyNavGates();
+  }
+
+  // ============================================================
+  // Source platform reactivity — show/hide driver guidance,
+  // highlight the matching row in the OLE DB reference table,
+  // and pre-fill the JDE server type field on the submit page
+  // ============================================================
+
+  function applySourceVisibility() {
+    var src = getSelectedSource();
+
+    // Show the driver-guidance block matching the chosen source
+    var conditionals = document.querySelectorAll('.source-conditional');
+    for (var i = 0; i < conditionals.length; i++) {
+      var el = conditionals[i];
+      var allowed = (el.getAttribute('data-source') || '').split(/\s+/);
+      if (src && allowed.indexOf(src) !== -1) {
+        el.classList.add('show');
+      } else {
+        el.classList.remove('show');
+      }
+    }
+
+    // Hide the "source pending" placeholder once a source is picked
+    var pending = document.querySelectorAll('.source-pending');
+    for (var j = 0; j < pending.length; j++) {
+      pending[j].style.display = src ? 'none' : '';
+    }
+
+    // Hide the placeholder checklist row once a source is picked
+    var pendingRows = document.querySelectorAll('.source-pending-row');
+    for (var p = 0; p < pendingRows.length; p++) {
+      if (src) pendingRows[p].classList.add('hide');
+      else pendingRows[p].classList.remove('hide');
+    }
+
+    // Highlight the matching row in any reference table tagged with data-source
+    var rows = document.querySelectorAll('tr[data-source]');
+    for (var k = 0; k < rows.length; k++) {
+      if (src && rows[k].getAttribute('data-source') === src) {
+        rows[k].classList.add('source-row-highlight');
+      } else {
+        rows[k].classList.remove('source-row-highlight');
+      }
+    }
+
+    // Pre-fill the JDE server type field on the submit page if the user
+    // has not already entered something different
+    var typeField = getField('jde-type');
+    if (typeField && src && SOURCE_JDE_TYPE[src]) {
+      // Only auto-fill if the field is empty or holds a previous auto-fill value
+      var current = (typeField.value || '').trim();
+      var isPreviousAutofill = current === '' ||
+        current === SOURCE_JDE_TYPE['oracle'] ||
+        current === SOURCE_JDE_TYPE['as400'] ||
+        current === SOURCE_JDE_TYPE['sqlserver'];
+      if (isPreviousAutofill) {
+        typeField.value = SOURCE_JDE_TYPE[src];
+        // Manually re-run validation since programmatic value changes don't fire 'input'
+        validateForm();
+      }
+    }
+    // Source change may have made previously-hidden items visible. If a step
+    // was claimed complete under a different source, re-evaluate it.
+    revalidateStepCompletions();
+    // Source selection changes the input gate for step 2 → 3 navigation
+    applyNavGates();
+  }
+
+  // ============================================================
+  // Status messaging
+  // ============================================================
+
+  function setStatus(msg, kind) {
+    var el = document.getElementById('submit-status');
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'submit-status' + (kind ? ' ' + kind : '');
+  }
+
+  function setTransientStatus(msg, kind) {
+    setStatus(msg, kind);
+    setTimeout(function() {
+      var el = document.getElementById('submit-status');
+      if (el && el.textContent === msg) validateForm();
+    }, 4000);
+  }
+
+  // ============================================================
+  // Validation — gate submit on topology + JDE fields
+  // ============================================================
+
+  function validateForm() {
+    var btn = document.getElementById('send-email-btn');
+    if (!btn) return;
+    var topoSelected = !!getSelectedTopology();
+    var missing = countMissingJde();
+    if (topoSelected && missing === 0) {
+      btn.disabled = false;
+      setStatus('All required fields complete.', 'ok');
+    } else {
+      btn.disabled = true;
+      var parts = [];
+      if (!topoSelected) parts.push('select a topology');
+      if (missing > 0) {
+        parts.push(missing === 1 ? '1 field still needs a value' : missing + ' fields still need values');
+      }
+      setStatus(capitalizeFirst(parts.join(' and ')) + '.', 'warn');
+    }
+  }
+
+  function capitalizeFirst(s) {
+    return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+  }
+
+  // ============================================================
+  // Email body construction
+  // ============================================================
+
+  function buildChecklistReport() {
+    var topo = getSelectedTopology();
+    var src = getSelectedSource();
+    var groups = document.querySelectorAll('.checklist-group');
+    var lines = [];
+    for (var i = 0; i < groups.length; i++) {
+      var group = groups[i];
+      // Skip groups that are topology-conditional and not applicable
+      if (group.classList.contains('topo-conditional')) {
+        var allowed = (group.getAttribute('data-topology') || '').split(/\s+/);
+        if (!topo || allowed.indexOf(topo) === -1) continue;
+      }
+      var headEl = group.querySelector('.checklist-head span');
+      var groupName = headEl ? headEl.textContent.trim() : 'Group';
+      lines.push('  [' + groupName + ']');
+      var rows = group.querySelectorAll('.checklist-row');
+      for (var j = 0; j < rows.length; j++) {
+        var row = rows[j];
+        // Skip individual rows that are source-conditional and don't match
+        if (row.classList.contains('source-conditional')) {
+          var allowedSrc = (row.getAttribute('data-source') || '').split(/\s+/);
+          if (!src || allowedSrc.indexOf(src) === -1) continue;
+        }
+        // Skip the placeholder row once a source is selected
+        if (row.classList.contains('source-pending-row') && src) continue;
+        var checkbox = row.querySelector('input[type="checkbox"]');
+        var label = row.querySelector('label');
+        if (!checkbox || !label) continue;
+        var labelClone = label.cloneNode(true);
+        var refs = labelClone.querySelectorAll('.ref');
+        for (var k = 0; k < refs.length; k++) refs[k].remove();
+        var labelText = labelClone.textContent.replace(/\s+/g, ' ').trim();
+        var mark = checkbox.checked ? '[x]' : '[ ]';
+        lines.push('    ' + mark + ' ' + labelText);
+      }
+      lines.push('');
+    }
+    return lines.join('\r\n');
+  }
+
+  function buildBody() {
+    var v = function(id) { return getValue(id) || '[not provided]'; };
+    var topo = getSelectedTopology();
+    var topoLabel = topo ? TOPOLOGY_LABELS[topo] : '[not selected]';
+    var src = getSelectedSource();
+    var sourceLabel = src ? SOURCE_LABELS[src] : '[not selected]';
+
+    // Count completed checklist items for a quick summary at top
+    var allChecked = document.querySelectorAll('.checklist-item');
+    var visibleCount = 0, checkedCount = 0;
+    for (var i = 0; i < allChecked.length; i++) {
+      var box = allChecked[i];
+      var group = box.closest('.checklist-group');
+      if (group && group.classList.contains('topo-conditional')) {
+        var allowed = (group.getAttribute('data-topology') || '').split(/\s+/);
+        if (!topo || allowed.indexOf(topo) === -1) continue;
+      }
+      // Skip rows that are source-conditional and don't match the selection
+      var row = box.closest('.checklist-row');
+      if (row && row.classList.contains('source-conditional')) {
+        var allowedSrc = (row.getAttribute('data-source') || '').split(/\s+/);
+        if (!src || allowedSrc.indexOf(src) === -1) continue;
+      }
+      // Skip the placeholder row once a source is selected
+      if (row && row.classList.contains('source-pending-row') && src) continue;
+      visibleCount++;
+      if (box.checked) checkedCount++;
+    }
+
+    // Build server-name lines for the chosen topology
+    var serverLines = [];
+    if (topo && SERVER_FIELDS_BY_TOPOLOGY[topo]) {
+      var fields = SERVER_FIELDS_BY_TOPOLOGY[topo];
+      for (var f = 0; f < fields.length; f++) {
+        var pad = '                                  '.substring(0, 31 - fields[f].label.length);
+        serverLines.push('  ' + fields[f].label + ':' + pad + v(fields[f].id));
+      }
+    } else {
+      serverLines.push('  [topology not selected — server names not provided]');
+    }
+
+    var lines = [
+      'RapidReconciler — Pre-Installation Submission',
+      '================================================',
+      '',
+      'TOPOLOGY SELECTED',
+      '  ' + topoLabel,
+      '',
+      'SOURCE PLATFORM',
+      '  ' + sourceLabel,
+      '',
+      'SERVER NAMES'
+    ].concat(serverLines).concat([
+      '',
+      'CHECKLIST SUMMARY',
+      '  ' + checkedCount + ' of ' + visibleCount + ' items complete',
+      '',
+      'CHECKLIST DETAIL',
+      buildChecklistReport(),
+      'JD EDWARDS — DATA DICTIONARY VARIABLES',
+      '  ECST (extended cost decimals): ' + v('jde-ecst'),
+      '  UNCS (unit cost decimals):     ' + v('jde-uncs'),
+      '  PQOH (qty on hand decimals):   ' + v('jde-pqoh'),
+      '  TRQT (cardex qty decimals):    ' + v('jde-trqt'),
+      '',
+      'JD EDWARDS — CONNECTION DETAILS',
+      '  JDE data server / warehouse:   ' + v('jde-server'),
+      '  Database username:             ' + v('jde-user'),
+      '  Database password:             ' + v('jde-pass'),
+      '  JDE server type:               ' + v('jde-type'),
+      '  Table qualifier:               ' + v('jde-qualifier'),
+      '',
+      'SUBMITTED BY',
+      '  Customer / Company:            ' + v('sub-company'),
+      '  Name:                          ' + v('sub-name'),
+      '  Title:                         ' + v('sub-title'),
+      '  Email:                         ' + v('sub-email'),
+      '  Phone:                         ' + v('sub-phone'),
+      '  Date:                          ' + v('sub-date'),
+      ''
+    ]);
+    return lines.join('\r\n');
+  }
+
+  function buildSubject() {
+    var c = getValue('sub-company');
+    return c
+      ? 'RapidReconciler Pre-Install Submission — ' + c
+      : 'RapidReconciler Pre-Install Submission';
+  }
+
+  // ============================================================
+  // Submit actions
+  // ============================================================
+
+  window.sendJdeEmail = function() {
+    if (!getSelectedTopology() || countMissingJde() > 0) return;
+    var mailto = 'mailto:rrsupport@getgsi.com'
+      + '?subject=' + encodeURIComponent(buildSubject())
+      + '&body=' + encodeURIComponent(buildBody());
+    window.location.href = mailto;
+    setTransientStatus('Opening your email client…', 'ok');
+  };
+
+  window.copyJdeText = function() {
+    var text = buildSubject() + '\r\n\r\n' + buildBody();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        setTransientStatus('Copied to clipboard.', 'ok');
+      }, function() {
+        fallbackCopy(text);
+      });
+    } else {
+      fallbackCopy(text);
+    }
+  };
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      setTransientStatus('Copied to clipboard.', 'ok');
+    } catch (e) {
+      setTransientStatus('Could not copy. Please select the text manually.', 'warn');
+    }
+    document.body.removeChild(ta);
+  }
+
+  // ============================================================
+  // Initialization
+  // ============================================================
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Auto-fill today's date
+    var dateField = getField('sub-date');
+    if (dateField && !dateField.value) {
+      var d = new Date();
+      dateField.value = d.getFullYear() + '-' +
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0');
+    }
+    // Wire up validation on JDE field input
+    for (var i = 0; i < JDE_FIELD_IDS.length; i++) {
+      var el = getField(JDE_FIELD_IDS[i]);
+      if (el) el.addEventListener('input', validateForm);
+    }
+    // Wire up topology radio change
+    var radios = document.querySelectorAll('input[name="topology-choice"]');
+    for (var j = 0; j < radios.length; j++) {
+      radios[j].addEventListener('change', function() {
+        applyTopologyVisibility();
+        validateForm();
+      });
+    }
+    // Wire up source-platform radio change
+    var sourceRadios = document.querySelectorAll('input[name="source-choice"]');
+    for (var s = 0; s < sourceRadios.length; s++) {
+      sourceRadios[s].addEventListener('change', function() {
+        applySourceVisibility();
+        validateForm();
+      });
+    }
+    // Wire up server-name input changes — these affect whether step 1 → 2
+    // navigation is allowed and whether step 1 can be marked complete
+    var serverNameInputs = document.querySelectorAll('.server-name-input');
+    for (var sn = 0; sn < serverNameInputs.length; sn++) {
+      serverNameInputs[sn].addEventListener('input', function() {
+        applyNavGates();
+      });
+    }
+    // Wire up bidirectional sync between step-complete checkboxes on the topic
+    // pages and their mirror counterparts in the Step Completion checklist group
+    wireStepSync();
+    // Initial state
+    applyTopologyVisibility();
+    applySourceVisibility();
+    applyNavGates();
+    validateForm();
+  });
+})();
+</script>
+
+</body>
+</html>

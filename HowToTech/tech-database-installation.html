@@ -1464,7 +1464,12 @@
       </div>
 
       <h2>Hand Off to the GSI Tech Team</h2>
-      <p>Once the database installation is verified, the remaining client setup steps are handled by the GSI tech team and are documented separately. Hand the customer's information off to the team responsible for completing the install.</p>
+      <p>Once the database installation is verified, the remaining client setup steps are handled by the GSI tech team and are documented separately. Hand the customer's information off to the team responsible for completing the install. Include:</p>
+      <ul>
+        <li>The <strong>internal IP address of the database server</strong> — needed to register the database in VALC.</li>
+        <li>The <strong>SQL Server communication port</strong>, but only if it is something other than the default <code>1433</code>. If the default port is in use, no need to specify.</li>
+        <li>The <strong>password for the <code>rruser</code> account</strong>, but only if it was set to something other than the default <code>rruser</code>. If the default password is in use, no need to specify.</li>
+      </ul>
 
       <div class="callout tip">
         <div class="callout-label">You're done</div>
