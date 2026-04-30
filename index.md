@@ -58,69 +58,10 @@ These technical documents provide detailed guidance on the installation, configu
 
 ---
 
-## Getting Started with the Application
+## RapidReconciler University
 
-These documents provide an introduction to RapidReconciler, including its benefits, how it compares to traditional reconciliation methods in JD Edwards, and the basics of using the application. Whether you're new to RapidReconciler or looking for a refresher on its core features, these resources will help you get up to speed quickly and start leveraging the application for more efficient reconciliations.
-
-| Document | Description |
-|----------|-------------|
-| [Application Basics](MDS/getting-started-with-rapidreconciler.md)                        | Logging in, navigating the interface, and system requirements |
-| [Complex Password Option](MDS/complex-password.md)                                       | Password policy requirements and reset process |
-| [Walkthrough](HowToHTML/administrator-walkthrough.html)         | Company management, user setup, general settings, and offset accounts |
-
----
-
-## Inventory Module
-
-This section covers all aspects of inventory reconciliation using RapidReconciler, including key concepts, application usage, and specific topics like the item ledger, DMAAIs, GL class codes, units of measure, product costing, zero balance adjustments, cardex variance, and outside operations. Whether you're looking to understand the fundamentals of inventory reconciliation or seeking guidance on specific issues and scenarios, these documents provide comprehensive information to help you effectively manage your inventory accounts in JD Edwards with RapidReconciler.
+RapidReconciler University is your go-to resource for learning how to use the application effectively. Whether you're new to RapidReconciler or looking to deepen your understanding of its features, these training materials will guide you through the process. From video tutorials to step-by-step guides, RapidReconciler University offers a comprehensive learning experience that covers everything from basic navigation to advanced reconciliation techniques. Explore the resources below to get started on your journey to mastering RapidReconciler.
 
 | Document | Description |
 |----------|-------------|
-| [Reference Guide](MDS/inventory-reference-guide.md)          | DMAAI tables, GL account assignment, period end logic, variance sources, cardex variance, GL class codes |
-| [Managing Accounts](MDS/inventory-add-account-rr.md)         | DMAAI model table process and refresh requirements |
-| [Reconciling Inventory](MDS/inventory-reconciliation.md)     | Reconciliation page, transactions page, As-Of page, Roll Forward, integrity reports, reconciliation process |
-| [Handling Cardex Variance](MDS/inventory-cardex-variance.md) | Standard vs. average cost environments, UDC 40/AV, P4114 procedure |
-
----
-
-## In Transit Module
-
-This section focuses on the reconciliation of in-transit inventory using RapidReconciler. It covers key concepts related to the in-transit process, how to use the application, and a wealth of JD Edwards best practice knowledge.
-
-| Document | Description |
-|----------|-------------|
-| [Reference Guide](MDS/transfer-order-reference.md)                      | Transfer order types, processing flow, AAIs, journal entries, and common issues    |
-| [Reconciliation Walkthrough](HowToHTML/in-transit-rec-walkthrough.html) | Step-by-step reconciliation
-| [Exclusions Guide](MDS/transfer-order-exclusion-guide.md)               | Exclusion types, setup, and troubleshooting                                        |
-
----
-
-## PO Receipts Module
-
-This section provides comprehensive information on reconciling purchase order receipts, aka RNV or RNI, using RapidReconciler. It includes key concepts related to the PO receipt process, how to use the application for PO receipt reconciliation, and a reference guide covering various aspects of purchase orders in JD Edwards.
-
-| Document | Description |
-|----------|-------------|
-| [Reference Guide](MDS/purchase_order_reference.md)                     | Purchase order types, processing flow, AAIs, journal entries, and common issues |
-| [Reconciliation Walkthrough](HowToHTML/po-receipts-walkthrough.html)   | Step-by-step reconciliation |
-| [Suspension and Exclusions](po-receipts-suspension-exclusion)          | Suspension and exclusion features in RR V7, including setup, use cases, and troubleshooting |
-
----
-
-## Reference Materials
-
-This section includes reference materials that provide in-depth information on various aspects of RapidReconciler and its use in JD Edwards reconciliation processes. These documents serve as a valuable resource for users seeking detailed explanations, best practices, and troubleshooting guidance related to the application. Whether you're looking for specific information on a particular feature or need comprehensive guidance on a broader topic, these reference materials will help you navigate and utilize RapidReconciler effectively.
-
-| Document | Description |
-|----------|-------------|
-| [Working with the Item Ledger](MDS/inventory-item-ledger.md) | Balances, posting codes, dates, DMAAs, and integrity conditions |
-| [Managing GL Class Codes](MDS/inventory-gl-class-codes.md)   | Procedure, hierarchy of change locations, why adjustments are required |
-| [Product Costing Guide](MDS/inventory-costing.md)            | Cost methods, cost levels, F4105 storage, IB transactions, R41815 conversion, inventory valuation impact |
-| [Ultimate DMAAI Guide](MDS/distribution-aais.md)                                         | Setup, GL class codes, business unit, financial AAIs, error messages, full AAI listing |
-| [About Units of Measure](MDS/inventory-uom.md)               | Changing the primary unit of measure, impact on inventory transactions, and cardex analysis considerations |
-| [Zero Balance Adjustments](MDS/inventory-zero-balance.md)    | Purpose, purchasing and inventory AAIs, journal entry examples |
-| [Outside Operations](MDS/inventory-outside-ops.md)           | Item master, work center, routing, receipt, and WIP journal entries |
-
----
-
-*For support, contact GSI at [rrsupport@getgsi.com](mailto:rrsupport@getgsi.com)*
+| [RapidReconciler University](/RapidReconciler-AI/RRUniversity/rapidreconciler-university.html) | A comprehensive guide to help new users get up and running with RapidReconciler, covering installation, basic navigation, and initial setup. |

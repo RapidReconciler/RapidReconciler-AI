@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PO Receipts — Suspensions and Exclusions · RapidReconciler University</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#1f2d4a;
+    --navy-deep:#142037;
+    --navy-soft:#2c3e63;
+    --blue:#2b5fb0;
+    --blue-bright:#3d8fd6;
+    --blue-pale:#d6e6f5;
+    --orange:#f08a24;
+    --orange-deep:#d97316;
+    --orange-pale:#fef5e7;
+    --bg:#ffffff;
+    --bg-soft:#f6f8fb;
+    --bg-panel:#eef3f9;
+    --text:#1f2d4a;
+    --text-soft:#5a6479;
+    --rule:#e1e7ef;
+    --rule-strong:#c9d3e0;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:'Open Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.65;
+    font-size:16px;
+  }
+  h1,h2,h3,h4,h5,h6{font-family:'Source Sans 3',-apple-system,sans-serif;color:var(--navy);line-height:1.25;font-weight:700}
+  code,pre,kbd{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace}
+
+  /* ===== Top Nav ===== */
+  .topnav{
+    position:sticky;top:0;z-index:50;
+    background:#fff;
+    border-bottom:1px solid var(--rule);
+    box-shadow:0 1px 0 rgba(20,32,55,.04);
+  }
+  .topnav-inner{
+    max-width:1320px;margin:0 auto;
+    padding:14px 28px;
+    display:flex;align-items:center;gap:32px;
+  }
+  .brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--navy)}
+  .brand img{height:36px;width:auto;display:block}
+  .brand-text{display:flex;flex-direction:column;line-height:1.1}
+  .brand-product{font-family:'Source Sans 3';font-weight:800;font-size:16px;color:var(--navy);letter-spacing:-.01em}
+  .brand-sub{font-size:11px;color:var(--text-soft);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+  .nav-links{display:flex;gap:26px;margin-left:auto;align-items:center}
+  .nav-links a{
+    text-decoration:none;color:var(--navy);font-weight:600;font-size:14px;
+    padding:6px 0;border-bottom:2px solid transparent;transition:.15s;
+  }
+  .nav-links a:hover{color:var(--blue);border-color:var(--blue-bright)}
+  .cta{
+    background:var(--orange);color:#fff;padding:9px 18px;border-radius:6px;
+    font-weight:700;font-size:14px;text-decoration:none;
+    transition:.15s;border:none;cursor:pointer;
+  }
+  .cta:hover{background:var(--orange-deep)}
+
+  /* ===== Page Header ===== */
+  .page-header{
+    background:linear-gradient(180deg,var(--bg-soft) 0%,#fff 100%);
+    border-bottom:1px solid var(--rule);
+    padding:36px 28px 32px;
+  }
+  .page-header-inner{max-width:1320px;margin:0 auto}
+  .breadcrumb{
+    font-size:13px;color:var(--text-soft);margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  }
+  .breadcrumb a{color:var(--blue);text-decoration:none;font-weight:600}
+  .breadcrumb a:hover{text-decoration:underline}
+  .breadcrumb .sep{color:var(--rule-strong)}
+  .eyebrow{
+    display:inline-block;
+    background:var(--blue-pale);color:var(--blue);
+    font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    padding:5px 12px;border-radius:999px;margin-bottom:14px;
+  }
+  .page-title{
+    font-size:42px;font-weight:800;letter-spacing:-.02em;
+    margin:0 0 14px;line-height:1.1;
+  }
+  .page-title em{font-style:normal;color:var(--blue-bright)}
+  .page-subtitle{
+    font-size:18px;color:var(--text-soft);max-width:780px;margin:0;font-weight:400;
+  }
+
+  /* ===== Layout ===== */
+  .layout{
+    max-width:1320px;margin:0 auto;
+    padding:36px 28px 80px;
+    display:grid;
+    grid-template-columns:240px 1fr;
+    gap:48px;
+    align-items:start;
+  }
+  .toc{
+    position:sticky;top:96px;
+    font-size:13.5px;
+    border-left:2px solid var(--rule);
+    padding:6px 0 6px 18px;
+    max-height:calc(100vh - 120px);
+    overflow-y:auto;
+  }
+  .toc-title{
+    font-family:'Source Sans 3';font-weight:700;
+    text-transform:uppercase;font-size:11px;letter-spacing:.1em;
+    color:var(--text-soft);margin-bottom:12px;
+  }
+  .toc ul{list-style:none;padding:0;margin:0}
+  .toc li{margin:4px 0}
+  .toc a{
+    color:var(--text);text-decoration:none;
+    display:block;padding:5px 8px;border-radius:4px;
+    transition:.15s;line-height:1.35;
+  }
+  .toc a:hover{background:var(--bg-panel);color:var(--blue)}
+
+  article{min-width:0;max-width:840px}
+  article p{margin:0 0 16px}
+  article a{color:var(--blue);text-decoration:underline;text-decoration-color:var(--blue-pale);text-underline-offset:3px}
+  article a:hover{text-decoration-color:var(--blue)}
+  article ul,article ol{margin:0 0 18px;padding-left:24px}
+  article li{margin:6px 0}
+  article strong{color:var(--navy);font-weight:700}
+
+  article h2{
+    font-size:28px;margin:44px 0 18px;padding-bottom:10px;
+    border-bottom:1px solid var(--rule);
+  }
+  article h2:first-child{margin-top:0}
+  article h3{
+    font-size:20px;margin:30px 0 12px;
+    display:flex;align-items:baseline;gap:12px;
+  }
+  article h3 .num{
+    color:var(--orange);font-family:'JetBrains Mono';font-size:15px;font-weight:600;
+    background:var(--orange-pale);padding:2px 8px;border-radius:4px;
+    flex-shrink:0;
+  }
+  article h4{font-size:16px;margin:22px 0 10px;color:var(--navy-soft)}
+
+  /* ===== Tables ===== */
+  .table-wrap{overflow-x:auto;margin:18px 0 24px;border:1px solid var(--rule);border-radius:6px}
+  table{
+    width:100%;border-collapse:collapse;
+    font-size:14px;background:#fff;
+  }
+  thead th{
+    background:var(--navy);color:#fff;
+    text-align:left;padding:11px 14px;
+    font-family:'Source Sans 3';font-weight:700;
+    text-transform:uppercase;letter-spacing:.05em;font-size:12px;
+  }
+  tbody td{
+    padding:11px 14px;border-top:1px solid var(--rule);
+    vertical-align:top;
+  }
+  tbody tr:nth-child(even){background:var(--bg-soft)}
+  tbody tr:hover{background:var(--blue-pale)}
+  tbody td strong{color:var(--navy)}
+
+  /* ===== Callouts ===== */
+  .callout{
+    margin:20px 0;padding:16px 18px 16px 52px;
+    border-radius:6px;position:relative;
+    font-size:15px;line-height:1.6;
+  }
+  .callout::before{
+    position:absolute;left:16px;top:14px;
+    width:24px;height:24px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:700;font-family:'Source Sans 3';
+    font-size:14px;
+  }
+  .callout p{margin:0 0 8px}
+  .callout p:last-child{margin-bottom:0}
+  .callout strong{color:var(--navy)}
+  .callout.important{
+    background:var(--orange-pale);
+    border-left:4px solid var(--orange);
+  }
+  .callout.important::before{content:"!";background:var(--orange)}
+  .callout.note{
+    background:var(--blue-pale);
+    border-left:4px solid var(--blue);
+  }
+  .callout.note::before{content:"i";background:var(--blue);font-style:italic;font-family:'Source Sans 3'}
+
+  /* ===== Decision Flow ===== */
+  .decision-flow{
+    counter-reset:dstep;
+    list-style:none;padding:0;margin:18px 0 24px;
+  }
+  .decision-flow > li{
+    counter-increment:dstep;
+    background:var(--bg-soft);border:1px solid var(--rule);
+    border-radius:6px;padding:18px 20px 18px 64px;
+    position:relative;margin:0 0 12px;
+  }
+  .decision-flow > li::before{
+    content:counter(dstep);
+    position:absolute;left:18px;top:16px;
+    width:32px;height:32px;border-radius:50%;
+    background:var(--blue);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Source Sans 3';font-weight:700;font-size:15px;
+  }
+  .decision-flow strong{display:block;margin-bottom:8px;color:var(--navy);font-size:15.5px}
+  .decision-flow ul{margin:6px 0 0;padding-left:18px}
+  .decision-flow ul li{margin:4px 0;color:var(--text-soft)}
+  .decision-flow ul li strong{display:inline;color:var(--navy)}
+
+  /* ===== Footer ===== */
+  footer.gsi-footer{
+    background:var(--navy-deep);color:#cfd8e8;
+    padding:48px 28px 28px;margin-top:80px;
+    position:relative;overflow:hidden;
+  }
+  .footer-deco{
+    position:absolute;top:-60px;right:-60px;
+    width:220px;height:220px;
+    border:2px solid rgba(61,143,214,.18);
+    border-radius:36px;
+    transform:rotate(18deg);
+    pointer-events:none;
+  }
+  .footer-inner{
+    max-width:1320px;margin:0 auto;
+    display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;
+    position:relative;
+  }
+  .footer-brand img{height:42px;margin-bottom:14px;filter:brightness(0) invert(1)}
+  .footer-brand p{font-size:13.5px;color:#9aa9c2;line-height:1.6;margin:0 0 14px;max-width:300px}
+  .footer-col h4{
+    color:#fff;font-size:13px;text-transform:uppercase;letter-spacing:.1em;
+    margin:0 0 14px;font-weight:700;
+  }
+  .footer-col ul{list-style:none;padding:0;margin:0}
+  .footer-col li{margin:7px 0}
+  .footer-col a{color:#9aa9c2;text-decoration:none;font-size:13.5px;transition:.15s}
+  .footer-col a:hover{color:var(--blue-bright)}
+  .footer-bottom{
+    max-width:1320px;margin:36px auto 0;padding-top:20px;
+    border-top:1px solid rgba(255,255,255,.08);
+    display:flex;justify-content:space-between;
+    font-size:12.5px;color:#7a8aa3;flex-wrap:wrap;gap:12px;
+    position:relative;
+  }
+
+  /* ===== Mobile ===== */
+  @media (max-width:960px){
+    .nav-links a:not(.cta){display:none}
+    .layout{grid-template-columns:1fr;gap:24px}
+    .toc{position:static;max-height:none;border:1px solid var(--rule);border-radius:6px;padding:14px 16px;background:var(--bg-soft)}
+    .page-title{font-size:32px}
+    .footer-inner{grid-template-columns:1fr 1fr;gap:28px}
+  }
+  @media (max-width:560px){
+    .topnav-inner{padding:12px 18px;gap:14px}
+    .page-header{padding:24px 18px}
+    .layout{padding:24px 18px 60px}
+    .footer-inner{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== TOP NAV ========== -->
+<header class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="index.html">
+      <img src="../Images/gsi-logo.png" alt="GSI" />
+      <span class="brand-text">
+        <span class="brand-product">RapidReconciler University</span>
+        <span class="brand-sub">JD Edwards Reconciliation</span>
+      </span>
+    </a>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="index.html#inventory">Inventory</a>
+      <a href="index.html#in-transit">In Transit</a>
+      <a href="index.html#po-receipts">PO Receipts</a>
+      <a href="index.html#reference">Reference</a>
+      <a class="cta" href="mailto:support@getgsi.com">Contact Support</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ========== PAGE HEADER ========== -->
+<section class="page-header">
+  <div class="page-header-inner">
+    <nav class="breadcrumb">
+      <a href="index.html">University</a>
+      <span class="sep">/</span>
+      <a href="index.html#po-receipts">PO Receipts</a>
+      <span class="sep">/</span>
+      <span>Suspensions &amp; Exclusions</span>
+    </nav>
+    <span class="eyebrow">Module · 04 / C</span>
+    <h1 class="page-title">PO Receipts — <em>Suspensions</em> &amp; Exclusions</h1>
+    <p class="page-subtitle">Managing known variances without distorting the RNV reconciliation.</p>
+  </div>
+</section>
+
+<!-- ========== BODY ========== -->
+<div class="layout">
+
+  <!-- ===== TOC ===== -->
+  <aside class="toc" aria-label="Table of contents">
+    <div class="toc-title">On this page</div>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#section-1">1. Why They Exist</a></li>
+      <li><a href="#section-2">2. Suspensions vs. Exclusions</a></li>
+      <li><a href="#section-3">3. How to Apply</a></li>
+      <li><a href="#section-4">4. The Audit Trail Note</a></li>
+      <li><a href="#section-5">5. Reversing</a></li>
+      <li><a href="#section-6">6. When to Use a Suspension</a></li>
+      <li><a href="#section-7">7. When to Use an Exclusion</a></li>
+      <li><a href="#section-8">8. Decision Guide</a></li>
+      <li><a href="#section-9">9. What They Do Not Do</a></li>
+      <li><a href="#section-10">10. Best Practices</a></li>
+      <li><a href="#section-11">11. Related Documentation</a></li>
+    </ul>
+  </aside>
+
+  <!-- ===== ARTICLE ===== -->
+  <article>
+
+    <!-- Overview -->
+    <h2 id="overview">Overview</h2>
+    <p>The RNV reconciliation in RapidReconciler compares open receipts in the F43121 PO Receiver table against the General Ledger balance for the Received-Not-Vouchered account. In a clean environment, every Match Type 1 record will eventually be offset by a Match Type 2 voucher match, and the F43121 open balance will agree to the GL.</p>
+
+    <p>In practice, certain records will never clear through the standard process. A receipt may have been cleared through a manual journal entry, a landed cost may have been configured as accrual-only, or an out-of-sequence reversal may have left an orphaned record that cannot be re-matched. If left in the variance calculation, these records create a permanent, unexplainable difference between F43121 and the GL.</p>
+
+    <p>Suspensions and exclusions are the mechanism RapidReconciler provides to remove these known, immaterial, or unresolvable items from the variance calculation so that the reconciliation surfaces only the items that genuinely need to be investigated.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Mechanism</th><th>Scope</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Suspension</strong></td><td>Entire purchase order</td><td>Remove the whole order from view and variance calculations</td></tr>
+          <tr><td><strong>Exclusion</strong></td><td>Individual PO line</td><td>Remove a single line from variance calculations when the order itself is otherwise valid</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Both are fully reversible. Both require an audit trail note. Both keep the affected items visible through a separate view rather than deleting them from the system.</p>
+
+    <!-- Section 1 -->
+    <h2 id="section-1">Section 1: Why Suspensions and Exclusions Exist</h2>
+    <p>The RNV reconciliation is only useful when the variance it reports is actionable. If the variance includes orders or lines that are known to be permanent — such as installation-era data, accrual-only landed costs, or voucher matches that were cleared manually — the variance will never go to zero, and the reviewer cannot tell which items are genuine open issues and which are noise.</p>
+
+    <p>Suspensions and exclusions resolve this by allowing reviewers to formally acknowledge that an item is known and accepted, document why, and remove it from the variance calculation. The item itself is not deleted from F43121 or the GL — it remains in the source data and continues to be visible in RapidReconciler through a separate filtered view. Only its contribution to the headline variance number is removed.</p>
+
+    <p>The result is a reconciliation that surfaces only the items requiring action, with full traceability for everything that has been set aside.</p>
+
+    <!-- Section 2 -->
+    <h2 id="section-2">Section 2: Suspensions vs. Exclusions</h2>
+    <p>The two mechanisms are mechanically similar but operate at different scopes and tend to be used in different situations.</p>
+
+    <h3 id="section-2-1"><span class="num">2.1</span>Scope</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Aspect</th><th>Suspension</th><th>Exclusion</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Applied at</strong></td><td>PO order header level</td><td>PO order line level</td></tr>
+          <tr><td><strong>Affects</strong></td><td>All lines on the order</td><td>Only the specified line</td></tr>
+          <tr><td><strong>Other lines on the same order</strong></td><td>All removed from variance</td><td>Continue to appear normally in the variance</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>A suspension is a blunt instrument applied when the entire purchase order is non-actionable. An exclusion is the targeted equivalent — used when the order is otherwise legitimate but contains one line that needs to be set aside.</p>
+
+    <h3 id="section-2-2"><span class="num">2.2</span>Typical Use</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Mechanism</th><th>Typical Trigger</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Suspension</strong></td><td>Application installation pulls in old unmatched receipt and voucher data; a data integrity issue at the order level that is immaterial for the GL; an entire PO that has been cleared by a manual journal entry</td></tr>
+          <tr><td><strong>Exclusion</strong></td><td>A single line cleared by manual JE while other lines voucher normally; a single PRLAND-style line-level issue; a one-line orphaned reversal on an otherwise active order</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 id="section-2-3"><span class="num">2.3</span>Behavior on the Variance</h3>
+    <p>Both mechanisms remove the affected items from the variance calculation. Both keep the item visible in a separate view so a reviewer can audit what has been set aside. Both require a note as the audit trail and both can be undone at any time through the same control that applied them.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Behavior</th><th>Suspension</th><th>Exclusion</th></tr></thead>
+        <tbody>
+          <tr><td>Removed from headline variance</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Removed from default unreconciled view</td><td>Yes (whole order)</td><td>Yes (specified line only)</td></tr>
+          <tr><td>Visible in a separate view</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Reversible</td><td>Yes — fully</td><td>Yes — fully</td></tr>
+          <tr><td>Requires audit note</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Affects underlying F43121 or GL data</td><td>No</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 3 -->
+    <h2 id="section-3">Section 3: How to Apply a Suspension or Exclusion</h2>
+    <p>Suspensions and exclusions are applied through the <strong>Edit Note</strong> button on the relevant screen. The same button handles both the initial action and any subsequent reversal — there is no separate "suspend" or "exclude" button.</p>
+
+    <h3 id="section-3-1"><span class="num">3.1</span>Applying a Suspension (Order Level)</h3>
+    <ol>
+      <li>Navigate to the purchase order in the PO Receipts module.</li>
+      <li>Click <strong>Edit Note</strong> on the order-level screen.</li>
+      <li>In the note popup, enter the audit trail note (see <a href="#section-4">Section 4</a>).</li>
+      <li>Check the suspension checkbox in the popup.</li>
+      <li>Save.</li>
+    </ol>
+    <p>The order is removed from the unreconciled view and from the variance calculation. It remains accessible in the suspended-items view.</p>
+
+    <h3 id="section-3-2"><span class="num">3.2</span>Applying an Exclusion (Line Level)</h3>
+    <ol>
+      <li>Navigate to the purchase order and drill to the line level.</li>
+      <li>Click <strong>Edit Note</strong> on the line-level screen.</li>
+      <li>In the note popup, enter the audit trail note.</li>
+      <li>Check the exclusion checkbox in the popup.</li>
+      <li>Save.</li>
+    </ol>
+    <p>The line is removed from the variance calculation. Other lines on the same order continue to appear normally. The excluded line remains visible in the corresponding excluded-items view.</p>
+
+    <div class="callout note">
+      <p><strong>Note:</strong> The Edit Note popup is the single point of control for both applying and reversing suspensions and exclusions. The checkbox in the popup is the toggle.</p>
+    </div>
+
+    <!-- Section 4 -->
+    <h2 id="section-4">Section 4: The Audit Trail Note</h2>
+    <p>The note entered in the Edit Note popup is the audit trail for the suspension or exclusion. It is the only record of why the action was taken and is the primary reference for any future review or audit.</p>
+
+    <h3 id="section-4-1"><span class="num">4.1</span>The Note Is Required</h3>
+    <p>Every suspension and exclusion must have a note. Treat the note field as a required input — a suspension or exclusion without context is effectively orphaned and cannot be defended in an audit.</p>
+
+    <h3 id="section-4-2"><span class="num">4.2</span>What a Good Note Includes</h3>
+    <p>A note should be specific enough that a reviewer six or twelve months later can understand exactly what was done and why without having to reconstruct the situation. At a minimum, include:</p>
+    <ul>
+      <li><strong>What the issue is</strong> — the underlying reason the item won't clear through the normal process</li>
+      <li><strong>Why it is acceptable to remove from variance</strong> — confirmation that the GL is correct, that the residual is immaterial, or that the issue has been investigated</li>
+      <li><strong>Reference number</strong> — JE number, ticket number, or other supporting reference where applicable</li>
+      <li><strong>Date and initials</strong> — even if the system captures these automatically, including them in the note text makes export and review easier</li>
+      <li><strong>Expected resolution path</strong> — if the suspension/exclusion is intended to be temporary, note when it should be revisited</li>
+    </ul>
+
+    <h3 id="section-4-3"><span class="num">4.3</span>Example Notes</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Scenario</th><th>Example Note</th></tr></thead>
+        <tbody>
+          <tr><td>Manual JE clearance</td><td>"Order cleared via JE 2024-08-1142 on 8/15/24. Supplier invoice received post-period; AP processed manually. F43121 record orphaned. GL is correct. — JS 8/16/24"</td></tr>
+          <tr><td>Out-of-sequence reversal</td><td>"Voucher reversed in error 6/3/24, original receipt also reversed before re-match attempted. IT ticket #4419 confirms no path to re-match. JE 2024-06-0871 cleared GL. — MR 6/10/24"</td></tr>
+          <tr><td>Cancelled PO with residual</td><td>"PO cancelled 11/2/24 after partial receipt; receipt was reversed but F43121 retains a residual due to rounding. Immaterial ($0.04). — KP 11/3/24"</td></tr>
+          <tr><td>Cross-period timing</td><td>"Receipt 12/29/24, voucher matched 1/3/25. Suspending for 12/24 close only; will reverse after 1/25 close confirms clearance. — DT 12/31/24"</td></tr>
+          <tr><td>Installation-era data</td><td>"Pre-go-live unmatched receipt from legacy system. Confirmed with controller no further action. Permanent. — Finance 3/1/24"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 5 -->
+    <h2 id="section-5">Section 5: Reversing a Suspension or Exclusion</h2>
+    <p>Both suspensions and exclusions are fully reversible at any time. The reversal mechanism is identical to the application mechanism: the Edit Note button, with the checkbox unchecked.</p>
+
+    <h3 id="section-5-1"><span class="num">5.1</span>Reversal Steps</h3>
+    <ol>
+      <li>Locate the suspended order or excluded line through the appropriate filtered view.</li>
+      <li>Click <strong>Edit Note</strong> on the same screen used to apply the action.</li>
+      <li>Uncheck the suspension or exclusion checkbox.</li>
+      <li>Update the note to record why the reversal is being made (recommended).</li>
+      <li>Save.</li>
+    </ol>
+    <p>The item returns to the standard unreconciled view and contributes to the variance calculation again.</p>
+
+    <h3 id="section-5-2"><span class="num">5.2</span>When to Reverse</h3>
+    <p>Common reasons to reverse a suspension or exclusion include:</p>
+    <ul>
+      <li>The underlying issue has been resolved (voucher finally posted, IT corrected the data integrity issue, etc.)</li>
+      <li>The suspension was applied for a single period to handle a timing difference and the next period has cleared the item normally</li>
+      <li>A reviewer determines the original suspension/exclusion was applied in error</li>
+      <li>Audit or controller review requires the item to be re-examined</li>
+    </ul>
+
+    <div class="callout note">
+      <p><strong>Best practice:</strong> When reversing, append to the existing note rather than overwriting it. The history of why an item was suspended in the first place remains valuable context even after reversal.</p>
+    </div>
+
+    <!-- Section 6 -->
+    <h2 id="section-6">Section 6: When to Use a Suspension</h2>
+    <p>Apply a suspension when the entire purchase order is non-actionable in the RNV reconciliation. The most common scenarios are below.</p>
+
+    <h3 id="section-6-1"><span class="num">6.1</span>Installation-Era Data</h3>
+    <p>When RapidReconciler is first deployed against an existing JD Edwards environment, F43121 typically contains old unmatched receipt and voucher records that pre-date the implementation. These records may have been settled through manual processes that were never reflected back into F43121, or they may simply be too old to investigate.</p>
+    <p>Suspending these orders en masse is the standard way to establish a clean baseline for ongoing reconciliation. Once installation-era noise is suspended, the variance reflects only post-go-live activity.</p>
+
+    <h3 id="section-6-2"><span class="num">6.2</span>Manual JE Clearances of RNV</h3>
+    <p>When AP processes a supplier invoice outside the standard P4314 voucher match — for example, by posting a journal entry directly to the RNV account — the GL is correct but the F43121 record is left open. The Match Type 1 receipt has no offsetting Match Type 2 record, so it appears as an open receipt forever.</p>
+    <p>If the JE cleared the entire order, suspend the order. The note should reference the JE number, the date, and confirm that the GL is correct.</p>
+
+    <h3 id="section-6-3"><span class="num">6.3</span>Out-of-Sequence or Orphaned Reversals</h3>
+    <p>Reversing a voucher match and then a receipt in an order that prevents re-matching can create an F43121 state that no JD Edwards process can resolve. If IT confirms there is no path to clean up the record through the application, and the GL has been corrected through a journal entry, suspend the order.</p>
+
+    <h3 id="section-6-4"><span class="num">6.4</span>Cancelled POs with Residual F43121 Records</h3>
+    <p>When a purchase order is cancelled after partial receipt, the receipt should be reversed and the F43121 record cleared. In some cases — typically due to rounding, partial reversals, or cost changes between receipt and reversal — a small residual remains. If the residual is immaterial and the GL is correct, suspend the order.</p>
+
+    <h3 id="section-6-5"><span class="num">6.5</span>Cross-Period Timing Differences (Whole Order)</h3>
+    <p>When a receipt occurs in one period and the voucher match occurs early in the next period, the receipt creates a legitimate RNV balance at period end. This is not a candidate for suspension under normal circumstances — it is a real open receipt that will clear through the standard process.</p>
+    <p>A suspension is only appropriate when:</p>
+    <ul>
+      <li>The timing difference would cause material misstatement of the variance for a specific close</li>
+      <li>The order will demonstrably clear in the following period</li>
+      <li>The suspension is reversed promptly after the next period close</li>
+    </ul>
+    <p>This is the one suspension scenario that should always be temporary. Note clearly in the audit trail that the suspension is for a single period.</p>
+
+    <!-- Section 7 -->
+    <h2 id="section-7">Section 7: When to Use an Exclusion</h2>
+    <p>Apply an exclusion when the issue is contained to a single line on an otherwise valid purchase order. The same scenarios as suspensions apply, scaled down to the line level.</p>
+
+    <h3 id="section-7-1"><span class="num">7.1</span>Manual JE Clearance of a Single Line</h3>
+    <p>A purchase order has multiple lines. Most lines vouchered normally, but one line was cleared via a journal entry — perhaps because the supplier billed that line on a separate invoice that AP processed manually. Suspending the entire order would hide legitimate activity on the other lines. Exclude only the affected line.</p>
+
+    <h3 id="section-7-2"><span class="num">7.2</span>Single-Line Orphaned Reversal</h3>
+    <p>A multi-line purchase order had one line reversed in a way that left an orphaned F43121 record, while the remaining lines processed normally. Exclude the orphaned line; the rest of the order continues to reconcile through the standard process.</p>
+
+    <h3 id="section-7-3"><span class="num">7.3</span>Cancelled or Adjusted Line with Residual</h3>
+    <p>A single line was cancelled or adjusted after receipt, leaving an immaterial residual in F43121. If the GL is correct and the rest of the order is active, exclude the line.</p>
+
+    <h3 id="section-7-4"><span class="num">7.4</span>Cross-Period Timing Difference on a Single Line</h3>
+    <p>The same logic as Section 6.5 applies, but at the line level. Use sparingly and reverse promptly.</p>
+
+    <!-- Section 8 -->
+    <h2 id="section-8">Section 8: Decision Guide</h2>
+    <p>Use this flow to choose between a suspension and an exclusion.</p>
+
+    <ol class="decision-flow">
+      <li>
+        <strong>Will the item ever clear through the standard receipt → voucher match process?</strong>
+        <ul>
+          <li><strong>Yes,</strong> in the normal course of business → Do nothing. Let the standard process clear it.</li>
+          <li><strong>No</strong> → Continue to step 2.</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Is the GL correct as-is?</strong>
+        <ul>
+          <li><strong>No</strong> → Do not suspend or exclude. Correct the GL first.</li>
+          <li><strong>Yes</strong> → Continue to step 3.</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Does the issue affect the entire purchase order, or only specific lines?</strong>
+        <ul>
+          <li><strong>Entire order</strong> → <strong>Suspension</strong></li>
+          <li><strong>Specific lines,</strong> with other lines on the order processing normally → <strong>Exclusion</strong></li>
+        </ul>
+      </li>
+      <li>
+        <strong>Is the situation expected to be temporary or permanent?</strong>
+        <ul>
+          <li><strong>Temporary</strong> (single-period timing) → Apply suspension/exclusion, note the expected reversal date, reverse promptly</li>
+          <li><strong>Permanent</strong> (manual clearance, orphaned reversal, installation-era) → Apply with a note that confirms permanence</li>
+        </ul>
+      </li>
+    </ol>
+
+    <div class="callout note">
+      <p><strong>Rule of thumb:</strong> When in doubt, prefer an exclusion over a suspension. An exclusion is more precise — it removes only the specific line that needs to be set aside and leaves the rest of the order's activity visible in the variance.</p>
+    </div>
+
+    <!-- Section 9 -->
+    <h2 id="section-9">Section 9: What Suspensions and Exclusions Do Not Do</h2>
+    <p>It is as important to understand what these mechanisms do not do as what they do.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Action</th><th>Suspension/Exclusion Effect</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Modify F43121</strong></td><td>No — F43121 is the source of truth and is never modified by RapidReconciler</td></tr>
+          <tr><td><strong>Modify the GL</strong></td><td>No — the GL is read-only from RapidReconciler's perspective</td></tr>
+          <tr><td><strong>Delete the record from RapidReconciler</strong></td><td>No — the item remains visible in a separate view</td></tr>
+          <tr><td><strong>Prevent future activity on the order</strong></td><td>No — if a voucher match is later processed in JD Edwards, it will flow through normally</td></tr>
+          <tr><td><strong>Substitute for fixing data integrity issues</strong></td><td>No — they are an acknowledgement that the item is known, not a fix</td></tr>
+          <tr><td><strong>Replace a journal entry</strong></td><td>No — if the GL is wrong, a JE is still required</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>A suspension or exclusion is a reconciliation-tool annotation, not a system-of-record action. The underlying JD Edwards data is unchanged.</p>
+
+    <!-- Section 10 -->
+    <h2 id="section-10">Section 10: Best Practices</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Practice</th><th>Rationale</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Always write a meaningful note</strong></td><td>The note is the only audit trail. A vague note ("cleared by JE") has no investigative value six months later.</td></tr>
+          <tr><td><strong>Reference source documents</strong></td><td>Include JE numbers, IT ticket numbers, and any supporting references in the note.</td></tr>
+          <tr><td><strong>Prefer exclusions over suspensions when possible</strong></td><td>Exclusions preserve more activity in the standard view and make residual issues easier to spot.</td></tr>
+          <tr><td><strong>Review suspended and excluded items periodically</strong></td><td>Items intended to be temporary should be reversed when the underlying issue clears. A quarterly review of the suspended/excluded view is reasonable for most environments.</td></tr>
+          <tr><td><strong>Reverse promptly when timing differences clear</strong></td><td>Cross-period suspensions in particular should be reversed as soon as the next period close confirms the receipt has been vouchered.</td></tr>
+          <tr><td><strong>Don't suspend to hide a real problem</strong></td><td>If the GL is wrong, fix the GL. Suspending an order with a real underlying variance defeats the purpose of the reconciliation.</td></tr>
+          <tr><td><strong>Suspend installation data en masse at go-live</strong></td><td>The cleanest way to start reconciliation against an existing F43121 is to suspend pre-go-live unmatched records as a baseline activity.</td></tr>
+          <tr><td><strong>Document the standard at the team level</strong></td><td>What constitutes "immaterial" varies by organization. Having a documented threshold for when suspensions are appropriate prevents drift between reviewers.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 11 -->
+    <h2 id="section-11">Section 11: Related Documentation</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Document</th><th>Relevance</th></tr></thead>
+        <tbody>
+          <tr><td>Reconciling RNV in RapidReconciler</td><td>Full RNV reconciliation workflow including the unreconciled view and drill-down</td></tr>
+          <tr><td>Purchase Order Comprehensive Reference Guide</td><td>F43121 mechanics, match types, PRLAND, AAIs, and accounting flow</td></tr>
+          <tr><td>PO Receipts Key Concepts</td><td>Foundational concepts for the RNV account and reconciliation</td></tr>
+          <tr><td><a href="getting-started-with-rapidreconciler.html">Getting Started with RapidReconciler</a></td><td>Login, navigation, and application overview</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </article>
+</div>
+
+<!-- ========== FOOTER ========== -->
+<footer class="gsi-footer">
+  <div class="footer-deco" aria-hidden="true"></div>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="../Images/gsi-logo.png" alt="GSI" />
+      <p>RapidReconciler is a GSI product that automates JD Edwards inventory, in-transit, and PO receipts reconciliation.</p>
+      <p style="font-size:12px;color:#7a8aa3;margin:0">Tomorrow's solutions. Today.</p>
+    </div>
+    <div class="footer-col">
+      <h4>University</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#inventory">Inventory</a></li>
+        <li><a href="index.html#in-transit">In Transit</a></li>
+        <li><a href="index.html#po-receipts">PO Receipts</a></li>
+        <li><a href="index.html#reference">Reference</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <ul>
+        <li><a href="getting-started-with-rapidreconciler.html">Getting Started</a></li>
+        <li><a href="complex-password.html">Account &amp; Security</a></li>
+        <li><a href="administrator-walkthrough.html">Administrator Guide</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="mailto:support@getgsi.com">Contact Support</a></li>
+        <li><a href="https://www.getgsi.com">getgsi.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 GSI, Inc. All rights reserved.</span>
+    <span>RapidReconciler University · JD Edwards Reconciliation</span>
+  </div>
+</footer>
+
+</body>
+</html>
