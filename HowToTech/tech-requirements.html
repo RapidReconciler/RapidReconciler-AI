@@ -434,6 +434,10 @@
     display: flex;
     align-items: center;
     border-right: 1px solid var(--table-border);
+    /* Defensive — if any spec-key ever gets long content, wrap rather than
+       overflow into the value column. Uses normal word boundaries. */
+    overflow-wrap: break-word;
+    min-width: 0;
   }
   .spec-val {
     padding: 10px 14px;
@@ -721,10 +725,50 @@
 
   @media print {
     body { background: white; }
-    .yellow-bar, .sidebar, .topic-footer-nav { display: none; }
+    /* Hide screen-only chrome */
+    .yellow-bar, .sidebar, .topic-footer-nav, .page-footer { display: none; }
     .page-wrap { display: block; padding: 0; }
     .content-card { box-shadow: none; padding: 24px; }
-    .view { display: block !important; page-break-after: always; }
+
+    /* Show every section. The default is `display: none` for non-active views;
+       on print we want the full document to flow. */
+    .view { display: block !important; }
+
+    /* Start each topic on a fresh page — except the first (Index), which
+       follows the masthead naturally. Using page-break-before instead of
+       page-break-after eliminates trailing whitespace at the end of short
+       sections. */
+    .view + .view { page-break-before: always; }
+
+    /* Keep atomic units intact across page breaks. These all represent
+       self-contained visual blocks where being split looks broken. */
+    .topo-compare-card,
+    .topology-figure,
+    .callout,
+    .storage-card,
+    .net-panel,
+    .spec-list,
+    figure {
+      page-break-inside: avoid;
+    }
+
+    /* Tables: try to keep them together when they're small. CSS has no
+       reliable "keep together if you can" so we just request avoid; large
+       tables will still split, which is the right behavior for them. */
+    table { page-break-inside: avoid; }
+    /* When a table does split, repeat the header row */
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; }
+
+    /* Don't strand a heading at the bottom of a page — it should stay with
+       at least the next sibling element. */
+    h1, h2, h3, h4 { page-break-after: avoid; }
+    /* And a heading should never be the last thing on a page. */
+    h2, h3 { page-break-inside: avoid; }
+
+    /* The diamond divider after a topic title is decorative; don't let it
+       end up on a different page from the title or the section it precedes. */
+    .diamond-divider { page-break-before: avoid; page-break-after: avoid; }
   }
 </style>
 </head>
@@ -1218,8 +1262,8 @@
 
       <h2>Network Access from Workstations</h2>
       <ul class="spec-list">
-        <li class="spec-row"><span class="spec-key">To the application server</span><span class="spec-val">Required. End users access the RapidReconciler web application by hostname or URL on your internal network.</span></li>
-        <li class="spec-row"><span class="spec-key">To <code>rapidreconciler.getgsi.com</code></span><span class="spec-val">Optional but recommended. Allows users to reach GSI's hosted documentation and update channels.</span></li>
+        <li class="spec-row"><span class="spec-key">Application server</span><span class="spec-val">Required. End users access the RapidReconciler web application by hostname or URL on your internal network.</span></li>
+        <li class="spec-row"><span class="spec-key">GSI hosted services</span><span class="spec-val">Optional but recommended. Allows users to reach <code>rapidreconciler.getgsi.com</code> for hosted documentation and update channels.</span></li>
       </ul>
 
       <div class="topic-footer-nav">
@@ -1434,7 +1478,7 @@
       <p>RapidReconciler uses a small set of well-defined accounts. The exact configuration depends on the chosen topology, but the model is consistent.</p>
       <ul class="spec-list">
         <li class="spec-row"><span class="spec-key">SQL Server Service Account</span><span class="spec-val">A dedicated AD or local service account is recommended for the SQL Server service. Set the password not to expire, or document the rotation procedure with GSI.</span></li>
-        <li class="spec-row"><span class="spec-key">Application Database User</span><span class="spec-val">A SQL-based login (<code>rruser</code>) is created during install for the application's connection to the database. Windows authentication via a domain service account in the <code>db_owner</code> role on the RapidReconciler database can be substituted if your organization prefers it.</span></li>
+        <li class="spec-row"><span class="spec-key">Application Database User</span><span class="spec-val">A SQL-based login (<code>rruser</code>) is created during install for the application's connection to the database. The RapidReconciler application uses SQL authentication for this connection; Windows authentication is not supported.</span></li>
         <li class="spec-row"><span class="spec-key">Source Read Account</span><span class="spec-val">A read-only account on the JDE source database, used by SSIS to extract data. Provided by the customer's JDE administrator.</span></li>
         <li class="spec-row"><span class="spec-key">Local Administrator</span><span class="spec-val">Local administrative credentials on each RR server are required during the install meeting. These can be revoked or rotated after install.</span></li>
       </ul>
@@ -1457,7 +1501,7 @@
       </ul>
 
       <h2>Authentication Between Servers</h2>
-      <p>For Configurations 2 and 3, the application server and (in Configuration 3) the SSIS server need to authenticate to the database server. SQL authentication via the <code>rruser</code> login is the default and requires no domain trust between machines. Windows authentication via a domain service account is supported as an alternative and is preferred if your security policy mandates it.</p>
+      <p>For Configurations 2 and 3, the application server and (in Configuration 3) the SSIS server need to authenticate to the database server. The RapidReconciler application uses SQL authentication via the <code>rruser</code> login for its database connection — Windows authentication is not supported for the application. SSIS is a Microsoft component independent of RapidReconciler and can use either SQL or Windows authentication when connecting to SQL Server, per your organization's preference.</p>
 
       <div class="callout info">
         <div class="callout-label">Conformance with internal standards</div>
