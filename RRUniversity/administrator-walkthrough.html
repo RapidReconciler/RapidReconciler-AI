@@ -467,6 +467,44 @@
   .view .callout.important .callout-icon { background: var(--orange); }
   .view .callout.warning { background: #fef5e7; border-color: var(--orange); }
   .view .callout.warning .callout-icon { background: var(--orange); }
+  .view .callout.try-now {
+    background: #fff7ec;
+    border-color: var(--orange);
+    border-left: 4px solid var(--orange);
+  }
+  .view .callout.try-now .callout-icon {
+    background: var(--orange);
+    color: #fff;
+    position: relative;
+  }
+  .view .callout.try-now .callout-icon::before {
+    content: "\25B8";
+    font-size: 16px;
+    line-height: 1;
+  }
+  .view .callout.try-now .try-now-label {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange-deep, #d97316);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .view .callout.try-now .callout-label {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange-deep, #d97316);
+    margin-bottom: 6px;
+  }
+  .view .callout.try-now strong {
+    color: var(--navy);
+  }
+
   .view .callout.note, .view .callout.tip, .view .callout.info {
     background: var(--blue-pale); border-color: var(--blue);
   }
@@ -1187,6 +1225,12 @@
           See <strong>About Administration</strong> for a fuller orientation, including how the administrator role is assigned.
         </a>
 
+        <div class="callout try-now">
+          <div class="callout-label">Try this now</div>
+          <p>If you have admin access to RR, log in and click through the four sub-items under the Admin menu in order: <strong>Companies → Users → General → Inventory Offsets</strong>. Don&rsquo;t change anything &mdash; just look at each page and notice what&rsquo;s configurable on it.</p>
+          <p>The goal is recognition, not understanding. Five minutes here will make every procedural topic in this walkthrough easier to follow because you&rsquo;ll have already seen the screen each topic is describing.</p>
+        </div>
+
         <div class="topic-footer-nav">
           <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
           <button class="next-btn" onclick="showView('topic-first-setup')">Next: Your First Setup &rarr;</button>
@@ -1263,6 +1307,12 @@
         <a class="xref" href="javascript:void(0)" onclick="showView('topic-pre-launch')">
           When you&rsquo;re done with the sequence, walk the <strong>Pre-launch Checklist</strong> to confirm the deployment is ready for end-users.
         </a>
+
+        <div class="callout try-now">
+          <div class="callout-label">Try this now</div>
+          <p><strong>For new deployments:</strong> identify which step from the recommended sequence you&rsquo;re currently on and what&rsquo;s blocking the next one. The most common blockers are waiting for company licensing from GSI or waiting for end-user lists from the customer&rsquo;s HR or operations team. Knowing where you&rsquo;re stuck is the first step to unstuck.</p>
+          <p><strong>For inherited deployments:</strong> walk the Pre-launch Checklist now &mdash; not as a setup procedure but as a configuration audit. Most inherited deployments have at least one finding (usually stale users or stale offset mappings). Catching them on a quiet day is far better than discovering them at period close.</p>
+        </div>
 
         <div class="topic-footer-nav">
           <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
@@ -1346,6 +1396,13 @@
         <div class="callout tip">
           <div class="callout-label">If the nightly import has not run or produced errors</div>
           <p>This is operational rather than configuration. Contact the team that runs the import jobs (typically IT or the JDE administration team). RapidReconciler administrators do not own the import schedule itself.</p>
+        </div>
+
+        <div class="callout try-now">
+          <div class="callout-label">Try this now</div>
+          <p>The single highest-value pre-launch action is to log in as a representative end-user (or have one of your end-users log in on a call with you) and verify that they can see what they should see.</p>
+          <p>Specifically: do their account filters show the companies and business units they need? Do they see the modules they need (Inventory, In Transit, PO Receipts) and not the ones they don&rsquo;t? If they look at a closed period, do the GL Balance values match what JDE shows for the same accounts?</p>
+          <p>Most pre-launch surprises surface in the first five minutes of a real end-user logging in. Better to find them now than at period close.</p>
         </div>
 
         <div class="topic-footer-nav">

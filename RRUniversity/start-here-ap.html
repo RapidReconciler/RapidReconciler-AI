@@ -299,6 +299,35 @@
   .view .callout.important .callout-icon { background: var(--orange); }
   .view .callout.warning { background: #fef5e7; border-color: var(--orange); }
   .view .callout.warning .callout-icon { background: var(--orange); }
+  .view .callout.try-now {
+    background: #fff7ec;
+    border-color: var(--orange);
+    border-left: 4px solid var(--orange);
+  }
+  .view .callout.try-now .callout-icon {
+    background: var(--orange);
+    color: #fff;
+    position: relative;
+  }
+  .view .callout.try-now .callout-icon::before {
+    content: "\25B8";
+    font-size: 16px;
+    line-height: 1;
+  }
+  .view .callout.try-now .try-now-label {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange-deep, #d97316);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .view .callout.try-now strong {
+    color: var(--navy);
+  }
+
   .view .callout.note, .view .callout.tip, .view .callout.info {
     background: var(--blue-pale); border-color: var(--blue);
   }
@@ -1017,6 +1046,16 @@
           See <strong>PO Receipts &rarr; Reference Guide</strong> for the deep concept material on F43121, match types, PRLAND, and AAIs. You don&rsquo;t need to read it now &mdash; just know where it is.
         </a>
 
+        <div class="callout try-now">
+          <div class="callout-icon"></div>
+          <div>
+            <span class="try-now-label">Try this now</span>
+            <p>If you have RR access, log in and navigate to the PO Receipts module. Open any open PO order and try to change something on it &mdash; edit a quantity, change a date, alter a price.</p>
+            <p>You can&rsquo;t. The fields are read-only. That&rsquo;s the read-only model in action: every correction you&rsquo;ll ever make to PO data lands in JD Edwards using the tools you already know. RapidReconciler shows you what needs attention, but doesn&rsquo;t change anything.</p>
+            <p>The two things you <em>can</em> change are notes and the suspension/exclusion checkboxes via Edit Note. Find the Edit Note button on the same screen so you know where it is &mdash; you&rsquo;ll use it next week.</p>
+          </div>
+        </div>
+
         <div class="topic-footer-nav">
           <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
           <button class="next-btn" onclick="showView('topic-first-session')">Next: Your First Session &rarr;</button>
@@ -1089,7 +1128,18 @@
           </div>
         </div>
 
+        <div class="callout try-now">
+          <div class="callout-icon"></div>
+          <div>
+            <span class="try-now-label">Try this now</span>
+            <p>The 8-step walk above is meant to be done, not just read. If you have RR access, work through the eight steps in your own application before continuing to the next topic.</p>
+            <p>Don&rsquo;t aim for understanding everything you see &mdash; aim for being able to find each landmark. If you got stuck on any step (especially finding the Edit Note button on a specific order), that&rsquo;s the part to ask your reviewer or administrator about.</p>
+          </div>
+        </div>
+
         <h2>What You Should Now Be Able To Do</h2>
+
+        <p>After completing the walk above, you should be able to do each of the following on your own. If any of these still feel uncertain, the related step from the walk is worth a second pass.</p>
 
         <ul class="checklist">
           <li class="checklist-title">After your first session</li>
@@ -1169,6 +1219,16 @@
             </tr>
           </tbody>
         </table>
+
+        <div class="callout try-now">
+          <div class="callout-icon"></div>
+          <div>
+            <span class="try-now-label">Try this now</span>
+            <p>If your environment has any suspended orders or excluded lines, find one and read its audit-trail note. Does the note explain <em>what</em> was done, <em>why</em> it&rsquo;s acceptable to remove from variance, and reference a JE or ticket number?</p>
+            <p>If yes, that&rsquo;s a good model for the notes you&rsquo;ll write. If no &mdash; if the note is something like &ldquo;Cleared by JE&rdquo; with no further detail &mdash; that&rsquo;s a real example of what <em>not</em> to do, and it&rsquo;s worth knowing your team has produced these in the past.</p>
+            <p>If your environment has no suspensions or exclusions yet (typical for new deployments), browse a few open F43121 records in the unreconciled view to get a feel for what the items look like before you start making decisions about them.</p>
+          </div>
+        </div>
 
         <h2>Stop and Ask If&hellip;</h2>
 
