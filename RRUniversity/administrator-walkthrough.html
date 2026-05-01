@@ -874,8 +874,8 @@
         <li data-target="company"><button onclick="showView('topic-company')">Company Management</button></li>
         <li data-target="adding"><button onclick="showView('topic-adding')">Adding a Company License</button></li>
         <li data-target="users"><button onclick="showView('topic-users')">User Management</button></li>
-        <li data-target="general"><button onclick="showView('topic-general')">General Settings</button></li>
-        <li data-target="offsets"><button onclick="showView('topic-offsets')">Offset Accounts</button></li>
+        <li data-target="general"><button onclick="showView('topic-general')">General</button></li>
+        <li data-target="offsets"><button onclick="showView('topic-offsets')">Inventory Offsets</button></li>
       </ul>
 
       <div class="sidebar-section-label">Reference</div>
@@ -895,62 +895,60 @@
             <p>If you are new to the role, the topics under <em>Getting Oriented</em> in the sidebar tell you what RapidReconciler asks an administrator to manage and the recommended order to do it in. Each procedural section is also self-contained and can be jumped to directly when you are looking up a specific task.</p>
           </div>
           <div class="hero-art" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200">
-              <defs>
-                <linearGradient id="tileGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#ffffff"/>
-                  <stop offset="100%" stop-color="#eef3f9"/>
-                </linearGradient>
-              </defs>
-              <g transform="translate(20,20)">
-                <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
-                <rect x="14" y="16" width="22" height="22" rx="3" fill="#2b5fb0"/>
-                <rect x="42" y="20" width="50" height="6" rx="2" fill="#1f2d4a"/>
-                <rect x="42" y="30" width="38" height="4" rx="2" fill="#8a93a6"/>
-                <rect x="14" y="48" width="82" height="4" rx="2" fill="#d6e6f5"/>
-                <rect x="14" y="58" width="62" height="4" rx="2" fill="#d6e6f5"/>
-                <text x="55" y="91" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">COMPANIES</text>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 220" font-family="'Open Sans', 'Source Sans 3', sans-serif">
+              <!-- Panel background -->
+              <rect x="0" y="0" width="240" height="220" rx="6" fill="#f5f7fa" stroke="#c9d3e0"/>
+
+              <!-- Header -->
+              <text x="14" y="20" font-size="9" font-weight="700" fill="#5a6479" letter-spacing="0.5">Main Navigation</text>
+              <line x1="14" y1="26" x2="226" y2="26" stroke="#dcdcdc" stroke-width="1"/>
+
+              <!-- INVENTORY (highlighted top-level, navy) -->
+              <rect x="8" y="32" width="3" height="18" fill="#2b5fb0"/>
+              <g transform="translate(20, 41)">
+                <rect x="0" y="-5" width="10" height="2" rx="1" fill="#2b5fb0"/>
+                <rect x="0" y="-1" width="10" height="2" rx="1" fill="#2b5fb0"/>
+                <rect x="0" y="3" width="10" height="2" rx="1" fill="#2b5fb0"/>
               </g>
-              <g transform="translate(150,20)">
-                <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
-                <circle cx="35" cy="32" r="10" fill="#f08a24"/>
-                <path d="M 18 56 Q 18 44 35 44 Q 52 44 52 56 Z" fill="#f08a24"/>
-                <rect x="62" y="22" width="34" height="4" rx="2" fill="#1f2d4a"/>
-                <rect x="62" y="32" width="28" height="4" rx="2" fill="#8a93a6"/>
-                <rect x="62" y="46" width="34" height="4" rx="2" fill="#d6e6f5"/>
-                <rect x="62" y="56" width="22" height="4" rx="2" fill="#d6e6f5"/>
-                <text x="55" y="91" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">USERS</text>
+              <text x="38" y="45" font-size="11" font-weight="700" fill="#2b5fb0" letter-spacing="1">INVENTORY</text>
+
+              <!-- IN TRANSIT -->
+              <g transform="translate(20, 65)">
+                <circle r="6" fill="none" stroke="#5a6479" stroke-width="1.4"/>
+                <line x1="-4" y1="0" x2="4" y2="0" stroke="#5a6479" stroke-width="1.2"/>
+                <line x1="0" y1="-4" x2="0" y2="4" stroke="#5a6479" stroke-width="1.2"/>
               </g>
-              <g transform="translate(20,116)">
-                <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
-                <g transform="translate(38,40)">
-                  <circle r="14" fill="none" stroke="#2b5fb0" stroke-width="3"/>
-                  <circle r="4" fill="#2b5fb0"/>
-                  <g stroke="#2b5fb0" stroke-width="3" stroke-linecap="round">
-                    <line x1="0" y1="-19" x2="0" y2="-15"/>
-                    <line x1="0" y1="15" x2="0" y2="19"/>
-                    <line x1="-19" y1="0" x2="-15" y2="0"/>
-                    <line x1="15" y1="0" x2="19" y2="0"/>
-                    <line x1="-13" y1="-13" x2="-10" y2="-10"/>
-                    <line x1="10" y1="10" x2="13" y2="13"/>
-                    <line x1="13" y1="-13" x2="10" y2="-10"/>
-                    <line x1="-10" y1="10" x2="-13" y2="13"/>
-                  </g>
+              <text x="38" y="69" font-size="11" font-weight="600" fill="#1f2d4a" letter-spacing="0.5">IN TRANSIT</text>
+
+              <!-- PO RECEIPTS -->
+              <g transform="translate(20, 89)">
+                <circle r="6" fill="none" stroke="#5a6479" stroke-width="1.4"/>
+                <line x1="-3" y1="-3" x2="3" y2="3" stroke="#5a6479" stroke-width="1.2"/>
+                <line x1="3" y1="-3" x2="-3" y2="3" stroke="#5a6479" stroke-width="1.2"/>
+              </g>
+              <text x="38" y="93" font-size="11" font-weight="600" fill="#1f2d4a" letter-spacing="0.5">PO Receipts</text>
+
+              <!-- ADMIN (expanded) - gear icon + label -->
+              <g transform="translate(20, 113)">
+                <circle r="5" fill="none" stroke="#5a6479" stroke-width="1.3"/>
+                <circle r="1.5" fill="#5a6479"/>
+                <g stroke="#5a6479" stroke-width="1.3" stroke-linecap="round">
+                  <line x1="0" y1="-7" x2="0" y2="-5.5"/>
+                  <line x1="0" y1="5.5" x2="0" y2="7"/>
+                  <line x1="-7" y1="0" x2="-5.5" y2="0"/>
+                  <line x1="5.5" y1="0" x2="7" y2="0"/>
                 </g>
-                <rect x="64" y="28" width="32" height="4" rx="2" fill="#1f2d4a"/>
-                <rect x="64" y="38" width="26" height="4" rx="2" fill="#8a93a6"/>
-                <rect x="64" y="48" width="32" height="4" rx="2" fill="#d6e6f5"/>
-                <text x="55" y="187" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">SETTINGS</text>
               </g>
-              <g transform="translate(150,116)">
-                <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
-                <polygon points="35,28 41,40 54,42 44,51 47,64 35,58 23,64 26,51 16,42 29,40" fill="#f08a24"/>
-                <rect x="62" y="28" width="34" height="4" rx="2" fill="#1f2d4a"/>
-                <rect x="62" y="38" width="22" height="4" rx="2" fill="#8a93a6"/>
-                <rect x="62" y="48" width="32" height="4" rx="2" fill="#d6e6f5"/>
-                <rect x="62" y="56" width="26" height="4" rx="2" fill="#d6e6f5"/>
-                <text x="55" y="187" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">OFFSETS</text>
-              </g>
+              <text x="38" y="117" font-size="11" font-weight="700" fill="#1f2d4a" letter-spacing="1">ADMIN</text>
+
+              <!-- Sub-items under ADMIN, indented -->
+              <text x="50" y="139" font-size="10" font-weight="500" fill="#1f2d4a">Companies</text>
+              <text x="50" y="158" font-size="10" font-weight="500" fill="#1f2d4a">Users</text>
+              <text x="50" y="177" font-size="10" font-weight="500" fill="#1f2d4a">General</text>
+              <text x="50" y="196" font-size="10" font-weight="500" fill="#1f2d4a">Inventory Offsets</text>
+
+              <!-- Subtle connector line linking ADMIN to its sub-items -->
+              <line x1="44" y1="121" x2="44" y2="194" stroke="#c9d3e0" stroke-width="1" stroke-dasharray="2,2"/>
             </svg>
           </div>
         </div>
@@ -999,10 +997,10 @@
             <dd><a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a></dd>
 
             <dt>The Roll Forward report is missing a column</dt>
-            <dd><a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a></dd>
+            <dd><a href="javascript:void(0)" onclick="showView('topic-general')">General</a></dd>
 
             <dt>Variance entries are populating with the wrong accounts</dt>
-            <dd><a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a></dd>
+            <dd><a href="javascript:void(0)" onclick="showView('topic-offsets')">Inventory Offsets</a></dd>
 
             <dt>A user can&rsquo;t see a company they should have access to</dt>
             <dd><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></dd>
@@ -1034,11 +1032,11 @@
               <td>Add, edit, and remove users. Set authorized functions, tabs, and per-module company access.</td>
             </tr>
             <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a></td>
+              <td><a href="javascript:void(0)" onclick="showView('topic-general')">General</a></td>
               <td>Common units of measure, roll forward report configuration, and cardex deletion.</td>
             </tr>
             <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a></td>
+              <td><a href="javascript:void(0)" onclick="showView('topic-offsets')">Inventory Offsets</a></td>
               <td>Configure GL accounts for End of Day and Transactional variance journal entries.</td>
             </tr>
           </tbody>
@@ -1070,9 +1068,69 @@
       </section>
       <section id="topic-what-you-configure" class="view">
         <h1>What You Configure</h1>
-        <p>Five minutes of orientation. RapidReconciler asks an administrator to manage four configuration domains. Knowing what they are &mdash; and how they relate &mdash; makes the procedural topics much easier to navigate.</p>
+        <p>Five minutes of orientation. RapidReconciler asks an administrator to manage four configuration domains, all reached from the <strong>Admin</strong> menu in the main navigation. Knowing what they are &mdash; and how they relate &mdash; makes the procedural topics much easier to navigate.</p>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>Where They Live in the Application</h2>
+
+        <p>From any page, the four configuration areas are reached by clicking <strong>Admin</strong> in the left-rail main navigation, which expands to show the four sub-items below:</p>
+
+        <figure>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 220" font-family="'Open Sans', 'Source Sans 3', sans-serif" style="max-width: 240px; display: block; margin: 0 auto; background: #f5f7fa; border: 1px solid #c9d3e0; border-radius: 6px;">
+            <!-- Header -->
+            <text x="14" y="20" font-size="9" font-weight="700" fill="#5a6479" letter-spacing="0.5">Main Navigation</text>
+            <line x1="14" y1="26" x2="226" y2="26" stroke="#dcdcdc" stroke-width="1"/>
+
+            <!-- INVENTORY (top, default-active style) -->
+            <g transform="translate(20, 41)">
+              <rect x="0" y="-5" width="10" height="2" rx="1" fill="#5a6479"/>
+              <rect x="0" y="-1" width="10" height="2" rx="1" fill="#5a6479"/>
+              <rect x="0" y="3" width="10" height="2" rx="1" fill="#5a6479"/>
+            </g>
+            <text x="38" y="45" font-size="11" font-weight="600" fill="#1f2d4a" letter-spacing="1">INVENTORY</text>
+
+            <!-- IN TRANSIT -->
+            <g transform="translate(20, 65)">
+              <circle r="6" fill="none" stroke="#5a6479" stroke-width="1.4"/>
+              <line x1="-4" y1="0" x2="4" y2="0" stroke="#5a6479" stroke-width="1.2"/>
+              <line x1="0" y1="-4" x2="0" y2="4" stroke="#5a6479" stroke-width="1.2"/>
+            </g>
+            <text x="38" y="69" font-size="11" font-weight="600" fill="#1f2d4a" letter-spacing="0.5">IN TRANSIT</text>
+
+            <!-- PO RECEIPTS -->
+            <g transform="translate(20, 89)">
+              <circle r="6" fill="none" stroke="#5a6479" stroke-width="1.4"/>
+              <line x1="-3" y1="-3" x2="3" y2="3" stroke="#5a6479" stroke-width="1.2"/>
+              <line x1="3" y1="-3" x2="-3" y2="3" stroke="#5a6479" stroke-width="1.2"/>
+            </g>
+            <text x="38" y="93" font-size="11" font-weight="600" fill="#1f2d4a" letter-spacing="0.5">PO Receipts</text>
+
+            <!-- ADMIN highlighted (because this is what the doc is about) -->
+            <rect x="6" y="105" width="3" height="18" fill="#2b5fb0"/>
+            <g transform="translate(20, 113)">
+              <circle r="5" fill="none" stroke="#2b5fb0" stroke-width="1.5"/>
+              <circle r="1.5" fill="#2b5fb0"/>
+              <g stroke="#2b5fb0" stroke-width="1.5" stroke-linecap="round">
+                <line x1="0" y1="-7" x2="0" y2="-5.5"/>
+                <line x1="0" y1="5.5" x2="0" y2="7"/>
+                <line x1="-7" y1="0" x2="-5.5" y2="0"/>
+                <line x1="5.5" y1="0" x2="7" y2="0"/>
+              </g>
+            </g>
+            <text x="38" y="117" font-size="11" font-weight="700" fill="#2b5fb0" letter-spacing="1">ADMIN</text>
+
+            <!-- Sub-items -->
+            <text x="50" y="139" font-size="10" font-weight="500" fill="#1f2d4a">Companies</text>
+            <text x="50" y="158" font-size="10" font-weight="500" fill="#1f2d4a">Users</text>
+            <text x="50" y="177" font-size="10" font-weight="500" fill="#1f2d4a">General</text>
+            <text x="50" y="196" font-size="10" font-weight="500" fill="#1f2d4a">Inventory Offsets</text>
+
+            <!-- Connector line -->
+            <line x1="44" y1="121" x2="44" y2="194" stroke="#c9d3e0" stroke-width="1" stroke-dasharray="2,2"/>
+          </svg>
+          <figcaption><strong>Admin menu, expanded</strong>Companies, Users, General, and Inventory Offsets are the four configuration screens you&rsquo;ll work with.</figcaption>
+        </figure>
 
         <h2>The Four Domains</h2>
 
@@ -1092,14 +1150,14 @@
               <td><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></td>
             </tr>
             <tr>
-              <td><strong>General Settings</strong></td>
+              <td><strong>General</strong></td>
               <td>Application-wide configuration that doesn&rsquo;t belong to a specific company or user. Common units of measure for cross-item analysis, the Roll Forward report column mapping, and cardex purge controls.</td>
-              <td><a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a></td>
+              <td><a href="javascript:void(0)" onclick="showView('topic-general')">General</a></td>
             </tr>
             <tr>
-              <td><strong>Offset Accounts</strong></td>
+              <td><strong>Inventory Offsets</strong></td>
               <td>The GL accounts RapidReconciler suggests as offsets when end-users post variance journal entries. Configure these correctly and end-users get clean Excel exports they can paste into JDE without editing.</td>
-              <td><a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a></td>
+              <td><a href="javascript:void(0)" onclick="showView('topic-offsets')">Inventory Offsets</a></td>
             </tr>
           </tbody>
         </table>
@@ -1159,12 +1217,12 @@
             </tr>
             <tr>
               <td><strong>3</strong></td>
-              <td><strong>Configure General Settings.</strong> See <a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a>.</td>
+              <td><strong>Configure General.</strong> See <a href="javascript:void(0)" onclick="showView('topic-general')">General</a>.</td>
               <td>Common UOM list and Roll Forward report column mapping. These are application-wide and worth configuring once before users start running into them.</td>
             </tr>
             <tr>
               <td><strong>4</strong></td>
-              <td><strong>Configure offset accounts.</strong> See <a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a>.</td>
+              <td><strong>Configure inventory offsets.</strong> See <a href="javascript:void(0)" onclick="showView('topic-offsets')">Inventory Offsets</a>.</td>
               <td>Required for clean variance JE exports. Without this, end-users will see &ldquo;TBD&rdquo; placeholders in their Excel exports.</td>
             </tr>
             <tr>
@@ -1228,7 +1286,7 @@
           <li>The company appears in the period selector with reasonable historical periods available.</li>
         </ul>
 
-        <h2>General Settings</h2>
+        <h2>General</h2>
 
         <ul class="checklist">
           <li class="checklist-title">Application-wide configuration is set</li>
@@ -1237,13 +1295,13 @@
           <li>The cardex deletion policy matches your organization&rsquo;s data retention requirements.</li>
         </ul>
 
-        <h2>Offset Accounts</h2>
+        <h2>Inventory Offsets</h2>
 
         <ul class="checklist">
           <li class="checklist-title">Offset account mappings are complete</li>
           <li>Every variance source that produces a JE export has an offset account configured.</li>
           <li>The configured GL accounts exist in the chart of accounts and are open for posting.</li>
-          <li>A test export from the Offset Account widget produces an Excel file with no &ldquo;TBD&rdquo; entries other than expected ones.</li>
+          <li>A test export from the Inventory Offsets widget produces an Excel file with no &ldquo;TBD&rdquo; entries other than expected ones.</li>
           <li>If multiple companies use different offset account schemes, each company&rsquo;s mappings have been reviewed individually.</li>
         </ul>
 
@@ -1277,7 +1335,7 @@
 
         <div class="callout tip">
           <div class="callout-label">If offset accounts are missing or stale</div>
-          <p>Update the affected mappings in <a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a>. Re-export from the Offset Account widget to verify the change took effect.</p>
+          <p>Update the affected mappings in <a href="javascript:void(0)" onclick="showView('topic-offsets')">Inventory Offsets</a>. Re-export from the Inventory Offsets widget to verify the change took effect.</p>
         </div>
 
         <div class="callout tip">
@@ -1310,36 +1368,9 @@
       <h2>Areas of Administrator Responsibility</h2>
       <p>This training manual covers the following four areas of RapidReconciler administration. They are accessed from the <strong>Admin</strong> menu in the main navigation panel — visible only to users who have administrator rights enabled on their account.</p>
 
-      <figure class="screenshot" style="max-width:340px;margin-left:auto;margin-right:auto;">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" font-family="'Open Sans', sans-serif">
-          <!-- Top nav bar with Admin highlighted -->
-          <rect x="0" y="0" width="320" height="36" fill="#1f2d4a"/>
-          <text x="20" y="23" font-size="12" font-weight="700" fill="#ffffff" letter-spacing="0.05em">RapidReconciler</text>
-          <text x="140" y="23" font-size="11" fill="rgba(255,255,255,0.7)">Inventory</text>
-          <text x="190" y="23" font-size="11" fill="rgba(255,255,255,0.7)">In Transit</text>
-          <text x="240" y="23" font-size="11" font-weight="700" fill="#f08a24">Admin ▾</text>
-          <!-- Connector arrow -->
-          <line x1="252" y1="38" x2="252" y2="50" stroke="#c9d3e0" stroke-width="1"/>
-          <!-- Dropdown panel -->
-          <rect x="186" y="50" width="124" height="160" rx="4" fill="#ffffff" stroke="#c9d3e0" stroke-width="1"/>
-          <!-- Menu items -->
-          <g font-size="11.5" fill="#1f2d4a">
-            <rect x="186" y="50" width="124" height="36" fill="#f6f8fb"/>
-            <text x="200" y="73">Companies</text>
-            <line x1="186" y1="86" x2="310" y2="86" stroke="#e1e7ef" stroke-width="1"/>
-
-            <text x="200" y="109">Users</text>
-            <line x1="186" y1="122" x2="310" y2="122" stroke="#e1e7ef" stroke-width="1"/>
-
-            <text x="200" y="145">General Settings</text>
-            <line x1="186" y1="158" x2="310" y2="158" stroke="#e1e7ef" stroke-width="1"/>
-
-            <text x="200" y="181">Inventory Offsets</text>
-          </g>
-          <!-- Caret indicator showing active selection -->
-          <polygon points="186,68 191,64 191,72" fill="#f08a24"/>
-        </svg>
-        <figcaption><strong>Admin menu</strong>Click <strong>Admin</strong> in the top navigation to reveal the four administration areas covered in this walkthrough.</figcaption>
+      <figure class="screenshot" style="max-width:200px;margin-left:auto;margin-right:auto;">
+        <img src="data:image/jpeg;base64,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" alt="Main Navigation panel showing four top-level items: INVENTORY (highlighted in blue with a stacked-shelf icon), IN TRANSIT (with a globe icon), PO Receipts (with a circle-and-arrow icon), and ADMIN (with a gear icon and expanded to show four indented sub-items: Companies, Users, General, Inventory Offsets).">
+        <figcaption><strong>Admin menu, expanded</strong>Click <strong>ADMIN</strong> in the main navigation to reveal the four administration areas covered in this walkthrough.</figcaption>
       </figure>
 
       <table>
@@ -1349,8 +1380,8 @@
         <tbody>
           <tr><td>Company Management</td><td>Configuring licensed companies and start dates.</td></tr>
           <tr><td>User Management</td><td>Adding and modifying RapidReconciler users and permissions.</td></tr>
-          <tr><td>General Settings</td><td>Roll forward setup, common units of measure, and cardex deletions.</td></tr>
-          <tr><td>Offset Accounts</td><td>Setting up offset accounts for End of Day and Transactional variances.</td></tr>
+          <tr><td>General</td><td>Roll forward setup, common units of measure, and cardex deletions.</td></tr>
+          <tr><td>Inventory Offsets</td><td>Setting up offset accounts for End of Day and Transactional variances.</td></tr>
         </tbody>
       </table>
 
@@ -1814,13 +1845,13 @@ Thank you,</div>
 
       <div class="topic-footer-nav">
         <button class="back-btn" onclick="goHome()">← Back to Index</button>
-        <button class="next-btn" onclick="showView('topic-general')">Next: General Settings →</button>
+        <button class="next-btn" onclick="showView('topic-general')">Next: General →</button>
       </div>
       </section>
 
       <section id="topic-general" class="view">
-<h1>General Settings</h1>
-      <p>Configure common units of measure, define roll forward report columns, and access the cardex deletion utility from the General Settings page.</p>
+<h1>General</h1>
+      <p>Configure common units of measure, define roll forward report columns, and access the cardex deletion utility from the General page.</p>
 
       <div class="diamond-divider"><span class="diamond"></span></div>
 
@@ -2000,12 +2031,12 @@ Thank you,</div>
 
       <div class="topic-footer-nav">
         <button class="back-btn" onclick="goHome()">← Back to Index</button>
-        <button class="next-btn" onclick="showView('topic-offsets')">Next: Offset Accounts →</button>
+        <button class="next-btn" onclick="showView('topic-offsets')">Next: Inventory Offsets →</button>
       </div>
       </section>
 
       <section id="topic-offsets" class="view">
-<h1>Offset Accounts</h1>
+<h1>Inventory Offsets</h1>
       <p>Pre-configure the GL accounts that should be used to offset End of Day and Transaction variances. When set up, these accounts and their associated amounts are populated automatically in the <strong>Suggested Entry popup</strong> that opens when a user clicks the <strong>star icon</strong> on a variance category row in the Variance Calculation section of the Reconciliation page.</p>
 
       <div class="diamond-divider"><span class="diamond"></span></div>
@@ -2018,7 +2049,7 @@ Thank you,</div>
         <figcaption><strong>Admin &gt; Inventory Offsets</strong>The setup grid for offset accounts. Each row is a unique combination of Company, Variance Source, Document Type, and Order Type.</figcaption>
       </figure>
 
-      <h2>What Offset Accounts Do</h2>
+      <h2>What Inventory Offsets Do</h2>
       <p>Offset accounts work for two of the variance sources on the Reconciliation page: <strong>End of Day</strong> and <strong>Transactions</strong>. The grid shown above lists every combination of Company, Document Type, and Order Type that appears in the applicable variance reports. The administrator enters the GL account that should offset the variance for each combination.</p>
       <p>The result: when a user clicks the <strong>star icon</strong> next to End of Day or Transactions in the Variance Calculation section of the Reconciliation page, the <strong>Suggested Entry popup</strong> opens with the pre-configured offset accounts and their associated amounts already populated — saving the user from having to look up and enter the offset accounts manually each period.</p>
 
@@ -2237,7 +2268,7 @@ Thank you,</div>
             <div class="self-check-num">Scenario 3</div>
             <p class="scenario">An end-user reports that their Offset Account widget Excel exports are showing &ldquo;TBD&rdquo; in the offset column for several variance rows.</p>
             <p class="prompt">What&rsquo;s the configuration gap, and which procedural topic do you fix it in?</p>
-            <a class="where" href="javascript:void(0)" onclick="showView('topic-pre-launch')">Where to find this: <strong>Pre-launch Checklist &rarr; Offset Accounts</strong></a>
+            <a class="where" href="javascript:void(0)" onclick="showView('topic-pre-launch')">Where to find this: <strong>Pre-launch Checklist &rarr; Inventory Offsets</strong></a>
           </div>
 
           <div class="self-check-card">
@@ -2292,7 +2323,7 @@ Thank you,</div>
           <dd>Per-user permissions for which views (tabs) a user sees inside a module. Used to hide irrelevant pages from users whose role doesn&rsquo;t need them &mdash; e.g., an A/P clerk doesn&rsquo;t need to see the Inventory Reconciliation page.</dd>
 
           <dt>Common UOM</dt>
-          <dd>Application-wide list of units of measure that span multiple item master records, used to restate quantities across items for analysis on the As-Of page. Configured in <a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a>.</dd>
+          <dd>Application-wide list of units of measure that span multiple item master records, used to restate quantities across items for analysis on the As-Of page. Configured in <a href="javascript:void(0)" onclick="showView('topic-general')">General</a>.</dd>
 
           <dt>Company license</dt>
           <dd>The mechanism that grants RapidReconciler access to a JDE company&rsquo;s data. Licensed at the GSI level; configured at the customer level. Adding a previously-unlicensed company requires a request to GSI support. <a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a>.</dd>
@@ -2301,13 +2332,13 @@ Thank you,</div>
           <dd>Per-company configuration that tells RapidReconciler when each company&rsquo;s fiscal year begins. Drives period boundaries throughout the application. Must match what JDE has for the same company.</dd>
 
           <dt>Offset account</dt>
-          <dd>The GL account configured to be used as the offset side of a variance journal entry. Configured per company per variance source. When end-users export from the Offset Account widget, the configured offset is filled in automatically; missing offsets show as &ldquo;TBD&rdquo;. <a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a>.</dd>
+          <dd>The GL account configured to be used as the offset side of a variance journal entry. Configured per company per variance source. When end-users export from the Inventory Offsets widget, the configured offset is filled in automatically; missing offsets show as &ldquo;TBD&rdquo;. <a href="javascript:void(0)" onclick="showView('topic-offsets')">Inventory Offsets</a>.</dd>
 
           <dt>Per-module company access</dt>
           <dd>The list of companies a user can see inside a specific module (Inventory, In Transit, PO Receipts). A user can have access to different sets of companies in different modules. Configured per-user in <a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a>.</dd>
 
           <dt>Roll Forward report column mapping</dt>
-          <dd>Configuration that maps JDE document and order types to columns on the Roll Forward report. If end-users see a non-zero value in the Variance column at the right, a document or order type is missing from the mapping. <a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a>.</dd>
+          <dd>Configuration that maps JDE document and order types to columns on the Roll Forward report. If end-users see a non-zero value in the Variance column at the right, a document or order type is missing from the mapping. <a href="javascript:void(0)" onclick="showView('topic-general')">General</a>.</dd>
 
           <dt>Suggested Entry popup</dt>
           <dd>The end-user-facing popup that uses configured offset accounts to pre-build a variance JE for the user to review and post. Quality of this popup is directly proportional to the quality of offset account configuration.</dd>

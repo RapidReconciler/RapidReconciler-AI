@@ -692,6 +692,62 @@
     border: 1px solid var(--rule);
   }
 
+  /* ============== FEEDBACK BAND ============== */
+  .feedback-band {
+    background: var(--bg-soft);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 32px 0;
+  }
+  .feedback-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+  .feedback-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--orange);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .feedback-text {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.55;
+    max-width: 760px;
+  }
+  .feedback-text strong {
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .feedback-text a {
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 700;
+    border-bottom: 1px solid var(--blue-pale);
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .feedback-text a:hover {
+    color: var(--navy);
+    border-bottom-color: var(--blue);
+  }
+  @media (max-width: 720px) {
+    .feedback-band { padding: 24px 0; }
+    .feedback-inner { gap: 14px; }
+    .feedback-text { font-size: 14px; }
+  }
+
   /* ============== FOOTER ============== */
   /* ============== FOOTER (thin, single line) ============== */
   footer {
@@ -897,7 +953,7 @@
           <span class="doc-arrow">&rarr;</span>
         </div>
         <h3 class="doc-title">Start Here &mdash; RR Administrators</h3>
-        <p class="doc-desc">Wayfinding plus full procedural reference for RapidReconciler administrators. Company licensing, user permissions, general settings, and offset accounts.</p>
+        <p class="doc-desc">Wayfinding plus full procedural reference for RapidReconciler administrators. Companies, users, general, and inventory offsets.</p>
       </a>
       <a class="doc-card" href="start-here-inventory.html">
         <div class="doc-card-top">
@@ -1143,6 +1199,21 @@
         <h3 class="doc-title">Complex Password Option</h3>
         <p class="doc-desc">Password policy requirements and the reset process. Configuration toggle &mdash; applies only to sites that have enabled the complex password option.</p>
       </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEEDBACK ============ -->
+<section class="feedback-band" aria-label="Documentation feedback">
+  <div class="container">
+    <div class="feedback-inner">
+      <div class="feedback-icon" aria-hidden="true">i</div>
+      <div class="feedback-text">
+        <strong>Help us improve.</strong>
+        Found an error, a gap, or something unclear in any of these documents?
+        Email <a href="mailto:rrsupport@getgsi.com?subject=RapidReconciler%20University%20-%20Documentation%20Feedback">rrsupport@getgsi.com</a> &mdash;
+        documentation corrections, missing topics, and suggestions are all welcome.
+      </div>
     </div>
   </div>
 </section>
