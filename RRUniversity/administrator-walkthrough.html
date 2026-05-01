@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Administrator Walkthrough &mdash; RapidReconciler University</title>
+<title>Start Here &mdash; RR Administrators &mdash; RapidReconciler University</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -186,6 +186,174 @@
     font-weight: 700;
     border-left-color: var(--orange);
   }
+
+  /* Sidebar section label (for grouping nav items) */
+  .sidebar-section-label {
+    padding: 16px 24px 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-top: 1px solid var(--rule);
+    margin-top: 8px;
+  }
+  .sidebar-section-label:first-of-type { border-top: none; margin-top: 0; }
+
+  /* Glossary list */
+  .view dl.glossary {
+    margin: 18px 0;
+    padding: 0;
+  }
+  .view dl.glossary dt {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 14.5px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+  }
+  .view dl.glossary dt:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+  .view dl.glossary dd {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    color: var(--text-soft);
+    line-height: 1.6;
+  }
+  .view dl.glossary dd a {
+    font-weight: 600;
+  }
+
+  /* Checklist card */
+  .view ul.checklist {
+    list-style: none;
+    margin: 16px 0 24px;
+    padding: 0;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .view ul.checklist .checklist-title {
+    background: var(--navy);
+    color: #fff;
+    padding: 10px 18px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .view ul.checklist li {
+    padding: 12px 18px 12px 46px;
+    position: relative;
+    margin-bottom: 0;
+    border-top: 1px solid var(--rule);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .view ul.checklist li::before {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 16px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--rule-strong);
+    border-radius: 3px;
+    background: #fff;
+  }
+
+  /* Cross-reference link */
+  .view .xref {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--blue-bright);
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    color: var(--text);
+    text-decoration: none !important;
+    border-bottom: 1px solid var(--rule) !important;
+    margin: 6px 0;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .view .xref:hover {
+    background: var(--blue-pale);
+    color: var(--navy) !important;
+    border-left-color: var(--blue) !important;
+  }
+  .view .xref::before { content: '\u2197'; color: var(--blue); font-weight: 700; }
+  .view .xref strong { color: var(--navy); font-weight: 700; }
+
+  /* Self-check card stack */
+  .view .self-check-stack {
+    margin: 18px 0 24px;
+    display: grid;
+    gap: 14px;
+  }
+  .view .self-check-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--blue-bright);
+    border-radius: 6px;
+    padding: 16px 20px;
+  }
+  .view .self-check-num {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .view .self-check-card .scenario {
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 15px;
+    line-height: 1.55;
+    margin: 0 0 10px;
+  }
+  .view .self-check-card .prompt {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    margin: 0 0 12px;
+  }
+  .view .self-check-card .where {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none !important;
+    border-bottom: none !important;
+    background: var(--bg-panel);
+    border: 1px solid var(--rule);
+    padding: 5px 11px;
+    border-radius: 3px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .view .self-check-card .where::before {
+    content: '\u2937';
+    color: var(--blue);
+    font-weight: 700;
+  }
+  .view .self-check-card .where:hover {
+    background: var(--blue-pale);
+    color: var(--navy) !important;
+  }
+  .view .self-check-card .where strong { color: var(--navy); font-weight: 700; }
 
   main.content-card {
     background: #fff;
@@ -680,9 +848,9 @@
       <span class="sep">/</span>
       <a href="rapidreconciler-university.html#getting-started">Getting Started</a>
       <span class="sep">/</span>
-      <span class="current">Administrator Walkthrough</span>
+      <span class="current">Start Here &mdash; RR Administrators</span>
     </div>
-    <h1 class="page-title">Administrator <em>Walkthrough</em></h1>
+    <h1 class="page-title">Start Here &mdash; RR <em>Administrators</em></h1>
   </div>
 </section>
 
@@ -690,9 +858,18 @@
 <div class="container">
   <div class="spa-wrap">
     <aside class="sidebar">
-      <div class="sidebar-title">Walkthrough</div>
+      <div class="sidebar-title">Start Here</div>
+
+      <div class="sidebar-section-label">Getting Oriented</div>
       <ul class="sidebar-nav" id="sidebar-nav">
         <li data-target="home"><button onclick="showView('home')">Index</button></li>
+        <li data-target="what-you-configure"><button onclick="showView('topic-what-you-configure')">What You Configure</button></li>
+        <li data-target="first-setup"><button onclick="showView('topic-first-setup')">Your First Setup</button></li>
+        <li data-target="pre-launch"><button onclick="showView('topic-pre-launch')">Pre-launch Checklist</button></li>
+      </ul>
+
+      <div class="sidebar-section-label">Procedures</div>
+      <ul class="sidebar-nav">
         <li data-target="overview"><button onclick="showView('topic-overview')">About Administration</button></li>
         <li data-target="company"><button onclick="showView('topic-company')">Company Management</button></li>
         <li data-target="adding"><button onclick="showView('topic-adding')">Adding a Company License</button></li>
@@ -700,152 +877,425 @@
         <li data-target="general"><button onclick="showView('topic-general')">General Settings</button></li>
         <li data-target="offsets"><button onclick="showView('topic-offsets')">Offset Accounts</button></li>
       </ul>
+
+      <div class="sidebar-section-label">Reference</div>
+      <ul class="sidebar-nav">
+        <li data-target="self-check"><button onclick="showView('topic-self-check')">Self-Check</button></li>
+        <li data-target="vocabulary"><button onclick="showView('topic-vocabulary')">Vocabulary</button></li>
+      </ul>
     </aside>
 
     <main class="content-card">
       <section id="home" class="view active">
-<h1>Administrator Walkthrough</h1>
+        <h1>Start Here &mdash; RR Administrators</h1>
 
-      <div class="hero-block">
-        <div class="hero-text">
-          <p>Configure and maintain RapidReconciler with confidence. This walkthrough is the companion guide for RapidReconciler administrators — covering company licensing, user permissions, general settings, and inventory offset accounts.</p>
-          <p>Each section is self-contained. Use the sidebar or the table below to jump directly to a topic. From any topic, the <strong>Back to Index</strong> button returns you here.</p>
-        </div>
-        <div class="hero-art" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200">
-            <defs>
-              <linearGradient id="tileGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#ffffff"/>
-                <stop offset="100%" stop-color="#eef3f9"/>
-              </linearGradient>
-            </defs>
-            <!-- Companies tile -->
-            <g transform="translate(20,20)">
-              <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
-              <rect x="14" y="16" width="22" height="22" rx="3" fill="#2b5fb0"/>
-              <rect x="42" y="20" width="50" height="6" rx="2" fill="#1f2d4a"/>
-              <rect x="42" y="30" width="38" height="4" rx="2" fill="#8a93a6"/>
-              <rect x="14" y="48" width="82" height="4" rx="2" fill="#d6e6f5"/>
-              <rect x="14" y="58" width="62" height="4" rx="2" fill="#d6e6f5"/>
-              <text x="55" y="91" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">COMPANIES</text>
-            </g>
-            <!-- Users tile -->
-            <g transform="translate(150,20)">
-              <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
-              <circle cx="35" cy="32" r="10" fill="#f08a24"/>
-              <path d="M 18 56 Q 18 44 35 44 Q 52 44 52 56 Z" fill="#f08a24"/>
-              <rect x="62" y="22" width="34" height="4" rx="2" fill="#1f2d4a"/>
-              <rect x="62" y="32" width="28" height="4" rx="2" fill="#8a93a6"/>
-              <rect x="62" y="46" width="34" height="4" rx="2" fill="#d6e6f5"/>
-              <rect x="62" y="56" width="22" height="4" rx="2" fill="#d6e6f5"/>
-              <text x="55" y="91" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">USERS</text>
-            </g>
-            <!-- General Settings tile -->
-            <g transform="translate(20,116)">
-              <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
-              <g transform="translate(38,40)">
-                <circle r="14" fill="none" stroke="#2b5fb0" stroke-width="3"/>
-                <circle r="4" fill="#2b5fb0"/>
-                <g stroke="#2b5fb0" stroke-width="3" stroke-linecap="round">
-                  <line x1="0" y1="-19" x2="0" y2="-15"/>
-                  <line x1="0" y1="15" x2="0" y2="19"/>
-                  <line x1="-19" y1="0" x2="-15" y2="0"/>
-                  <line x1="15" y1="0" x2="19" y2="0"/>
-                  <line x1="-13" y1="-13" x2="-10" y2="-10"/>
-                  <line x1="10" y1="10" x2="13" y2="13"/>
-                  <line x1="13" y1="-13" x2="10" y2="-10"/>
-                  <line x1="-10" y1="10" x2="-13" y2="13"/>
-                </g>
+        <div class="hero-block">
+          <div class="hero-text">
+            <p>Configure and maintain RapidReconciler with confidence. This guide is the wayfinding entry point for RapidReconciler administrators &mdash; covering company licensing, user permissions, general settings, and inventory offset accounts.</p>
+            <p>If you are new to the role, the topics under <em>Getting Oriented</em> in the sidebar tell you what RapidReconciler asks an administrator to manage and the recommended order to do it in. Each procedural section is also self-contained and can be jumped to directly when you are looking up a specific task.</p>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200">
+              <defs>
+                <linearGradient id="tileGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ffffff"/>
+                  <stop offset="100%" stop-color="#eef3f9"/>
+                </linearGradient>
+              </defs>
+              <g transform="translate(20,20)">
+                <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
+                <rect x="14" y="16" width="22" height="22" rx="3" fill="#2b5fb0"/>
+                <rect x="42" y="20" width="50" height="6" rx="2" fill="#1f2d4a"/>
+                <rect x="42" y="30" width="38" height="4" rx="2" fill="#8a93a6"/>
+                <rect x="14" y="48" width="82" height="4" rx="2" fill="#d6e6f5"/>
+                <rect x="14" y="58" width="62" height="4" rx="2" fill="#d6e6f5"/>
+                <text x="55" y="91" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">COMPANIES</text>
               </g>
-              <rect x="64" y="28" width="32" height="4" rx="2" fill="#1f2d4a"/>
-              <rect x="64" y="38" width="26" height="4" rx="2" fill="#8a93a6"/>
-              <rect x="64" y="48" width="32" height="4" rx="2" fill="#d6e6f5"/>
-              <text x="55" y="187" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">SETTINGS</text>
-            </g>
-            <!-- Offset Accounts tile -->
-            <g transform="translate(150,116)">
-              <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
-              <polygon points="35,28 41,40 54,42 44,51 47,64 35,58 23,64 26,51 16,42 29,40" fill="#f08a24"/>
-              <rect x="62" y="28" width="34" height="4" rx="2" fill="#1f2d4a"/>
-              <rect x="62" y="38" width="22" height="4" rx="2" fill="#8a93a6"/>
-              <rect x="62" y="48" width="32" height="4" rx="2" fill="#d6e6f5"/>
-              <rect x="62" y="56" width="26" height="4" rx="2" fill="#d6e6f5"/>
-              <text x="55" y="187" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">OFFSETS</text>
-            </g>
-          </svg>
+              <g transform="translate(150,20)">
+                <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
+                <circle cx="35" cy="32" r="10" fill="#f08a24"/>
+                <path d="M 18 56 Q 18 44 35 44 Q 52 44 52 56 Z" fill="#f08a24"/>
+                <rect x="62" y="22" width="34" height="4" rx="2" fill="#1f2d4a"/>
+                <rect x="62" y="32" width="28" height="4" rx="2" fill="#8a93a6"/>
+                <rect x="62" y="46" width="34" height="4" rx="2" fill="#d6e6f5"/>
+                <rect x="62" y="56" width="22" height="4" rx="2" fill="#d6e6f5"/>
+                <text x="55" y="91" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">USERS</text>
+              </g>
+              <g transform="translate(20,116)">
+                <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
+                <g transform="translate(38,40)">
+                  <circle r="14" fill="none" stroke="#2b5fb0" stroke-width="3"/>
+                  <circle r="4" fill="#2b5fb0"/>
+                  <g stroke="#2b5fb0" stroke-width="3" stroke-linecap="round">
+                    <line x1="0" y1="-19" x2="0" y2="-15"/>
+                    <line x1="0" y1="15" x2="0" y2="19"/>
+                    <line x1="-19" y1="0" x2="-15" y2="0"/>
+                    <line x1="15" y1="0" x2="19" y2="0"/>
+                    <line x1="-13" y1="-13" x2="-10" y2="-10"/>
+                    <line x1="10" y1="10" x2="13" y2="13"/>
+                    <line x1="13" y1="-13" x2="10" y2="-10"/>
+                    <line x1="-10" y1="10" x2="-13" y2="13"/>
+                  </g>
+                </g>
+                <rect x="64" y="28" width="32" height="4" rx="2" fill="#1f2d4a"/>
+                <rect x="64" y="38" width="26" height="4" rx="2" fill="#8a93a6"/>
+                <rect x="64" y="48" width="32" height="4" rx="2" fill="#d6e6f5"/>
+                <text x="55" y="187" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">SETTINGS</text>
+              </g>
+              <g transform="translate(150,116)">
+                <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
+                <polygon points="35,28 41,40 54,42 44,51 47,64 35,58 23,64 26,51 16,42 29,40" fill="#f08a24"/>
+                <rect x="62" y="28" width="34" height="4" rx="2" fill="#1f2d4a"/>
+                <rect x="62" y="38" width="22" height="4" rx="2" fill="#8a93a6"/>
+                <rect x="62" y="48" width="32" height="4" rx="2" fill="#d6e6f5"/>
+                <rect x="62" y="56" width="26" height="4" rx="2" fill="#d6e6f5"/>
+                <text x="55" y="187" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">OFFSETS</text>
+              </g>
+            </svg>
+          </div>
         </div>
-      </div>
 
-      <div class="page-meta">
-        <span class="meta-item"><strong>Last reviewed:</strong>&nbsp;January 2026</span>
-        <span class="meta-item">Press <kbd>Ctrl</kbd>+<kbd>F</kbd> (or <kbd>⌘</kbd>+<kbd>F</kbd>) to search within a topic</span>
-      </div>
+        <div class="page-meta">
+          <span class="meta-item"><strong>Last reviewed:</strong>&nbsp;January 2026</span>
+          <span class="meta-item">Press <kbd>Ctrl</kbd>+<kbd>F</kbd> (or <kbd>&#8984;</kbd>+<kbd>F</kbd>) to search within a topic</span>
+        </div>
 
-      <div class="diamond-divider"><span class="diamond"></span></div>
+        <div class="diamond-divider"><span class="diamond"></span></div>
 
-      <div class="quick-ref">
-        <h3>Quick Reference — Common Tasks</h3>
-        <dl>
-          <dt>I need to add a new fiscal year start date</dt>
-          <dd><a href="javascript:void(0)" onclick="showView('topic-company')">Company Management</a></dd>
+        <h2>If You Are New to the Role</h2>
 
-          <dt>A new hire needs login access</dt>
-          <dd><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></dd>
+        <p>Read the three Getting Oriented topics in order before working through the procedures. They cover the shape of the job and the recommended sequence for an initial deployment, so the procedural topics make sense as steps in a flow rather than a list of features.</p>
 
-          <dt>I need to license an additional JDE company</dt>
-          <dd><a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a></dd>
+        <table class="doc-table">
+          <thead>
+            <tr><th>Read in this order</th><th>What it covers</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-what-you-configure')">What You Configure</a></td>
+              <td>The four configuration domains an administrator owns and how they relate to each other.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-first-setup')">Your First Setup</a></td>
+              <td>The recommended order to configure things in for a first deployment, with links into the procedural topics.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-pre-launch')">Pre-launch Checklist</a></td>
+              <td>What must be configured and verified before users can productively work in the application.</td>
+            </tr>
+          </tbody>
+        </table>
 
-          <dt>The Roll Forward report is missing a column</dt>
-          <dd><a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a></dd>
+        <div class="quick-ref">
+          <h3>Quick Reference &mdash; Common Tasks</h3>
+          <dl>
+            <dt>I need to add a new fiscal year start date</dt>
+            <dd><a href="javascript:void(0)" onclick="showView('topic-company')">Company Management</a></dd>
 
-          <dt>Variance entries are populating with the wrong accounts</dt>
-          <dd><a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a></dd>
+            <dt>A new hire needs login access</dt>
+            <dd><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></dd>
 
-          <dt>A user can't see a company they should have access to</dt>
-          <dd><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></dd>
-        </dl>
-      </div>
+            <dt>I need to license an additional JDE company</dt>
+            <dd><a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a></dd>
 
-      <h2>Topics</h2>
-      <p>Select a section below to view its content. Each topic includes step-by-step navigation, field references, and links to related video tutorials where available.</p>
+            <dt>The Roll Forward report is missing a column</dt>
+            <dd><a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a></dd>
 
-      <table class="doc-table">
-        <thead>
-          <tr><th>Section</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><a href="javascript:void(0)" onclick="showView('topic-overview')">About Administration</a></td>
-            <td>Orientation for the administrator role and the four areas this manual covers.</td>
-          </tr>
-          <tr>
-            <td><a href="javascript:void(0)" onclick="showView('topic-company')">Company Management</a></td>
-            <td>Configure licensed companies, fiscal start dates, currencies, AAI documents, and thresholds.</td>
-          </tr>
-          <tr>
-            <td><a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a></td>
-            <td>Request additional licensed companies from GSI support and what to include in your request.</td>
-          </tr>
-          <tr>
-            <td><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></td>
-            <td>Add, edit, and remove users. Set authorized functions, tabs, and per-module company access.</td>
-          </tr>
-          <tr>
-            <td><a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a></td>
-            <td>Common units of measure, roll forward report configuration, and cardex deletion.</td>
-          </tr>
-          <tr>
-            <td><a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a></td>
-            <td>Configure GL accounts for End of Day and Transactional variance journal entries.</td>
-          </tr>
-        </tbody>
-      </table>
+            <dt>Variance entries are populating with the wrong accounts</dt>
+            <dd><a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a></dd>
 
-      <div class="callout tip">
-        <div class="callout-label">New to the role?</div>
-        <p>Work through the topics in the order shown. If you are looking up a specific task, jump directly to the section you need from the sidebar.</p>
-      </div>
+            <dt>A user can&rsquo;t see a company they should have access to</dt>
+            <dd><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></dd>
+          </dl>
+        </div>
+
+        <h2>Procedural Topics</h2>
+        <p>The full procedural reference. Self-contained &mdash; each topic includes step-by-step navigation, field references, and links to related video tutorials where available.</p>
+
+        <table class="doc-table">
+          <thead>
+            <tr><th>Section</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-overview')">About Administration</a></td>
+              <td>Orientation for the administrator role and the four areas this manual covers.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-company')">Company Management</a></td>
+              <td>Configure licensed companies, fiscal start dates, currencies, AAI documents, and thresholds.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a></td>
+              <td>Request additional licensed companies from GSI support and what to include in your request.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></td>
+              <td>Add, edit, and remove users. Set authorized functions, tabs, and per-module company access.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a></td>
+              <td>Common units of measure, roll forward report configuration, and cardex deletion.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a></td>
+              <td>Configure GL accounts for End of Day and Transactional variance journal entries.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>Reference</h2>
+        <p>Use these on demand. Self-Check is a useful read-through after the Getting Oriented topics; Vocabulary is a lookup utility.</p>
+
+        <table class="doc-table">
+          <thead>
+            <tr><th>Section</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-self-check')">Self-Check</a></td>
+              <td>Six scenario questions to test whether the doc landed. Not graded.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-vocabulary')">Vocabulary</a></td>
+              <td>RapidReconciler-specific terms relevant to the administrator role.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <div class="callout-label">Looking up a specific task?</div>
+          <p>Jump straight to the relevant procedural topic from the sidebar, or use the Quick Reference above. The Getting Oriented topics are most useful on initial deployment; experienced admins can skip them.</p>
+        </div>
       </section>
+      <section id="topic-what-you-configure" class="view">
+        <h1>What You Configure</h1>
+        <p>Five minutes of orientation. RapidReconciler asks an administrator to manage four configuration domains. Knowing what they are &mdash; and how they relate &mdash; makes the procedural topics much easier to navigate.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>The Four Domains</h2>
+
+        <table class="doc-table">
+          <thead>
+            <tr><th style="width:24%;">Domain</th><th>What It Covers</th><th style="width:24%;">Procedural Topic</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Companies</strong></td>
+              <td>The licensed JDE companies RapidReconciler can see. Fiscal year start dates, base currency, AAI document types, and tolerance thresholds for each licensed company.</td>
+              <td><a href="javascript:void(0)" onclick="showView('topic-company')">Company Management</a> + <a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a></td>
+            </tr>
+            <tr>
+              <td><strong>Users</strong></td>
+              <td>Who can log in. What each user can see (which companies, which modules) and do (which functions, which tabs). The boundary between an inventory accountant and an A/P clerk is drawn here.</td>
+              <td><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></td>
+            </tr>
+            <tr>
+              <td><strong>General Settings</strong></td>
+              <td>Application-wide configuration that doesn&rsquo;t belong to a specific company or user. Common units of measure for cross-item analysis, the Roll Forward report column mapping, and cardex purge controls.</td>
+              <td><a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a></td>
+            </tr>
+            <tr>
+              <td><strong>Offset Accounts</strong></td>
+              <td>The GL accounts RapidReconciler suggests as offsets when end-users post variance journal entries. Configure these correctly and end-users get clean Excel exports they can paste into JDE without editing.</td>
+              <td><a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>How They Relate</h2>
+
+        <p>The four domains are mostly independent, but a few dependencies are worth knowing up front:</p>
+
+        <ul>
+          <li><strong>Companies must exist before users can be assigned to them.</strong> A user&rsquo;s per-module company access list (Inventory, In Transit, PO Receipts) is filtered to companies that are licensed and configured. Configure companies first.</li>
+          <li><strong>Offset accounts depend on companies and on the AAI document types each company uses.</strong> If a company changes its AAI document type configuration, the offset account mappings should be reviewed.</li>
+          <li><strong>General settings &mdash; particularly the Common UOM list &mdash; affect what end-users see on the As-Of page.</strong> Changes here are visible to all users immediately on the next page load.</li>
+        </ul>
+
+        <h2>What You Do <em>Not</em> Configure</h2>
+
+        <p>Worth being explicit. RapidReconciler is read-only against JD Edwards. The configuration items below live in JDE, not in RapidReconciler &mdash; an administrator should know they exist but they aren&rsquo;t managed here:</p>
+
+        <ul>
+          <li><strong>DMAAI table 4152.</strong> Inventory accounts come from DMAAI; managed in JDE.</li>
+          <li><strong>GL chart of accounts.</strong> Owned by the JDE finance configuration.</li>
+          <li><strong>JDE security or row-security.</strong> RapidReconciler trusts what JDE has authorized; it does not enforce its own row-level security on JDE data.</li>
+          <li><strong>The nightly import schedule.</strong> Operationally owned by the team that runs the JDE-to-RapidReconciler import jobs.</li>
+        </ul>
+
+        <a class="xref" href="javascript:void(0)" onclick="showView('topic-overview')">
+          See <strong>About Administration</strong> for a fuller orientation, including how the administrator role is assigned.
+        </a>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-first-setup')">Next: Your First Setup &rarr;</button>
+        </div>
+      </section>
+      <section id="topic-first-setup" class="view">
+        <h1>Your First Setup</h1>
+        <p>The recommended order to configure RapidReconciler for a first deployment. Each step links into the procedural topic that explains how to do it. Following the order matters &mdash; some steps depend on earlier ones.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>Recommended Sequence</h2>
+
+        <table class="doc-table">
+          <thead>
+            <tr><th style="width:6%;">#</th><th style="width:30%;">Action</th><th>Why This Order</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1</strong></td>
+              <td><strong>Read <a href="javascript:void(0)" onclick="showView('topic-overview')">About Administration</a>.</strong></td>
+              <td>Confirms how the administrator role is assigned and gives you the vocabulary for the rest of the setup.</td>
+            </tr>
+            <tr>
+              <td><strong>2</strong></td>
+              <td><strong>Configure each licensed company.</strong> See <a href="javascript:void(0)" onclick="showView('topic-company')">Company Management</a>.</td>
+              <td>Fiscal year start, base currency, AAI document types, tolerance thresholds. Everything downstream filters by company, so getting this right first prevents rework later.</td>
+            </tr>
+            <tr>
+              <td><strong>3</strong></td>
+              <td><strong>Configure General Settings.</strong> See <a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a>.</td>
+              <td>Common UOM list and Roll Forward report column mapping. These are application-wide and worth configuring once before users start running into them.</td>
+            </tr>
+            <tr>
+              <td><strong>4</strong></td>
+              <td><strong>Configure offset accounts.</strong> See <a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a>.</td>
+              <td>Required for clean variance JE exports. Without this, end-users will see &ldquo;TBD&rdquo; placeholders in their Excel exports.</td>
+            </tr>
+            <tr>
+              <td><strong>5</strong></td>
+              <td><strong>Add users and assign access.</strong> See <a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a>.</td>
+              <td>Users are added last because per-module company access depends on companies being configured first. Adding users earlier means revisiting them after company setup.</td>
+            </tr>
+            <tr>
+              <td><strong>6</strong></td>
+              <td><strong>Walk the <a href="javascript:void(0)" onclick="showView('topic-pre-launch')">Pre-launch Checklist</a> before announcing availability to end-users.</strong></td>
+              <td>Confirms each domain is set up correctly and that a representative end-user can productively work in the application before broader rollout.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>If You Are Adding a Company After Initial Deployment</h2>
+
+        <p>The sequence above describes a first deployment. Once RapidReconciler is live and you need to add a newly-licensed JDE company:</p>
+
+        <ol>
+          <li>Submit the company licensing request to GSI support &mdash; see <a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a>.</li>
+          <li>Once GSI confirms the license is in place, configure the new company per <a href="javascript:void(0)" onclick="showView('topic-company')">Company Management</a>.</li>
+          <li>Review and update offset account mappings if the new company introduces new AAI document types.</li>
+          <li>Update existing user permissions to grant per-module access to the new company where appropriate.</li>
+        </ol>
+
+        <h2>If You Are Inheriting an Existing Deployment</h2>
+
+        <p>If you are taking over administration of a RapidReconciler instance that someone else configured:</p>
+
+        <ul>
+          <li>Walk the Pre-launch Checklist as a sanity check &mdash; treat it as a configuration audit rather than a setup procedure.</li>
+          <li>Pay particular attention to user access lists. Stale users (departed staff still configured) are the most common finding when an administrator changes hands.</li>
+          <li>Verify offset account mappings against the chart of accounts. Account numbers do change, and stale offsets produce wrong entries on user JE exports.</li>
+          <li>Review the Common UOM list for entries that no longer reflect current item-master conventions.</li>
+        </ul>
+
+        <a class="xref" href="javascript:void(0)" onclick="showView('topic-pre-launch')">
+          When you&rsquo;re done with the sequence, walk the <strong>Pre-launch Checklist</strong> to confirm the deployment is ready for end-users.
+        </a>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-pre-launch')">Next: Pre-launch Checklist &rarr;</button>
+        </div>
+      </section>
+      <section id="topic-pre-launch" class="view">
+        <h1>Pre-launch Checklist</h1>
+        <p>What must be configured and verified before users can productively work in the application. Use this for first deployment, as a configuration audit when inheriting an instance, and as a periodic review at major milestones (new fiscal year, new licensed company, organizational changes).</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>Companies</h2>
+
+        <ul class="checklist">
+          <li class="checklist-title">Each licensed company is configured</li>
+          <li>The fiscal year start date matches the company&rsquo;s fiscal calendar in JDE.</li>
+          <li>The base currency is correct.</li>
+          <li>AAI document types are populated and match the document types actually in use in JDE.</li>
+          <li>Tolerance thresholds are set to your organization&rsquo;s materiality standard (or to the GSI default if you have not yet established one).</li>
+          <li>The company appears in the period selector with reasonable historical periods available.</li>
+        </ul>
+
+        <h2>General Settings</h2>
+
+        <ul class="checklist">
+          <li class="checklist-title">Application-wide configuration is set</li>
+          <li>The Common UOM list includes the units of measure that span multiple item master records.</li>
+          <li>The Roll Forward report column mapping reflects the document and order types your organization actually uses.</li>
+          <li>The cardex deletion policy matches your organization&rsquo;s data retention requirements.</li>
+        </ul>
+
+        <h2>Offset Accounts</h2>
+
+        <ul class="checklist">
+          <li class="checklist-title">Offset account mappings are complete</li>
+          <li>Every variance source that produces a JE export has an offset account configured.</li>
+          <li>The configured GL accounts exist in the chart of accounts and are open for posting.</li>
+          <li>A test export from the Offset Account widget produces an Excel file with no &ldquo;TBD&rdquo; entries other than expected ones.</li>
+          <li>If multiple companies use different offset account schemes, each company&rsquo;s mappings have been reviewed individually.</li>
+        </ul>
+
+        <h2>Users</h2>
+
+        <ul class="checklist">
+          <li class="checklist-title">User access is appropriate</li>
+          <li>Every user who needs access has an account.</li>
+          <li>Departed staff have been removed.</li>
+          <li>Each user&rsquo;s authorized functions and tabs match their role (inventory accountants don&rsquo;t see PO Receipts admin functions; A/P clerks don&rsquo;t see inventory configuration).</li>
+          <li>Per-module company access is set correctly for each user.</li>
+          <li>At least one administrator other than yourself exists, so the system isn&rsquo;t single-administrator-dependent.</li>
+        </ul>
+
+        <h2>Operational Readiness</h2>
+
+        <ul class="checklist">
+          <li class="checklist-title">The application is ready for end-users</li>
+          <li>The nightly JDE-to-RapidReconciler import has run successfully at least once.</li>
+          <li>Both status lights on the Reconciliation page are green for the periods end-users will work with.</li>
+          <li>A representative end-user from each role family (inventory, A/P) has logged in, completed their <a href="start-here-inventory.html">Start Here</a> or <a href="start-here-ap.html">Start Here</a> orientation, and confirmed they can see what they need to see.</li>
+          <li>End-users know how to contact you (or the support inbox) when something doesn&rsquo;t look right.</li>
+        </ul>
+
+        <h2>What to Do When the Checklist Surfaces a Problem</h2>
+
+        <div class="callout tip">
+          <div class="callout-label">If a company is missing or misconfigured</div>
+          <p>Resolve through <a href="javascript:void(0)" onclick="showView('topic-company')">Company Management</a> (for already-licensed companies) or <a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a> (if the company is not yet licensed).</p>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-label">If offset accounts are missing or stale</div>
+          <p>Update the affected mappings in <a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a>. Re-export from the Offset Account widget to verify the change took effect.</p>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-label">If user access is wrong</div>
+          <p>Edit the affected user(s) in <a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a>. For departed staff, deactivate or remove rather than just clearing module access &mdash; this keeps the active user list clean.</p>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-label">If the nightly import has not run or produced errors</div>
+          <p>This is operational rather than configuration. Contact the team that runs the import jobs (typically IT or the JDE administration team). RapidReconciler administrators do not own the import schedule itself.</p>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-overview')">Next: About Administration &rarr;</button>
+        </div>
+      </section>
+
 
       <section id="topic-overview" class="view">
 <h1>About Administration</h1>
@@ -1759,6 +2209,124 @@ Thank you,</div>
         <button class="back-btn" onclick="goHome()">← Back to Index</button>
         <button class="next-btn done-btn" onclick="goHome()">Done — Back to Index ✓</button>
       </div>
+      </section>
+
+      <section id="topic-self-check" class="view">
+        <h1>Self-Check</h1>
+        <p>Six scenarios to test your reading. Read each one, decide what you&rsquo;d do, and click <strong>Where to find this</strong> to confirm. If a scenario surprises you or you&rsquo;d guess wrong, that&rsquo;s the topic to re-read &mdash; not a failure. Administrator decisions tend to be infrequent and high-consequence; the value of these scenarios is in surfacing the judgment patterns rather than memorizing facts.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <div class="self-check-stack">
+
+          <div class="self-check-card">
+            <div class="self-check-num">Scenario 1</div>
+            <p class="scenario">A new RapidReconciler deployment. You&rsquo;ve been given admin access. The customer has three licensed JDE companies and you need to onboard ten end-users (six inventory accountants, four AP clerks).</p>
+            <p class="prompt">What order do you configure things in &mdash; companies first, users first, settings first? Why?</p>
+            <a class="where" href="javascript:void(0)" onclick="showView('topic-first-setup')">Where to find this: <strong>Your First Setup &rarr; Recommended Sequence</strong></a>
+          </div>
+
+          <div class="self-check-card">
+            <div class="self-check-num">Scenario 2</div>
+            <p class="scenario">You&rsquo;re inheriting an existing RapidReconciler instance from a previous admin. The instance has been running for two years.</p>
+            <p class="prompt">What&rsquo;s the most common configuration finding in a handoff like this, and what tool does this doc give you to surface it?</p>
+            <a class="where" href="javascript:void(0)" onclick="showView('topic-first-setup')">Where to find this: <strong>Your First Setup &rarr; If You Are Inheriting an Existing Deployment</strong></a>
+          </div>
+
+          <div class="self-check-card">
+            <div class="self-check-num">Scenario 3</div>
+            <p class="scenario">An end-user reports that their Offset Account widget Excel exports are showing &ldquo;TBD&rdquo; in the offset column for several variance rows.</p>
+            <p class="prompt">What&rsquo;s the configuration gap, and which procedural topic do you fix it in?</p>
+            <a class="where" href="javascript:void(0)" onclick="showView('topic-pre-launch')">Where to find this: <strong>Pre-launch Checklist &rarr; Offset Accounts</strong></a>
+          </div>
+
+          <div class="self-check-card">
+            <div class="self-check-num">Scenario 4</div>
+            <p class="scenario">An end-user opens a support ticket: &ldquo;The Reconciliation page shows totally wrong numbers for company 00010 today &mdash; way off from what JDE shows.&rdquo;</p>
+            <p class="prompt">Is this likely a configuration issue you own, an operational issue someone else owns, or a user error? What do you check first to decide?</p>
+            <a class="where" href="javascript:void(0)" onclick="showView('topic-pre-launch')">Where to find this: <strong>Pre-launch Checklist &rarr; What to do when the checklist surfaces a problem</strong></a>
+          </div>
+
+          <div class="self-check-card">
+            <div class="self-check-num">Scenario 5</div>
+            <p class="scenario">The customer just licensed a new JDE company through GSI. You see the license is in place. End-users are asking when they can start using it.</p>
+            <p class="prompt">What four things do you do (in order) before announcing the new company is available?</p>
+            <a class="where" href="javascript:void(0)" onclick="showView('topic-first-setup')">Where to find this: <strong>Your First Setup &rarr; If You Are Adding a Company After Initial Deployment</strong></a>
+          </div>
+
+          <div class="self-check-card">
+            <div class="self-check-num">Scenario 6</div>
+            <p class="scenario">A user complains that they can see the Inventory module but not the In Transit module &mdash; they need both for their role.</p>
+            <p class="prompt">Where in the configuration is this controlled, and what specific setting do you change?</p>
+            <a class="where" href="javascript:void(0)" onclick="showView('topic-what-you-configure')">Where to find this: <strong>What You Configure &rarr; Users</strong></a>
+          </div>
+
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-label">How to use this</div>
+          <p>The questions don&rsquo;t have a score. They&rsquo;re a self-test for whether the doc landed. If three or more felt uncertain, the doc didn&rsquo;t land and is worth a re-read &mdash; ideally with the specific topic each scenario points to. If they all felt obvious, you&rsquo;re ready to walk the Pre-launch Checklist for your specific deployment.</p>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">← Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-vocabulary')">Next: Vocabulary →</button>
+        </div>
+      </section>
+
+      <section id="topic-vocabulary" class="view">
+        <h1>Vocabulary</h1>
+        <p>RapidReconciler-specific terms relevant to the administrator role. Each entry is a one-line definition plus a link to the topic that explains it in depth. Skim once for awareness; come back when a term comes up in a configuration screen and you want to remember what it meant.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <dl class="glossary">
+
+          <dt>AAI document type</dt>
+          <dd>Per-company configuration that tells RapidReconciler which JDE document types apply to inventory transactions for that company. Drives the AAI-based account derivation in the Variance Calculation. <a href="javascript:void(0)" onclick="showView('topic-company')">Company Management</a>.</dd>
+
+          <dt>Authorized functions</dt>
+          <dd>Per-user permissions for what actions a user can take inside a module (e.g., apply a suspension, post a JE export, edit a note). Configured in <a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a> alongside authorized tabs.</dd>
+
+          <dt>Authorized tabs</dt>
+          <dd>Per-user permissions for which views (tabs) a user sees inside a module. Used to hide irrelevant pages from users whose role doesn&rsquo;t need them &mdash; e.g., an A/P clerk doesn&rsquo;t need to see the Inventory Reconciliation page.</dd>
+
+          <dt>Common UOM</dt>
+          <dd>Application-wide list of units of measure that span multiple item master records, used to restate quantities across items for analysis on the As-Of page. Configured in <a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a>.</dd>
+
+          <dt>Company license</dt>
+          <dd>The mechanism that grants RapidReconciler access to a JDE company&rsquo;s data. Licensed at the GSI level; configured at the customer level. Adding a previously-unlicensed company requires a request to GSI support. <a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a>.</dd>
+
+          <dt>Fiscal year start date</dt>
+          <dd>Per-company configuration that tells RapidReconciler when each company&rsquo;s fiscal year begins. Drives period boundaries throughout the application. Must match what JDE has for the same company.</dd>
+
+          <dt>Offset account</dt>
+          <dd>The GL account configured to be used as the offset side of a variance journal entry. Configured per company per variance source. When end-users export from the Offset Account widget, the configured offset is filled in automatically; missing offsets show as &ldquo;TBD&rdquo;. <a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a>.</dd>
+
+          <dt>Per-module company access</dt>
+          <dd>The list of companies a user can see inside a specific module (Inventory, In Transit, PO Receipts). A user can have access to different sets of companies in different modules. Configured per-user in <a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a>.</dd>
+
+          <dt>Roll Forward report column mapping</dt>
+          <dd>Configuration that maps JDE document and order types to columns on the Roll Forward report. If end-users see a non-zero value in the Variance column at the right, a document or order type is missing from the mapping. <a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a>.</dd>
+
+          <dt>Suggested Entry popup</dt>
+          <dd>The end-user-facing popup that uses configured offset accounts to pre-build a variance JE for the user to review and post. Quality of this popup is directly proportional to the quality of offset account configuration.</dd>
+
+          <dt>Tolerance threshold</dt>
+          <dd>Per-company materiality threshold used to filter the Transactions page so end-users see only meaningful variances rather than sub-unit rounding noise. Differences below the threshold are excluded by default but still roll up into the Transactions line of the headline variance.</dd>
+
+          <dt>Tolerance Adjust line</dt>
+          <dd>An informational line on the Offset Account export representing the aggregate of sub-tolerance differences. Shown to end-users so they know it exists; they replace it with the correct GL account before pasting into JDE.</dd>
+
+        </dl>
+
+        <a class="xref" href="javascript:void(0)" onclick="showView('home')">
+          Back to <strong>Index</strong> for the full topic table.
+        </a>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">← Back to Index</button>
+        </div>
       </section>
 
     </main>
