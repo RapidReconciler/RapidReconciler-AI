@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Reconciling Inventory &mdash; RapidReconciler University</title>
+<title>Inventory Reconciliation Walkthrough &mdash; RapidReconciler University</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -25,8 +25,6 @@
     --text-muted:  #8a93a6;
     --rule:        #e1e7ef;
     --rule-strong: #c9d3e0;
-    --green:       #2e8b57;
-    --red:         #c0392b;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -72,19 +70,14 @@
     text-decoration: none;
     color: var(--navy);
   }
-
   .brand img { height: 42px; width: auto; display: block; }
-
   .brand-divider { width: 1px; height: 28px; background: var(--rule-strong); }
-
   .brand-product { display: flex; flex-direction: column; line-height: 1.1; }
-
   .brand-product-name {
     font-family: 'Source Sans 3', sans-serif;
     font-weight: 700; font-size: 17px; color: var(--navy);
     letter-spacing: -0.005em;
   }
-
   .brand-product-tag {
     font-size: 11px; color: var(--text-muted); font-weight: 500;
     letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px;
@@ -93,134 +86,168 @@
   nav.section-nav {
     display: flex; gap: 28px; font-size: 14px; font-weight: 600; margin-left: auto;
   }
-
   nav.section-nav a {
     color: var(--navy); text-decoration: none; position: relative; padding: 6px 0;
     transition: color 0.2s;
   }
-
   nav.section-nav a:hover { color: var(--blue); }
-
   nav.section-nav a::after {
     content: ''; position: absolute; left: 0; bottom: 0; width: 0;
     height: 2px; background: var(--orange); transition: width 0.3s ease;
   }
-
   nav.section-nav a:hover::after { width: 100%; }
-
   .nav-cta {
     background: var(--orange); color: #fff !important; padding: 10px 22px !important;
     border-radius: 4px; font-weight: 700 !important; font-size: 13px !important;
     transition: background 0.2s !important;
   }
-
   .nav-cta:hover { background: var(--orange-deep); color: #fff !important; }
   .nav-cta::after { display: none !important; }
 
-  /* ============== PAGE HEADER ============== */
-  /* PAGE HEADER (thin) */
-  .page-header { background: linear-gradient(180deg, var(--bg-soft) 0%, #fff 100%); border-bottom: 1px solid var(--rule); padding: 28px 0 24px; }
-  .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-soft); margin-bottom: 12px; flex-wrap: wrap; }
+  /* ============== PAGE HEADER (thin) ============== */
+  .page-header {
+    background: linear-gradient(180deg, var(--bg-soft) 0%, #fff 100%);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px;
+  }
+  .breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-soft);
+    margin-bottom: 12px; flex-wrap: wrap;
+  }
   .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 600; transition: color 0.2s; }
   .breadcrumb a:hover { text-decoration: underline; }
   .breadcrumb .sep { color: var(--rule-strong); }
   .breadcrumb .current { color: var(--text-soft); font-weight: 500; }
-  .page-title { font-family: 'Source Sans 3', sans-serif; font-weight: 800; font-size: clamp(28px, 3.6vw, 36px); line-height: 1.15; letter-spacing: -0.02em; color: var(--navy); margin: 0; }
-  .page-title em { color: var(--blue-bright); font-style: normal; }
+  .page-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 800; font-size: clamp(28px, 3.6vw, 36px);
+    line-height: 1.15; letter-spacing: -0.02em;
+    color: var(--navy);
+    margin: 0;
+  }
+  .page-title em {
+    color: var(--blue-bright); font-style: normal;
+  }
 
-  /* ============== CONTENT WRAPPER ============== */
-  .content-wrap {
+  /* ============== SPA LAYOUT (sidebar + content) ============== */
+  .spa-wrap {
     display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 64px;
-    padding: 56px 0 96px;
+    grid-template-columns: 280px 1fr;
+    gap: 48px;
+    padding: 48px 0 80px;
     align-items: start;
   }
 
-  /* TOC sidebar */
-  .toc {
+  aside.sidebar {
     position: sticky;
-    top: 100px;
-    border-left: 2px solid var(--rule-strong);
-    padding-left: 20px;
+    top: 96px;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px 0;
+    overflow: hidden;
   }
-
-  .toc h4 {
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--orange); margin-bottom: 14px;
-  }
-
-  .toc ul { list-style: none; }
-
-  .toc li { margin-bottom: 10px; }
-
-  .toc a {
-    color: var(--text-soft); text-decoration: none;
-    font-size: 13.5px; line-height: 1.4;
-    display: block; transition: color 0.2s, padding-left 0.2s;
-  }
-
-  .toc a:hover { color: var(--blue); padding-left: 4px; }
-
-  /* Article body */
-  article.doc-body {
-    max-width: 760px;
-  }
-
-  article.doc-body h2 {
+  .sidebar-title {
     font-family: 'Source Sans 3', sans-serif;
-    font-weight: 700; font-size: 28px;
-    color: var(--navy); margin-top: 48px; margin-bottom: 16px;
-    letter-spacing: -0.015em;
-    padding-bottom: 12px;
-    border-bottom: 2px solid var(--rule);
-    scroll-margin-top: 100px;
-  }
-
-  article.doc-body h2:first-child { margin-top: 0; }
-
-  article.doc-body h3 {
-    font-family: 'Source Sans 3', sans-serif;
-    font-weight: 700; font-size: 19px;
-    color: var(--navy); margin-top: 32px; margin-bottom: 12px;
-    letter-spacing: -0.01em;
-    scroll-margin-top: 100px;
-  }
-
-  article.doc-body h3 .num {
-    color: var(--blue-bright);
     font-weight: 700;
-    margin-right: 8px;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange);
+    padding: 0 24px 16px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 12px;
+  }
+  ul.sidebar-nav { list-style: none; }
+  ul.sidebar-nav li {}
+  ul.sidebar-nav li button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 11px 24px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14.5px;
+    color: var(--text);
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  ul.sidebar-nav li button:hover {
+    background: #fff;
+    color: var(--blue);
+    border-left-color: var(--blue-bright);
+  }
+  ul.sidebar-nav li.active button {
+    background: #fff;
+    color: var(--navy);
+    font-weight: 700;
+    border-left-color: var(--orange);
   }
 
-  article.doc-body p {
-    font-size: 15.5px; line-height: 1.7;
-    color: var(--text); margin-bottom: 16px;
+  main.content-card {
+    background: #fff;
+    min-width: 0; /* prevent grid blowout */
   }
 
-  article.doc-body p strong { color: var(--navy); font-weight: 700; }
+  /* SPA view switching */
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-  article.doc-body a {
+  /* ============== ARTICLE / TYPOGRAPHY ============== */
+  .view h1 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 36px;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+  .view h2 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 24px;
+    color: var(--navy);
+    margin-top: 40px; margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--rule);
+    letter-spacing: -0.015em;
+  }
+  .view h3 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 18px;
+    color: var(--navy);
+    margin-top: 28px; margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .view h4 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600; font-size: 15px;
+    color: var(--navy-soft);
+    margin-top: 20px; margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .view p {
+    font-size: 15px; line-height: 1.7; margin-bottom: 14px;
+    color: var(--text);
+  }
+  .view p strong { color: var(--navy); font-weight: 700; }
+  .view a {
     color: var(--blue); text-decoration: none;
     border-bottom: 1px solid var(--blue-pale);
     transition: color 0.2s, border-color 0.2s;
   }
-
-  article.doc-body a:hover {
-    color: var(--orange); border-bottom-color: var(--orange);
-  }
-
-  article.doc-body ul, article.doc-body ol {
-    margin: 0 0 20px 22px;
-    font-size: 15.5px; line-height: 1.7;
-  }
-
-  article.doc-body li { margin-bottom: 8px; color: var(--text); }
-
-  article.doc-body li strong { color: var(--navy); font-weight: 700; }
-
-  article.doc-body code {
+  .view a:hover { color: var(--orange); border-bottom-color: var(--orange); }
+  .view ul, .view ol { margin: 0 0 18px 22px; font-size: 15px; line-height: 1.7; }
+  .view li { margin-bottom: 6px; }
+  .view li strong { color: var(--navy); font-weight: 700; }
+  .view code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     background: var(--bg-panel);
@@ -230,172 +257,306 @@
   }
 
   /* Tables */
-  article.doc-body table {
+  .view table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0 28px;
+    margin: 18px 0 24px;
     font-size: 14px;
     border: 1px solid var(--rule);
     border-radius: 6px;
     overflow: hidden;
   }
-
-  article.doc-body thead {
-    background: var(--navy);
-    color: #fff;
+  .view thead { background: var(--navy); color: #fff; }
+  .view th {
+    text-align: left; padding: 12px 16px;
+    font-weight: 700; font-size: 12px;
+    letter-spacing: 0.06em; text-transform: uppercase;
   }
-
-  article.doc-body th {
-    text-align: left;
-    padding: 12px 16px;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+  .view td {
+    padding: 13px 16px; border-bottom: 1px solid var(--rule);
+    vertical-align: top; line-height: 1.55;
   }
-
-  article.doc-body td {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--rule);
-    vertical-align: top;
-    line-height: 1.55;
-  }
-
-  article.doc-body tr:last-child td { border-bottom: none; }
-
-  article.doc-body tbody tr:nth-child(even) { background: var(--bg-soft); }
-
-  article.doc-body tbody tr:hover { background: var(--blue-pale); }
-
-  article.doc-body td strong { color: var(--navy); }
+  .view tr:last-child td { border-bottom: none; }
+  .view tbody tr:nth-child(even) { background: var(--bg-soft); }
+  .view tbody tr:hover { background: var(--blue-pale); }
 
   /* Callouts */
-  .callout {
-    display: flex;
-    gap: 14px;
-    padding: 18px 22px;
+  .view .callout {
+    display: flex; gap: 14px;
+    padding: 16px 20px;
     border-radius: 6px;
-    margin: 24px 0;
+    margin: 22px 0;
     border-left: 4px solid;
   }
-
-  .callout-icon {
-    flex-shrink: 0;
-    width: 24px; height: 24px;
+  .view .callout-icon {
+    flex-shrink: 0; width: 24px; height: 24px;
     border-radius: 50%;
     display: grid; place-items: center;
-    font-weight: 700; font-size: 13px;
-    color: #fff;
+    font-weight: 700; font-size: 13px; color: #fff;
   }
-
-  .callout p { margin-bottom: 0; font-size: 14.5px; }
-
-  .callout.important {
-    background: #fef5e7;
-    border-color: var(--orange);
+  .view .callout p { margin-bottom: 0; font-size: 14.5px; }
+  .view .callout.important { background: #fef5e7; border-color: var(--orange); }
+  .view .callout.important .callout-icon { background: var(--orange); }
+  .view .callout.warning { background: #fef5e7; border-color: var(--orange); }
+  .view .callout.warning .callout-icon { background: var(--orange); }
+  .view .callout.note, .view .callout.tip, .view .callout.info {
+    background: var(--blue-pale); border-color: var(--blue);
   }
-
-  .callout.important .callout-icon { background: var(--orange); }
-
-  .callout.note {
-    background: var(--blue-pale);
-    border-color: var(--blue);
+  .view .callout.note .callout-icon, .view .callout.tip .callout-icon, .view .callout.info .callout-icon {
+    background: var(--blue);
   }
-
-  .callout.note .callout-icon { background: var(--blue); }
+  /* Original used callout-label as a heading inside the box */
+  .view .callout-label {
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+    font-size: 14.5px;
+  }
 
   /* Images */
-  article.doc-body img {
+  .view img, .view .screenshot {
     max-width: 100%;
     height: auto;
     border: 1px solid var(--rule);
     border-radius: 6px;
-    margin: 12px 0;
+    margin: 14px 0;
     background: var(--bg-soft);
   }
 
-  .img-row {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin: 16px 0;
-  }
-
-  .img-row img { flex: 1; min-width: 240px; margin: 0; }
-
-  /* Inline icons inside table cells */
-  article.doc-body td img {
-    display: inline-block;
-    margin: 0 6px 0 0;
-    vertical-align: middle;
-    border: 1px solid var(--rule);
-    background: #fff;
-    padding: 2px;
-    border-radius: 3px;
-  }
-
-  /* Footer nav (prev/next, back) */
-  .doc-footer-nav {
-    margin-top: 64px;
-    padding-top: 32px;
-    border-top: 1px solid var(--rule);
+  /* Topic footer nav (back to index, prev/next) */
+  .topic-footer-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
     gap: 16px;
     flex-wrap: wrap;
   }
-
-  .back-link {
-    display: inline-flex; align-items: center; gap: 8px;
-    color: var(--blue); text-decoration: none;
-    font-weight: 600; font-size: 14px;
+  .back-btn, .next-btn {
+    background: transparent;
     border: 1px solid var(--rule-strong);
+    color: var(--navy);
     padding: 10px 18px;
     border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
     transition: all 0.2s;
   }
-
-  .back-link:hover {
-    background: var(--navy); color: #fff; border-color: var(--navy);
+  .back-btn:hover, .next-btn:hover {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .next-btn {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: #fff;
+  }
+  .next-btn:hover {
+    background: var(--orange-deep);
+    border-color: var(--orange-deep);
   }
 
-  .support-link {
-    font-size: 14px; color: var(--text-soft);
+  /* Email card / video link styling from original */
+  .view .email-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 20px;
+    margin: 18px 0;
   }
-
-  .support-link a {
-    color: var(--blue); font-weight: 600; text-decoration: none;
+  .view .email-card .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
   }
+  .view .email-card .addr {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--navy);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .view .email-compose-btn {
+    display: inline-block;
+    background: var(--orange);
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    border: none !important;
+  }
+  .view .email-compose-btn:hover { background: var(--orange-deep); }
 
-  .support-link a:hover { color: var(--orange); }
+  .view .video-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue-pale);
+    color: var(--blue) !important;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    border: none !important;
+    margin: 6px 0;
+  }
+  .view .video-link:hover { background: var(--blue); color: #fff !important; }
+
+  /* Hide original branding header/yellow bar/sidebar (we replace with GSI nav) */
+  .blue-header, .yellow-bar, aside.sidebar.original { display: none; }
+
+  /* Diamond divider — give it GSI styling */
+  .view .diamond-divider {
+    text-align: center;
+    margin: 28px 0;
+  }
+  .view .diamond {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--orange);
+    transform: rotate(45deg);
+  }
 
   /* ============== FOOTER ============== */
-  /* ============== FOOTER (thin, single line) ============== */
-  footer { background: var(--navy-deep); color: rgba(255,255,255,0.7); padding: 18px 0; font-size: 13px; border-top: 3px solid var(--blue); }
-  .footer-line { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
-  .footer-line strong { color: #fff; font-weight: 700; }
-  .footer-line a { color: var(--blue-bright); text-decoration: none; transition: color 0.15s; }
-  .footer-line a:hover { color: #fff; }
-  .footer-sep { color: rgba(255,255,255,0.25); margin: 0 6px; }
+  /* ============== EXTRA CLASSES (PO Receipts Walkthrough) ============== */
+  /* Lead paragraph */
+  .view .lead {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--text-soft);
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+  .view .lead strong { color: var(--navy); font-weight: 700; }
 
-  /* ============== RESPONSIVE ============== */
-  @media (max-width: 960px) {
-    .content-wrap { grid-template-columns: 1fr; gap: 32px; }
-    .toc { position: static; border-left: none; padding-left: 0;
-           border-top: 2px solid var(--rule-strong); padding-top: 20px; }
-    .toc ul { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  /* "principle" callout variant - blue tone for guiding principles */
+  .view .callout.principle {
+    background: var(--blue-pale);
+    border-color: var(--blue);
+  }
+  .view .callout.principle .callout-icon { background: var(--blue); }
+
+  /* Checklist - styled as a card with rule-bordered items */
+  .view .checklist {
+    list-style: none;
+    margin: 16px 0 24px;
+    padding: 0;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .view .checklist .checklist-title {
+    background: var(--navy);
+    color: #fff;
+    padding: 10px 18px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .view .checklist li {
+    padding: 12px 18px 12px 46px;
+    position: relative;
+    margin-bottom: 0;
+    border-top: 1px solid var(--rule);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .view .checklist li::before {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 16px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--rule-strong);
+    border-radius: 3px;
+    background: #fff;
   }
 
-  @media (max-width: 800px) {
-    .container { padding: 0 22px; }
-    nav.section-nav { display: none; }
-    .footer-line { gap: 12px; font-size: 12px; }
-    .doc-footer-nav { flex-direction: column; align-items: flex-start; }
+  /* Status pills (green/yellow/red) */
+  .view .status-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+  .view .status-pill.green { background: #e2efd9; color: #3d6927; border: 1px solid #b3d49a; }
+  .view .status-pill.yellow { background: #fef5e7; color: #8a5a0c; border: 1px solid #f5cb35; }
+  .view .status-pill.red { background: #fdeae5; color: #8a3520; border: 1px solid #e8a895; }
+
+  /* Step badge inline */
+  .view .step-badge {
+    display: inline-block;
+    background: var(--orange);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    margin-right: 8px;
   }
 
-  /* Process flow diagram (SVG) */
-  .flow-container {
+  /* num-cell for table sequence numbers */
+  .view td.num-cell {
+    width: 36px;
+    text-align: center;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    color: var(--orange);
+    font-size: 15px;
+  }
+
+  /* Key-value cards (KV grid) */
+  .view .kv-grid {
+    display: grid;
+    gap: 16px;
+    margin: 18px 0 24px;
+  }
+  .view .kv-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 16px 18px;
+  }
+  .view .kv-card .kv-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .view .kv-card .kv-value {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .view .kv-card .kv-value strong { color: var(--navy); }
+
+  /* Flow container (for SVG flowchart) */
+  .view .flow-container {
     background: var(--bg-soft);
     border: 1px solid var(--rule);
     border-radius: 8px;
@@ -404,35 +565,240 @@
     overflow-x: auto;
     text-align: center;
   }
-  .flow-svg {
-    max-width: 100%;
-    height: auto;
-    display: inline-block;
+  .view .flow-svg { max-width: 100%; height: auto; display: inline-block; }
+
+  /* Sidebar section label (for grouping nav items) */
+  .sidebar-section-label {
+    padding: 16px 24px 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-top: 1px solid var(--rule);
+    margin-top: 8px;
   }
-  /* Checkbox-style list (markdown task lists) */
-  .checklist {
-    list-style: none;
-    margin: 16px 0 24px 0 !important;
-    padding: 0;
-  }
-  .checklist li {
-    padding: 8px 0 8px 32px;
-    position: relative;
-    font-size: 15px;
-  }
-  .checklist li::before {
-    content: '';
+  .sidebar-section-label:first-of-type { border-top: none; margin-top: 0; }
+
+  /* Step number indicator for sidebar items */
+  ul.sidebar-nav li.step-num button { padding-left: 50px; position: relative; }
+  ul.sidebar-nav li.step-num button::before {
+    content: counter(step-counter);
     position: absolute;
-    left: 0;
-    top: 12px;
-    width: 18px;
-    height: 18px;
-    border: 2px solid var(--rule-strong);
-    border-radius: 3px;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--orange);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  ul#sidebar-steps { counter-reset: step-counter; }
+  ul#sidebar-steps li.step-num { counter-increment: step-counter; }
+
+  /* ============== FOOTER (thin, single line) ============== */
+  footer {
+    background: var(--navy-deep);
+    color: rgba(255,255,255,0.7);
+    padding: 18px 0;
+    font-size: 13px;
+    border-top: 3px solid var(--blue);
+  }
+  .footer-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .footer-line strong { color: #fff; font-weight: 700; }
+  .footer-line a {
+    color: var(--blue-bright);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .footer-line a:hover { color: #fff; }
+  .footer-sep { color: rgba(255,255,255,0.25); margin: 0 6px; }
+
+
+  /* ============== EXTRA: page-meta, figure/figcaption, xref, quick-ref, done btn ============== */
+  .view .page-meta {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .view .page-meta .meta-item { display: inline-flex; align-items: center; gap: 6px; }
+  .view .page-meta .meta-item strong { color: var(--text-soft); font-weight: 600; }
+  .view .page-meta kbd {
     background: #fff;
+    border: 1px solid var(--rule-strong);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--navy);
   }
 
-  </style>
+  .view figure { margin: 22px 0; }
+  .view figure img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--bg-soft);
+  }
+  .view figcaption {
+    font-size: 13px;
+    color: var(--text-soft);
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.55;
+    padding: 0 8px;
+  }
+  .view figcaption strong {
+    display: block;
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 13.5px;
+    margin-bottom: 3px;
+  }
+
+  .view .xref {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--blue-bright);
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    color: var(--text);
+    text-decoration: none !important;
+    border-bottom: 1px solid var(--rule) !important;
+    margin: 6px 0;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .view .xref:hover {
+    background: var(--blue-pale);
+    color: var(--navy) !important;
+    border-left-color: var(--blue) !important;
+  }
+  .view .xref::before { content: '↗'; color: var(--blue); font-weight: 700; }
+  .view .xref strong { color: var(--navy); font-weight: 700; }
+
+  .view .quick-ref {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--orange);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 18px 0;
+  }
+  .view .quick-ref-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 10px;
+  }
+  .view .quick-ref dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 18px;
+    margin: 0;
+  }
+  .view .quick-ref dt {
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 13.5px;
+  }
+  .view .quick-ref dd {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--text-soft);
+  }
+
+  /* Multi-paragraph callout wrapper */
+  .view .callout > div { flex: 1; }
+  .view .callout > div p { margin-bottom: 10px; font-size: 14.5px; }
+  .view .callout > div p:last-child { margin-bottom: 0; }
+
+  :root { --green: #2e8b57; }
+  .view .topic-footer-nav .done-btn {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+    border: 1px solid;
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .view .topic-footer-nav .done-btn:hover {
+    background: #246e44;
+    border-color: #246e44;
+  }
+
+  .view tbody tr.highlight-row { background: var(--blue-pale) !important; }
+  .view tbody tr.highlight-row:hover { background: var(--blue-pale) !important; }
+
+  /* SVG flow container styling */
+  .view .flow-container {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+    text-align: center;
+  }
+  .view .flow-svg { max-width: 100%; height: auto; display: inline-block; }
+
+  /* Variance source heading style for inside Step 2.2 */
+  .view .variance-source {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--navy);
+    margin-top: 28px;
+    margin-bottom: 8px;
+    padding-left: 12px;
+    border-left: 4px solid var(--orange);
+  }
+
+  /* ============== RESPONSIVE ============== */
+  @media (max-width: 960px) {
+    .spa-wrap { grid-template-columns: 1fr; gap: 28px; }
+    aside.sidebar { position: static; }
+  }
+  @media (max-width: 800px) {
+    .container { padding: 0 22px; }
+    nav.section-nav { display: none; }
+    .footer-line { gap: 12px; font-size: 12px; }
+  }
+</style>
 </head>
 <body>
 
@@ -466,51 +832,134 @@
       <span class="sep">/</span>
       <a href="rapidreconciler-university.html#inventory">Inventory</a>
       <span class="sep">/</span>
-      <span class="current">Reconciling Inventory</span>
+      <span class="current">Inventory Reconciliation Walkthrough</span>
     </div>
-    <h1 class="page-title">Reconciling <em>Inventory</em></h1>
+    <h1 class="page-title">Inventory Reconciliation <em>Walkthrough</em></h1>
   </div>
 </section>
 
-<!-- ============ CONTENT ============ -->
+<!-- ============ SPA LAYOUT ============ -->
 <div class="container">
-  <div class="content-wrap">
-    <aside class="toc">
-      <h4>On this page</h4>
-      <ul>
-        <li><a href="#audience">Who This Guide Is For</a></li>
-        <li><a href="#process">The Process at a Glance</a></li>
-        <li><a href="#before">Before You Begin</a></li>
-        <li><a href="#step-1">Step 1: Select Data</a></li>
-        <li><a href="#step-2">Step 2: Investigate Variances</a></li>
-        <li><a href="#step-3">Step 3: Period-End Closing</a></li>
-        <li><a href="#step-4">Step 4: Integrity Reports</a></li>
-        <li><a href="#reference">Reference Material</a></li>
-        <li><a href="#pitfalls">Common Pitfalls</a></li>
-        <li><a href="#more-help">Where to Get More Help</a></li>
+  <div class="spa-wrap">
+    <aside class="sidebar">
+            <div class="sidebar-title">Inventory Reconciliation Walkthrough</div>
+
+      <div class="sidebar-section-label">Overview</div>
+      <ul class="sidebar-nav">
+        <li data-target="home"><button onclick="showView('home')">Index</button></li>
+        <li data-target="process"><button onclick="showView('topic-process')">Process at a Glance</button></li>
+      </ul>
+
+      <div class="sidebar-section-label">Reconciliation Steps</div>
+      <ul class="sidebar-nav" id="sidebar-steps">
+        <li data-target="step1" class="step-num"><button onclick="showView('topic-step1')">Select data &amp; check the system</button></li>
+        <li data-target="step2" class="step-num"><button onclick="showView('topic-step2')">Read Valuation, investigate variances</button></li>
+        <li data-target="step3" class="step-num"><button onclick="showView('topic-step3')">Period-end closing activities</button></li>
+        <li data-target="step4" class="step-num"><button onclick="showView('topic-step4')">Review the Integrity Reports</button></li>
+      </ul>
+
+      <div class="sidebar-section-label">Reference</div>
+      <ul class="sidebar-nav">
+        <li data-target="reference"><button onclick="showView('topic-reference')">Reference Material</button></li>
+        <li data-target="pitfalls"><button onclick="showView('topic-pitfalls')">Pitfalls &amp; Getting Help</button></li>
       </ul>
     </aside>
 
-    <article class="doc-body">
-      
-<p style="font-size:17px; color:var(--text-soft); margin-bottom:32px;">
-A practical, step-by-step guide for reconciling JD Edwards perpetual inventory (F4111) to the general ledger (F0902) using RapidReconciler.
-</p>
+    <main class="content-card">
 
-<h2 id="audience">Who This Guide Is For</h2>
+      <!-- ============ INDEX (HOME) VIEW ============ -->
+      <section id="home" class="view active">
+        <h1>Inventory Reconciliation Walkthrough</h1>
+        <p class="lead">A practical, step-by-step guide for reconciling JD Edwards perpetual inventory (F4111) to the general ledger (F0902) using RapidReconciler.</p>
 
-<p>You should use this guide if you are responsible for closing inventory accounts at period-end, or for monitoring inventory variances during the period. It assumes you have a RapidReconciler login and access to JD Edwards for making corrections.</p>
+        <div class="page-meta">
+          <span class="meta-item"><strong>Last reviewed:</strong>&nbsp;January 2026</span>
+          <span class="meta-item"><strong>Reading time:</strong>&nbsp;~25 minutes</span>
+          <span class="meta-item">Press <kbd>Ctrl</kbd>+<kbd>F</kbd> (or <kbd>&#8984;</kbd>+<kbd>F</kbd>) to search this page</span>
+        </div>
 
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>Important:</strong> RapidReconciler is read-only. It identifies what is out of balance and where the discrepancy originates &mdash; but every correction is made in JD Edwards, not in RapidReconciler. Data refreshes nightly; transactions entered today won&rsquo;t appear until tomorrow.</p>
-</div>
+        <div class="diamond-divider"><span class="diamond"></span></div>
 
-<h2 id="process">The Reconciliation Process at a Glance</h2>
+        <h2>Who This Guide Is For</h2>
 
-<p>The diagram below shows the end-to-end reconciliation flow at a glance. Each step is detailed in the four-step process below.</p>
+        <p>You should use this guide if you are responsible for closing inventory accounts at period-end, or for monitoring inventory variances during the period. It assumes you have a RapidReconciler login and access to JD Edwards for making corrections.</p>
 
-<div class="flow-container">
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>Important.</strong> RapidReconciler is read-only. It identifies what is out of balance and where the discrepancy originates &mdash; but every correction is made in JD Edwards, not in RapidReconciler. Data refreshes nightly; transactions entered today won&rsquo;t appear until tomorrow.</p>
+          </div>
+        </div>
+
+        <h2>The Four Steps</h2>
+
+        <p>The reconciliation process breaks into four steps. Steps 1 and 2 are run daily or weekly during the period; Steps 3 and 4 are period-end activities. See <a href="javascript:void(0)" onclick="showView('topic-process')">Process at a Glance</a> for the full flowchart and frequency table.</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:6%;">#</th><th style="width:36%;">Step</th><th>What It Does</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="num-cell">1</td><td><a href="javascript:void(0)" onclick="showView('topic-step1')">Select data &amp; check the system</a></td><td>Confirm both status lights are green, then choose the period and account filters.</td></tr>
+            <tr><td class="num-cell">2</td><td><a href="javascript:void(0)" onclick="showView('topic-step2')">Read Valuation, investigate variances</a></td><td>Read the Valuation section, then work through every non-zero line in the Variance Calculation section.</td></tr>
+            <tr><td class="num-cell">3</td><td><a href="javascript:void(0)" onclick="showView('topic-step3')">Period-end closing activities</a></td><td>Run the pre-close checklist, post the closing JE, and produce the Audit Report.</td></tr>
+            <tr><td class="num-cell">4</td><td><a href="javascript:void(0)" onclick="showView('topic-step4')">Review the Integrity Reports</a></td><td>Review Reports 2&ndash;6 monthly, plus other reports when triggered.</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Before You Begin</h2>
+
+        <h3>What You Need</h3>
+
+        <table>
+          <thead>
+            <tr><th style="width:28%;">Item</th><th>Requirement</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>RapidReconciler login</strong></td><td>Provided by your administrator.</td></tr>
+            <tr><td><strong>Browser</strong></td><td>Chrome, Edge, Firefox, or Safari.</td></tr>
+            <tr><td><strong>Network</strong></td><td>Office network or VPN.</td></tr>
+            <tr><td><strong>JD Edwards access</strong></td><td>Required for making corrections.</td></tr>
+            <tr><td><strong>Account permissions</strong></td><td>Confirm with your administrator which companies and accounts you can see.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Key JD Edwards Tables Behind the Scenes</h3>
+
+        <p>You won&rsquo;t query these directly, but understanding what RapidReconciler is comparing helps when investigating variances.</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:18%;">Table</th><th>What It Holds</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong><code>F4111</code></strong></td><td>Item Ledger &mdash; every inventory transaction.</td></tr>
+            <tr><td><strong><code>F41021</code></strong></td><td>Item Location &mdash; current on-hand balances.</td></tr>
+            <tr><td><strong><code>F0902</code></strong></td><td>Account Balances &mdash; GL period-end totals.</td></tr>
+            <tr><td><strong><code>F0911</code></strong></td><td>Account Ledger &mdash; GL transaction detail.</td></tr>
+            <tr><td><strong><code>F4095</code></strong></td><td>Distribution/Manufacturing AAI Values.</td></tr>
+            <tr><td><strong><code>F4101</code> / <code>F4102</code></strong></td><td>Item Master / Item Branch.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout principle">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Key principle.</strong> RapidReconciler tells you <em>what</em> is out of balance and <em>where</em> the discrepancy originates &mdash; but every correction lands in JD Edwards. Don&rsquo;t adjust the GL on stale data; both status lights must be green and the latest import must be complete.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PROCESS AT A GLANCE ============ -->
+      <section id="topic-process" class="view">
+        <h1>The Reconciliation Process at a Glance</h1>
+        <p>The diagram below shows the end-to-end reconciliation flow at a glance. Each step is detailed in the sidebar topics 1 through 4.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>Reconciliation Flowchart</h2>
+
+        <div class="flow-container">
   <svg class="flow-svg" viewBox="0 0 880 1380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flowchart showing the inventory reconciliation process from login through to integrity report review">
     <defs>
       <marker id="arrowFlow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
@@ -723,476 +1172,583 @@ A practical, step-by-step guide for reconciling JD Edwards perpetual inventory (
   </svg>
 </div>
 
-<h3 id="how-often"><span class="num">&sect;</span>How Often to Run Each Step</h3>
-
-<table>
-  <thead>
-    <tr><th>Activity</th><th style="width:30%;">Frequency</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Steps 1 and 2 &mdash; Monitor and investigate variances</td><td>Daily or weekly</td></tr>
-    <tr><td>Steps 3 and 4 &mdash; Closing activities and integrity reviews</td><td>Period-end only</td></tr>
-  </tbody>
-</table>
-
-<h2 id="before">Before You Begin</h2>
-
-<h3 id="what-you-need"><span class="num">&sect;</span>What You Need</h3>
-
-<table>
-  <thead>
-    <tr><th style="width:28%;">Item</th><th>Requirement</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>RapidReconciler login</strong></td><td>Provided by your administrator</td></tr>
-    <tr><td><strong>Browser</strong></td><td>Chrome, Edge, Firefox, or Safari</td></tr>
-    <tr><td><strong>Network</strong></td><td>Office network or VPN</td></tr>
-    <tr><td><strong>JD Edwards access</strong></td><td>Required for making corrections</td></tr>
-    <tr><td><strong>Account permissions</strong></td><td>Confirm with your administrator which companies and accounts you can see</td></tr>
-  </tbody>
-</table>
-
-<h3 id="jde-tables"><span class="num">&sect;</span>Key JD Edwards Tables Behind the Scenes</h3>
-
-<p>You won&rsquo;t query these directly, but understanding what RapidReconciler is comparing helps when investigating variances.</p>
-
-<table>
-  <thead>
-    <tr><th style="width:18%;">Table</th><th>What It Holds</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>F4111</strong></td><td>Item Ledger &mdash; every inventory transaction</td></tr>
-    <tr><td><strong>F41021</strong></td><td>Item Location &mdash; current on-hand balances</td></tr>
-    <tr><td><strong>F0902</strong></td><td>Account Balances &mdash; GL period-end totals</td></tr>
-    <tr><td><strong>F0911</strong></td><td>Account Ledger &mdash; GL transaction detail</td></tr>
-    <tr><td><strong>F4095</strong></td><td>Distribution/Manufacturing AAI Values</td></tr>
-    <tr><td><strong>F4101 / F4102</strong></td><td>Item Master / Item Branch</td></tr>
-  </tbody>
-</table>
-
-<h2 id="step-1">Step 1: Select the Right Data and Confirm the System Is Ready</h2>
-
-<h3 id="s1-1"><span class="num">1.1</span>Log in and check the status lights</h3>
-
-<p>Both status indicators at the top center of the Reconciliation page <strong>must be green</strong> before you make any GL adjustments.</p>
-
-<table>
-  <thead>
-    <tr><th style="width:18%;">Light</th><th>Green Means</th><th>Red Means</th><th>What To Do If Red</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Inventory Validation</strong></td><td>Carry-forward from prior period is accurate</td><td>Likely an unposted batch in the prior period</td><td>Hover for details; resolve the prior period first</td></tr>
-    <tr><td><strong>System Status</strong></td><td>Last JD Edwards import succeeded</td><td>Import error</td><td>Hover for details; contact your administrator</td></tr>
-  </tbody>
-</table>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>Flashing yellow on System Status</strong> means the import is still running. Wait for it to finish before reviewing data.</p>
-</div>
-
-<h3 id="s1-2"><span class="num">1.2</span>Select the period and apply filters</h3>
-
-<ul>
-  <li>Use the <strong>period selector</strong> in the top-right corner. New periods appear automatically as cardex transactions are entered in JD Edwards.</li>
-  <li>Apply filters in left-to-right order: <strong>Company &rarr; Business Unit &rarr; Object &rarr; Subsidiary</strong>. Removing a company also removes its child entities.</li>
-  <li>Filter and period selections persist as you move between pages within the inventory module.</li>
-</ul>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>Tip:</strong> If the screen looks stale or columns don&rsquo;t refresh, click the refresh icon in the top-right corner.</p>
-</div>
-
-<h2 id="step-2">Step 2: Read the Valuation Section, Then Investigate Variances</h2>
-
-<h3 id="s2-1"><span class="num">2.1</span>Check the Valuation section</h3>
-
-<p>The Valuation section answers one question: <em>does perpetual match the GL for this period and these accounts?</em></p>
-
-<table>
-  <thead>
-    <tr><th style="width:24%;">Field</th><th>What It Shows</th><th>Source</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>GL Balance</strong></td><td>General ledger total</td><td>F0902 &mdash; should match your trial balance exactly</td></tr>
-    <tr><td><strong>Perpetual Balance</strong></td><td>Summarized cardex total</td><td>F4111, summarized by RapidReconciler</td></tr>
-    <tr><td><strong>Out of Balance</strong></td><td>The difference</td><td>Zero = fully reconciled</td></tr>
-  </tbody>
-</table>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>Out of Balance = $0</strong> &rarr; Inventory is reconciled. Stop here.<br>
-  <strong>Out of Balance &ne; $0</strong> &rarr; Continue to 2.2 and work through each variance source below.</p>
-</div>
-
-<h3 id="s2-2"><span class="num">2.2</span>Work through each variance source</h3>
-
-<p>Every non-zero line in the Variance Calculation section needs attention. The sum of these lines equals the total Out of Balance amount.</p>
-
-<h4 style="font-family:'Source Sans 3'; font-weight:700; font-size:17px; color:var(--navy); margin-top:24px; margin-bottom:8px;">Carry Forward</h4>
-<p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">The variance from the prior period that wasn&rsquo;t fully cleared.</p>
-
-<p><strong>Why it happens:</strong> A prior-period variance was left unresolved at close.</p>
-
-<p><strong>How to fix it:</strong></p>
-<ul>
-  <li>Go back to the prior period and resolve the original issue if possible.</li>
-  <li>If the prior period is closed and the amount is immaterial, roll it into this period&rsquo;s manual JE &mdash; and document the decision for audit.</li>
-</ul>
-
-<h4 style="font-family:'Source Sans 3'; font-weight:700; font-size:17px; color:var(--navy); margin-top:28px; margin-bottom:8px;">GL Batches</h4>
-<p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">GL detail entries (F0911) where the batch hasn&rsquo;t been posted yet.</p>
-
-<p><strong>Why it happens:</strong> Batches sit unposted because of approval holds, posting errors, or missing batch headers.</p>
-
-<p><strong>How to fix it:</strong></p>
-<ul>
-  <li>Work with finance to identify and post outstanding batches.</li>
-  <li>A <strong>bell icon</strong> on this row flags batches unposted for more than 2 days &mdash; treat as urgent.</li>
-  <li>For a missing batch header, run the JD Edwards Missing Batch Header report, rebuild the header, and repost.</li>
-</ul>
-
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>Must be $0 before closing the period.</strong> Don&rsquo;t proceed to Step 3 with this line non-zero.</p>
-</div>
-
-<h4 style="font-family:'Source Sans 3'; font-weight:700; font-size:17px; color:var(--navy); margin-top:28px; margin-bottom:8px;">End of Day</h4>
-<p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">Item ledger records (F4111) that don&rsquo;t yet have a batch number or GL date.</p>
-
-<p><strong>Why it happens:</strong> Ship confirmations, material issues, and work order completions create item ledger records immediately, but the GL batch isn&rsquo;t created until <strong>Sales Update (R42800)</strong> or <strong>Manufacturing Accounting (R31802A)</strong> runs &mdash; usually nightly.</p>
-
-<p><strong>How to fix it:</strong></p>
-<ul>
-  <li>A <strong>bell icon</strong> flags orders open more than 2 days &mdash; investigate why nightly jobs haven&rsquo;t picked them up.</li>
-  <li>Confirm Sales Update and Manufacturing Accounting are scheduled and completing.</li>
-  <li>Engage IT for chronically stuck orders.</li>
-</ul>
-
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>Must be $0 before closing the period.</strong></p>
-</div>
-
-<h4 style="font-family:'Source Sans 3'; font-weight:700; font-size:17px; color:var(--navy); margin-top:28px; margin-bottom:8px;">Transactions</h4>
-<p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">Dollar differences between an item ledger transaction (F4111) and its GL entry (F0911) &mdash; where the two don&rsquo;t match on company, account, fiscal period, document type, document number, order number, or batch number.</p>
-
-<p><strong>Why it happens:</strong> DMAAI misconfiguration, fiscal period mismatches from backdated transactions, intercompany settlements landing in unexpected accounts, and direct ship handling.</p>
-
-<p><strong>How to fix it:</strong></p>
-<ul>
-  <li>Go to the <strong>Transactions page</strong> (see <a href="#ref-transactions">Reference: Transactions Page</a>) and review each row.</li>
-  <li>Use the Transaction Detail report (the <strong>+</strong> icon) to find the root cause.</li>
-  <li>The corrective action is <strong>always an offsetting manual JE in JD Edwards</strong> &mdash; the original transaction is final and can&rsquo;t be rewritten.</li>
-  <li>Add a note in RapidReconciler for each resolved item so the audit trail is complete.</li>
-</ul>
-
-<h4 style="font-family:'Source Sans 3'; font-weight:700; font-size:17px; color:var(--navy); margin-top:28px; margin-bottom:8px;">Cardex</h4>
-<p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">Items where summarized item ledger (F4111) doesn&rsquo;t match on-hand balance in F41021.</p>
-
-<table>
-  <thead>
-    <tr><th style="width:24%;">Variance Type</th><th>Meaning</th><th>How to Resolve</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Quantity variance</strong></td><td>F4111 quantity &ne; F41021 quantity</td><td>Requires an IT SQL correction &mdash; cannot be fixed through normal JDE transactions</td></tr>
-    <tr><td><strong>Amount variance</strong></td><td>F4111 extended cost &ne; F41021 value</td><td>Dollars-only IA adjustment in JD Edwards</td></tr>
-  </tbody>
-</table>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>How to find them:</strong> Open the <strong>Cardex Integrity pop-up</strong> in RapidReconciler. It lists only items with variances and tells you which type. Always validate against JD Edwards before adjusting.</p>
-</div>
-
-<h4 style="font-family:'Source Sans 3'; font-weight:700; font-size:17px; color:var(--navy); margin-top:28px; margin-bottom:8px;">Manual Journal Entries</h4>
-<p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">Manual entries posted directly to the inventory GL account.</p>
-
-<p>These are surfaced here so they&rsquo;re visible inside the reconciliation. No corrective action &mdash; this line confirms manual entries are accounted for in the variance math.</p>
-
-<h3 id="s2-3"><span class="num">2.3</span>Use the supporting widgets to dig in</h3>
-
-<p>These tools sit alongside the variance lines and help you find and resolve issues faster.</p>
-
-<table>
-  <thead>
-    <tr><th style="width:24%;">Widget</th><th>When To Use It</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Drill Down Widget</strong></td><td>Multi-company environments &mdash; see which account holds the largest variance. Click sections to drill from currency code through company, business unit, object, and subsidiary.</td></tr>
-    <tr><td><strong>Out of Balance History Graph</strong></td><td>Shows variance trends across the last 14 periods. Use it to tell whether a variance is recurring or a one-off. Click any data point to jump to that period.</td></tr>
-    <tr><td><strong>Offset Account Widget (star icon)</strong></td><td>Hover over the End of Day or Transactions row. Opens a pop-up listing the inventory account and suggested offset for each variance, exportable to Excel. <em>Period-end close tool &mdash; mid-period entries won&rsquo;t reflect.</em></td></tr>
-    <tr><td><strong>Journal Entry Button</strong></td><td>Produces an Excel report of GL and perpetual balances for account-level JEs when you don&rsquo;t need transaction-level detail.</td></tr>
-  </tbody>
-</table>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>About the Offset Account export:</strong> The <code>je_account</code> column will include rows for the inventory side, a "Tolerance Adjust" line for sub-unit rounding, and "TBD" placeholders for any variance rows without a configured offset. Replace "Tolerance Adjust" and "TBD" with the correct GL accounts before pasting into JD Edwards.</p>
-</div>
-
-<h2 id="step-3">Step 3: Period-End Closing Activities</h2>
-
-<p>Only do this once Step 2 is fully worked through.</p>
-
-<h3 id="s3-1"><span class="num">3.1</span>Pre-close checklist</h3>
-
-<p>Confirm all of the following before posting your closing JE:</p>
-
-<ul class="checklist">
-  <li><strong>GL Batches</strong> variance = $0</li>
-  <li><strong>End of Day</strong> variance = $0</li>
-  <li><strong>Transaction</strong> variances reviewed; offsetting JEs prepared</li>
-  <li><strong>Carry Forward</strong> accounted for in the manual entry (if applicable)</li>
-</ul>
-
-<h3 id="s3-2"><span class="num">3.2</span>Post the closing journal entry</h3>
-
-<p>Choose the right tool based on what you&rsquo;re posting:</p>
-
-<table>
-  <thead>
-    <tr><th style="width:34%;">What You&rsquo;re Posting</th><th>Tool To Use</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Account-level amounts</strong></td><td>Journal Entry button &mdash; produces an Excel report of GL and perpetual balances</td></tr>
-    <tr><td><strong>Transaction-level amounts</strong></td><td>Offset Account widget (star icon) &mdash; export to Excel, replace "TBD" with real accounts, paste two rightmost columns into JD Edwards</td></tr>
-  </tbody>
-</table>
-
-<p>After posting, <strong>wait for the next nightly import</strong> and confirm Out of Balance returns to $0.</p>
-
-<h3 id="s3-3"><span class="num">3.3</span>Produce and save the Audit Report</h3>
-
-<p>The Audit Report is your permanent record of the period&rsquo;s reconciliation. <strong>Produce it for every period and save it externally</strong> &mdash; detail data may be removed during a future purge.</p>
-
-<p>The report contains:</p>
-
-<table>
-  <thead>
-    <tr><th style="width:30%;">Section</th><th>What&rsquo;s In It</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Accounts Summary</strong></td><td>Valuation and variance summary for each account</td></tr>
-    <tr><td><strong>Unposted GL Batches</strong></td><td>Any remaining unposted batches</td></tr>
-    <tr><td><strong>End of Day</strong></td><td>Work orders or sales orders still awaiting processing</td></tr>
-    <tr><td><strong>Manual Journal Entries</strong></td><td>All manual entries posted to the account</td></tr>
-    <tr><td><strong>Variances</strong></td><td>Transaction variances with your notes</td></tr>
-    <tr><td><strong>Perpetual Details</strong></td><td>Item balances and values at period end</td></tr>
-  </tbody>
-</table>
-
-<p>Output: Excel or PDF.</p>
-
-<h2 id="step-4">Step 4: Review the Integrity Reports</h2>
-
-<p>Integrity reports surface JD Edwards configuration issues that <em>cause</em> future variances. Review them at install and then <strong>monthly</strong> at period-end.</p>
-
-<h3 id="s4-1"><span class="num">4.1</span>The reports you must review monthly</h3>
-
-<table>
-  <thead>
-    <tr><th style="width:14%;">Report</th><th style="width:22%;">Name</th><th>What It Catches</th><th>How to Resolve</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Report 2</strong></td><td>DMAAI Entry Integrity</td><td>Business unit/object/subsidiary mismatches and net-zero accounts in DMAAI tables</td><td>Correct the AAI entries in JD Edwards</td></tr>
-    <tr><td><strong>Report 3</strong></td><td>Excluded GL Classes</td><td>Items whose GL class isn&rsquo;t in the model DMAAI table 4152 &mdash; their values are excluded from the reconciliation</td><td>Add the GL class to the model, or confirm exclusion is intentional</td></tr>
-    <tr><td><strong>Report 4</strong></td><td>UOM Conversion Integrity</td><td>Items whose transaction UOM differs from the primary UOM with no conversion factor (causes -9999 in the As-Of quantity column)</td><td>Add the direct conversion in JD Edwards</td></tr>
-    <tr><td><strong>Report 5</strong></td><td>GL Class Integrity</td><td>Items where the GL class on F4102 doesn&rsquo;t match one or more F41021 location records</td><td>Correct in JD Edwards using the proper GL class change procedure</td></tr>
-    <tr><td><strong>Report 6</strong></td><td>Frozen Cost Integrity</td><td>Items where F30026 frozen cost &ne; F4105 method 07 ledger cost</td><td>Re-roll the cost in JD Edwards (equivalent to running R30543)</td></tr>
-  </tbody>
-</table>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p>Items clear from these reports automatically after the next nightly refresh once the underlying JDE data is corrected.</p>
-</div>
-
-<h3 id="s4-2"><span class="num">4.2</span>Other reports &mdash; review when triggered</h3>
-
-<table>
-  <thead>
-    <tr><th style="width:36%;">Report</th><th>When to Review</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Report 0 &mdash; JDE DMAAs</strong></td><td>Debugging only &mdash; when investigating Transactions page items</td></tr>
-    <tr><td><strong>Report 1 &mdash; Model AAI Table</strong></td><td>Before any GL adjustments &mdash; confirms DMAAI 4152 is accurate</td></tr>
-    <tr><td><strong>Report 7 &mdash; Duplicate Item Costs</strong></td><td>When alerted at login &mdash; causes the import to fail; correct in JDE immediately</td></tr>
-    <tr><td><strong>Report 8 &mdash; Duplicate Sales Integrity</strong></td><td>When items appear &mdash; typically caused by Sales Update failures; resolve via cycle count and manual JE; contact <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> for help</td></tr>
-    <tr><td><strong>Report 9 &mdash; Clean Cutoff Integrity</strong></td><td>Informational &mdash; items where cardex creation period &ne; GL date period; no action required, review for accrual opportunities</td></tr>
-    <tr><td><strong>Report 10 &mdash; Items Missing Branch Records</strong></td><td>When items appear &mdash; severe data integrity issue; contact IT immediately</td></tr>
-  </tbody>
-</table>
-
-<h2 id="reference">Reference Material</h2>
-
-<p>The sections below are reference info you&rsquo;ll dip into during Step 2 &mdash; they support the workflow rather than being a separate process.</p>
-
-<h3 id="ref-layout"><span class="num">&sect;</span>Reference: The Reconciliation Page Layout</h3>
-
-<p>The Reconciliation page is the default page after login. It has four parts you&rsquo;ll use throughout the process:</p>
-
-<ul>
-  <li><strong>Status indicators</strong> (top center) &mdash; both must be green; see Step 1.1.</li>
-  <li><strong>Period selector</strong> (top right) &mdash; driven by the reconciliation start date your administrator configured. If more than 14 periods exist, ask your administrator about a purge.</li>
-  <li><strong>Account filters</strong> (left-to-right hierarchy) &mdash; Company &rarr; Business Unit &rarr; Object &rarr; Subsidiary. Use the search row at the top of each column to filter within it.</li>
-  <li><strong>Valuation and Variance Calculation sections</strong> &mdash; covered in Step 2.</li>
-</ul>
-
-<p>To open the <strong>Inventory Validation Report</strong>, click directly on the Inventory Validation status light. This report is your starting point any time that light is red.</p>
-
-<h3 id="ref-transactions"><span class="num">&sect;</span>Reference: The Transactions Page</h3>
-
-<p>Use this page when the <strong>Transactions</strong> line in the Variance Calculation is non-zero.</p>
-
-<p><strong>What&rsquo;s listed:</strong> Documents where F4111 doesn&rsquo;t match F0911. Fully reconciled transactions don&rsquo;t appear.</p>
-
-<p><strong>Tolerance:</strong> Transactions differing by less than 1 monetary unit are excluded by default, but their amounts still roll up into the Transactions line of the variance. Administrators can change this threshold.</p>
-
-<p><strong>Filters:</strong></p>
-
-<table>
-  <thead>
-    <tr><th style="width:26%;">Filter</th><th>Options</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Type</td><td>Inventory, Sales, Manufacturing, Purchasing</td></tr>
-    <tr><td>Sub Type</td><td>Accounts, Periods, Transfers, Intercompany, Direct Ship, Voucher Variance</td></tr>
-    <tr><td>Order Type</td><td>JDE order type</td></tr>
-    <tr><td>Document Type</td><td>JDE document type</td></tr>
-  </tbody>
-</table>
-
-<p><strong>Filter widget tips:</strong></p>
-<ul>
-  <li><strong>Target icon</strong> isolates one value and hides others in that category.</li>
-  <li><strong>Toggle switch</strong> turns a value on/off independently &mdash; useful for stacking views (e.g., target Sales, then toggle Inventory back on).</li>
-</ul>
-
-<p><strong>Subtotals widget</strong> has a <strong>Type</strong> dropdown that groups totals by Type, Sub Type, Order Type, or Document Type.</p>
-
-<p><strong>Transaction Detail report:</strong> Click the <strong>+</strong> icon at the left of any row to expand. The green icon exports detail to Excel. Six sections:</p>
-
-<table>
-  <thead>
-    <tr><th style="width:30%;">Section</th><th>What It Shows</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>1 &mdash; Unassigned Account</strong></td><td>Cardex transactions whose GL class isn&rsquo;t in the model DMAAI table &mdash; stock items belong here</td></tr>
-    <tr><td><strong>2 &mdash; F4111 Cardex</strong></td><td>All cardex rows for the selected company, document type, and document number</td></tr>
-    <tr><td><strong>3 &mdash; F0911 GL</strong></td><td>All GL rows for the same company, document type, and document number</td></tr>
-    <tr><td><strong>4 &mdash; RapidReconciler</strong></td><td>How RR matches and summarizes &mdash; one row = match; multiple rows = mismatch</td></tr>
-    <tr><td><strong>5 &mdash; Order Data</strong></td><td>All lines for the related sales order or PO; for intercompany, related order info</td></tr>
-    <tr><td><strong>6 &mdash; DMAAIs</strong></td><td>All DMAAI entries for each GL class involved; first row is from the model table</td></tr>
-  </tbody>
-</table>
-
-<p><strong>Analysis tips:</strong></p>
-<ul>
-  <li>Verify company number, account number, and period end date align across Sections 2 and 3.</li>
-  <li>For single-sided IT transfers, cardex shows only the "from" side and GL nets to $0.</li>
-  <li>Account differences between Sections 2 and 3 &rarr; check DMAAI setup in Section 6.</li>
-</ul>
-
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>Corrective action for every Transactions page item:</strong> offsetting JE in JD Edwards plus a note in RapidReconciler.</p>
-</div>
-
-<h3 id="ref-asof"><span class="num">&sect;</span>Reference: The As-Of Page</h3>
-
-<p>The supporting detail behind the Perpetual Balance shown in the Valuation section. Use it when you need to see balances at the item, branch, location, or lot level.</p>
-
-<p><strong>Important behavior:</strong></p>
-<ul>
-  <li>Amounts are <strong>summarized F4111 from the balance forward</strong> &mdash; not a snapshot of item balance &times; unit cost.</li>
-  <li>Items can have a value with no quantity. This is expected &mdash; see the <a href="inventory-zero-balance.html">Zero Balance Adjustments</a> guide.</li>
-  <li><strong>-9999</strong> in the Quantity on Hand column means a UOM conversion factor is missing (Integrity Report 4).</li>
-</ul>
-
-<p><strong>Filters</strong> (combinable, all match from start of value): Item Number, Branch Plant, Location, Lot. The <strong>Totals</strong> row sums all visible rows.</p>
-
-<p><strong>Detail section controls:</strong></p>
-<ul>
-  <li><strong>Daily As-Of dropdown</strong> &mdash; view inventory as of any single day in the period. Clear it before comparing to the Reconciliation page perpetual total (which uses period end).</li>
-  <li><strong>Common UOM</strong> &mdash; restates quantities across items in one UOM for easier analysis (administrator must configure).</li>
-  <li><strong>Summarize by Item</strong> &mdash; collapses location and lot detail to branch + item level; nets offsetting positives and negatives.</li>
-  <li><strong>Plus icon</strong> &mdash; expands transaction detail for any row; exportable.</li>
-  <li><strong>Row Count</strong> &mdash; top right; pagination kicks in above 250 rows.</li>
-</ul>
-
-<p><strong>Key columns:</strong></p>
-
-<table>
-  <thead>
-    <tr><th style="width:18%;">Column</th><th>Meaning</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>CurrCost</strong></td><td>Current item cost from the cost ledger; period-independent</td></tr>
-    <tr><td><strong>CalcCost</strong></td><td>Amount &divide; Quantity on Hand; zero when quantity is zero</td></tr>
-    <tr><td><strong>QtyVar</strong></td><td>F4111 summarized quantity vs. F41021 quantity</td></tr>
-    <tr><td><strong>AmtVar</strong></td><td>F4111 summarized extended cost vs. F41021 value</td></tr>
-  </tbody>
-</table>
-
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>GL class code changes:</strong> Changing a GL class without following the proper procedure produces multiple rows for the same item on the As-Of grid. Correct procedure: (1) adjust inventory to zero under the original code, (2) update the code at all hierarchy levels (item branch, item location, open orders), (3) adjust inventory back in under the new code.</p>
-</div>
-
-<h3 id="ref-rollfwd"><span class="num">&sect;</span>Reference: The Roll Forward Page</h3>
-
-<p>Lists item activity across a date range, with document and order types mapped to report columns by your administrator. <strong>Informational &mdash; not part of the standard reconciliation flow.</strong></p>
-
-<p><strong>Validation:</strong> Look at the rightmost <strong>Variance</strong> column. Any non-zero value means a document or order type may be missing from the report configuration &mdash; ask your administrator to review.</p>
-
-<h2 id="pitfalls">Common Pitfalls and Tips</h2>
-
-<p>A few things worth keeping in mind as you work through the process:</p>
-
-<ul>
-  <li><strong>Never adjust the GL on stale data.</strong> Both status lights must be green and the latest import must be complete. Acting on red or yellow data is how variances get baked in for future periods.</li>
-  <li><strong>Carry-forward rolls.</strong> A small variance left in one period reappears as Carry Forward next period &mdash; and compounds. Resolve in the period it originates whenever possible.</li>
-  <li><strong>DMAAI is the usual suspect for Transactions variances.</strong> Before assuming a transaction is broken, check Section 6 of the Transaction Detail report.</li>
-  <li><strong>Cardex variances split two ways.</strong> Quantity variances need IT (SQL); amount variances need a dollars-only IA in JDE. The Cardex Integrity pop-up tells you which.</li>
-  <li><strong>Save Audit Reports externally.</strong> Don&rsquo;t rely on RapidReconciler retaining detail data forever &mdash; purges happen.</li>
-  <li><strong>Watch for repeating variances.</strong> The Out of Balance History Graph is the fastest way to tell whether you have a chronic configuration issue or a one-off.</li>
-</ul>
-
-<h2 id="more-help">Where to Get More Help</h2>
-
-<table>
-  <thead>
-    <tr><th style="width:38%;">Topic</th><th>Document</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Login, navigation, first-time setup</td><td><a href="getting-started-with-rapidreconciler.html">Getting Started with RapidReconciler</a></td></tr>
-    <tr><td>DMAAI tables, GL account assignment, period-end logic</td><td><a href="inventory-reference-guide.html">Inventory Key Concepts</a></td></tr>
-    <tr><td>JDE vs. RapidReconciler reconciliation, timing, backdating</td><td>Stock Status and Trial Balance Reconciliation Guide</td></tr>
-    <tr><td>DMAAI model table process and refresh</td><td><a href="inventory-add-account-rr.html">Managing Inventory Accounts</a></td></tr>
-    <tr><td>Item ledger balances, posting codes, dates</td><td><a href="inventory-item-ledger.html">Working with the Item Ledger</a></td></tr>
-    <tr><td>DMAAI setup, GL class codes, business unit</td><td><a href="distribution-aais.html">Ultimate DMAAI Guide</a></td></tr>
-    <tr><td>GL class code change procedure</td><td><a href="inventory-gl-class-codes.html">Managing GL Class Codes</a></td></tr>
-    <tr><td>UOM changes and cardex impact</td><td><a href="inventory-uom.html">About Units of Measure</a></td></tr>
-    <tr><td>Cost methods, cost levels, F4105</td><td><a href="inventory-costing.html">Product Costing Guide</a></td></tr>
-    <tr><td>Zero balance adjustments</td><td><a href="inventory-zero-balance.html">Zero Balance Adjustments</a></td></tr>
-    <tr><td>Cardex variance &mdash; standard vs. average cost</td><td><a href="inventory-cardex-variance.html">Handling Cardex Variance</a></td></tr>
-    <tr><td>Sales order types, AAIs, JEs, common issues</td><td>Sales Order Reference Guide</td></tr>
-    <tr><td>In Transit module &mdash; concepts and use</td><td><a href="transfer-order-reference.html">In Transit Key Concepts</a> / <a href="in-transit-rec-walkthrough.html">Using the Application</a></td></tr>
-    <tr><td>PO Receipts module &mdash; concepts and use</td><td><a href="purchase-order-reference.html">PO Receipts Key Concepts</a> / <a href="po-receipts-walkthrough.html">Using the Application</a></td></tr>
-    <tr><td>Companies, users, settings, offset accounts</td><td><a href="administrator-walkthrough.html">Administrator Responsibilities</a></td></tr>
-    <tr><td>Support</td><td><a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a></td></tr>
-  </tbody>
-</table>
-
-
-      <div class="doc-footer-nav">
-        <a href="rapidreconciler-university.html#inventory" class="back-link">&larr; Back to Inventory</a>
-        <span class="support-link">Need help? <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a></span>
-      </div>
-    </article>
+        <h2>How Often to Run Each Step</h2>
+
+        <table>
+          <thead>
+            <tr><th>Activity</th><th style="width:30%;">Frequency</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><a href="javascript:void(0)" onclick="showView('topic-step1')">Step&nbsp;1</a> and <a href="javascript:void(0)" onclick="showView('topic-step2')">Step&nbsp;2</a> &mdash; Monitor and investigate variances</td><td>Daily or weekly</td></tr>
+            <tr><td><a href="javascript:void(0)" onclick="showView('topic-step3')">Step&nbsp;3</a> and <a href="javascript:void(0)" onclick="showView('topic-step4')">Step&nbsp;4</a> &mdash; Closing activities and integrity reviews</td><td>Period-end only</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Reading the chart.</strong> Solid black arrows are the main path. Red arrows show stop-and-fix branches; green arrows show clean exits. Dashed arrows are loops back to earlier steps (e.g., wait for nightly refresh, then re-evaluate).</p>
+          </div>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-step1')">Start: Step 1 &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 1 ============ -->
+      <section id="topic-step1" class="view">
+        <h1>Step 1 &mdash; Select the Right Data and Confirm the System Is Ready</h1>
+        <p>Before reading any numbers, make sure RapidReconciler has fresh, accurate data and you&rsquo;re looking at the right slice of it. Two checks: status lights, then period and account filters.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>1.1 &nbsp; Log in and check the status lights</h2>
+
+        <p>Both status indicators at the top center of the Reconciliation page <strong>must be green</strong> before you make any GL adjustments.</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:18%;">Light</th><th>Green Means</th><th>Red Means</th><th>What To Do If Red</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Inventory Validation</strong></td><td>Carry-forward from prior period is accurate.</td><td>Likely an unposted batch in the prior period.</td><td>Hover for details; resolve the prior period first.</td></tr>
+            <tr><td><strong>System Status</strong></td><td>Last JD Edwards import succeeded.</td><td>Import error.</td><td>Hover for details; contact your administrator.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Flashing yellow on System Status</strong> means the import is still running. Wait for it to finish before reviewing data.</p>
+          </div>
+        </div>
+
+        <h2>1.2 &nbsp; Select the period and apply filters</h2>
+
+        <ul>
+          <li>Use the <strong>period selector</strong> in the top-right corner. New periods appear automatically as cardex transactions are entered in JD Edwards.</li>
+          <li>Apply filters in left-to-right order: <strong>Company &rarr; Business Unit &rarr; Object &rarr; Subsidiary</strong>. Removing a company also removes its child entities.</li>
+          <li>Filter and period selections persist as you move between pages within the inventory module.</li>
+        </ul>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Tip.</strong> If the screen looks stale or columns don&rsquo;t refresh, click the refresh icon in the top-right corner.</p>
+          </div>
+        </div>
+
+        <a class="xref" href="javascript:void(0)" onclick="showView('topic-reference')">
+          See <strong>Reference Material &rarr; The Reconciliation Page Layout</strong> for a full tour of the page.
+        </a>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-step2')">Next: Read Valuation, investigate variances &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 2 ============ -->
+      <section id="topic-step2" class="view">
+        <h1>Step 2 &mdash; Read the Valuation Section, Then Investigate Variances</h1>
+        <p>Step 2 has two parts. First you read the Valuation section to see whether perpetual matches the GL. If it doesn&rsquo;t, you work through every non-zero line in the Variance Calculation section &mdash; each line points to a specific source of the discrepancy.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>2.1 &nbsp; Check the Valuation section</h2>
+
+        <p>The Valuation section answers one question: <em>does perpetual match the GL for this period and these accounts?</em></p>
+
+        <table>
+          <thead>
+            <tr><th style="width:24%;">Field</th><th>What It Shows</th><th>Source</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>GL Balance</strong></td><td>General ledger total.</td><td><code>F0902</code> &mdash; should match your trial balance exactly.</td></tr>
+            <tr><td><strong>Perpetual Balance</strong></td><td>Summarized cardex total.</td><td><code>F4111</code>, summarized by RapidReconciler.</td></tr>
+            <tr><td><strong>Out of Balance</strong></td><td>The difference.</td><td>Zero = fully reconciled.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Out of Balance = $0</strong> &rarr; Inventory is reconciled. Stop here.</p>
+            <p><strong>Out of Balance &ne; $0</strong> &rarr; Continue to 2.2 and work through each variance source below.</p>
+          </div>
+        </div>
+
+        <h2>2.2 &nbsp; Work through each variance source</h2>
+
+        <p>Every non-zero line in the Variance Calculation section needs attention. The sum of these lines equals the total Out of Balance amount.</p>
+
+        <h3 class="variance-source">Carry Forward</h3>
+        <p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">The variance from the prior period that wasn&rsquo;t fully cleared.</p>
+
+        <p><strong>Why it happens:</strong> A prior-period variance was left unresolved at close.</p>
+
+        <p><strong>How to fix it:</strong></p>
+        <ul>
+          <li>Go back to the prior period and resolve the original issue if possible.</li>
+          <li>If the prior period is closed and the amount is immaterial, roll it into this period&rsquo;s manual JE &mdash; and document the decision for audit.</li>
+        </ul>
+
+        <h3 class="variance-source">GL Batches</h3>
+        <p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">GL detail entries (<code>F0911</code>) where the batch hasn&rsquo;t been posted yet.</p>
+
+        <p><strong>Why it happens:</strong> Batches sit unposted because of approval holds, posting errors, or missing batch headers.</p>
+
+        <p><strong>How to fix it:</strong></p>
+        <ul>
+          <li>Work with finance to identify and post outstanding batches.</li>
+          <li>A <strong>bell icon</strong> on this row flags batches unposted for more than 2 days &mdash; treat as urgent.</li>
+          <li>For a missing batch header, run the JD Edwards Missing Batch Header report, rebuild the header, and repost.</li>
+        </ul>
+
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>Must be $0 before closing the period.</strong> Don&rsquo;t proceed to Step 3 with this line non-zero.</p>
+          </div>
+        </div>
+
+        <h3 class="variance-source">End of Day</h3>
+        <p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">Item ledger records (<code>F4111</code>) that don&rsquo;t yet have a batch number or GL date.</p>
+
+        <p><strong>Why it happens:</strong> Ship confirmations, material issues, and work order completions create item ledger records immediately, but the GL batch isn&rsquo;t created until <strong>Sales Update (R42800)</strong> or <strong>Manufacturing Accounting (R31802A)</strong> runs &mdash; usually nightly.</p>
+
+        <p><strong>How to fix it:</strong></p>
+        <ul>
+          <li>A <strong>bell icon</strong> flags orders open more than 2 days &mdash; investigate why nightly jobs haven&rsquo;t picked them up.</li>
+          <li>Confirm Sales Update and Manufacturing Accounting are scheduled and completing.</li>
+          <li>Engage IT for chronically stuck orders.</li>
+        </ul>
+
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>Must be $0 before closing the period.</strong></p>
+          </div>
+        </div>
+
+        <h3 class="variance-source">Transactions</h3>
+        <p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">Dollar differences between an item ledger transaction (<code>F4111</code>) and its GL entry (<code>F0911</code>) &mdash; where the two don&rsquo;t match on company, account, fiscal period, document type, document number, order number, or batch number.</p>
+
+        <p><strong>Why it happens:</strong> DMAAI misconfiguration, fiscal period mismatches from backdated transactions, intercompany settlements landing in unexpected accounts, and direct ship handling.</p>
+
+        <p><strong>How to fix it:</strong></p>
+        <ul>
+          <li>Go to the <strong>Transactions page</strong> (see <a href="javascript:void(0)" onclick="showView('topic-reference')">Reference Material &rarr; The Transactions Page</a>) and review each row.</li>
+          <li>Use the Transaction Detail report (the <strong>+</strong> icon) to find the root cause.</li>
+          <li>The corrective action is <strong>always an offsetting manual JE in JD Edwards</strong> &mdash; the original transaction is final and can&rsquo;t be rewritten.</li>
+          <li>Add a note in RapidReconciler for each resolved item so the audit trail is complete.</li>
+        </ul>
+
+        <h3 class="variance-source">Cardex</h3>
+        <p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">Items where summarized item ledger (<code>F4111</code>) doesn&rsquo;t match on-hand balance in <code>F41021</code>.</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:24%;">Variance Type</th><th>Meaning</th><th>How to Resolve</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Quantity variance</strong></td><td><code>F4111</code> quantity &ne; <code>F41021</code> quantity.</td><td>Requires an IT SQL correction &mdash; cannot be fixed through normal JDE transactions.</td></tr>
+            <tr><td><strong>Amount variance</strong></td><td><code>F4111</code> extended cost &ne; <code>F41021</code> value.</td><td>Dollars-only IA adjustment in JD Edwards.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>How to find them.</strong> Open the <strong>Cardex Integrity pop-up</strong> in RapidReconciler. It lists only items with variances and tells you which type. Always validate against JD Edwards before adjusting. See the <a href="cardex-variance.html">Handling Cardex Variance</a> guide for the full procedure.</p>
+          </div>
+        </div>
+
+        <h3 class="variance-source">Manual Journal Entries</h3>
+        <p style="font-style:italic; color:var(--text-soft); margin-bottom:14px;">Manual entries posted directly to the inventory GL account.</p>
+
+        <p>These are surfaced here so they&rsquo;re visible inside the reconciliation. No corrective action &mdash; this line confirms manual entries are accounted for in the variance math.</p>
+
+        <h2>2.3 &nbsp; Use the supporting widgets to dig in</h2>
+
+        <p>These tools sit alongside the variance lines and help you find and resolve issues faster.</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:24%;">Widget</th><th>When To Use It</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Drill Down Widget</strong></td><td>Multi-company environments &mdash; see which account holds the largest variance. Click sections to drill from currency code through company, business unit, object, and subsidiary.</td></tr>
+            <tr><td><strong>Out of Balance History Graph</strong></td><td>Shows variance trends across the last 14 periods. Use it to tell whether a variance is recurring or a one-off. Click any data point to jump to that period.</td></tr>
+            <tr><td><strong>Offset Account Widget (star icon)</strong></td><td>Hover over the End of Day or Transactions row. Opens a pop-up listing the inventory account and suggested offset for each variance, exportable to Excel. <em>Period-end close tool &mdash; mid-period entries won&rsquo;t reflect.</em></td></tr>
+            <tr><td><strong>Journal Entry Button</strong></td><td>Produces an Excel report of GL and perpetual balances for account-level JEs when you don&rsquo;t need transaction-level detail.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>About the Offset Account export.</strong> The <code>je_account</code> column will include rows for the inventory side, a &ldquo;Tolerance Adjust&rdquo; line for sub-unit rounding, and &ldquo;TBD&rdquo; placeholders for any variance rows without a configured offset. Replace &ldquo;Tolerance Adjust&rdquo; and &ldquo;TBD&rdquo; with the correct GL accounts before pasting into JD Edwards.</p>
+          </div>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-step3')">Next: Period-end closing activities &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 3 ============ -->
+      <section id="topic-step3" class="view">
+        <h1>Step 3 &mdash; Period-End Closing Activities</h1>
+        <p>Only do this once Step 2 is fully worked through. The closing activities have three parts: pre-close checklist, post the closing JE, and produce the Audit Report.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>3.1 &nbsp; Pre-close checklist</h2>
+
+        <p>Confirm all of the following before posting your closing JE:</p>
+
+        <ul class="checklist">
+          <li class="checklist-title">Pre-close requirements</li>
+          <li><strong>GL Batches</strong> variance = $0.</li>
+          <li><strong>End of Day</strong> variance = $0.</li>
+          <li><strong>Transaction</strong> variances reviewed; offsetting JEs prepared.</li>
+          <li><strong>Carry Forward</strong> accounted for in the manual entry (if applicable).</li>
+        </ul>
+
+        <h2>3.2 &nbsp; Post the closing journal entry</h2>
+
+        <p>Choose the right tool based on what you&rsquo;re posting:</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:34%;">What You&rsquo;re Posting</th><th>Tool To Use</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Account-level amounts</strong></td><td>Journal Entry button &mdash; produces an Excel report of GL and perpetual balances.</td></tr>
+            <tr><td><strong>Transaction-level amounts</strong></td><td>Offset Account widget (star icon) &mdash; export to Excel, replace &ldquo;TBD&rdquo; with real accounts, paste two rightmost columns into JD Edwards.</td></tr>
+          </tbody>
+        </table>
+
+        <p>After posting, <strong>wait for the next nightly import</strong> and confirm Out of Balance returns to $0.</p>
+
+        <h2>3.3 &nbsp; Produce and save the Audit Report</h2>
+
+        <p>The Audit Report is your permanent record of the period&rsquo;s reconciliation. <strong>Produce it for every period and save it externally</strong> &mdash; detail data may be removed during a future purge.</p>
+
+        <p>The report contains:</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:30%;">Section</th><th>What&rsquo;s In It</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Accounts Summary</strong></td><td>Valuation and variance summary for each account.</td></tr>
+            <tr><td><strong>Unposted GL Batches</strong></td><td>Any remaining unposted batches.</td></tr>
+            <tr><td><strong>End of Day</strong></td><td>Work orders or sales orders still awaiting processing.</td></tr>
+            <tr><td><strong>Manual Journal Entries</strong></td><td>All manual entries posted to the account.</td></tr>
+            <tr><td><strong>Variances</strong></td><td>Transaction variances with your notes.</td></tr>
+            <tr><td><strong>Perpetual Details</strong></td><td>Item balances and values at period end.</td></tr>
+          </tbody>
+        </table>
+
+        <p>Output: Excel or PDF.</p>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-step4')">Next: Review the Integrity Reports &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 4 ============ -->
+      <section id="topic-step4" class="view">
+        <h1>Step 4 &mdash; Review the Integrity Reports</h1>
+        <p>Integrity reports surface JD Edwards configuration issues that <em>cause</em> future variances. Review them at install and then <strong>monthly</strong> at period-end.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>4.1 &nbsp; The reports you must review monthly</h2>
+
+        <table>
+          <thead>
+            <tr><th style="width:14%;">Report</th><th style="width:22%;">Name</th><th>What It Catches</th><th>How to Resolve</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Report 2</strong></td><td>DMAAI Entry Integrity</td><td>Business unit/object/subsidiary mismatches and net-zero accounts in DMAAI tables.</td><td>Correct the AAI entries in JD Edwards.</td></tr>
+            <tr><td><strong>Report 3</strong></td><td>Excluded GL Classes</td><td>Items whose GL class isn&rsquo;t in the model DMAAI table 4152 &mdash; their values are excluded from the reconciliation.</td><td>Add the GL class to the model, or confirm exclusion is intentional.</td></tr>
+            <tr><td><strong>Report 4</strong></td><td>UOM Conversion Integrity</td><td>Items whose transaction UOM differs from the primary UOM with no conversion factor (causes <code>-9999</code> in the As-Of quantity column).</td><td>Add the direct conversion in JD Edwards.</td></tr>
+            <tr><td><strong>Report 5</strong></td><td>GL Class Integrity</td><td>Items where the GL class on <code>F4102</code> doesn&rsquo;t match one or more <code>F41021</code> location records.</td><td>Correct in JD Edwards using the proper GL class change procedure.</td></tr>
+            <tr><td><strong>Report 6</strong></td><td>Frozen Cost Integrity</td><td>Items where <code>F30026</code> frozen cost &ne; <code>F4105</code> method 07 ledger cost.</td><td>Re-roll the cost in JD Edwards (equivalent to running R30543).</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p>Items clear from these reports automatically after the next nightly refresh once the underlying JDE data is corrected.</p>
+          </div>
+        </div>
+
+        <h2>4.2 &nbsp; Other reports &mdash; review when triggered</h2>
+
+        <table>
+          <thead>
+            <tr><th style="width:36%;">Report</th><th>When to Review</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Report 0 &mdash; JDE DMAAs</strong></td><td>Debugging only &mdash; when investigating Transactions page items.</td></tr>
+            <tr><td><strong>Report 1 &mdash; Model AAI Table</strong></td><td>Before any GL adjustments &mdash; confirms DMAAI 4152 is accurate.</td></tr>
+            <tr><td><strong>Report 7 &mdash; Duplicate Item Costs</strong></td><td>When alerted at login &mdash; causes the import to fail; correct in JDE immediately.</td></tr>
+            <tr><td><strong>Report 8 &mdash; Duplicate Sales Integrity</strong></td><td>When items appear &mdash; typically caused by Sales Update failures; resolve via cycle count and manual JE; contact <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> for help.</td></tr>
+            <tr><td><strong>Report 9 &mdash; Clean Cutoff Integrity</strong></td><td>Informational &mdash; items where cardex creation period &ne; GL date period; no action required, review for accrual opportunities.</td></tr>
+            <tr><td><strong>Report 10 &mdash; Items Missing Branch Records</strong></td><td>When items appear &mdash; severe data integrity issue; contact IT immediately.</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Period-End Sign-Off Checklist</h2>
+
+        <ul class="checklist">
+          <li class="checklist-title">Before signing off on the period</li>
+          <li>All four steps complete: data confirmed (Step 1), variances investigated (Step 2), closing JE posted and Audit Report saved (Step 3), integrity reports reviewed (Step 4).</li>
+          <li>Reports 2&ndash;6 reviewed; remediation actions logged or completed in JDE.</li>
+          <li>Out of Balance returned to $0 after the post-JE nightly refresh.</li>
+          <li>Audit Report saved externally for permanent retention.</li>
+        </ul>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="done-btn" onclick="goHome()">Done &mdash; Back to Index &#x2713;</button>
+        </div>
+      </section>
+
+      <!-- ============ REFERENCE MATERIAL ============ -->
+      <section id="topic-reference" class="view">
+        <h1>Reference Material</h1>
+        <p>The sections below are reference info you&rsquo;ll dip into during Step 2 &mdash; they support the workflow rather than being a separate process. Each section describes one of the four pages or views you&rsquo;ll touch most often.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>The Reconciliation Page Layout</h2>
+
+        <p>The Reconciliation page is the default page after login. It has four parts you&rsquo;ll use throughout the process:</p>
+
+        <ul>
+          <li><strong>Status indicators</strong> (top center) &mdash; both must be green; see <a href="javascript:void(0)" onclick="showView('topic-step1')">Step 1.1</a>.</li>
+          <li><strong>Period selector</strong> (top right) &mdash; driven by the reconciliation start date your administrator configured. If more than 14 periods exist, ask your administrator about a purge.</li>
+          <li><strong>Account filters</strong> (left-to-right hierarchy) &mdash; Company &rarr; Business Unit &rarr; Object &rarr; Subsidiary. Use the search row at the top of each column to filter within it.</li>
+          <li><strong>Valuation and Variance Calculation sections</strong> &mdash; covered in <a href="javascript:void(0)" onclick="showView('topic-step2')">Step 2</a>.</li>
+        </ul>
+
+        <p>To open the <strong>Inventory Validation Report</strong>, click directly on the Inventory Validation status light. This report is your starting point any time that light is red.</p>
+
+        <h2>The Transactions Page</h2>
+
+        <p>Use this page when the <strong>Transactions</strong> line in the Variance Calculation is non-zero.</p>
+
+        <p><strong>What&rsquo;s listed:</strong> Documents where <code>F4111</code> doesn&rsquo;t match <code>F0911</code>. Fully reconciled transactions don&rsquo;t appear.</p>
+
+        <p><strong>Tolerance:</strong> Transactions differing by less than 1 monetary unit are excluded by default, but their amounts still roll up into the Transactions line of the variance. Administrators can change this threshold.</p>
+
+        <h3>Filters</h3>
+
+        <table>
+          <thead>
+            <tr><th style="width:26%;">Filter</th><th>Options</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Type</td><td>Inventory, Sales, Manufacturing, Purchasing.</td></tr>
+            <tr><td>Sub Type</td><td>Accounts, Periods, Transfers, Intercompany, Direct Ship, Voucher Variance.</td></tr>
+            <tr><td>Order Type</td><td>JDE order type.</td></tr>
+            <tr><td>Document Type</td><td>JDE document type.</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>Filter widget tips:</strong></p>
+        <ul>
+          <li><strong>Target icon</strong> isolates one value and hides others in that category.</li>
+          <li><strong>Toggle switch</strong> turns a value on/off independently &mdash; useful for stacking views (e.g., target Sales, then toggle Inventory back on).</li>
+        </ul>
+
+        <p><strong>Subtotals widget</strong> has a <strong>Type</strong> dropdown that groups totals by Type, Sub Type, Order Type, or Document Type.</p>
+
+        <h3>Transaction Detail report</h3>
+
+        <p>Click the <strong>+</strong> icon at the left of any row to expand. The green icon exports detail to Excel. Six sections:</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:30%;">Section</th><th>What It Shows</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>1 &mdash; Unassigned Account</strong></td><td>Cardex transactions whose GL class isn&rsquo;t in the model DMAAI table &mdash; stock items belong here.</td></tr>
+            <tr><td><strong>2 &mdash; F4111 Cardex</strong></td><td>All cardex rows for the selected company, document type, and document number.</td></tr>
+            <tr><td><strong>3 &mdash; F0911 GL</strong></td><td>All GL rows for the same company, document type, and document number.</td></tr>
+            <tr><td><strong>4 &mdash; RapidReconciler</strong></td><td>How RR matches and summarizes &mdash; one row = match; multiple rows = mismatch.</td></tr>
+            <tr><td><strong>5 &mdash; Order Data</strong></td><td>All lines for the related sales order or PO; for intercompany, related order info.</td></tr>
+            <tr><td><strong>6 &mdash; DMAAIs</strong></td><td>All DMAAI entries for each GL class involved; first row is from the model table.</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>Analysis tips:</strong></p>
+        <ul>
+          <li>Verify company number, account number, and period end date align across Sections 2 and 3.</li>
+          <li>For single-sided IT transfers, cardex shows only the &ldquo;from&rdquo; side and GL nets to $0.</li>
+          <li>Account differences between Sections 2 and 3 &rarr; check DMAAI setup in Section 6.</li>
+        </ul>
+
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>Corrective action for every Transactions page item:</strong> offsetting JE in JD Edwards plus a note in RapidReconciler.</p>
+          </div>
+        </div>
+
+        <h2>The As-Of Page</h2>
+
+        <p>The supporting detail behind the Perpetual Balance shown in the Valuation section. Use it when you need to see balances at the item, branch, location, or lot level.</p>
+
+        <p><strong>Important behavior:</strong></p>
+        <ul>
+          <li>Amounts are <strong>summarized <code>F4111</code> from the balance forward</strong> &mdash; not a snapshot of item balance &times; unit cost.</li>
+          <li>Items can have a value with no quantity. This is expected &mdash; see the <a href="inventory-zero-balance.html">Zero Balance Adjustments</a> guide.</li>
+          <li><strong><code>-9999</code></strong> in the Quantity on Hand column means a UOM conversion factor is missing (Integrity Report 4).</li>
+        </ul>
+
+        <p><strong>Filters</strong> (combinable, all match from start of value): Item Number, Branch Plant, Location, Lot. The <strong>Totals</strong> row sums all visible rows.</p>
+
+        <p><strong>Detail section controls:</strong></p>
+        <ul>
+          <li><strong>Daily As-Of dropdown</strong> &mdash; view inventory as of any single day in the period. Clear it before comparing to the Reconciliation page perpetual total (which uses period end).</li>
+          <li><strong>Common UOM</strong> &mdash; restates quantities across items in one UOM for easier analysis (administrator must configure).</li>
+          <li><strong>Summarize by Item</strong> &mdash; collapses location and lot detail to branch + item level; nets offsetting positives and negatives.</li>
+          <li><strong>Plus icon</strong> &mdash; expands transaction detail for any row; exportable.</li>
+          <li><strong>Row Count</strong> &mdash; top right; pagination kicks in above 250 rows.</li>
+        </ul>
+
+        <p><strong>Key columns:</strong></p>
+
+        <table>
+          <thead>
+            <tr><th style="width:18%;">Column</th><th>Meaning</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>CurrCost</strong></td><td>Current item cost from the cost ledger; period-independent.</td></tr>
+            <tr><td><strong>CalcCost</strong></td><td>Amount &divide; Quantity on Hand; zero when quantity is zero.</td></tr>
+            <tr><td><strong>QtyVar</strong></td><td><code>F4111</code> summarized quantity vs. <code>F41021</code> quantity.</td></tr>
+            <tr><td><strong>AmtVar</strong></td><td><code>F4111</code> summarized extended cost vs. <code>F41021</code> value.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>GL class code changes.</strong> Changing a GL class without following the proper procedure produces multiple rows for the same item on the As-Of grid. Correct procedure: (1) adjust inventory to zero under the original code, (2) update the code at all hierarchy levels (item branch, item location, open orders), (3) adjust inventory back in under the new code.</p>
+          </div>
+        </div>
+
+        <h2>The Roll Forward Page</h2>
+
+        <p>Lists item activity across a date range, with document and order types mapped to report columns by your administrator. <strong>Informational &mdash; not part of the standard reconciliation flow.</strong></p>
+
+        <p><strong>Validation:</strong> Look at the rightmost <strong>Variance</strong> column. Any non-zero value means a document or order type may be missing from the report configuration &mdash; ask your administrator to review.</p>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-pitfalls')">Next: Pitfalls &amp; Getting Help &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============ PITFALLS & GETTING HELP ============ -->
+      <section id="topic-pitfalls" class="view">
+        <h1>Common Pitfalls and Getting Help</h1>
+        <p>A few things worth keeping in mind as you work through the reconciliation process, plus a directory of related documentation for the deeper questions this guide doesn&rsquo;t cover.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>Common Pitfalls</h2>
+
+        <div class="callout tip">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Never adjust the GL on stale data.</strong> Both status lights must be green and the latest import must be complete. Acting on red or yellow data is how variances get baked in for future periods.</p>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Carry-forward rolls.</strong> A small variance left in one period reappears as Carry Forward next period &mdash; and compounds. Resolve in the period it originates whenever possible.</p>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>DMAAI is the usual suspect for Transactions variances.</strong> Before assuming a transaction is broken, check Section 6 of the Transaction Detail report.</p>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Cardex variances split two ways.</strong> Quantity variances need IT (SQL); amount variances need a dollars-only IA in JDE. The Cardex Integrity pop-up tells you which. See <a href="cardex-variance.html">Handling Cardex Variance</a> for the full procedure.</p>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Save Audit Reports externally.</strong> Don&rsquo;t rely on RapidReconciler retaining detail data forever &mdash; purges happen.</p>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Watch for repeating variances.</strong> The Out of Balance History Graph is the fastest way to tell whether you have a chronic configuration issue or a one-off.</p>
+          </div>
+        </div>
+
+        <h2>Where to Get More Help</h2>
+
+        <table>
+          <thead>
+            <tr><th style="width:38%;">Topic</th><th>Document</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Login, navigation, first-time setup.</td><td><a href="getting-started-with-rapidreconciler.html">Getting Started with RapidReconciler</a></td></tr>
+            <tr><td>DMAAI tables, GL account assignment, period-end logic.</td><td><a href="inventory-reference-guide.html">Inventory Key Concepts</a></td></tr>
+            <tr><td>JDE vs. RapidReconciler reconciliation, timing, backdating.</td><td>Stock Status and Trial Balance Reconciliation Guide</td></tr>
+            <tr><td>DMAAI model table process and refresh.</td><td><a href="managing-accounts.html">Managing Inventory Accounts</a></td></tr>
+            <tr><td>Item ledger balances, posting codes, dates.</td><td><a href="inventory-item-ledger.html">Working with the Item Ledger</a></td></tr>
+            <tr><td>DMAAI setup, GL class codes, business unit.</td><td><a href="distribution-aais.html">Ultimate DMAAI Guide</a></td></tr>
+            <tr><td>GL class code change procedure.</td><td><a href="inventory-gl-class-codes.html">Managing GL Class Codes</a></td></tr>
+            <tr><td>UOM changes and cardex impact.</td><td><a href="inventory-uom.html">About Units of Measure</a></td></tr>
+            <tr><td>Cost methods, cost levels, <code>F4105</code>.</td><td><a href="inventory-costing.html">Product Costing Guide</a></td></tr>
+            <tr><td>Zero balance adjustments.</td><td><a href="inventory-zero-balance.html">Zero Balance Adjustments</a></td></tr>
+            <tr><td>Cardex variance &mdash; standard vs. average cost.</td><td><a href="cardex-variance.html">Handling Cardex Variance</a></td></tr>
+            <tr><td>Sales order types, AAIs, JEs, common issues.</td><td>Sales Order Reference Guide</td></tr>
+            <tr><td>In Transit module &mdash; concepts and use.</td><td><a href="transfer-order-reference.html">In Transit Key Concepts</a> / <a href="in-transit-rec-walkthrough.html">Using the Application</a></td></tr>
+            <tr><td>PO Receipts module &mdash; concepts and use.</td><td><a href="purchase-order-reference.html">PO Receipts Key Concepts</a> / <a href="po-receipts-walkthrough.html">Using the Application</a></td></tr>
+            <tr><td>Companies, users, settings, offset accounts.</td><td><a href="administrator-walkthrough.html">Administrator Responsibilities</a></td></tr>
+            <tr><td>Support.</td><td><a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a></td></tr>
+          </tbody>
+        </table>
+
+        <a class="xref" href="javascript:void(0)" onclick="showView('topic-process')">
+          See <strong>Process at a Glance</strong> for the visual end-to-end flowchart.
+        </a>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="goHome()">Return to Index &#8634;</button>
+        </div>
+      </section>
+
+    </main>
   </div>
 </div>
 
@@ -1205,6 +1761,47 @@ A practical, step-by-step guide for reconciling JD Edwards perpetual inventory (
     </div>
   </div>
 </footer>
+
+<script>
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      const slug = id === 'home' ? 'home' : id.replace('topic-', '');
+      // Update active state across all sidebar groups
+      document.querySelectorAll('.sidebar-nav li').forEach(li => {
+        li.classList.toggle('active', li.dataset.target === slug);
+      });
+
+      try {
+        if (window.location.protocol !== 'about:') {
+          history.replaceState(null, '', slug === 'home' ? ' ' : '#' + slug);
+        }
+      } catch (e) { /* sandboxed context */ }
+    }
+  }
+
+  function goHome() { showView('home'); }
+
+  document.querySelectorAll('.sidebar-nav li[data-target="home"]').forEach(li => li.classList.add('active'));
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && hash !== 'home') showView('topic-' + hash);
+    } catch (e) { /* ignore */ }
+  });
+
+  window.addEventListener('popstate', () => {
+    try {
+      const hash = window.location.hash.replace('#', '');
+      showView(hash && hash !== 'home' ? 'topic-' + hash : 'home');
+    } catch (e) { /* ignore */ }
+  });
+</script>
 
 </body>
 </html>

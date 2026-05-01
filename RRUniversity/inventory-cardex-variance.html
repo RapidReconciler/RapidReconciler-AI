@@ -25,8 +25,6 @@
     --text-muted:  #8a93a6;
     --rule:        #e1e7ef;
     --rule-strong: #c9d3e0;
-    --green:       #2e8b57;
-    --red:         #c0392b;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -72,19 +70,14 @@
     text-decoration: none;
     color: var(--navy);
   }
-
   .brand img { height: 42px; width: auto; display: block; }
-
   .brand-divider { width: 1px; height: 28px; background: var(--rule-strong); }
-
   .brand-product { display: flex; flex-direction: column; line-height: 1.1; }
-
   .brand-product-name {
     font-family: 'Source Sans 3', sans-serif;
     font-weight: 700; font-size: 17px; color: var(--navy);
     letter-spacing: -0.005em;
   }
-
   .brand-product-tag {
     font-size: 11px; color: var(--text-muted); font-weight: 500;
     letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px;
@@ -93,134 +86,168 @@
   nav.section-nav {
     display: flex; gap: 28px; font-size: 14px; font-weight: 600; margin-left: auto;
   }
-
   nav.section-nav a {
     color: var(--navy); text-decoration: none; position: relative; padding: 6px 0;
     transition: color 0.2s;
   }
-
   nav.section-nav a:hover { color: var(--blue); }
-
   nav.section-nav a::after {
     content: ''; position: absolute; left: 0; bottom: 0; width: 0;
     height: 2px; background: var(--orange); transition: width 0.3s ease;
   }
-
   nav.section-nav a:hover::after { width: 100%; }
-
   .nav-cta {
     background: var(--orange); color: #fff !important; padding: 10px 22px !important;
     border-radius: 4px; font-weight: 700 !important; font-size: 13px !important;
     transition: background 0.2s !important;
   }
-
   .nav-cta:hover { background: var(--orange-deep); color: #fff !important; }
   .nav-cta::after { display: none !important; }
 
-  /* ============== PAGE HEADER ============== */
-  /* PAGE HEADER (thin) */
-  .page-header { background: linear-gradient(180deg, var(--bg-soft) 0%, #fff 100%); border-bottom: 1px solid var(--rule); padding: 28px 0 24px; }
-  .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-soft); margin-bottom: 12px; flex-wrap: wrap; }
+  /* ============== PAGE HEADER (thin) ============== */
+  .page-header {
+    background: linear-gradient(180deg, var(--bg-soft) 0%, #fff 100%);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px;
+  }
+  .breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-soft);
+    margin-bottom: 12px; flex-wrap: wrap;
+  }
   .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 600; transition: color 0.2s; }
   .breadcrumb a:hover { text-decoration: underline; }
   .breadcrumb .sep { color: var(--rule-strong); }
   .breadcrumb .current { color: var(--text-soft); font-weight: 500; }
-  .page-title { font-family: 'Source Sans 3', sans-serif; font-weight: 800; font-size: clamp(28px, 3.6vw, 36px); line-height: 1.15; letter-spacing: -0.02em; color: var(--navy); margin: 0; }
-  .page-title em { color: var(--blue-bright); font-style: normal; }
+  .page-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 800; font-size: clamp(28px, 3.6vw, 36px);
+    line-height: 1.15; letter-spacing: -0.02em;
+    color: var(--navy);
+    margin: 0;
+  }
+  .page-title em {
+    color: var(--blue-bright); font-style: normal;
+  }
 
-  /* ============== CONTENT WRAPPER ============== */
-  .content-wrap {
+  /* ============== SPA LAYOUT (sidebar + content) ============== */
+  .spa-wrap {
     display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 64px;
-    padding: 56px 0 96px;
+    grid-template-columns: 280px 1fr;
+    gap: 48px;
+    padding: 48px 0 80px;
     align-items: start;
   }
 
-  /* TOC sidebar */
-  .toc {
+  aside.sidebar {
     position: sticky;
-    top: 100px;
-    border-left: 2px solid var(--rule-strong);
-    padding-left: 20px;
+    top: 96px;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px 0;
+    overflow: hidden;
   }
-
-  .toc h4 {
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--orange); margin-bottom: 14px;
-  }
-
-  .toc ul { list-style: none; }
-
-  .toc li { margin-bottom: 10px; }
-
-  .toc a {
-    color: var(--text-soft); text-decoration: none;
-    font-size: 13.5px; line-height: 1.4;
-    display: block; transition: color 0.2s, padding-left 0.2s;
-  }
-
-  .toc a:hover { color: var(--blue); padding-left: 4px; }
-
-  /* Article body */
-  article.doc-body {
-    max-width: 760px;
-  }
-
-  article.doc-body h2 {
+  .sidebar-title {
     font-family: 'Source Sans 3', sans-serif;
-    font-weight: 700; font-size: 28px;
-    color: var(--navy); margin-top: 48px; margin-bottom: 16px;
-    letter-spacing: -0.015em;
-    padding-bottom: 12px;
-    border-bottom: 2px solid var(--rule);
-    scroll-margin-top: 100px;
-  }
-
-  article.doc-body h2:first-child { margin-top: 0; }
-
-  article.doc-body h3 {
-    font-family: 'Source Sans 3', sans-serif;
-    font-weight: 700; font-size: 19px;
-    color: var(--navy); margin-top: 32px; margin-bottom: 12px;
-    letter-spacing: -0.01em;
-    scroll-margin-top: 100px;
-  }
-
-  article.doc-body h3 .num {
-    color: var(--blue-bright);
     font-weight: 700;
-    margin-right: 8px;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange);
+    padding: 0 24px 16px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 12px;
+  }
+  ul.sidebar-nav { list-style: none; }
+  ul.sidebar-nav li {}
+  ul.sidebar-nav li button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 11px 24px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14.5px;
+    color: var(--text);
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  ul.sidebar-nav li button:hover {
+    background: #fff;
+    color: var(--blue);
+    border-left-color: var(--blue-bright);
+  }
+  ul.sidebar-nav li.active button {
+    background: #fff;
+    color: var(--navy);
+    font-weight: 700;
+    border-left-color: var(--orange);
   }
 
-  article.doc-body p {
-    font-size: 15.5px; line-height: 1.7;
-    color: var(--text); margin-bottom: 16px;
+  main.content-card {
+    background: #fff;
+    min-width: 0; /* prevent grid blowout */
   }
 
-  article.doc-body p strong { color: var(--navy); font-weight: 700; }
+  /* SPA view switching */
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-  article.doc-body a {
+  /* ============== ARTICLE / TYPOGRAPHY ============== */
+  .view h1 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 36px;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+  .view h2 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 24px;
+    color: var(--navy);
+    margin-top: 40px; margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--rule);
+    letter-spacing: -0.015em;
+  }
+  .view h3 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 18px;
+    color: var(--navy);
+    margin-top: 28px; margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .view h4 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600; font-size: 15px;
+    color: var(--navy-soft);
+    margin-top: 20px; margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .view p {
+    font-size: 15px; line-height: 1.7; margin-bottom: 14px;
+    color: var(--text);
+  }
+  .view p strong { color: var(--navy); font-weight: 700; }
+  .view a {
     color: var(--blue); text-decoration: none;
     border-bottom: 1px solid var(--blue-pale);
     transition: color 0.2s, border-color 0.2s;
   }
-
-  article.doc-body a:hover {
-    color: var(--orange); border-bottom-color: var(--orange);
-  }
-
-  article.doc-body ul, article.doc-body ol {
-    margin: 0 0 20px 22px;
-    font-size: 15.5px; line-height: 1.7;
-  }
-
-  article.doc-body li { margin-bottom: 8px; color: var(--text); }
-
-  article.doc-body li strong { color: var(--navy); font-weight: 700; }
-
-  article.doc-body code {
+  .view a:hover { color: var(--orange); border-bottom-color: var(--orange); }
+  .view ul, .view ol { margin: 0 0 18px 22px; font-size: 15px; line-height: 1.7; }
+  .view li { margin-bottom: 6px; }
+  .view li strong { color: var(--navy); font-weight: 700; }
+  .view code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     background: var(--bg-panel);
@@ -230,168 +257,528 @@
   }
 
   /* Tables */
-  article.doc-body table {
+  .view table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0 28px;
+    margin: 18px 0 24px;
     font-size: 14px;
     border: 1px solid var(--rule);
     border-radius: 6px;
     overflow: hidden;
   }
-
-  article.doc-body thead {
-    background: var(--navy);
-    color: #fff;
+  .view thead { background: var(--navy); color: #fff; }
+  .view th {
+    text-align: left; padding: 12px 16px;
+    font-weight: 700; font-size: 12px;
+    letter-spacing: 0.06em; text-transform: uppercase;
   }
-
-  article.doc-body th {
-    text-align: left;
-    padding: 12px 16px;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+  .view td {
+    padding: 13px 16px; border-bottom: 1px solid var(--rule);
+    vertical-align: top; line-height: 1.55;
   }
-
-  article.doc-body td {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--rule);
-    vertical-align: top;
-    line-height: 1.55;
-  }
-
-  article.doc-body tr:last-child td { border-bottom: none; }
-
-  article.doc-body tbody tr:nth-child(even) { background: var(--bg-soft); }
-
-  article.doc-body tbody tr:hover { background: var(--blue-pale); }
-
-  article.doc-body td strong { color: var(--navy); }
+  .view tr:last-child td { border-bottom: none; }
+  .view tbody tr:nth-child(even) { background: var(--bg-soft); }
+  .view tbody tr:hover { background: var(--blue-pale); }
 
   /* Callouts */
-  .callout {
-    display: flex;
-    gap: 14px;
-    padding: 18px 22px;
+  .view .callout {
+    display: flex; gap: 14px;
+    padding: 16px 20px;
     border-radius: 6px;
-    margin: 24px 0;
+    margin: 22px 0;
     border-left: 4px solid;
   }
-
-  .callout-icon {
-    flex-shrink: 0;
-    width: 24px; height: 24px;
+  .view .callout-icon {
+    flex-shrink: 0; width: 24px; height: 24px;
     border-radius: 50%;
     display: grid; place-items: center;
-    font-weight: 700; font-size: 13px;
-    color: #fff;
+    font-weight: 700; font-size: 13px; color: #fff;
   }
-
-  .callout p { margin-bottom: 0; font-size: 14.5px; }
-
-  .callout.important {
-    background: #fef5e7;
-    border-color: var(--orange);
+  .view .callout p { margin-bottom: 0; font-size: 14.5px; }
+  .view .callout.important { background: #fef5e7; border-color: var(--orange); }
+  .view .callout.important .callout-icon { background: var(--orange); }
+  .view .callout.warning { background: #fef5e7; border-color: var(--orange); }
+  .view .callout.warning .callout-icon { background: var(--orange); }
+  .view .callout.note, .view .callout.tip, .view .callout.info {
+    background: var(--blue-pale); border-color: var(--blue);
   }
-
-  .callout.important .callout-icon { background: var(--orange); }
-
-  .callout.note {
-    background: var(--blue-pale);
-    border-color: var(--blue);
+  .view .callout.note .callout-icon, .view .callout.tip .callout-icon, .view .callout.info .callout-icon {
+    background: var(--blue);
   }
-
-  .callout.note .callout-icon { background: var(--blue); }
+  /* Original used callout-label as a heading inside the box */
+  .view .callout-label {
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+    font-size: 14.5px;
+  }
 
   /* Images */
-  article.doc-body img {
+  .view img, .view .screenshot {
     max-width: 100%;
     height: auto;
     border: 1px solid var(--rule);
     border-radius: 6px;
-    margin: 12px 0;
+    margin: 14px 0;
     background: var(--bg-soft);
   }
 
-  .img-row {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin: 16px 0;
-  }
-
-  .img-row img { flex: 1; min-width: 240px; margin: 0; }
-
-  /* Inline icons inside table cells */
-  article.doc-body td img {
-    display: inline-block;
-    margin: 0 6px 0 0;
-    vertical-align: middle;
-    border: 1px solid var(--rule);
-    background: #fff;
-    padding: 2px;
-    border-radius: 3px;
-  }
-
-  /* Footer nav (prev/next, back) */
-  .doc-footer-nav {
-    margin-top: 64px;
-    padding-top: 32px;
-    border-top: 1px solid var(--rule);
+  /* Topic footer nav (back to index, prev/next) */
+  .topic-footer-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
     gap: 16px;
     flex-wrap: wrap;
   }
-
-  .back-link {
-    display: inline-flex; align-items: center; gap: 8px;
-    color: var(--blue); text-decoration: none;
-    font-weight: 600; font-size: 14px;
+  .back-btn, .next-btn {
+    background: transparent;
     border: 1px solid var(--rule-strong);
+    color: var(--navy);
     padding: 10px 18px;
     border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
     transition: all 0.2s;
   }
-
-  .back-link:hover {
-    background: var(--navy); color: #fff; border-color: var(--navy);
+  .back-btn:hover, .next-btn:hover {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .next-btn {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: #fff;
+  }
+  .next-btn:hover {
+    background: var(--orange-deep);
+    border-color: var(--orange-deep);
   }
 
-  .support-link {
-    font-size: 14px; color: var(--text-soft);
+  /* Email card / video link styling from original */
+  .view .email-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 20px;
+    margin: 18px 0;
   }
-
-  .support-link a {
-    color: var(--blue); font-weight: 600; text-decoration: none;
+  .view .email-card .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
   }
+  .view .email-card .addr {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--navy);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .view .email-compose-btn {
+    display: inline-block;
+    background: var(--orange);
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    border: none !important;
+  }
+  .view .email-compose-btn:hover { background: var(--orange-deep); }
 
-  .support-link a:hover { color: var(--orange); }
+  .view .video-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue-pale);
+    color: var(--blue) !important;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    border: none !important;
+    margin: 6px 0;
+  }
+  .view .video-link:hover { background: var(--blue); color: #fff !important; }
+
+  /* Hide original branding header/yellow bar/sidebar (we replace with GSI nav) */
+  .blue-header, .yellow-bar, aside.sidebar.original { display: none; }
+
+  /* Diamond divider — give it GSI styling */
+  .view .diamond-divider {
+    text-align: center;
+    margin: 28px 0;
+  }
+  .view .diamond {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--orange);
+    transform: rotate(45deg);
+  }
 
   /* ============== FOOTER ============== */
+  /* ============== EXTRA CLASSES (PO Receipts Walkthrough) ============== */
+  /* Lead paragraph */
+  .view .lead {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--text-soft);
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+  .view .lead strong { color: var(--navy); font-weight: 700; }
+
+  /* "principle" callout variant - blue tone for guiding principles */
+  .view .callout.principle {
+    background: var(--blue-pale);
+    border-color: var(--blue);
+  }
+  .view .callout.principle .callout-icon { background: var(--blue); }
+
+  /* Checklist - styled as a card with rule-bordered items */
+  .view .checklist {
+    list-style: none;
+    margin: 16px 0 24px;
+    padding: 0;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .view .checklist .checklist-title {
+    background: var(--navy);
+    color: #fff;
+    padding: 10px 18px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .view .checklist li {
+    padding: 12px 18px 12px 46px;
+    position: relative;
+    margin-bottom: 0;
+    border-top: 1px solid var(--rule);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .view .checklist li::before {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 16px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--rule-strong);
+    border-radius: 3px;
+    background: #fff;
+  }
+
+  /* Status pills (green/yellow/red) */
+  .view .status-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+  .view .status-pill.green { background: #e2efd9; color: #3d6927; border: 1px solid #b3d49a; }
+  .view .status-pill.yellow { background: #fef5e7; color: #8a5a0c; border: 1px solid #f5cb35; }
+  .view .status-pill.red { background: #fdeae5; color: #8a3520; border: 1px solid #e8a895; }
+
+  /* Step badge inline */
+  .view .step-badge {
+    display: inline-block;
+    background: var(--orange);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    margin-right: 8px;
+  }
+
+  /* num-cell for table sequence numbers */
+  .view td.num-cell {
+    width: 36px;
+    text-align: center;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    color: var(--orange);
+    font-size: 15px;
+  }
+
+  /* Key-value cards (KV grid) */
+  .view .kv-grid {
+    display: grid;
+    gap: 16px;
+    margin: 18px 0 24px;
+  }
+  .view .kv-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 16px 18px;
+  }
+  .view .kv-card .kv-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .view .kv-card .kv-value {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .view .kv-card .kv-value strong { color: var(--navy); }
+
+  /* Flow container (for SVG flowchart) */
+  .view .flow-container {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+    text-align: center;
+  }
+  .view .flow-svg { max-width: 100%; height: auto; display: inline-block; }
+
+  /* Sidebar section label (for grouping nav items) */
+  .sidebar-section-label {
+    padding: 16px 24px 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-top: 1px solid var(--rule);
+    margin-top: 8px;
+  }
+  .sidebar-section-label:first-of-type { border-top: none; margin-top: 0; }
+
+  /* Step number indicator for sidebar items */
+  ul.sidebar-nav li.step-num button { padding-left: 50px; position: relative; }
+  ul.sidebar-nav li.step-num button::before {
+    content: counter(step-counter);
+    position: absolute;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--orange);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  ul#sidebar-steps { counter-reset: step-counter; }
+  ul#sidebar-steps li.step-num { counter-increment: step-counter; }
+
   /* ============== FOOTER (thin, single line) ============== */
-  footer { background: var(--navy-deep); color: rgba(255,255,255,0.7); padding: 18px 0; font-size: 13px; border-top: 3px solid var(--blue); }
-  .footer-line { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+  footer {
+    background: var(--navy-deep);
+    color: rgba(255,255,255,0.7);
+    padding: 18px 0;
+    font-size: 13px;
+    border-top: 3px solid var(--blue);
+  }
+  .footer-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
   .footer-line strong { color: #fff; font-weight: 700; }
-  .footer-line a { color: var(--blue-bright); text-decoration: none; transition: color 0.15s; }
+  .footer-line a {
+    color: var(--blue-bright);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
   .footer-line a:hover { color: #fff; }
   .footer-sep { color: rgba(255,255,255,0.25); margin: 0 6px; }
 
-  /* ============== RESPONSIVE ============== */
-  @media (max-width: 960px) {
-    .content-wrap { grid-template-columns: 1fr; gap: 32px; }
-    .toc { position: static; border-left: none; padding-left: 0;
-           border-top: 2px solid var(--rule-strong); padding-top: 20px; }
-    .toc ul { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+
+  /* ============== EXTRA: page-meta, figure/figcaption, xref, quick-ref, done btn ============== */
+  .view .page-meta {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .view .page-meta .meta-item { display: inline-flex; align-items: center; gap: 6px; }
+  .view .page-meta .meta-item strong { color: var(--text-soft); font-weight: 600; }
+  .view .page-meta kbd {
+    background: #fff;
+    border: 1px solid var(--rule-strong);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--navy);
   }
 
+  .view figure {
+    margin: 22px 0;
+  }
+  .view figure img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--bg-soft);
+  }
+  .view figcaption {
+    font-size: 13px;
+    color: var(--text-soft);
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.55;
+    padding: 0 8px;
+  }
+  .view figcaption strong {
+    display: block;
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 13.5px;
+    margin-bottom: 3px;
+  }
+
+  .view .xref {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-panel);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--blue-bright);
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    color: var(--text);
+    text-decoration: none !important;
+    border-bottom: 1px solid var(--rule) !important;
+    margin: 6px 0;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .view .xref:hover {
+    background: var(--blue-pale);
+    color: var(--navy) !important;
+    border-left-color: var(--blue) !important;
+  }
+  .view .xref::before { content: '↗'; color: var(--blue); font-weight: 700; }
+  .view .xref strong { color: var(--navy); font-weight: 700; }
+
+  .view .quick-ref {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--orange);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 18px 0;
+  }
+  .view .quick-ref-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 10px;
+  }
+  .view .quick-ref dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 18px;
+    margin: 0;
+  }
+  .view .quick-ref dt {
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 13.5px;
+  }
+  .view .quick-ref dd {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--text-soft);
+  }
+
+  /* Multi-paragraph callout wrapper */
+  .view .callout > div { flex: 1; }
+  .view .callout > div p { margin-bottom: 10px; font-size: 14.5px; }
+  .view .callout > div p:last-child { margin-bottom: 0; }
+
+  /* Define green color (was missing from base template) */
+  :root { --green: #2e8b57; }
+
+  /* Done button (green) for last topic in walkthrough */
+  .view .topic-footer-nav .done-btn {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+    border: 1px solid;
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .view .topic-footer-nav .done-btn:hover {
+    background: #246e44;
+    border-color: #246e44;
+  }
+
+  /* Highlighted "this row" in routing tables (preserves blue-pale tint from source) */
+  .view tbody tr.highlight-row { background: var(--blue-pale) !important; }
+  .view tbody tr.highlight-row:hover { background: var(--blue-pale) !important; }
+
+  /* ============== RESPONSIVE ============== */
+  @media (max-width: 960px) {
+    .spa-wrap { grid-template-columns: 1fr; gap: 28px; }
+    aside.sidebar { position: static; }
+  }
   @media (max-width: 800px) {
     .container { padding: 0 22px; }
     nav.section-nav { display: none; }
     .footer-line { gap: 12px; font-size: 12px; }
-    .doc-footer-nav { flex-direction: column; align-items: flex-start; }
   }
 </style>
 </head>
@@ -433,396 +820,530 @@
   </div>
 </section>
 
-<!-- ============ CONTENT ============ -->
+<!-- ============ SPA LAYOUT ============ -->
 <div class="container">
-  <div class="content-wrap">
-    <aside class="toc">
-      <h4>On this page</h4>
-      <ul>
-        <li><a href="#overview">Overview</a></li>
-        <li><a href="#before">Before You Begin</a></li>
-        <li><a href="#step-1">Step 1: Open the Cardex Pop-Up</a></li>
-        <li><a href="#step-2">Step 2: Validate in JDE</a></li>
-        <li><a href="#step-3">Step 3: Dollars-Only Adjustment</a></li>
-        <li><a href="#step-4">Step 4: Re-Roll in RR</a></li>
-        <li><a href="#step-5">Step 5: Confirm the Result</a></li>
+  <div class="spa-wrap">
+    <aside class="sidebar">
+            <div class="sidebar-title">Cardex Variance Walkthrough</div>
+
+      <div class="sidebar-section-label">Overview</div>
+      <ul class="sidebar-nav">
+        <li data-target="home"><button onclick="showView('home')">Index</button></li>
+      </ul>
+
+      <div class="sidebar-section-label">Reconciliation Steps</div>
+      <ul class="sidebar-nav" id="sidebar-steps">
+        <li data-target="step1" class="step-num"><button onclick="showView('topic-step1')">Open the Cardex Integrity Pop-Up</button></li>
+        <li data-target="step2" class="step-num"><button onclick="showView('topic-step2')">Validate the Variance in JD Edwards</button></li>
+        <li data-target="step3" class="step-num"><button onclick="showView('topic-step3')">Dollars-Only Adjustment in JD Edwards</button></li>
+        <li data-target="step4" class="step-num"><button onclick="showView('topic-step4')">Resolve via Re-Roll in RapidReconciler</button></li>
+        <li data-target="step5" class="step-num"><button onclick="showView('topic-step5')">Confirm the Result</button></li>
       </ul>
     </aside>
 
-    <article class="doc-body">
-      
-<p style="font-size:17px; color:var(--text-soft); margin-bottom:32px;">
-Using RapidReconciler and JD Edwards together to identify and correct cardex discrepancies. This guide walks through the full workflow &mdash; from spotting the variance, to validating it in JDE, to either making a correction or syncing RapidReconciler with the Re-Roll options.
-</p>
-
-<h2 id="overview">Overview</h2>
-
-<p>A cardex integrity variance occurs when the summarized quantity or extended amount in the item ledger does not match the on-hand balances in JD Edwards. Common causes include:</p>
-<ul>
-  <li>Rounding errors accumulated over time</li>
-  <li>Manual overrides of transaction costs</li>
-  <li>Incorrect average cost calculations</li>
-  <li>Unit of measure changes</li>
-</ul>
-
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>JD Edwards is the system of record.</strong> RapidReconciler calculates its cardex variance only from the point in time when the program was first initiated, or from the date the data was last reset &mdash; it does not have visibility into transaction history that predates that point. If a discrepancy exists between RapidReconciler and JD Edwards, the Re-Roll options are used to synchronize RapidReconciler to match JD Edwards &mdash; not the other way around.</p>
-</div>
-
-<h3 id="how-rr-helps"><span class="num">&sect;</span>How RapidReconciler Helps</h3>
-
-<p>Without a dedicated tool, identifying cardex integrity variances requires manually summarizing the item ledger in Excel, excluding memo transactions, and comparing the totals to the Item Location table (F41021) &mdash; a process that must be repeated for every item, every period. RapidReconciler performs this comparison automatically across the entire item population on every nightly import cycle.</p>
-
-<p>The <strong>Cardex Integrity pop-up</strong> in RapidReconciler surfaces only the items where a discrepancy exists, along with the exact quantity and dollar variance for each. This eliminates the manual extraction and comparison process entirely and makes it immediately clear which items require investigation and what type of correction is needed.</p>
-
-<table>
-  <thead>
-    <tr><th style="width:48%;">What RapidReconciler Does</th><th>Benefit</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Compares summarized F4111 to F41021 automatically for every item on every nightly import</td><td>No manual extraction or calculation required</td></tr>
-    <tr><td>Excludes memo transactions (ILIPCD = "X") and applies UOM conversions automatically</td><td>Results are accurate without manual data manipulation</td></tr>
-    <tr><td>Identifies whether the variance is a quantity issue, a dollar issue, or both</td><td>Directs the user to the correct corrective action immediately</td></tr>
-    <tr><td>Provides the Re-Roll options to synchronize RapidReconciler after a JD Edwards correction</td><td>Clears the variance from the reconciliation without requiring a data reset</td></tr>
-    <tr><td>Reflects the corrected position after the next nightly refresh</td><td>Provides confirmation that the correction was successful</td></tr>
-  </tbody>
-</table>
-
-<p>This guide walks through the full process &mdash; from identifying a variance in RapidReconciler, validating it in JD Edwards, performing a correction in JD Edwards if needed, and synchronizing RapidReconciler using the Re-Roll options.</p>
-
-<h2 id="before">Before You Begin</h2>
-
-<table>
-  <thead>
-    <tr><th style="width:30%;">Item</th><th>Detail</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Who should perform this</strong></td><td>Cost accountant or inventory accountant with appropriate JD Edwards security</td></tr>
-    <tr><td><strong>RapidReconciler access</strong></td><td>Required to identify and confirm variances</td></tr>
-    <tr><td><strong>JD Edwards access</strong></td><td>Required to validate and correct the underlying data</td></tr>
-    <tr><td><strong>Average cost environments</strong></td><td>A dollars-only IA correction procedure requires an additional UDC configuration step &mdash; read the full guide before proceeding</td></tr>
-  </tbody>
-</table>
-
-<h2 id="step-1">Step 1 &mdash; Open the Cardex Integrity Pop-Up in RapidReconciler</h2>
-
-<p>The RapidReconciler Cardex Integrity pop-up compares the summarized item ledger (F4111) against the on-hand balance in the Item Location table (F41021) for every item in the system. It automatically excludes memo transactions, applies unit of measure conversions, and respects the cost level setting for average cost items.</p>
-
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>Important:</strong> RapidReconciler calculates its cardex variance only from the point in time when the program was initiated, or from the date the data was last reset. It does not have visibility into transaction history that predates that starting point. <strong>JD Edwards is always the system of record.</strong> Any variance shown in RapidReconciler should be validated against JD Edwards before taking corrective action. The Re-Roll options exist to bring RapidReconciler into alignment with JD Edwards &mdash; not to correct JD Edwards data.</p>
-</div>
-
-<h3 id="s1-1"><span class="num">1.1</span>Navigate to the Cardex Integrity pop-up</h3>
-
-<p>From the RapidReconciler inventory reconciliation screen, open the Cardex Integrity pop-up. Hover over the cardex variance line in the variance calculation section. Click the green square to open the pop-up.</p>
-
-<img src="../Images/rr_inv_cardex_integrity_popup.png" alt="Cardex Integrity pop-up" />
-
-<h3 id="s1-2"><span class="num">1.2</span>Review the variance indicators</h3>
-
-<p>The pop-up displays the following key fields for the item:</p>
-
-<table>
-  <thead>
-    <tr><th style="width:22%;">Field</th><th>Description</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Reason</strong></td><td>Either Quantity or Amount</td></tr>
-    <tr><td><strong>Quantity</strong></td><td>The on-hand quantity recorded in RapidReconciler</td></tr>
-    <tr><td><strong>Amount</strong></td><td>The on-hand value recorded in RapidReconciler</td></tr>
-    <tr><td><strong>QtyVar</strong></td><td>The quantity variance between RapidReconciler and JD Edwards</td></tr>
-    <tr><td><strong>AmtVar</strong></td><td>The dollar variance between RapidReconciler and JD Edwards</td></tr>
-  </tbody>
-</table>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>Note:</strong> The pop-up also displays the item details. You may notice offsetting values for the same item. This can be due to incorrect transaction processing or incorrect updating of GL class codes or primary units of measure.</p>
-</div>
-
-<h3 id="s1-3"><span class="num">1.3</span>Determine the type of variance</h3>
-
-<table>
-  <thead>
-    <tr><th style="width:14%;">Quantity</th><th style="width:14%;">Amount</th><th>Interpretation</th><th>Next Step</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>0</td><td>0</td><td>No variance &mdash; no action needed</td><td>Stop</td></tr>
-    <tr><td>Non-zero</td><td>Any</td><td>Quantity discrepancy &mdash; investigate quantity before addressing dollars</td><td>Investigate quantity first</td></tr>
-    <tr style="background:var(--blue-pale);"><td><strong>0</strong></td><td><strong>Non-zero</strong></td><td><strong>Dollar-only variance &mdash; proceed with this guide</strong></td><td><strong>Step 2</strong></td></tr>
-  </tbody>
-</table>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>Note:</strong> The Cardex Integrity pop-up reflects data as of the most recent nightly refresh cycle. Any transactions that occurred after the last import will not be reflected until the following night&rsquo;s refresh is complete.</p>
-</div>
-
-<h2 id="step-2">Step 2 &mdash; Validate the Variance in JD Edwards</h2>
-
-<img src="../Images/jde-item-ledger.png" alt="JDE Item Ledger inquiry screen" />
-
-<p>Before making any correction, confirm the discrepancy by reviewing the item&rsquo;s transaction history directly in JD Edwards. Since JD Edwards is the system of record, this step determines the true source of the variance &mdash; whether a correction needs to be made in JD Edwards, or whether RapidReconciler simply needs to be synchronized to match JD Edwards using the Re-Roll options.</p>
-
-<h3 id="s2-1"><span class="num">2.1</span>Export the cardex for the item</h3>
-<p>Export all cardex transactions for the item from JD Edwards to Excel.</p>
-
-<h3 id="s2-2"><span class="num">2.2</span>Exclude memo transactions</h3>
-<p>Remove all rows where column <strong>ILIPCD</strong> in table F4111 equals <strong>"X"</strong>. Memo transactions include work order scrap, lot releases, and certain warehousing movements. These do not impact the on-hand balance and must be excluded from the calculation.</p>
-
-<h3 id="s2-3"><span class="num">2.3</span>Summarize the remaining transactions</h3>
-<p>Total the following columns from the remaining rows:</p>
-<ul>
-  <li><strong>Quantity</strong> &mdash; expressed in the primary unit of measure</li>
-  <li><strong>Extended Amount</strong></li>
-</ul>
-
-<h3 id="s2-4"><span class="num">2.4</span>Compare to JD Edwards balances</h3>
-<p>Compare your summarized totals to the on-hand quantity and value displayed in JD Edwards.</p>
-
-<table>
-  <thead>
-    <tr><th style="width:32%;">Result</th><th>Interpretation</th><th>Next Step</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Quantity and amount both match JDE</td><td>JD Edwards is correct &mdash; variance is isolated to RapidReconciler</td><td>Use the Re-Roll options (Step 4)</td></tr>
-    <tr style="background:var(--blue-pale);"><td><strong>Amount does not match JDE</strong></td><td><strong>A true dollar discrepancy exists in JD Edwards</strong></td><td><strong>Perform a dollars-only adjustment (Step 3)</strong></td></tr>
-    <tr><td>Quantity does not match JDE</td><td>A quantity issue exists &mdash; this guide does not cover quantity corrections</td><td>Investigate the quantity discrepancy separately. May require IT intervention.</td></tr>
-  </tbody>
-</table>
-
-<h2 id="step-3">Step 3 &mdash; Perform a Dollars-Only Adjustment in JD Edwards</h2>
-
-<p>Follow this procedure only if Step 2 confirmed that a true dollar discrepancy exists in JD Edwards. If JD Edwards is correct and the variance is in RapidReconciler only, skip to Step 4.</p>
-
-<h3 id="s3-1"><span class="num">3.1</span>Determine Your Cost Environment</h3>
-<ul>
-  <li><strong>Standard Cost (Method 07)</strong> &mdash; Proceed directly to Step 3.3.</li>
-  <li><strong>Average Cost (Method 02)</strong> &mdash; Complete Step 3.2 first.</li>
-</ul>
-
-<h3 id="s3-2"><span class="num">3.2</span>Average Cost Only: Disable Average Cost Update for P4114</h3>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>Skip this step if the item uses standard cost.</strong></p>
-</div>
-
-<p>In an average cost environment, program P4114 (Inventory Adjustments) is typically configured to recalculate the unit cost when a transaction is posted. If this recalculation runs during a dollars-only adjustment, it will change the average cost &mdash; negating the intended correction.</p>
-
-<p><strong>3.2.1</strong> Enter <strong>UDC</strong> on the fast path, then enter <strong>40/AV</strong> and click Find.</p>
-<p><strong>3.2.2</strong> Locate program <strong>P4114</strong> in the table.</p>
-<p><strong>3.2.3</strong> Change the <strong>Description 02</strong> value from <strong>"Y" to "N"</strong> to disable the average cost update for P4114. Do not change any other programs.</p>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>Note:</strong> This change takes effect immediately. Proceed to Step 3.3 without delay to minimize the window during which normal P4114 transactions would not update the average cost.</p>
-</div>
-
-<h3 id="s3-3"><span class="num">3.3</span>Process the IA Transaction</h3>
-
-<p><strong>3.3.1</strong> Navigate to <strong>Inventory Adjustments (P4114)</strong> from the applicable inventory menu.</p>
-
-<p><strong>3.3.2</strong> Complete the following fields:</p>
-
-<table>
-  <thead>
-    <tr><th style="width:24%;">Field</th><th>Value</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Item Number</strong></td><td>The item requiring adjustment</td></tr>
-    <tr><td><strong>Branch Plant</strong></td><td>The applicable branch plant</td></tr>
-    <tr><td><strong>Location</strong></td><td>The applicable location</td></tr>
-    <tr><td><strong>Lot Number</strong></td><td>The applicable lot number, if applicable</td></tr>
-    <tr><td><strong>Extended Amount</strong></td><td>The adjustment amount (positive to increase value, negative to decrease)</td></tr>
-  </tbody>
-</table>
-
-<p><strong>3.3.3</strong> Leave the following fields blank:</p>
-
-<table>
-  <thead>
-    <tr><th style="width:24%;">Field</th><th>Why</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Quantity</strong></td><td>Must be blank &mdash; entering a quantity will change the on-hand balance</td></tr>
-    <tr><td><strong>Unit Cost</strong></td><td>Must be blank &mdash; entering a unit cost will result in a quantity-based transaction</td></tr>
-  </tbody>
-</table>
-
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>Critical:</strong> Leaving the Quantity and Unit Cost fields blank is what makes this a dollars-only adjustment. If either field contains a value, the transaction will not behave as intended.</p>
-</div>
-
-<p><strong>3.3.4</strong> Review and post the IA transaction. The adjustment will appear in the cardex (F4111) with the correct dollar amount and corresponding GL entries.</p>
-
-<h3 id="s3-4"><span class="num">3.4</span>Verify the JD Edwards Adjustment</h3>
-
-<p><strong>3.4.1</strong> Open the item ledger (F4111) and confirm the IA transaction appears with the correct extended amount and a quantity of zero.</p>
-
-<p><strong>3.4.2</strong> Re-export the cardex to Excel, re-apply the exclusion for ILIPCD = "X", and re-summarize to confirm the extended amount total now ties to the JD Edwards balance.</p>
-
-<p><strong>3.4.3</strong> Verify that the corresponding GL entries have been created and posted to the correct inventory account.</p>
-
-<h3 id="s3-5"><span class="num">3.5</span>Average Cost Only: Restore UDC Table 40/AV</h3>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>Skip this step if the item uses standard cost.</strong></p>
-</div>
-
-<p><strong>Immediately after verifying the adjustment</strong>, restore the UDC 40/AV setting for P4114.</p>
-
-<p><strong>3.5.1</strong> Enter <strong>UDC</strong> on the fast path, enter <strong>40/AV</strong>, and click Find.</p>
-<p><strong>3.5.2</strong> Locate program <strong>P4114</strong> in the table.</p>
-<p><strong>3.5.3</strong> Change the <strong>Description 02</strong> value from <strong>"N" back to "Y"</strong> to re-enable the average cost update.</p>
-
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>Warning:</strong> Leaving P4114 set to "N" will prevent the average cost from updating on future legitimate transactions. Do not skip this step.</p>
-</div>
-
-<h3 id="s3-6"><span class="num">3.6</span>Standard vs. Average Cost Summary</h3>
-
-<table>
-  <thead>
-    <tr><th>Step</th><th style="width:22%;">Standard Cost</th><th style="width:22%;">Average Cost</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>3.2 &mdash; Disable average cost update (UDC 40/AV)</td><td><strong>Skip</strong></td><td><strong>Required</strong></td></tr>
-    <tr><td>3.3 &mdash; Process IA transaction</td><td>Required</td><td>Required</td></tr>
-    <tr><td>3.4 &mdash; Verify the adjustment</td><td>Required</td><td>Required</td></tr>
-    <tr><td>3.5 &mdash; Restore UDC 40/AV</td><td><strong>Skip</strong></td><td><strong>Required</strong></td></tr>
-  </tbody>
-</table>
-
-<h2 id="step-4">Step 4 &mdash; Resolve the Variance in RapidReconciler Using Re-Roll</h2>
-
-<p>If Step 2 confirmed that JD Edwards is correct and the variance exists only in RapidReconciler, or after completing the JD Edwards correction in Step 3, use the <strong>Re-Roll Item</strong> dialog to synchronize RapidReconciler with JD Edwards.</p>
-
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>Key Principle:</strong> The Re-Roll options do not change JD Edwards data. They recalculate or adjust RapidReconciler&rsquo;s internal balances to bring them into alignment with JD Edwards, which is the system of record. Since RapidReconciler only tracks history from the point the program was initiated or the data was last reset, Re-Roll is sometimes needed to account for transactions or cost changes that occurred before or outside that window. Note there is no UNDO button. Use the options with caution!</p>
-</div>
-
-<img src="../Images/rr_inv_asof_reroll.png" alt="Re-Roll Item dialog" />
-
-<p>The Re-Roll Item dialog offers three options. Only one should be selected at a time.</p>
-
-<h3 id="s4-1"><span class="num">&sect;</span>Option 1: Re-Roll Item</h3>
-
-<img src="../Images/rr_inv_asof_reroll1.png" alt="Re-Roll Item option" />
-
-<p><strong>When to use:</strong> When there are issues with the RapidReconciler stated quantity on hand due to changes in the primary unit of measure, or after a JDE correction has been made and RapidReconciler needs to be recalculated.</p>
-
-<p><strong>What it does:</strong></p>
-<ul>
-  <li>Keeps the current balance forward at the beginning of the timeline</li>
-  <li>Adjusts transactions as needed</li>
-  <li>Recalculates each period ending total through the current period</li>
-</ul>
-
-<p><strong>How to use:</strong></p>
-<ol>
-  <li>Open the <strong>Re-Roll Item</strong> dialog for the affected item.</li>
-  <li>Check the <strong>Re-Roll Item</strong> checkbox.</li>
-  <li>Verify the item details &mdash; Company, Branch, Item Number, Location, Lot, GI Class, Cost Level, Primary UOM, Period Ends, Quantity, Amount, QtyVar, and AmtVar.</li>
-  <li>Click <strong>Re-Roll</strong>.</li>
-</ol>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>Note:</strong> This is the most common re-roll option. Verify item details carefully before executing.</p>
-</div>
-
-<h3 id="s4-2"><span class="num">&sect;</span>Option 2: Zero Beginning Balance</h3>
-
-<img src="../Images/rr_inv_asof_reroll2.png" alt="Zero Beginning Balance option" />
-
-<p><strong>When to use:</strong> Only if the first available period for the item in RapidReconciler should have a beginning balance of zero. Check the earliest balance by selecting the oldest date from the Period Ends drop-down before using this option.</p>
-
-<p><strong>What it does:</strong></p>
-<ul>
-  <li>Forces the beginning balance to zero</li>
-  <li>Recalculates each period total from the beginning of the timeline forward</li>
-</ul>
-
-<p><strong>How to use:</strong></p>
-<ol>
-  <li>Open the <strong>Re-Roll Item</strong> dialog for the affected item.</li>
-  <li>Select the oldest date from the Period Ends drop-down to verify the beginning balance should be zero.</li>
-  <li>Check the <strong>Zero Beg Bal</strong> checkbox.</li>
-  <li>Verify the item details.</li>
-  <li>Click <strong>Re-Roll</strong>.</li>
-</ol>
-
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>Warning:</strong> All perpetual period totals may change as a result of this option. Do not use if the earliest period has a legitimate non-zero beginning balance &mdash; this will incorrectly zero out valid history.</p>
-</div>
-
-<h3 id="s4-3"><span class="num">&sect;</span>Option 3: Remove CX Var</h3>
-
-<img src="../Images/rr_inv_asof_reroll3.png" alt="Remove CX Var option" />
-
-<p><strong>When to use:</strong> When JD Edwards is confirmed to be correct but RapidReconciler is showing a cardex variance. Requires JDE validation (Step 2) to be completed first.</p>
-
-<p><strong>What it does:</strong></p>
-<ul>
-  <li>Removes the erroneous cardex variance displayed in RapidReconciler for the item</li>
-</ul>
-
-<p><strong>How to use:</strong></p>
-<ol>
-  <li>Confirm that JD Edwards data is correct (Step 2 complete).</li>
-  <li>Open the <strong>Re-Roll Item</strong> dialog for the affected item.</li>
-  <li>Check the <strong>Remove CX Var</strong> checkbox.</li>
-  <li>Verify the item details including QtyVar and AmtVar.</li>
-  <li>Click <strong>Re-Roll</strong>.</li>
-</ol>
-
-<div class="callout important">
-  <div class="callout-icon">!</div>
-  <p><strong>Important:</strong> Do not use this option to mask a genuine data issue in JD Edwards. Always complete the JDE validation in Step 2 before selecting this option.</p>
-</div>
-
-<h3 id="s4-4"><span class="num">&sect;</span>Re-Roll Options Quick Reference</h3>
-
-<table>
-  <thead>
-    <tr><th style="width:22%;">Option</th><th>Use When</th><th>Key Caution</th></tr>
-  </thead>
-  <tbody>
-    <tr><td><strong>Re-Roll Item</strong></td><td>UOM changes or general recalculation needed</td><td>Verify item details before executing</td></tr>
-    <tr><td><strong>Zero Beg Bal</strong></td><td>Earliest period should have a zero beginning balance</td><td>All perpetual period totals will be recalculated</td></tr>
-    <tr><td><strong>Remove CX Var</strong></td><td>JDE is correct but RapidReconciler shows a variance</td><td>Complete JDE validation first &mdash; do not use to mask a JDE issue</td></tr>
-  </tbody>
-</table>
-
-<h2 id="step-5">Step 5 &mdash; Confirm the Result in RapidReconciler</h2>
-
-<p>After completing the Re-Roll, the RapidReconciler Cardex Integrity pop-up will reflect the updated data following the <strong>next nightly refresh cycle</strong>.</p>
-
-<div class="callout note">
-  <div class="callout-icon">i</div>
-  <p><strong>Note:</strong> Re-Roll changes are applied immediately within RapidReconciler&rsquo;s internal data, but the Cardex Integrity pop-up displays data as of the most recent nightly import. Verify the variance has been resolved by checking the item again after the next refresh cycle completes.</p>
-</div>
-
-<p><strong>5.1</strong> After the next nightly refresh, reopen the Cardex Integrity pop-up for the item.</p>
-
-<p><strong>5.2</strong> Confirm that <strong>QtyVar</strong> and <strong>AmtVar</strong> both show <strong>0</strong>.</p>
-
-<p><strong>5.3</strong> If a variance still appears, review the item&rsquo;s transaction history and repeat the validation steps in Step 2 before taking further action.</p>
-
-
-      <div class="doc-footer-nav">
-        <a href="rapidreconciler-university.html#inventory" class="back-link">&larr; Back to Inventory</a>
-        <span class="support-link">Need help? <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a></span>
-      </div>
-    </article>
+    <main class="content-card">
+
+      <!-- ============ INDEX (HOME) VIEW ============ -->
+      <section id="home" class="view active">
+        <h1>Handling Cardex Variance</h1>
+        <p class="lead">Use RapidReconciler and JD Edwards together to identify and correct cardex discrepancies. This walkthrough covers the full workflow &mdash; from spotting the variance, to validating it in JDE, to either making a JDE correction or syncing RapidReconciler with the Re-Roll options.</p>
+
+        <div class="page-meta">
+          <span class="meta-item"><strong>Last reviewed:</strong>&nbsp;January 2026</span>
+          <span class="meta-item"><strong>Reading time:</strong>&nbsp;~12 minutes</span>
+          <span class="meta-item">Press <kbd>Ctrl</kbd>+<kbd>F</kbd> (or <kbd>&#8984;</kbd>+<kbd>F</kbd>) to search this page</span>
+        </div>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>Overview</h2>
+
+        <p>A cardex integrity variance occurs when the summarized quantity or extended amount in the item ledger does not match the on-hand balances in JD Edwards. Common causes include:</p>
+        <ul>
+          <li>Rounding errors accumulated over time</li>
+          <li>Manual overrides of transaction costs</li>
+          <li>Incorrect average cost calculations</li>
+          <li>Unit of measure changes</li>
+        </ul>
+
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>JD Edwards is the system of record.</strong> RapidReconciler calculates its cardex variance only from the point in time when the program was first initiated, or from the date the data was last reset &mdash; it does not have visibility into transaction history that predates that point. If a discrepancy exists between RapidReconciler and JD Edwards, the Re-Roll options are used to synchronize RapidReconciler to match JD Edwards &mdash; not the other way around.</p>
+          </div>
+        </div>
+
+        <h2>How RapidReconciler Helps</h2>
+
+        <p>Without a dedicated tool, identifying cardex integrity variances requires manually summarizing the item ledger in Excel, excluding memo transactions, and comparing the totals to the Item Location table (F41021) &mdash; a process that must be repeated for every item, every period. RapidReconciler performs this comparison automatically across the entire item population on every nightly import cycle.</p>
+
+        <p>The <strong>Cardex Integrity pop-up</strong> in RapidReconciler surfaces only the items where a discrepancy exists, along with the exact quantity and dollar variance for each. This eliminates the manual extraction and comparison process entirely and makes it immediately clear which items require investigation and what type of correction is needed.</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:48%;">What RapidReconciler Does</th><th>Benefit</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Compares summarized F4111 to F41021 automatically for every item on every nightly import.</td><td>No manual extraction or calculation required.</td></tr>
+            <tr><td>Excludes memo transactions (<code>ILIPCD = "X"</code>) and applies UOM conversions automatically.</td><td>Results are accurate without manual data manipulation.</td></tr>
+            <tr><td>Identifies whether the variance is a quantity issue, a dollar issue, or both.</td><td>Directs the user to the correct corrective action immediately.</td></tr>
+            <tr><td>Provides the Re-Roll options to synchronize RapidReconciler after a JD Edwards correction.</td><td>Clears the variance from the reconciliation without requiring a data reset.</td></tr>
+            <tr><td>Reflects the corrected position after the next nightly refresh.</td><td>Provides confirmation that the correction was successful.</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Before You Begin</h2>
+
+        <table>
+          <thead>
+            <tr><th style="width:30%;">Item</th><th>Detail</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Who should perform this</strong></td><td>Cost accountant or inventory accountant with appropriate JD Edwards security.</td></tr>
+            <tr><td><strong>RapidReconciler access</strong></td><td>Required to identify and confirm variances.</td></tr>
+            <tr><td><strong>JD Edwards access</strong></td><td>Required to validate and correct the underlying data.</td></tr>
+            <tr><td><strong>Average cost environments</strong></td><td>The dollars-only IA correction procedure requires an additional UDC configuration step &mdash; read the full guide before proceeding.</td></tr>
+          </tbody>
+        </table>
+
+        <h2>Steps</h2>
+
+        <table>
+          <thead>
+            <tr><th style="width:6%;">#</th><th>Step</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="num-cell">1</td><td><a href="javascript:void(0)" onclick="showView('topic-step1')">Open the Cardex Integrity Pop-Up</a></td><td>Surface the item, quantity variance, and dollar variance.</td></tr>
+            <tr><td class="num-cell">2</td><td><a href="javascript:void(0)" onclick="showView('topic-step2')">Validate the Variance in JD Edwards</a></td><td>Determine whether JDE or RapidReconciler is the source of the discrepancy.</td></tr>
+            <tr><td class="num-cell">3</td><td><a href="javascript:void(0)" onclick="showView('topic-step3')">Dollars-Only Adjustment in JD Edwards</a></td><td>Correct a true dollar discrepancy in JDE without affecting on-hand quantity.</td></tr>
+            <tr><td class="num-cell">4</td><td><a href="javascript:void(0)" onclick="showView('topic-step4')">Resolve via Re-Roll in RapidReconciler</a></td><td>Synchronize RapidReconciler with JDE using one of three Re-Roll options.</td></tr>
+            <tr><td class="num-cell">5</td><td><a href="javascript:void(0)" onclick="showView('topic-step5')">Confirm the Result</a></td><td>Verify <code>QtyVar</code> and <code>AmtVar</code> are zero after the next refresh.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout principle">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Key principle.</strong> Re-Roll synchronizes RapidReconciler to JDE; it does not change JDE data. There is no UNDO. Always validate in JDE first, then decide whether the fix belongs in JDE (Step 3) or in RapidReconciler (Step 4).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ STEP 1: OPEN THE CARDEX INTEGRITY POP-UP ============ -->
+      <section id="topic-step1" class="view">
+        <h1>Step 1 &mdash; Open the Cardex Integrity Pop-Up in RapidReconciler</h1>
+        <p>The RapidReconciler Cardex Integrity pop-up compares the summarized item ledger (F4111) against the on-hand balance in the Item Location table (F41021) for every item in the system. It automatically excludes memo transactions, applies unit of measure conversions, and respects the cost level setting for average cost items.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>Important.</strong> RapidReconciler calculates its cardex variance only from the point in time when the program was initiated, or from the date the data was last reset. It does not have visibility into transaction history that predates that starting point. <strong>JD Edwards is always the system of record.</strong> Any variance shown in RapidReconciler should be validated against JD Edwards before taking corrective action. The Re-Roll options exist to bring RapidReconciler into alignment with JD Edwards &mdash; not to correct JD Edwards data.</p>
+          </div>
+        </div>
+
+        <h2>1.1 &nbsp; Navigate to the Cardex Integrity pop-up</h2>
+
+        <p>From the RapidReconciler inventory reconciliation screen, open the Cardex Integrity pop-up. Hover over the cardex variance line in the variance calculation section, then click the green square to open the pop-up.</p>
+
+        <figure>
+          <img src="../Images/rr_inv_cardex_integrity_popup.png" alt="RapidReconciler Cardex Integrity pop-up titled 'Cardex'. Each row represents an item with a variance. The leftmost Reason column is highlighted in yellow and shows either 'Quantity' (in yellow) or 'Amount' (in orange) for each row. Columns to the right of Reason are: Company, LongAcc, Branch, ShortItem, ItemNum, ThirdItem, Location, Lot, Method, AdjAmount, AdjQty, UOM, GLClass, and Comment. Sample data uses placeholder values such as 00001, ITEM-XXX, XXX, 9999999, 07, and EA.">
+          <figcaption><strong>Cardex Integrity pop-up</strong>Each row is an item with a variance. The Reason column on the left identifies the type &mdash; <em>Quantity</em> (yellow) or <em>Amount</em> (orange) &mdash; alongside item identification, adjustment amount and quantity, UOM, and GL class.</figcaption>
+        </figure>
+
+        <h2>1.2 &nbsp; Review the variance indicators</h2>
+
+        <p>The pop-up displays the following key fields for the item:</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:22%;">Field</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Reason</strong></td><td>Either Quantity or Amount.</td></tr>
+            <tr><td><strong>Quantity</strong></td><td>The on-hand quantity recorded in RapidReconciler.</td></tr>
+            <tr><td><strong>Amount</strong></td><td>The on-hand value recorded in RapidReconciler.</td></tr>
+            <tr><td><strong>QtyVar</strong></td><td>The quantity variance between RapidReconciler and JD Edwards.</td></tr>
+            <tr><td><strong>AmtVar</strong></td><td>The dollar variance between RapidReconciler and JD Edwards.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Note.</strong> The pop-up also displays the item details. You may notice offsetting values for the same item. This can be due to incorrect transaction processing or incorrect updating of GL class codes or primary units of measure.</p>
+          </div>
+        </div>
+
+        <h2>1.3 &nbsp; Determine the type of variance</h2>
+
+        <table>
+          <thead>
+            <tr><th style="width:14%;">Quantity</th><th style="width:14%;">Amount</th><th>Interpretation</th><th style="width:24%;">Next Step</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>0</code></td><td><code>0</code></td><td>No variance &mdash; no action needed.</td><td>Stop.</td></tr>
+            <tr><td>Non-zero</td><td>Any</td><td>Quantity discrepancy &mdash; investigate quantity before addressing dollars.</td><td>Investigate quantity first.</td></tr>
+            <tr class="highlight-row"><td><strong><code>0</code></strong></td><td><strong>Non-zero</strong></td><td><strong>Dollar-only variance &mdash; proceed with this guide.</strong></td><td><strong>Step 2</strong></td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Note.</strong> The Cardex Integrity pop-up reflects data as of the most recent nightly refresh cycle. Any transactions that occurred after the last import will not be reflected until the following night&rsquo;s refresh is complete.</p>
+          </div>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-step2')">Next: Validate in JD Edwards &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 2: VALIDATE IN JDE ============ -->
+      <section id="topic-step2" class="view">
+        <h1>Step 2 &mdash; Validate the Variance in JD Edwards</h1>
+        <p>Before making any correction, confirm the discrepancy by reviewing the item&rsquo;s transaction history directly in JD Edwards. Since JD Edwards is the system of record, this step determines the true source of the variance &mdash; whether a correction needs to be made in JD Edwards, or whether RapidReconciler simply needs to be synchronized to match JD Edwards using the Re-Roll options.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <figure>
+          <img src="../Images/jde-item-ledger.png" alt="JD Edwards Item Ledger inquiry screen displaying transaction history for an item, with columns for document type, ILIPCD, quantity, and extended amount.">
+          <figcaption><strong>JDE Item Ledger inquiry</strong>The transaction-level view of F4111 used to summarize quantity and extended amount for the item.</figcaption>
+        </figure>
+
+        <h2>2.1 &nbsp; Export the cardex for the item</h2>
+        <p>Export all cardex transactions for the item from JD Edwards to Excel.</p>
+
+        <h2>2.2 &nbsp; Exclude memo transactions</h2>
+        <p>Remove all rows where column <strong><code>ILIPCD</code></strong> in table F4111 equals <strong><code>"X"</code></strong>. Memo transactions include work order scrap, lot releases, and certain warehousing movements. These do not impact the on-hand balance and must be excluded from the calculation.</p>
+
+        <h2>2.3 &nbsp; Summarize the remaining transactions</h2>
+        <p>Total the following columns from the remaining rows:</p>
+        <ul>
+          <li><strong>Quantity</strong> &mdash; expressed in the primary unit of measure.</li>
+          <li><strong>Extended Amount</strong>.</li>
+        </ul>
+
+        <h2>2.4 &nbsp; Compare to JD Edwards balances</h2>
+        <p>Compare your summarized totals to the on-hand quantity and value displayed in JD Edwards.</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:32%;">Result</th><th>Interpretation</th><th style="width:24%;">Next Step</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Quantity and amount both match JDE.</td><td>JD Edwards is correct &mdash; variance is isolated to RapidReconciler.</td><td>Use the Re-Roll options (Step 4).</td></tr>
+            <tr class="highlight-row"><td><strong>Amount does not match JDE.</strong></td><td><strong>A true dollar discrepancy exists in JD Edwards.</strong></td><td><strong>Perform a dollars-only adjustment (Step 3).</strong></td></tr>
+            <tr><td>Quantity does not match JDE.</td><td>A quantity issue exists &mdash; this guide does not cover quantity corrections.</td><td>Investigate the quantity discrepancy separately. May require IT intervention.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-step3')">Next: Dollars-Only Adjustment in JDE &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 3: DOLLARS-ONLY ADJUSTMENT ============ -->
+      <section id="topic-step3" class="view">
+        <h1>Step 3 &mdash; Perform a Dollars-Only Adjustment in JD Edwards</h1>
+        <p>Follow this procedure only if Step 2 confirmed that a true dollar discrepancy exists in JD Edwards. If JD Edwards is correct and the variance is in RapidReconciler only, skip to <a href="javascript:void(0)" onclick="showView('topic-step4')">Step 4</a>.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>3.1 &nbsp; Determine Your Cost Environment</h2>
+        <ul>
+          <li><strong>Standard Cost (Method 07)</strong> &mdash; Proceed directly to Step 3.3.</li>
+          <li><strong>Average Cost (Method 02)</strong> &mdash; Complete Step 3.2 first.</li>
+        </ul>
+
+        <h2>3.2 &nbsp; Average Cost Only: Disable Average Cost Update for P4114</h2>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Skip this step if the item uses standard cost.</strong></p>
+          </div>
+        </div>
+
+        <p>In an average cost environment, program P4114 (Inventory Adjustments) is typically configured to recalculate the unit cost when a transaction is posted. If this recalculation runs during a dollars-only adjustment, it will change the average cost &mdash; negating the intended correction.</p>
+
+        <p><strong>3.2.1</strong> &nbsp; Enter <strong>UDC</strong> on the fast path, then enter <strong>40/AV</strong> and click Find.</p>
+        <p><strong>3.2.2</strong> &nbsp; Locate program <strong>P4114</strong> in the table.</p>
+        <p><strong>3.2.3</strong> &nbsp; Change the <strong>Description 02</strong> value from <strong>"Y" to "N"</strong> to disable the average cost update for P4114. Do not change any other programs.</p>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Note.</strong> This change takes effect immediately. Proceed to Step 3.3 without delay to minimize the window during which normal P4114 transactions would not update the average cost.</p>
+          </div>
+        </div>
+
+        <h2>3.3 &nbsp; Process the IA Transaction</h2>
+
+        <p><strong>3.3.1</strong> &nbsp; Navigate to <strong>Inventory Adjustments (P4114)</strong> from the applicable inventory menu.</p>
+
+        <p><strong>3.3.2</strong> &nbsp; Complete the following fields:</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:24%;">Field</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Item Number</strong></td><td>The item requiring adjustment.</td></tr>
+            <tr><td><strong>Branch Plant</strong></td><td>The applicable branch plant.</td></tr>
+            <tr><td><strong>Location</strong></td><td>The applicable location.</td></tr>
+            <tr><td><strong>Lot Number</strong></td><td>The applicable lot number, if applicable.</td></tr>
+            <tr><td><strong>Extended Amount</strong></td><td>The adjustment amount (positive to increase value, negative to decrease).</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>3.3.3</strong> &nbsp; Leave the following fields blank:</p>
+
+        <table>
+          <thead>
+            <tr><th style="width:24%;">Field</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Quantity</strong></td><td>Must be blank &mdash; entering a quantity will change the on-hand balance.</td></tr>
+            <tr><td><strong>Unit Cost</strong></td><td>Must be blank &mdash; entering a unit cost will result in a quantity-based transaction.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>Critical.</strong> Leaving the Quantity and Unit Cost fields blank is what makes this a dollars-only adjustment. If either field contains a value, the transaction will not behave as intended.</p>
+          </div>
+        </div>
+
+        <p><strong>3.3.4</strong> &nbsp; Review and post the IA transaction. The adjustment will appear in the cardex (F4111) with the correct dollar amount and corresponding GL entries.</p>
+
+        <h2>3.4 &nbsp; Verify the JD Edwards Adjustment</h2>
+
+        <p><strong>3.4.1</strong> &nbsp; Open the item ledger (F4111) and confirm the IA transaction appears with the correct extended amount and a quantity of zero.</p>
+
+        <p><strong>3.4.2</strong> &nbsp; Re-export the cardex to Excel, re-apply the exclusion for <code>ILIPCD = "X"</code>, and re-summarize to confirm the extended amount total now ties to the JD Edwards balance.</p>
+
+        <p><strong>3.4.3</strong> &nbsp; Verify that the corresponding GL entries have been created and posted to the correct inventory account.</p>
+
+        <h2>3.5 &nbsp; Average Cost Only: Restore UDC Table 40/AV</h2>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Skip this step if the item uses standard cost.</strong></p>
+          </div>
+        </div>
+
+        <p><strong>Immediately after verifying the adjustment</strong>, restore the UDC 40/AV setting for P4114.</p>
+
+        <p><strong>3.5.1</strong> &nbsp; Enter <strong>UDC</strong> on the fast path, enter <strong>40/AV</strong>, and click Find.</p>
+        <p><strong>3.5.2</strong> &nbsp; Locate program <strong>P4114</strong> in the table.</p>
+        <p><strong>3.5.3</strong> &nbsp; Change the <strong>Description 02</strong> value from <strong>"N" back to "Y"</strong> to re-enable the average cost update.</p>
+
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>Warning.</strong> Leaving P4114 set to "N" will prevent the average cost from updating on future legitimate transactions. Do not skip this step.</p>
+          </div>
+        </div>
+
+        <h2>3.6 &nbsp; Standard vs. Average Cost Summary</h2>
+
+        <table>
+          <thead>
+            <tr><th>Step</th><th style="width:22%;">Standard Cost</th><th style="width:22%;">Average Cost</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>3.2 &mdash; Disable average cost update (UDC 40/AV)</td><td><strong>Skip</strong></td><td><strong>Required</strong></td></tr>
+            <tr><td>3.3 &mdash; Process IA transaction</td><td>Required</td><td>Required</td></tr>
+            <tr><td>3.4 &mdash; Verify the adjustment</td><td>Required</td><td>Required</td></tr>
+            <tr><td>3.5 &mdash; Restore UDC 40/AV</td><td><strong>Skip</strong></td><td><strong>Required</strong></td></tr>
+          </tbody>
+        </table>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-step4')">Next: Resolve via Re-Roll &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 4: RESOLVE VIA RE-ROLL ============ -->
+      <section id="topic-step4" class="view">
+        <h1>Step 4 &mdash; Resolve the Variance in RapidReconciler Using Re-Roll</h1>
+        <p>If Step 2 confirmed that JD Edwards is correct and the variance exists only in RapidReconciler, or after completing the JD Edwards correction in Step 3, use the <strong>Re-Roll Item</strong> dialog to synchronize RapidReconciler with JD Edwards.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>Key principle.</strong> The Re-Roll options do not change JD Edwards data. They recalculate or adjust RapidReconciler&rsquo;s internal balances to bring them into alignment with JD Edwards, which is the system of record. Since RapidReconciler only tracks history from the point the program was initiated or the data was last reset, Re-Roll is sometimes needed to account for transactions or cost changes that occurred before or outside that window. <strong>There is no UNDO button. Use the options with caution.</strong></p>
+          </div>
+        </div>
+
+        <figure>
+          <img src="../Images/rr_inv_asof_reroll.png" alt="Re-Roll Item dialog in RapidReconciler showing three checkbox options (Re-Roll Item, Zero Beg Bal, Remove CX Var) above the item details panel and a Re-Roll button.">
+          <figcaption><strong>Re-Roll Item dialog</strong>Three options &mdash; only one should be selected at a time.</figcaption>
+        </figure>
+
+        <p>The Re-Roll Item dialog offers three options. Only one should be selected at a time.</p>
+
+        <h2>Option 1: Re-Roll Item</h2>
+
+        <figure>
+          <img src="../Images/rr_inv_asof_reroll1.png" alt="Re-Roll Item dialog with the Re-Roll Item checkbox highlighted.">
+          <figcaption><strong>Re-Roll Item</strong>The most common option &mdash; recalculates each period total through the current period.</figcaption>
+        </figure>
+
+        <p><strong>When to use:</strong> When there are issues with the RapidReconciler stated quantity on hand due to changes in the primary unit of measure, or after a JDE correction has been made and RapidReconciler needs to be recalculated.</p>
+
+        <p><strong>What it does:</strong></p>
+        <ul>
+          <li>Keeps the current balance forward at the beginning of the timeline.</li>
+          <li>Adjusts transactions as needed.</li>
+          <li>Recalculates each period ending total through the current period.</li>
+        </ul>
+
+        <p><strong>How to use:</strong></p>
+        <ol>
+          <li>Open the <strong>Re-Roll Item</strong> dialog for the affected item.</li>
+          <li>Check the <strong>Re-Roll Item</strong> checkbox.</li>
+          <li>Verify the item details &mdash; Company, Branch, Item Number, Location, Lot, GI Class, Cost Level, Primary UOM, Period Ends, Quantity, Amount, QtyVar, and AmtVar.</li>
+          <li>Click <strong>Re-Roll</strong>.</li>
+        </ol>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Note.</strong> This is the most common re-roll option. Verify item details carefully before executing.</p>
+          </div>
+        </div>
+
+        <h2>Option 2: Zero Beginning Balance</h2>
+
+        <figure>
+          <img src="../Images/rr_inv_asof_reroll2.png" alt="Re-Roll Item dialog with the Zero Beg Bal checkbox highlighted.">
+          <figcaption><strong>Zero Beginning Balance</strong>Forces the earliest period&rsquo;s beginning balance to zero before recalculating forward.</figcaption>
+        </figure>
+
+        <p><strong>When to use:</strong> Only if the first available period for the item in RapidReconciler should have a beginning balance of zero. Check the earliest balance by selecting the oldest date from the Period Ends drop-down before using this option.</p>
+
+        <p><strong>What it does:</strong></p>
+        <ul>
+          <li>Forces the beginning balance to zero.</li>
+          <li>Recalculates each period total from the beginning of the timeline forward.</li>
+        </ul>
+
+        <p><strong>How to use:</strong></p>
+        <ol>
+          <li>Open the <strong>Re-Roll Item</strong> dialog for the affected item.</li>
+          <li>Select the oldest date from the Period Ends drop-down to verify the beginning balance should be zero.</li>
+          <li>Check the <strong>Zero Beg Bal</strong> checkbox.</li>
+          <li>Verify the item details.</li>
+          <li>Click <strong>Re-Roll</strong>.</li>
+        </ol>
+
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>Warning.</strong> All perpetual period totals may change as a result of this option. Do not use if the earliest period has a legitimate non-zero beginning balance &mdash; this will incorrectly zero out valid history.</p>
+          </div>
+        </div>
+
+        <h2>Option 3: Remove CX Var</h2>
+
+        <figure>
+          <img src="../Images/rr_inv_asof_reroll3.png" alt="Re-Roll Item dialog with the Remove CX Var checkbox highlighted.">
+          <figcaption><strong>Remove CX Var</strong>Clears the displayed cardex variance for the item &mdash; only after JDE has been validated as correct.</figcaption>
+        </figure>
+
+        <p><strong>When to use:</strong> When JD Edwards is confirmed to be correct but RapidReconciler is showing a cardex variance. Requires JDE validation (Step 2) to be completed first.</p>
+
+        <p><strong>What it does:</strong></p>
+        <ul>
+          <li>Removes the erroneous cardex variance displayed in RapidReconciler for the item.</li>
+        </ul>
+
+        <p><strong>How to use:</strong></p>
+        <ol>
+          <li>Confirm that JD Edwards data is correct (Step 2 complete).</li>
+          <li>Open the <strong>Re-Roll Item</strong> dialog for the affected item.</li>
+          <li>Check the <strong>Remove CX Var</strong> checkbox.</li>
+          <li>Verify the item details including <code>QtyVar</code> and <code>AmtVar</code>.</li>
+          <li>Click <strong>Re-Roll</strong>.</li>
+        </ol>
+
+        <div class="callout important">
+          <div class="callout-icon">!</div>
+          <div>
+            <p><strong>Important.</strong> Do not use this option to mask a genuine data issue in JD Edwards. Always complete the JDE validation in Step 2 before selecting this option.</p>
+          </div>
+        </div>
+
+        <h2>Re-Roll Options Quick Reference</h2>
+
+        <table>
+          <thead>
+            <tr><th style="width:22%;">Option</th><th>Use When</th><th>Key Caution</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Re-Roll Item</strong></td><td>UOM changes or general recalculation needed.</td><td>Verify item details before executing.</td></tr>
+            <tr><td><strong>Zero Beg Bal</strong></td><td>Earliest period should have a zero beginning balance.</td><td>All perpetual period totals will be recalculated.</td></tr>
+            <tr><td><strong>Remove CX Var</strong></td><td>JDE is correct but RapidReconciler shows a variance.</td><td>Complete JDE validation first &mdash; do not use to mask a JDE issue.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-step5')">Next: Confirm the Result &rarr;</button>
+        </div>
+      </section>
+
+      <!-- ============ STEP 5: CONFIRM THE RESULT ============ -->
+      <section id="topic-step5" class="view">
+        <h1>Step 5 &mdash; Confirm the Result in RapidReconciler</h1>
+        <p>After completing the Re-Roll, the RapidReconciler Cardex Integrity pop-up will reflect the updated data following the <strong>next nightly refresh cycle</strong>.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Note.</strong> Re-Roll changes are applied immediately within RapidReconciler&rsquo;s internal data, but the Cardex Integrity pop-up displays data as of the most recent nightly import. Verify the variance has been resolved by checking the item again after the next refresh cycle completes.</p>
+          </div>
+        </div>
+
+        <h2>5.1 &nbsp; Reopen the Cardex Integrity pop-up</h2>
+        <p>After the next nightly refresh, reopen the Cardex Integrity pop-up for the item.</p>
+
+        <h2>5.2 &nbsp; Confirm both variances are zero</h2>
+        <p>Confirm that <strong><code>QtyVar</code></strong> and <strong><code>AmtVar</code></strong> both show <strong><code>0</code></strong>.</p>
+
+        <h2>5.3 &nbsp; If a variance still appears</h2>
+        <p>Review the item&rsquo;s transaction history and repeat the validation steps in <a href="javascript:void(0)" onclick="showView('topic-step2')">Step 2</a> before taking further action.</p>
+
+        <h2>Summary Checklist</h2>
+
+        <ul class="checklist">
+          <li class="checklist-title">Variance fully resolved</li>
+          <li>Step 2 validation completed against JDE.</li>
+          <li>Where required, JDE adjustment posted (Step 3) and average cost UDC restored.</li>
+          <li>Appropriate Re-Roll option executed for the item (Step 4).</li>
+          <li>Cardex Integrity pop-up confirms <code>QtyVar = 0</code> and <code>AmtVar = 0</code> after the next nightly refresh.</li>
+        </ul>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="done-btn" onclick="goHome()">Done &mdash; Back to Index &#x2713;</button>
+        </div>
+      </section>
+
+    </main>
   </div>
 </div>
 
@@ -835,6 +1356,47 @@ Using RapidReconciler and JD Edwards together to identify and correct cardex dis
     </div>
   </div>
 </footer>
+
+<script>
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      const slug = id === 'home' ? 'home' : id.replace('topic-', '');
+      // Update active state across all sidebar groups
+      document.querySelectorAll('.sidebar-nav li').forEach(li => {
+        li.classList.toggle('active', li.dataset.target === slug);
+      });
+
+      try {
+        if (window.location.protocol !== 'about:') {
+          history.replaceState(null, '', slug === 'home' ? ' ' : '#' + slug);
+        }
+      } catch (e) { /* sandboxed context */ }
+    }
+  }
+
+  function goHome() { showView('home'); }
+
+  document.querySelectorAll('.sidebar-nav li[data-target="home"]').forEach(li => li.classList.add('active'));
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && hash !== 'home') showView('topic-' + hash);
+    } catch (e) { /* ignore */ }
+  });
+
+  window.addEventListener('popstate', () => {
+    try {
+      const hash = window.location.hash.replace('#', '');
+      showView(hash && hash !== 'home' ? 'topic-' + hash : 'home');
+    } catch (e) { /* ignore */ }
+  });
+</script>
 
 </body>
 </html>

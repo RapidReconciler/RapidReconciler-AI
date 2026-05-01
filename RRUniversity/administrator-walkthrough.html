@@ -428,6 +428,189 @@
     transform: rotate(45deg);
   }
 
+  /* Figure / figcaption */
+  .view figure {
+    margin: 22px 0;
+  }
+  .view figure.screenshot {
+    border: none;
+    background: transparent;
+    padding: 0;
+  }
+  .view figure.screenshot img,
+  .view figure.screenshot svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    margin: 0 auto;
+    background: var(--bg-soft);
+  }
+  .view figcaption {
+    font-size: 13px;
+    color: var(--text-soft);
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.55;
+    padding: 0 8px;
+  }
+  .view figcaption strong {
+    display: block;
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 13.5px;
+    margin-bottom: 3px;
+  }
+
+  /* Hero block on Index */
+  .hero-block {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 32px;
+    align-items: center;
+    background: linear-gradient(135deg, var(--bg-soft) 0%, var(--blue-pale) 100%);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+  }
+  .hero-block .hero-text p { margin-bottom: 10px; }
+  .hero-block .hero-text p:last-child { margin-bottom: 0; }
+  .hero-block svg { display: block; max-width: 100%; height: auto; }
+  @media (max-width: 720px) {
+    .hero-block { grid-template-columns: 1fr; }
+    .hero-block .hero-art { display: none; }
+  }
+
+  /* Quick-reference task table */
+  .view .quick-ref {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--orange);
+    border-radius: 6px;
+    padding: 18px 22px;
+    margin: 22px 0;
+  }
+  .view .quick-ref h3 {
+    margin-top: 0;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--orange);
+  }
+  .view .quick-ref dl {
+    display: grid;
+    grid-template-columns: 1fr 180px;
+    gap: 8px 18px;
+    font-size: 14px;
+    margin: 0;
+  }
+  .view .quick-ref dt {
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .view .quick-ref dt::before { content: '› '; color: var(--orange); font-weight: 700; }
+  .view .quick-ref dd {
+    color: var(--blue);
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.5;
+  }
+  .view .quick-ref dd a { border-bottom: none; }
+  .view .quick-ref dd a:hover { text-decoration: underline; }
+  @media (max-width: 720px) {
+    .view .quick-ref dl { grid-template-columns: 1fr; gap: 4px; }
+    .view .quick-ref dd { margin-bottom: 10px; padding-left: 14px; }
+  }
+
+  /* Page meta (last updated, search hint) */
+  .page-meta {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+  .page-meta .meta-item { display: inline-flex; align-items: center; gap: 6px; }
+  .page-meta .meta-item strong { color: var(--text-soft); font-weight: 600; }
+  .page-meta kbd {
+    background: #fff;
+    border: 1px solid var(--rule-strong);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--navy);
+  }
+
+  /* Email preview block */
+  .email-preview {
+    margin-top: 14px;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 13px;
+  }
+  .email-preview .ep-header {
+    background: var(--bg-panel);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+  .email-preview .ep-header strong { color: var(--navy); font-weight: 600; }
+  .email-preview .ep-row {
+    padding: 4px 14px;
+    display: flex;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+  }
+  .email-preview .ep-row:first-child { padding-top: 10px; }
+  .email-preview .ep-row .lbl {
+    color: var(--text-muted);
+    font-weight: 600;
+    min-width: 56px;
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding-top: 2px;
+  }
+  .email-preview .ep-row .val { color: var(--navy); }
+  .email-preview .ep-body {
+    padding: 14px;
+    border-top: 1px solid var(--rule);
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text);
+    white-space: pre-line;
+    background: var(--bg-soft);
+  }
+
+  /* External link icon for video links */
+  .view .video-link::after {
+    content: '↗';
+    margin-left: 4px;
+    font-size: 13px;
+  }
+
+  /* "Done" / completion button */
+  .next-btn.done-btn {
+    background: #2e7d4f;
+    border-color: #2e7d4f;
+  }
+  .next-btn.done-btn:hover {
+    background: #226338;
+    border-color: #226338;
+  }
+
   /* ============== FOOTER ============== */
   /* ============== FOOTER (thin, single line) ============== */
   footer {
@@ -522,10 +705,106 @@
     <main class="content-card">
       <section id="home" class="view active">
 <h1>Administrator Walkthrough</h1>
-      <p>Configure and maintain RapidReconciler with confidence. This walkthrough is the companion guide for RapidReconciler administrators — covering company licensing, user permissions, general settings, and inventory offset accounts.</p>
-      <p>Each section is self-contained. Use the sidebar or the table below to jump directly to a topic. From any topic, the <strong>Back to Index</strong> button returns you here.</p>
+
+      <div class="hero-block">
+        <div class="hero-text">
+          <p>Configure and maintain RapidReconciler with confidence. This walkthrough is the companion guide for RapidReconciler administrators — covering company licensing, user permissions, general settings, and inventory offset accounts.</p>
+          <p>Each section is self-contained. Use the sidebar or the table below to jump directly to a topic. From any topic, the <strong>Back to Index</strong> button returns you here.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 200">
+            <defs>
+              <linearGradient id="tileGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="100%" stop-color="#eef3f9"/>
+              </linearGradient>
+            </defs>
+            <!-- Companies tile -->
+            <g transform="translate(20,20)">
+              <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
+              <rect x="14" y="16" width="22" height="22" rx="3" fill="#2b5fb0"/>
+              <rect x="42" y="20" width="50" height="6" rx="2" fill="#1f2d4a"/>
+              <rect x="42" y="30" width="38" height="4" rx="2" fill="#8a93a6"/>
+              <rect x="14" y="48" width="82" height="4" rx="2" fill="#d6e6f5"/>
+              <rect x="14" y="58" width="62" height="4" rx="2" fill="#d6e6f5"/>
+              <text x="55" y="91" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">COMPANIES</text>
+            </g>
+            <!-- Users tile -->
+            <g transform="translate(150,20)">
+              <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
+              <circle cx="35" cy="32" r="10" fill="#f08a24"/>
+              <path d="M 18 56 Q 18 44 35 44 Q 52 44 52 56 Z" fill="#f08a24"/>
+              <rect x="62" y="22" width="34" height="4" rx="2" fill="#1f2d4a"/>
+              <rect x="62" y="32" width="28" height="4" rx="2" fill="#8a93a6"/>
+              <rect x="62" y="46" width="34" height="4" rx="2" fill="#d6e6f5"/>
+              <rect x="62" y="56" width="22" height="4" rx="2" fill="#d6e6f5"/>
+              <text x="55" y="91" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">USERS</text>
+            </g>
+            <!-- General Settings tile -->
+            <g transform="translate(20,116)">
+              <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
+              <g transform="translate(38,40)">
+                <circle r="14" fill="none" stroke="#2b5fb0" stroke-width="3"/>
+                <circle r="4" fill="#2b5fb0"/>
+                <g stroke="#2b5fb0" stroke-width="3" stroke-linecap="round">
+                  <line x1="0" y1="-19" x2="0" y2="-15"/>
+                  <line x1="0" y1="15" x2="0" y2="19"/>
+                  <line x1="-19" y1="0" x2="-15" y2="0"/>
+                  <line x1="15" y1="0" x2="19" y2="0"/>
+                  <line x1="-13" y1="-13" x2="-10" y2="-10"/>
+                  <line x1="10" y1="10" x2="13" y2="13"/>
+                  <line x1="13" y1="-13" x2="10" y2="-10"/>
+                  <line x1="-10" y1="10" x2="-13" y2="13"/>
+                </g>
+              </g>
+              <rect x="64" y="28" width="32" height="4" rx="2" fill="#1f2d4a"/>
+              <rect x="64" y="38" width="26" height="4" rx="2" fill="#8a93a6"/>
+              <rect x="64" y="48" width="32" height="4" rx="2" fill="#d6e6f5"/>
+              <text x="55" y="187" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">SETTINGS</text>
+            </g>
+            <!-- Offset Accounts tile -->
+            <g transform="translate(150,116)">
+              <rect width="110" height="76" rx="6" fill="url(#tileGrad)" stroke="#c9d3e0"/>
+              <polygon points="35,28 41,40 54,42 44,51 47,64 35,58 23,64 26,51 16,42 29,40" fill="#f08a24"/>
+              <rect x="62" y="28" width="34" height="4" rx="2" fill="#1f2d4a"/>
+              <rect x="62" y="38" width="22" height="4" rx="2" fill="#8a93a6"/>
+              <rect x="62" y="48" width="32" height="4" rx="2" fill="#d6e6f5"/>
+              <rect x="62" y="56" width="26" height="4" rx="2" fill="#d6e6f5"/>
+              <text x="55" y="187" font-family="'Open Sans',sans-serif" font-size="9" font-weight="700" fill="#1f2d4a" text-anchor="middle" letter-spacing="0.5">OFFSETS</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div class="page-meta">
+        <span class="meta-item"><strong>Last reviewed:</strong>&nbsp;January 2026</span>
+        <span class="meta-item">Press <kbd>Ctrl</kbd>+<kbd>F</kbd> (or <kbd>⌘</kbd>+<kbd>F</kbd>) to search within a topic</span>
+      </div>
 
       <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <div class="quick-ref">
+        <h3>Quick Reference — Common Tasks</h3>
+        <dl>
+          <dt>I need to add a new fiscal year start date</dt>
+          <dd><a href="javascript:void(0)" onclick="showView('topic-company')">Company Management</a></dd>
+
+          <dt>A new hire needs login access</dt>
+          <dd><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></dd>
+
+          <dt>I need to license an additional JDE company</dt>
+          <dd><a href="javascript:void(0)" onclick="showView('topic-adding')">Adding a Company License</a></dd>
+
+          <dt>The Roll Forward report is missing a column</dt>
+          <dd><a href="javascript:void(0)" onclick="showView('topic-general')">General Settings</a></dd>
+
+          <dt>Variance entries are populating with the wrong accounts</dt>
+          <dd><a href="javascript:void(0)" onclick="showView('topic-offsets')">Offset Accounts</a></dd>
+
+          <dt>A user can't see a company they should have access to</dt>
+          <dd><a href="javascript:void(0)" onclick="showView('topic-users')">User Management</a></dd>
+        </dl>
+      </div>
 
       <h2>Topics</h2>
       <p>Select a section below to view its content. Each topic includes step-by-step navigation, field references, and links to related video tutorials where available.</p>
@@ -579,7 +858,40 @@
       <p>GSI will also designate the first customer user as an administrator. That customer administrator then assumes responsibility for maintaining the RapidReconciler configuration going forward.</p>
 
       <h2>Areas of Administrator Responsibility</h2>
-      <p>This training manual covers the following four areas of RapidReconciler administration:</p>
+      <p>This training manual covers the following four areas of RapidReconciler administration. They are accessed from the <strong>Admin</strong> menu in the main navigation panel — visible only to users who have administrator rights enabled on their account.</p>
+
+      <figure class="screenshot" style="max-width:340px;margin-left:auto;margin-right:auto;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" font-family="'Open Sans', sans-serif">
+          <!-- Top nav bar with Admin highlighted -->
+          <rect x="0" y="0" width="320" height="36" fill="#1f2d4a"/>
+          <text x="20" y="23" font-size="12" font-weight="700" fill="#ffffff" letter-spacing="0.05em">RapidReconciler</text>
+          <text x="140" y="23" font-size="11" fill="rgba(255,255,255,0.7)">Inventory</text>
+          <text x="190" y="23" font-size="11" fill="rgba(255,255,255,0.7)">In Transit</text>
+          <text x="240" y="23" font-size="11" font-weight="700" fill="#f08a24">Admin ▾</text>
+          <!-- Connector arrow -->
+          <line x1="252" y1="38" x2="252" y2="50" stroke="#c9d3e0" stroke-width="1"/>
+          <!-- Dropdown panel -->
+          <rect x="186" y="50" width="124" height="160" rx="4" fill="#ffffff" stroke="#c9d3e0" stroke-width="1"/>
+          <!-- Menu items -->
+          <g font-size="11.5" fill="#1f2d4a">
+            <rect x="186" y="50" width="124" height="36" fill="#f6f8fb"/>
+            <text x="200" y="73">Companies</text>
+            <line x1="186" y1="86" x2="310" y2="86" stroke="#e1e7ef" stroke-width="1"/>
+
+            <text x="200" y="109">Users</text>
+            <line x1="186" y1="122" x2="310" y2="122" stroke="#e1e7ef" stroke-width="1"/>
+
+            <text x="200" y="145">General Settings</text>
+            <line x1="186" y1="158" x2="310" y2="158" stroke="#e1e7ef" stroke-width="1"/>
+
+            <text x="200" y="181">Inventory Offsets</text>
+          </g>
+          <!-- Caret indicator showing active selection -->
+          <polygon points="186,68 191,64 191,72" fill="#f08a24"/>
+        </svg>
+        <figcaption><strong>Admin menu</strong>Click <strong>Admin</strong> in the top navigation to reveal the four administration areas covered in this walkthrough.</figcaption>
+      </figure>
+
       <table>
         <thead>
           <tr><th>Area</th><th>What it covers</th></tr>
@@ -633,7 +945,7 @@
           <tr><td>Report Currency</td><td>The currency used for reporting purposes.</td></tr>
           <tr><td>Rate Type</td><td>The exchange rate type used for currency conversion, if applicable.</td></tr>
           <tr><td>AAI Doc</td><td>The AAI document type used for the model DMAAI table.</td></tr>
-          <tr><td>Threshold</td><td>The reconciliation threshold value.</td></tr>
+          <tr><td>Threshold</td><td>The reconciliation threshold value, expressed in the company's base currency. Variances at or below this absolute value are treated as within tolerance and flagged accordingly on the Reconciliation page.</td></tr>
           <tr><td>Options</td><td>Click to open the Company Options pop-up for editing.</td></tr>
           <tr><td>Reroll</td><td>Click to reroll the company, which recalculates the perpetual balance from the baseline date forward. Typically used if transactions have been backdated more than 1 period.</td></tr>
         </tbody>
@@ -656,10 +968,17 @@
 
       <h3>Start Date</h3>
       <p>The Start Date represents the earliest fiscal period that can be reconciled. It is always set to the first day of a fiscal period — typically the first day of the current fiscal year. Once the current fiscal year is closed, the administrator should update this date to reflect the new fiscal year.</p>
+
+      <div class="callout warning">
+        <div>
+          <div class="callout-label">Irreversible action</div>
+          <p>The Start Date <strong>cannot be moved backwards</strong>. Once advanced, RapidReconciler will initiate a purge procedure to permanently remove historical data prior to the new date. Verify your fiscal year is fully closed and reconciled before advancing this date.</p>
+        </div>
+      </div>
+
       <h4>Key considerations</h4>
       <ul>
         <li>It is highly recommended that at least 2 months of history be retained in the RapidReconciler database at all times.</li>
-        <li>The Start Date cannot be moved backwards. Once advanced, RapidReconciler will initiate a purge procedure to remove historical data prior to the new date.</li>
         <li>Advancing the Start Date is a method of recovering server resources and improving application performance. Reducing the volume of data in the database results in faster response times.</li>
       </ul>
 
@@ -673,7 +992,11 @@
       <p>The AAI document type used to identify the model DMAAI table for the company. The default value is <code>99</code>. This field should only be changed in consultation with GSI.</p>
 
       <h3>Threshold</h3>
-      <p>The reconciliation threshold amount. Variances at or below this value may be treated as within tolerance.</p>
+      <p>The reconciliation threshold amount, expressed in the company's base currency. Variances whose absolute value falls at or below this amount are treated as within tolerance.</p>
+      <div class="callout tip">
+        <div class="callout-label">Example</div>
+        <p>If the Threshold is set to <code>100.00</code> and a variance of $87.50 is calculated for a period, that variance is flagged as within tolerance on the Reconciliation page and does not require a journal entry. A variance of $250.00, by contrast, is flagged as exceeding tolerance and requires investigation.</p>
+      </div>
 
       <p>Click <strong>Save Changes</strong> when all modifications are complete.</p>
 
@@ -702,7 +1025,41 @@
         <a class="email-compose-btn" href="mailto:gsisales@getgsi.com?subject=RapidReconciler%20%E2%80%94%20Additional%20Company%20License%20Request&body=Hello%20GSI%20Sales%20Team%2C%0A%0AWe%20would%20like%20to%20add%20one%20or%20more%20additional%20companies%20to%20our%20RapidReconciler%20license.%20Please%20find%20the%20details%20below.%0A%0A%3D%3D%20Customer%20Information%20%3D%3D%0ACompany%20Name%3A%0ARapidReconciler%20Account%20/%20Customer%20ID%3A%0APrimary%20Contact%20Name%3A%0APrimary%20Contact%20Email%3A%0APhone%3A%0A%0A%3D%3D%20Companies%20to%20Add%20%3D%3D%0APlease%20add%20the%20following%20JD%20Edwards%20companies%20to%20our%20license%3A%0A%0A%20%201.%20JDE%20Company%20Number%3A%0A%20%20%20%20%20Company%20Name%3A%0A%0A%20%202.%20JDE%20Company%20Number%3A%0A%20%20%20%20%20Company%20Name%3A%0A%0A%20%20%28add%20additional%20rows%20as%20needed%29%0A%0A%3D%3D%20Additional%20Notes%20%3D%3D%0A%0A%0AThank%20you%2C%0A">Compose Pre-Filled Email</a>
       </div>
 
-      <p>Clicking the button above opens your default email client with a draft addressed to GSI Sales, including a subject line and a request template ready to fill in. If you prefer to write the email manually, please include the following:</p>
+      <p>Clicking the button above opens your default email client with a draft addressed to GSI Sales, including a subject line and a request template ready to fill in. The pre-filled email looks like this:</p>
+
+      <div class="email-preview">
+        <div class="ep-header">Preview &mdash; opens in your default mail client</div>
+        <div class="ep-row"><span class="lbl">To</span><span class="val">gsisales@getgsi.com</span></div>
+        <div class="ep-row"><span class="lbl">Subject</span><span class="val">RapidReconciler — Additional Company License Request</span></div>
+        <div class="ep-body">Hello GSI Sales Team,
+
+We would like to add one or more additional companies to our RapidReconciler license. Please find the details below.
+
+== Customer Information ==
+Company Name:
+RapidReconciler Account / Customer ID:
+Primary Contact Name:
+Primary Contact Email:
+Phone:
+
+== Companies to Add ==
+Please add the following JD Edwards companies to our license:
+
+  1. JDE Company Number:
+     Company Name:
+
+  2. JDE Company Number:
+     Company Name:
+
+  (add additional rows as needed)
+
+== Additional Notes ==
+
+
+Thank you,</div>
+      </div>
+
+      <p>If you prefer to write the email manually, please include the following:</p>
       <ul>
         <li>Your company name and RapidReconciler account details</li>
         <li>The JD Edwards company numbers you would like to add</li>
@@ -980,6 +1337,26 @@
 
       <p>Click <strong>Done</strong> when all rights have been configured.</p>
 
+      <h2>Common Pitfalls</h2>
+      <div class="callout tip">
+        <div>
+          <div class="callout-label">User can't see a company they should have access to</div>
+          <p>Both layers must be granted: (1) the relevant module must be checked under <strong>Authorized Tabs</strong>, and (2) the company must be checked in the matching column under <strong>Authorized Companies</strong>. If either is missing, the user won't see the data.</p>
+        </div>
+      </div>
+      <div class="callout tip">
+        <div>
+          <div class="callout-label">User sees the tab but no data inside it</div>
+          <p>The Authorized Tabs section grants visibility of the module, but the per-company matrix controls what data appears inside. Confirm at least one company is checked in that module's column.</p>
+        </div>
+      </div>
+      <div class="callout tip">
+        <div>
+          <div class="callout-label">Reconciliation totals look wrong for a user</div>
+          <p>Reconciliation figures shown to a user only include companies they are authorized for in the relevant module. If a user reports unexpected totals, verify their Authorized Companies matrix matches the scope of their job.</p>
+        </div>
+      </div>
+
       <h2>Deleting a User</h2>
       <p>To delete a user, click the <strong>trash can icon</strong> to the right of their name on the Users page and confirm the prompt when displayed.</p>
 
@@ -1060,6 +1437,105 @@
         </tbody>
       </table>
 
+      <h3>Resulting Report Layout</h3>
+      <p>With the configuration above, the Roll Forward report renders the columns shown below. Each totals column appears between the <strong>Opening Balance</strong> and <strong>Closing Balance</strong> in the order set by the Sort field:</p>
+
+      <figure class="screenshot">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" font-family="'Open Sans', sans-serif">
+          <!-- Background -->
+          <rect x="0" y="0" width="900" height="220" fill="#ffffff"/>
+          <!-- Header band -->
+          <rect x="0" y="0" width="900" height="44" fill="#1f2d4a"/>
+          <text x="20" y="20" font-size="11" font-weight="700" fill="#f08a24" letter-spacing="0.08em">ROLL FORWARD — INVENTORY</text>
+          <text x="20" y="36" font-size="10" fill="rgba(255,255,255,0.7)">Period: 12/2025 &nbsp; · &nbsp; Company: 00010 Acme, Inc.</text>
+
+          <!-- Column headers -->
+          <g font-size="9.5" font-weight="700" fill="#1f2d4a">
+            <rect x="0" y="44" width="900" height="36" fill="#eef3f9"/>
+            <text x="14" y="66">Item</text>
+            <line x1="100" y1="50" x2="100" y2="76" stroke="#c9d3e0"/>
+            <text x="116" y="60" fill="#2b5fb0">OPENING</text>
+            <text x="116" y="73" fill="#2b5fb0">BALANCE</text>
+            <line x1="200" y1="50" x2="200" y2="76" stroke="#c9d3e0"/>
+            <text x="218" y="66">Receipts</text>
+            <line x1="288" y1="50" x2="288" y2="76" stroke="#c9d3e0"/>
+            <text x="306" y="66">NetWO</text>
+            <line x1="376" y1="50" x2="376" y2="76" stroke="#c9d3e0"/>
+            <text x="394" y="66">Adjustments</text>
+            <line x1="478" y1="50" x2="478" y2="76" stroke="#c9d3e0"/>
+            <text x="496" y="66">Transfers</text>
+            <line x1="566" y1="50" x2="566" y2="76" stroke="#c9d3e0"/>
+            <text x="584" y="66">Shipments</text>
+            <line x1="654" y1="50" x2="654" y2="76" stroke="#c9d3e0"/>
+            <text x="672" y="66">Returns</text>
+            <line x1="742" y1="50" x2="742" y2="76" stroke="#c9d3e0"/>
+            <text x="760" y="66">WriteDowns</text>
+            <line x1="830" y1="50" x2="830" y2="76" stroke="#c9d3e0"/>
+            <text x="846" y="60" fill="#f08a24">CLOSING</text>
+            <text x="846" y="73" fill="#f08a24">BALANCE</text>
+          </g>
+
+          <!-- Sample data rows -->
+          <g font-size="11" fill="#1f2d4a" font-family="'JetBrains Mono', monospace">
+            <text x="14" y="100">Item-A100</text>
+            <text x="190" y="100" text-anchor="end">12,450</text>
+            <text x="278" y="100" text-anchor="end">3,200</text>
+            <text x="366" y="100" text-anchor="end">(150)</text>
+            <text x="468" y="100" text-anchor="end">75</text>
+            <text x="556" y="100" text-anchor="end">(420)</text>
+            <text x="644" y="100" text-anchor="end">(1,800)</text>
+            <text x="732" y="100" text-anchor="end">120</text>
+            <text x="820" y="100" text-anchor="end">0</text>
+            <text x="888" y="100" text-anchor="end" font-weight="700">13,475</text>
+          </g>
+          <line x1="0" y1="112" x2="900" y2="112" stroke="#e1e7ef"/>
+
+          <g font-size="11" fill="#1f2d4a" font-family="'JetBrains Mono', monospace">
+            <text x="14" y="132">Item-B205</text>
+            <text x="190" y="132" text-anchor="end">8,300</text>
+            <text x="278" y="132" text-anchor="end">1,600</text>
+            <text x="366" y="132" text-anchor="end">0</text>
+            <text x="468" y="132" text-anchor="end">25</text>
+            <text x="556" y="132" text-anchor="end">(150)</text>
+            <text x="644" y="132" text-anchor="end">(940)</text>
+            <text x="732" y="132" text-anchor="end">60</text>
+            <text x="820" y="132" text-anchor="end">(50)</text>
+            <text x="888" y="132" text-anchor="end" font-weight="700">8,845</text>
+          </g>
+          <line x1="0" y1="144" x2="900" y2="144" stroke="#e1e7ef"/>
+
+          <g font-size="11" fill="#1f2d4a" font-family="'JetBrains Mono', monospace">
+            <text x="14" y="164">Item-C310</text>
+            <text x="190" y="164" text-anchor="end">5,750</text>
+            <text x="278" y="164" text-anchor="end">2,100</text>
+            <text x="366" y="164" text-anchor="end">(80)</text>
+            <text x="468" y="164" text-anchor="end">0</text>
+            <text x="556" y="164" text-anchor="end">(220)</text>
+            <text x="644" y="164" text-anchor="end">(1,100)</text>
+            <text x="732" y="164" text-anchor="end">45</text>
+            <text x="820" y="164" text-anchor="end">0</text>
+            <text x="888" y="164" text-anchor="end" font-weight="700">6,495</text>
+          </g>
+
+          <!-- Total row -->
+          <rect x="0" y="180" width="900" height="40" fill="#f6f8fb"/>
+          <line x1="0" y1="180" x2="900" y2="180" stroke="#c9d3e0" stroke-width="1.5"/>
+          <g font-size="11" font-weight="700" fill="#1f2d4a" font-family="'JetBrains Mono', monospace">
+            <text x="14" y="204">Total</text>
+            <text x="190" y="204" text-anchor="end">26,500</text>
+            <text x="278" y="204" text-anchor="end">6,900</text>
+            <text x="366" y="204" text-anchor="end">(230)</text>
+            <text x="468" y="204" text-anchor="end">100</text>
+            <text x="556" y="204" text-anchor="end">(790)</text>
+            <text x="644" y="204" text-anchor="end">(3,840)</text>
+            <text x="732" y="204" text-anchor="end">225</text>
+            <text x="820" y="204" text-anchor="end">(50)</text>
+            <text x="888" y="204" text-anchor="end" fill="#f08a24">28,815</text>
+          </g>
+        </svg>
+        <figcaption><strong>Sample Roll Forward Output</strong>The seven totals columns from the configuration above appear between Opening and Closing Balance, in Sort order. Each value summarizes the matching DCTO or DCT codes from JDE for the period.</figcaption>
+      </figure>
+
       <a class="video-link" href="https://vimeo.com/252701483" target="_blank" rel="noopener">Roll Forward Settings Video Tutorial</a>
 
       <h2>Delete RapidReconciler Cardex Records</h2>
@@ -1095,6 +1571,145 @@
       <h2>What Offset Accounts Do</h2>
       <p>Offset accounts work for two of the variance sources on the Reconciliation page: <strong>End of Day</strong> and <strong>Transactions</strong>. The grid shown above lists every combination of Company, Document Type, and Order Type that appears in the applicable variance reports. The administrator enters the GL account that should offset the variance for each combination.</p>
       <p>The result: when a user clicks the <strong>star icon</strong> next to End of Day or Transactions in the Variance Calculation section of the Reconciliation page, the <strong>Suggested Entry popup</strong> opens with the pre-configured offset accounts and their associated amounts already populated — saving the user from having to look up and enter the offset accounts manually each period.</p>
+
+      <h3>Where the Star Icon Appears</h3>
+      <p>The star icon appears next to applicable rows in the <strong>Variance Calculation</strong> section of the Reconciliation page:</p>
+
+      <figure class="screenshot" style="max-width:560px;margin-left:auto;margin-right:auto;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 230" font-family="'Open Sans', sans-serif">
+          <rect x="0" y="0" width="540" height="230" fill="#ffffff"/>
+          <!-- Section header -->
+          <text x="20" y="26" font-size="13" font-weight="700" fill="#1f2d4a" letter-spacing="0.04em">VARIANCE CALCULATION</text>
+          <line x1="20" y1="36" x2="520" y2="36" stroke="#e1e7ef" stroke-width="1"/>
+
+          <!-- Column header row -->
+          <g font-size="11" font-weight="700" fill="#8a93a6" letter-spacing="0.05em">
+            <text x="20" y="58">SOURCE</text>
+            <text x="380" y="58" text-anchor="end">VARIANCE</text>
+            <text x="500" y="58" text-anchor="end">ACTION</text>
+          </g>
+          <line x1="20" y1="68" x2="520" y2="68" stroke="#e1e7ef"/>
+
+          <!-- Row: End of Day (highlighted with star) -->
+          <rect x="20" y="78" width="500" height="32" fill="#fef5e7" rx="3"/>
+          <text x="32" y="98" font-size="13" font-weight="600" fill="#1f2d4a">End of Day</text>
+          <text x="380" y="98" text-anchor="end" font-size="13" font-family="'JetBrains Mono', monospace" fill="#1f2d4a">(2,847.50)</text>
+          <!-- Star icon -->
+          <g transform="translate(490,84)">
+            <polygon points="11,2 13.5,8.5 20,9 15,13.5 16.5,20 11,16.5 5.5,20 7,13.5 2,9 8.5,8.5" fill="#f08a24" stroke="#d97316" stroke-width="0.8"/>
+          </g>
+          <!-- Annotation arrow -->
+          <line x1="488" y1="94" x2="448" y2="142" stroke="#d97316" stroke-width="1" stroke-dasharray="3,3"/>
+          <text x="438" y="158" font-size="11" font-style="italic" fill="#d97316" text-anchor="end">Click to open Suggested Entry</text>
+
+          <!-- Row: Transactions (with star) -->
+          <text x="32" y="138" font-size="13" font-weight="600" fill="#1f2d4a">Transactions</text>
+          <text x="380" y="138" text-anchor="end" font-size="13" font-family="'JetBrains Mono', monospace" fill="#1f2d4a">125.00</text>
+          <g transform="translate(490,124)">
+            <polygon points="11,2 13.5,8.5 20,9 15,13.5 16.5,20 11,16.5 5.5,20 7,13.5 2,9 8.5,8.5" fill="#f08a24" stroke="#d97316" stroke-width="0.8"/>
+          </g>
+          <line x1="20" y1="158" x2="520" y2="158" stroke="#e1e7ef"/>
+
+          <!-- Row: Other (no star) -->
+          <text x="32" y="184" font-size="13" font-weight="600" fill="#5a6479">Roll Forward</text>
+          <text x="380" y="184" text-anchor="end" font-size="13" font-family="'JetBrains Mono', monospace" fill="#5a6479">0.00</text>
+          <text x="500" y="184" text-anchor="end" font-size="11" fill="#8a93a6" font-style="italic">—</text>
+          <line x1="20" y1="200" x2="520" y2="200" stroke="#e1e7ef"/>
+        </svg>
+        <figcaption><strong>Star icon on the Reconciliation page</strong>The star icon appears only on rows where offset accounts have been pre-configured in Admin &gt; Inventory Offsets — End of Day and Transactions.</figcaption>
+      </figure>
+
+      <h3>The Suggested Entry Popup</h3>
+      <p>Clicking the star opens the Suggested Entry popup. The offset accounts and amounts you configure in Admin &gt; Inventory Offsets are populated automatically — the user simply reviews the entry and uses it to drive the closing journal entry in JD Edwards:</p>
+
+      <figure class="screenshot" style="max-width:600px;margin-left:auto;margin-right:auto;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" font-family="'Open Sans', sans-serif">
+          <defs>
+            <filter id="suggestedShadow" x="-2%" y="-2%" width="104%" height="104%">
+              <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+            </filter>
+          </defs>
+          <!-- Popup container -->
+          <rect x="2" y="2" width="596" height="316" rx="6" fill="#ffffff" stroke="#dcdcdc" filter="url(#suggestedShadow)"/>
+
+          <!-- Header -->
+          <rect x="2" y="2" width="596" height="44" rx="6" fill="#1f2d4a"/>
+          <rect x="2" y="32" width="596" height="14" fill="#1f2d4a"/>
+          <text x="20" y="29" font-size="14" font-weight="700" fill="#ffffff">Suggested Entry — End of Day Variance</text>
+          <g stroke="#ffffff" stroke-width="1.5" stroke-linecap="round">
+            <line x1="568" y1="20" x2="578" y2="30"/>
+            <line x1="578" y1="20" x2="568" y2="30"/>
+          </g>
+
+          <!-- Subheader -->
+          <text x="20" y="68" font-size="12" fill="#5a6479">Company: 00010 Acme, Inc. &nbsp;·&nbsp; Period: 12/2025</text>
+
+          <!-- Table header -->
+          <rect x="20" y="80" width="560" height="28" fill="#eef3f9"/>
+          <g font-size="11" font-weight="700" fill="#1f2d4a" letter-spacing="0.04em">
+            <text x="32" y="98">DOCTYPE</text>
+            <text x="100" y="98">ORDER TYPE</text>
+            <text x="180" y="98">OFFSET ACCOUNT</text>
+            <text x="450" y="98" text-anchor="end">DEBIT</text>
+            <text x="555" y="98" text-anchor="end">CREDIT</text>
+          </g>
+
+          <!-- Row 1 -->
+          <line x1="20" y1="108" x2="580" y2="108" stroke="#e1e7ef"/>
+          <g font-size="12" fill="#1f2d4a" font-family="'JetBrains Mono', monospace">
+            <text x="32" y="128">SO</text>
+            <text x="100" y="128">SO</text>
+            <text x="180" y="128">1.5020.INVADJ</text>
+            <text x="450" y="128" text-anchor="end">1,425.00</text>
+            <text x="555" y="128" text-anchor="end">—</text>
+          </g>
+
+          <!-- Row 2 -->
+          <line x1="20" y1="138" x2="580" y2="138" stroke="#f3f3f3"/>
+          <g font-size="12" fill="#1f2d4a" font-family="'JetBrains Mono', monospace">
+            <text x="32" y="158">IA</text>
+            <text x="100" y="158">—</text>
+            <text x="180" y="158">1.5025.INVADJ</text>
+            <text x="450" y="158" text-anchor="end">—</text>
+            <text x="555" y="158" text-anchor="end">487.50</text>
+          </g>
+
+          <!-- Row 3 -->
+          <line x1="20" y1="168" x2="580" y2="168" stroke="#f3f3f3"/>
+          <g font-size="12" fill="#1f2d4a" font-family="'JetBrains Mono', monospace">
+            <text x="32" y="188">PI</text>
+            <text x="100" y="188">—</text>
+            <text x="180" y="188">1.5030.INVADJ</text>
+            <text x="450" y="188" text-anchor="end">935.00</text>
+            <text x="555" y="188" text-anchor="end">—</text>
+          </g>
+
+          <!-- Total row -->
+          <line x1="20" y1="200" x2="580" y2="200" stroke="#c9d3e0" stroke-width="1.5"/>
+          <rect x="20" y="200" width="560" height="32" fill="#f6f8fb"/>
+          <g font-size="12" font-weight="700" fill="#1f2d4a" font-family="'JetBrains Mono', monospace">
+            <text x="32" y="222">TOTAL</text>
+            <text x="450" y="222" text-anchor="end">2,360.00</text>
+            <text x="555" y="222" text-anchor="end">487.50</text>
+          </g>
+
+          <!-- Net variance -->
+          <text x="32" y="258" font-size="13" font-weight="700" fill="#1f2d4a">Net Variance:</text>
+          <text x="555" y="258" text-anchor="end" font-size="13" font-weight="700" fill="#f08a24" font-family="'JetBrains Mono', monospace">(1,872.50)</text>
+
+          <!-- Footer divider -->
+          <line x1="0" y1="276" x2="600" y2="276" stroke="#eeeeee"/>
+
+          <!-- Buttons -->
+          <g>
+            <rect x="404" y="288" width="80" height="28" rx="4" fill="#f5f5f5" stroke="#cccccc"/>
+            <text x="444" y="306" font-size="12" font-weight="600" fill="#5a6479" text-anchor="middle">Cancel</text>
+            <rect x="494" y="288" width="86" height="28" rx="4" fill="#f08a24"/>
+            <text x="537" y="306" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">Use Entry</text>
+          </g>
+        </svg>
+        <figcaption><strong>Suggested Entry popup</strong>With offset accounts pre-configured, the popup opens fully populated. The user reviews the entry and clicks <strong>Use Entry</strong> to confirm — no manual lookup of GL accounts required.</figcaption>
+      </figure>
 
       <h2>Grid Columns</h2>
       <table>
@@ -1142,7 +1757,7 @@
 
       <div class="topic-footer-nav">
         <button class="back-btn" onclick="goHome()">← Back to Index</button>
-        <button class="next-btn" onclick="goHome()">Return to Index ↺</button>
+        <button class="next-btn done-btn" onclick="goHome()">Done — Back to Index ✓</button>
       </div>
       </section>
 
@@ -1172,6 +1787,15 @@
       document.querySelectorAll('#sidebar-nav li').forEach(li => {
         li.classList.toggle('active', li.dataset.target === slug);
       });
+
+      // Sync document title with active topic
+      const baseTitle = 'Administrator Walkthrough — RapidReconciler University';
+      const heading = target.querySelector('h1');
+      if (heading) {
+        document.title = (slug === 'home')
+          ? baseTitle
+          : heading.textContent.trim() + ' — ' + baseTitle;
+      }
 
       try {
         if (window.location.protocol !== 'about:') {
