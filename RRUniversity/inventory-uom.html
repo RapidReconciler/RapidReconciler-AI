@@ -15,21 +15,24 @@ code,pre,kbd{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace}
 .topnav-inner{max-width:1320px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;gap:32px}
 .brand{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--navy)}
 .brand img{height:36px;width:auto;display:block}
-.brand-text{display:flex;flex-direction:column;line-height:1.1}
-.brand-product{font-family:'Source Sans 3';font-weight:800;font-size:16px;color:var(--navy);letter-spacing:-.01em}
-.brand-sub{font-size:11px;color:var(--text-soft);letter-spacing:.06em;text-transform:uppercase;font-weight:600}
-.nav-links{display:flex;gap:26px;margin-left:auto;align-items:center}
-.nav-links a{text-decoration:none;color:var(--navy);font-weight:600;font-size:14px;padding:6px 0;border-bottom:2px solid transparent;transition:.15s}
-.nav-links a:hover{color:var(--blue);border-color:var(--blue-bright)}
-.cta{background:var(--orange);color:#fff;padding:9px 18px;border-radius:6px;font-weight:700;font-size:14px;text-decoration:none;transition:.15s}
-.cta:hover{background:var(--orange-deep)}
+.brand-divider{width:1px;height:26px;background:var(--rule-strong)}
+.brand-product{display:flex;flex-direction:column;line-height:1.1}
+.brand-product-name{font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:16px;color:var(--navy);letter-spacing:-.005em}
+.brand-product-tag{font-size:11px;color:var(--text-muted,#8a93a6);font-weight:500;letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+nav.section-nav{display:flex;gap:26px;font-size:14px;font-weight:600;margin-left:auto}
+nav.section-nav a{color:var(--navy);text-decoration:none;position:relative;padding:6px 0;transition:color .2s}
+nav.section-nav a:hover{color:var(--blue)}
+nav.section-nav a::after{content:'';position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--orange);transition:width .3s ease}
+nav.section-nav a:hover::after{width:100%}
+.nav-cta{background:var(--orange);color:#fff !important;padding:9px 20px !important;border-radius:4px;font-weight:700 !important;font-size:13px !important;transition:background .2s !important}
+.nav-cta:hover{background:var(--orange-deep);color:#fff !important}
+.nav-cta::after{display:none !important}
 .page-header{background:linear-gradient(180deg,var(--bg-soft) 0%,#fff 100%);border-bottom:1px solid var(--rule);padding:36px 28px 32px}
 .page-header-inner{max-width:1320px;margin:0 auto}
 .breadcrumb{font-size:13px;color:var(--text-soft);margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .breadcrumb a{color:var(--blue);text-decoration:none;font-weight:600}
 .breadcrumb a:hover{text-decoration:underline}
 .breadcrumb .sep{color:var(--rule-strong)}
-.eyebrow{display:inline-block;background:var(--blue-pale);color:var(--blue);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:999px;margin-bottom:14px}
 .page-title{font-size:42px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px;line-height:1.1}
 .page-title em{font-style:normal;color:var(--blue-bright)}
 .page-subtitle{font-size:18px;color:var(--text-soft);max-width:780px;margin:0;font-weight:400}
@@ -71,32 +74,32 @@ tbody td strong{color:var(--navy)}
 .callout.important::before{content:"!";background:var(--orange)}
 .callout.note{background:var(--blue-pale);border-left:4px solid var(--blue)}
 .callout.note::before{content:"i";background:var(--blue);font-style:italic}
-footer.gsi-footer{background:var(--navy-deep);color:#cfd8e8;padding:48px 28px 28px;margin-top:80px;position:relative;overflow:hidden}
-.footer-deco{position:absolute;top:-60px;right:-60px;width:220px;height:220px;border:2px solid rgba(61,143,214,.18);border-radius:36px;transform:rotate(18deg);pointer-events:none}
-.footer-inner{max-width:1320px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;position:relative}
-.footer-brand img{height:42px;margin-bottom:14px;filter:brightness(0) invert(1)}
-.footer-brand p{font-size:13.5px;color:#9aa9c2;line-height:1.6;margin:0 0 14px;max-width:300px}
-.footer-col h4{color:#fff;font-size:13px;text-transform:uppercase;letter-spacing:.1em;margin:0 0 14px;font-weight:700}
-.footer-col ul{list-style:none;padding:0;margin:0}.footer-col li{margin:7px 0}
-.footer-col a{color:#9aa9c2;text-decoration:none;font-size:13.5px;transition:.15s}
-.footer-col a:hover{color:var(--blue-bright)}
-.footer-bottom{max-width:1320px;margin:36px auto 0;padding-top:20px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;font-size:12.5px;color:#7a8aa3;flex-wrap:wrap;gap:12px;position:relative}
-@media (max-width:960px){.nav-links a:not(.cta){display:none}.layout{grid-template-columns:1fr;gap:24px}.toc{position:static;max-height:none;border:1px solid var(--rule);border-radius:6px;padding:14px 16px;background:var(--bg-soft)}.page-title{font-size:32px}.footer-inner{grid-template-columns:1fr 1fr;gap:28px}}
-@media (max-width:560px){.topnav-inner{padding:12px 18px;gap:14px}.page-header{padding:24px 18px}.layout{padding:24px 18px 60px}.footer-inner{grid-template-columns:1fr}}
+footer{background:var(--navy-deep);color:rgba(255,255,255,0.7);padding:18px 0;font-size:13px;border-top:3px solid var(--blue);margin-top:80px}
+.footer-line{max-width:1320px;margin:0 auto;padding:0 28px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.footer-line strong{color:#fff;font-weight:700}
+.footer-line a{color:var(--blue-bright);text-decoration:none;transition:color .15s}
+.footer-line a:hover{color:#fff}
+.footer-sep{color:rgba(255,255,255,0.25);margin:0 6px}
+@media (max-width:960px){nav.section-nav a:not(.nav-cta){display:none}.layout{grid-template-columns:1fr;gap:24px}.toc{position:static;max-height:none;border:1px solid var(--rule);border-radius:6px;padding:14px 16px;background:var(--bg-soft)}.page-title{font-size:32px}.footer-line{gap:12px;font-size:12px}}
+@media (max-width:560px){.topnav-inner{padding:12px 18px;gap:14px}.page-header{padding:24px 18px}.layout{padding:24px 18px 60px}}
 </style></head>
 <body>
 
 <header class="topnav"><div class="topnav-inner">
-<a class="brand" href="index.html"><img src="../Images/gsi-logo.png" alt="GSI" />
-<span class="brand-text"><span class="brand-product">RapidReconciler University</span><span class="brand-sub">JD Edwards Reconciliation</span></span></a>
-<nav class="nav-links">
-<a href="index.html">Home</a><a href="index.html#inventory">Inventory</a><a href="index.html#in-transit">In Transit</a><a href="index.html#po-receipts">PO Receipts</a><a href="index.html#reference">Reference</a>
-<a class="cta" href="mailto:support@getgsi.com">Contact Support</a>
+<a class="brand" href="rapidreconciler-university.html"><img src="../Images/gsi-logo.png" alt="GSI" />
+<div class="brand-divider"></div>
+<div class="brand-product"><span class="brand-product-name">RapidReconciler</span><span class="brand-product-tag">University</span></div></a>
+<nav class="section-nav">
+<a href="rapidreconciler-university.html#getting-started">Getting Started</a>
+<a href="rapidreconciler-university.html#inventory">Inventory</a>
+<a href="rapidreconciler-university.html#in-transit">In Transit</a>
+<a href="rapidreconciler-university.html#po-receipts">PO Receipts</a>
+<a href="rapidreconciler-university.html#reference">Reference</a>
+<a href="mailto:rrsupport@getgsi.com" class="nav-cta">Contact Support</a>
 </nav></div></header>
 
 <section class="page-header"><div class="page-header-inner">
-<nav class="breadcrumb"><a href="index.html">University</a><span class="sep">/</span><a href="index.html#reference">Reference</a><span class="sep">/</span><span>Unit of Measure</span></nav>
-<span class="eyebrow">Module · 05 / E</span>
+<nav class="breadcrumb"><a href="rapidreconciler-university.html">University</a><span class="sep">/</span><a href="rapidreconciler-university.html#reference">Reference</a><span class="sep">/</span><span class="current">Unit of Measure</span></nav>
 <h1 class="page-title">JD Edwards <em>Unit of Measure</em> Reference</h1>
 <p class="page-subtitle">Overview, setup, configuration, and change procedures — including the risks of changing the primary UOM after go-live.</p>
 </div></section>
@@ -370,19 +373,10 @@ footer.gsi-footer{background:var(--navy-deep);color:#cfd8e8;padding:48px 28px 28
 </article>
 </div>
 
-<footer class="gsi-footer">
-<div class="footer-deco" aria-hidden="true"></div>
-<div class="footer-inner">
-<div class="footer-brand"><img src="../Images/gsi-logo.png" alt="GSI" />
-<p>RapidReconciler is a GSI product that automates JD Edwards inventory, in-transit, and PO receipts reconciliation.</p>
-<p style="font-size:12px;color:#7a8aa3;margin:0">Tomorrow's solutions. Today.</p></div>
-<div class="footer-col"><h4>University</h4><ul>
-<li><a href="index.html">Home</a></li><li><a href="index.html#inventory">Inventory</a></li><li><a href="index.html#in-transit">In Transit</a></li><li><a href="index.html#po-receipts">PO Receipts</a></li><li><a href="index.html#reference">Reference</a></li></ul></div>
-<div class="footer-col"><h4>Product</h4><ul>
-<li><a href="getting-started-with-rapidreconciler.html">Getting Started</a></li><li><a href="complex-password.html">Account &amp; Security</a></li><li><a href="administrator-walkthrough.html">Administrator Guide</a></li></ul></div>
-<div class="footer-col"><h4>Support</h4><ul>
-<li><a href="mailto:support@getgsi.com">Contact Support</a></li><li><a href="https://www.getgsi.com">getgsi.com</a></li></ul></div>
+<footer>
+<div class="footer-line">
+<span><strong>RapidReconciler University</strong> <span class="footer-sep">&middot;</span> a GSI knowledge base for JD Edwards reconciliation</span>
+<span>&copy; 2026 GSI <span class="footer-sep">&middot;</span> <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> <span class="footer-sep">&middot;</span> <a href="https://www.getgsi.com" target="_blank" rel="noopener">getgsi.com</a></span>
 </div>
-<div class="footer-bottom"><span>© 2026 GSI, Inc. All rights reserved.</span><span>RapidReconciler University · JD Edwards Reconciliation</span></div>
 </footer>
 </body></html>

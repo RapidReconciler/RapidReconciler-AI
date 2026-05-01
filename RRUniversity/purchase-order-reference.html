@@ -52,28 +52,30 @@ code, pre, kbd { font-family: "JetBrains Mono", ui-monospace, monospace; }
 .topnav-inner { max-width: 1320px; margin: 0 auto; padding: 12px 32px; display: flex; align-items: center; gap: 32px; }
 .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
 .brand img { height: 38px; width: auto; display: block; }
-.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
-.brand-product { font-family: "Source Sans 3", sans-serif; font-weight: 700; font-size: 15px; color: var(--navy); }
-.brand-sub { font-size: 11px; color: var(--text-soft); letter-spacing: 0.06em; text-transform: uppercase; }
-.topnav-links { display: flex; gap: 26px; margin-left: auto; align-items: center; }
-.topnav-links a { font-size: 14px; font-weight: 600; color: var(--navy); }
-.topnav-links a:hover { color: var(--blue); text-decoration: none; }
-.cta { display: inline-flex; align-items: center; gap: 8px; background: var(--orange); color: #fff !important; padding: 9px 18px; border-radius: 6px; font-weight: 700; font-size: 13px; letter-spacing: 0.02em; box-shadow: 0 2px 6px rgba(240,138,36,0.35); transition: background 0.15s, transform 0.15s; }
-.cta:hover { background: var(--orange-deep); text-decoration: none; transform: translateY(-1px); }
+.brand-divider { width: 1px; height: 26px; background: var(--rule-strong); }
+.brand-product { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-product-name { font-family: "Source Sans 3", sans-serif; font-weight: 700; font-size: 16px; color: var(--navy); letter-spacing: -.005em; }
+.brand-product-tag { font-size: 11px; color: var(--text-muted, #8a93a6); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+nav.section-nav { display: flex; gap: 26px; font-size: 14px; font-weight: 600; margin-left: auto; align-items: center; }
+nav.section-nav a { color: var(--navy); text-decoration: none; position: relative; padding: 6px 0; transition: color .2s; }
+nav.section-nav a:hover { color: var(--blue); text-decoration: none; }
+nav.section-nav a::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 2px; background: var(--orange); transition: width .3s ease; }
+nav.section-nav a:hover::after { width: 100%; }
+.nav-cta { background: var(--orange); color: #fff !important; padding: 9px 20px !important; border-radius: 4px; font-weight: 700 !important; font-size: 13px !important; transition: background .2s !important; }
+.nav-cta:hover { background: var(--orange-deep); color: #fff !important; }
+.nav-cta::after { display: none !important; }
 
-/* PAGE HEADER */
-.page-header { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%); color: #fff; padding: 56px 32px 64px; position: relative; overflow: hidden; }
-.page-header::before { content: ""; position: absolute; top: -100px; right: -100px; width: 360px; height: 360px; border: 2px solid rgba(61,143,214,0.18); border-radius: 56px; transform: rotate(20deg); pointer-events: none; }
-.page-header::after { content: ""; position: absolute; top: 30px; right: 60px; width: 240px; height: 240px; border: 2px solid rgba(240,138,36,0.14); border-radius: 40px; transform: rotate(-12deg); pointer-events: none; }
-.page-header-inner { max-width: 1320px; margin: 0 auto; position: relative; z-index: 1; }
-.breadcrumb { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 22px; letter-spacing: 0.02em; }
-.breadcrumb a { color: rgba(255,255,255,0.85); }
-.breadcrumb a:hover { color: #fff; }
-.breadcrumb .sep { margin: 0 10px; opacity: 0.5; }
-.eyebrow { display: inline-block; background: rgba(61,143,214,0.2); color: var(--blue-bright); font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 99px; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid rgba(61,143,214,0.3); margin-bottom: 18px; }
-.page-header h1 { font-family: "Source Sans 3", sans-serif; font-size: 44px; font-weight: 800; margin: 0 0 14px; color: #fff; line-height: 1.15; letter-spacing: -0.02em; max-width: 920px; }
+/* PAGE HEADER (thin) */
+.page-header { background: linear-gradient(180deg, var(--bg-soft) 0%, #fff 100%); border-bottom: 1px solid var(--rule); padding: 28px 32px 24px; }
+.page-header-inner { max-width: 1320px; margin: 0 auto; }
+.breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-soft); margin-bottom: 12px; flex-wrap: wrap; }
+.breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 600; }
+.breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb .sep { color: var(--rule-strong); margin: 0; }
+.breadcrumb .current { color: var(--text-soft); font-weight: 500; }
+.page-header h1 { font-family: "Source Sans 3", sans-serif; font-size: clamp(28px, 3.6vw, 36px); font-weight: 800; margin: 0 0 10px; color: var(--navy); line-height: 1.15; letter-spacing: -0.02em; max-width: 920px; }
 .page-header h1 em { font-style: normal; color: var(--blue-bright); }
-.page-header .lede { font-size: 17px; color: rgba(255,255,255,0.82); max-width: 820px; margin: 0; line-height: 1.55; }
+.page-header .lede { font-size: 16px; color: var(--text-soft); max-width: 820px; margin: 0; line-height: 1.55; }
 
 /* LAYOUT */
 .layout { max-width: 1320px; margin: 0 auto; padding: 48px 32px 80px; display: grid; grid-template-columns: 240px 1fr; gap: 56px; align-items: start; }
@@ -155,30 +157,23 @@ code, pre, kbd { font-family: "JetBrains Mono", ui-monospace, monospace; }
 /* INLINE CODE */
 .article :not(pre) > code { background: var(--bg-panel); padding: 2px 6px; border-radius: 4px; font-size: 0.88em; color: var(--navy-soft); border: 1px solid var(--rule); }
 
-/* FOOTER */
-.gsi-footer { background: var(--navy-deep); color: rgba(255,255,255,0.78); padding: 56px 32px 32px; position: relative; overflow: hidden; }
-.gsi-footer::before { content: ""; position: absolute; top: -60px; right: -60px; width: 240px; height: 240px; border: 2px solid rgba(61,143,214,0.15); border-radius: 36px; transform: rotate(18deg); pointer-events: none; }
-.footer-inner { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px; position: relative; z-index: 1; }
-.footer-brand img { height: 42px; background: #fff; padding: 6px 10px; border-radius: 6px; margin-bottom: 16px; }
-.footer-brand p { font-size: 13.5px; margin: 0 0 12px; color: rgba(255,255,255,0.7); line-height: 1.55; max-width: 320px; }
-.footer-col h4 { font-family: "Source Sans 3", sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--blue-bright); margin: 0 0 14px; }
-.footer-col ul { list-style: none; padding: 0; margin: 0; }
-.footer-col li { margin-bottom: 8px; }
-.footer-col a { color: rgba(255,255,255,0.78); font-size: 13.5px; }
-.footer-col a:hover { color: #fff; text-decoration: none; }
-.footer-bottom { max-width: 1320px; margin: 40px auto 0; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 12px; color: rgba(255,255,255,0.5); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; position: relative; z-index: 1; }
+/* FOOTER (thin, single line) */
+footer { background: var(--navy-deep); color: rgba(255,255,255,0.7); padding: 18px 0; font-size: 13px; border-top: 3px solid var(--blue); margin-top: 80px; }
+.footer-line { max-width: 1320px; margin: 0 auto; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+.footer-line strong { color: #fff; font-weight: 700; }
+.footer-line a { color: var(--blue-bright); text-decoration: none; transition: color .15s; }
+.footer-line a:hover { color: #fff; text-decoration: none; }
+.footer-sep { color: rgba(255,255,255,0.25); margin: 0 6px; }
 
 @media (max-width: 980px) {
   .layout { grid-template-columns: 1fr; gap: 28px; padding: 32px 22px 60px; }
   .toc { position: static; max-height: none; padding-right: 0; }
-  .topnav-links { display: none; }
-  .topnav-links .cta { display: inline-flex; }
-  .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+  nav.section-nav a:not(.nav-cta) { display: none; }
+  .footer-line { gap: 12px; font-size: 12px; }
   .page-header { padding: 40px 22px 48px; }
   .page-header h1 { font-size: 32px; }
 }
 @media (max-width: 560px) {
-  .footer-inner { grid-template-columns: 1fr; }
   .page-header h1 { font-size: 26px; }
   .article h2 { font-size: 22px; }
 }
@@ -189,20 +184,21 @@ code, pre, kbd { font-family: "JetBrains Mono", ui-monospace, monospace; }
 <!-- TOP NAV -->
 <header class="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="index.html">
+    <a class="brand" href="rapidreconciler-university.html">
       <img src="../Images/gsi-logo.png" alt="GSI logo" />
-      <span class="brand-text">
-        <span class="brand-product">RapidReconciler University</span>
-        <span class="brand-sub">JD Edwards Reconciliation</span>
-      </span>
+      <div class="brand-divider"></div>
+      <div class="brand-product">
+        <span class="brand-product-name">RapidReconciler</span>
+        <span class="brand-product-tag">University</span>
+      </div>
     </a>
-    <nav class="topnav-links">
-      <a href="index.html">Home</a>
-      <a href="index.html#getting-started">Getting Started</a>
-      <a href="index.html#in-transit">In Transit</a>
-      <a href="index.html#po-receipts">PO Receipts</a>
-      <a href="index.html#reference">Reference</a>
-      <a class="cta" href="mailto:support@getgsi.com">Contact Support →</a>
+    <nav class="section-nav">
+      <a href="rapidreconciler-university.html#getting-started">Getting Started</a>
+      <a href="rapidreconciler-university.html#inventory">Inventory</a>
+      <a href="rapidreconciler-university.html#in-transit">In Transit</a>
+      <a href="rapidreconciler-university.html#po-receipts">PO Receipts</a>
+      <a href="rapidreconciler-university.html#reference">Reference</a>
+      <a href="mailto:rrsupport@getgsi.com" class="nav-cta">Contact Support</a>
     </nav>
   </div>
 </header>
@@ -211,13 +207,12 @@ code, pre, kbd { font-family: "JetBrains Mono", ui-monospace, monospace; }
 <section class="page-header">
   <div class="page-header-inner">
     <div class="breadcrumb">
-      <a href="index.html">University</a>
-      <span class="sep">›</span>
-      <a href="index.html#po-receipts">PO Receipts</a>
-      <span class="sep">›</span>
-      <span>Purchase Order Reference Guide</span>
+      <a href="rapidreconciler-university.html">University</a>
+      <span class="sep">/</span>
+      <a href="rapidreconciler-university.html#po-receipts">PO Receipts</a>
+      <span class="sep">/</span>
+      <span class="current">Purchase Order Reference Guide</span>
     </div>
-    <span class="eyebrow">Module 04 · A of C</span>
     <h1>JD Edwards Purchase Order <em>Comprehensive</em> Reference Guide</h1>
     <p class="lede">PO Receipts, RNV reconciliation, tax, landed costs, and receipts routing — everything you need to understand and reconcile purchase order activity in JD Edwards.</p>
   </div>
@@ -1489,43 +1484,10 @@ code, pre, kbd { font-family: "JetBrains Mono", ui-monospace, monospace; }
 </div>
 
 <!-- FOOTER -->
-<footer class="gsi-footer">
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <img src="../Images/gsi-logo.png" alt="GSI logo" />
-      <p>RapidReconciler is GSI's purpose-built reconciliation toolset for JD Edwards EnterpriseOne — clearing inventory, in-transit, and PO receipts variances at scale.</p>
-      <p style="font-size:12px;color:rgba(255,255,255,0.55);margin:0;">Tomorrow's solutions. Today.</p>
-    </div>
-    <div class="footer-col">
-      <h4>University</h4>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="getting-started-with-rapidreconciler.html">Getting Started</a></li>
-        <li><a href="index.html#in-transit">In Transit</a></li>
-        <li><a href="index.html#po-receipts">PO Receipts</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Reference</h4>
-      <ul>
-        <li><a href="inventory-reference-guide.html">Inventory Reference</a></li>
-        <li><a href="transfer-order-reference.html">Transfer Orders</a></li>
-        <li><a href="distribution-aais.html">Distribution AAIs</a></li>
-        <li><a href="inventory-costing.html">Inventory Costing</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Support</h4>
-      <ul>
-        <li><a href="mailto:support@getgsi.com">Email Support</a></li>
-        <li><a href="https://www.getgsi.com" target="_blank" rel="noopener">getgsi.com</a></li>
-        <li><a href="complex-password.html">Password Help</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© GSI, Inc. · RapidReconciler University</span>
-    <span>JD Edwards EnterpriseOne reconciliation, simplified.</span>
+<footer>
+  <div class="footer-line">
+    <span><strong>RapidReconciler University</strong> <span class="footer-sep">&middot;</span> a GSI knowledge base for JD Edwards reconciliation</span>
+    <span>&copy; 2026 GSI <span class="footer-sep">&middot;</span> <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> <span class="footer-sep">&middot;</span> <a href="https://www.getgsi.com" target="_blank" rel="noopener">getgsi.com</a></span>
   </div>
 </footer>
 
