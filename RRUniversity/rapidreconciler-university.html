@@ -331,6 +331,75 @@
 
   .stat-row:last-child { border-bottom: none; }
 
+  /* Role finder buttons inside hero panel */
+  .role-finder {
+    margin-bottom: 32px;
+  }
+  .role-finder-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.12);
+    margin: 0 -36px 28px;
+  }
+  .role-finder a.role-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14.5px;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 8px;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  }
+  .role-finder a.role-btn:last-child { margin-bottom: 0; }
+  .role-finder a.role-btn:hover {
+    background: rgba(255,255,255,0.10);
+    border-color: var(--blue-bright);
+    transform: translateX(2px);
+  }
+  .role-finder a.role-btn .role-arrow {
+    color: var(--blue-bright);
+    font-weight: 700;
+    transition: transform 0.15s;
+  }
+  .role-finder a.role-btn:hover .role-arrow {
+    transform: translateX(2px);
+  }
+  .role-finder a.role-btn .role-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: rgba(43,95,176,0.3);
+    color: var(--blue-bright);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  .role-finder a.role-btn .role-text {
+    flex: 1;
+  }
+  .role-finder a.role-btn .role-name {
+    display: block;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .role-finder a.role-btn .role-sub {
+    display: block;
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 500;
+    margin-top: 2px;
+  }
   .stat-label {
     font-size: 14px;
     color: rgba(255,255,255,0.7);
@@ -869,6 +938,42 @@
         </div>
       </div>
       <aside class="hero-panel">
+        <div class="role-finder">
+          <div class="hero-panel-title">Find Your Path</div>
+          <a class="role-btn" href="administrator-walkthrough.html">
+            <div class="role-icon">A</div>
+            <div class="role-text">
+              <span class="role-name">Administrators</span>
+              <span class="role-sub">Configure RR for your organization</span>
+            </div>
+            <span class="role-arrow">&rarr;</span>
+          </a>
+          <a class="role-btn" href="start-here-inventory.html">
+            <div class="role-icon">I</div>
+            <div class="role-text">
+              <span class="role-name">Inventory Accountants</span>
+              <span class="role-sub">Reconcile inventory accounts at period close</span>
+            </div>
+            <span class="role-arrow">&rarr;</span>
+          </a>
+          <a class="role-btn" href="start-here-warehouse.html">
+            <div class="role-icon">W</div>
+            <div class="role-text">
+              <span class="role-name">Warehouse Personnel</span>
+              <span class="role-sub">Ship, receive, and reconcile transfers</span>
+            </div>
+            <span class="role-arrow">&rarr;</span>
+          </a>
+          <a class="role-btn" href="start-here-ap.html">
+            <div class="role-icon">P</div>
+            <div class="role-text">
+              <span class="role-name">A/P Clerks</span>
+              <span class="role-sub">Investigate RNV and apply suspensions/exclusions</span>
+            </div>
+            <span class="role-arrow">&rarr;</span>
+          </a>
+        </div>
+        <div class="role-finder-divider"></div>
         <div class="hero-panel-title">At a Glance</div>
         <div class="stat-row">
           <span class="stat-label">Modules</span>
@@ -876,7 +981,7 @@
         </div>
         <div class="stat-row">
           <span class="stat-label">Documents</span>
-          <span class="stat-value">22</span>
+          <span class="stat-value">23</span>
         </div>
         <div class="stat-row">
           <span class="stat-label">Walkthroughs</span>
@@ -884,7 +989,7 @@
         </div>
         <div class="stat-row">
           <span class="stat-label">Roles</span>
-          <span class="stat-value">3</span>
+          <span class="stat-value">4</span>
         </div>
         <div class="stat-row">
           <span class="stat-label">Last revised</span>
@@ -960,24 +1065,24 @@
           <span class="doc-index">01 / B</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
-        <h3 class="doc-title">Start Here &mdash; Inventory &amp; Warehouse</h3>
-        <p class="doc-desc">Wayfinding for inventory accountants and warehouse personnel new to RapidReconciler. Reading roadmap, first-session guide, and vocabulary.</p>
+        <h3 class="doc-title">Start Here &mdash; Inventory</h3>
+        <p class="doc-desc">Wayfinding for inventory and cost accountants new to RapidReconciler. Reading roadmap, first-session guide, and vocabulary for period-end inventory reconciliation.</p>
       </a>
-      <a class="doc-card" href="start-here-ap.html">
+      <a class="doc-card" href="start-here-warehouse.html">
         <div class="doc-card-top">
           <span class="doc-index">01 / C</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
-        <h3 class="doc-title">Start Here &mdash; A/P Clerks</h3>
-        <p class="doc-desc">Wayfinding for AP clerks new to the PO Receipts module. RNV reconciliation orientation, suspension/exclusion concepts, and vocabulary.</p>
+        <h3 class="doc-title">Start Here &mdash; Warehouse Transfers</h3>
+        <p class="doc-desc">Wayfinding for warehouse personnel who ship and receive transfers, and for In-Transit reconcilers. Role-tagged topics, exclusion decision guidance, and order-pair fundamentals.</p>
       </a>
-      <a class="doc-card" href="getting-started-with-rapidreconciler.html">
+      <a class="doc-card" href="start-here-ap.html">
         <div class="doc-card-top">
           <span class="doc-index">01 / D</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
-        <h3 class="doc-title">Application Basics</h3>
-        <p class="doc-desc">Logging in, navigating the interface, and system requirements.</p>
+        <h3 class="doc-title">Start Here &mdash; A/P Clerks</h3>
+        <p class="doc-desc">Wayfinding for AP clerks new to the PO Receipts module. RNV reconciliation orientation, suspension/exclusion concepts, and vocabulary.</p>
       </a>
     </div>
   </div>
@@ -1198,6 +1303,14 @@
         </div>
         <h3 class="doc-title">Complex Password Option</h3>
         <p class="doc-desc">Password policy requirements and the reset process. Configuration toggle &mdash; applies only to sites that have enabled the complex password option.</p>
+      </a>
+      <a class="doc-card" href="getting-started-with-rapidreconciler.html">
+        <div class="doc-card-top">
+          <span class="doc-index">05 / G</span>
+          <span class="doc-arrow">&rarr;</span>
+        </div>
+        <h3 class="doc-title">Application Basics</h3>
+        <p class="doc-desc">Login, navigation, and overall application layout. Most useful as a reference when learning where features live, rather than first-day reading.</p>
       </a>
     </div>
   </div>
