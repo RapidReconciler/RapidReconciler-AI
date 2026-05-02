@@ -475,7 +475,11 @@
     font-size: 14.5px;
     line-height: 1.55;
   }
-  .view .checklist li::before {
+  .view .checklist li.checklist-title {
+    padding: 10px 18px;
+    border-top: none;
+  }
+  .view .checklist li:not(.checklist-title)::before {
     content: '';
     position: absolute;
     left: 18px;
@@ -845,7 +849,14 @@
     <main class="content-card">
       <section id="home" class="view active">
         <h1>Start Here &mdash; Warehouse Transfers</h1>
-        <p class="lead">A wayfinding guide for everyone whose work touches In-Transit reconciliation in RapidReconciler &mdash; from warehouse personnel who ship and receive between branches to the In-Transit reconcilers who clear variances at period close. JD Edwards experience is assumed throughout.</p>
+        <p class="lead">A wayfinding guide for everyone whose work touches In-Transit reconciliation in RapidReconciler &mdash; from warehouse personnel who ship and receive between branches to the inventory accountants who clear variances at period close. JD Edwards experience is assumed throughout.</p>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Module availability.</strong> If you can&rsquo;t find the In Transit module in your main navigation, contact your RapidReconciler administrator. They will either grant you access (if the module is already enabled at your site) or open a request with GSI support to enable it.</p>
+          </div>
+        </div>
 
         <div class="page-meta">
           <span class="meta-item"><strong>Last reviewed:</strong>&nbsp;January 2026</span>
@@ -869,7 +880,7 @@
               <td>Getting Oriented topics + Your Daily Practice + Common Mistakes. About 10 minutes total. The Self-Check at the end has scenarios for both roles.</td>
             </tr>
             <tr>
-              <td><span class="role-tag reconciler">Reconciler</span> Investigating In-Transit variances at period close.</td>
+              <td><span class="role-tag reconciler">Inventory Accountant</span> Investigating In-Transit variances at period close.</td>
               <td>Everything. The warehouse topics give you context on what your data looked like before it reached you &mdash; useful for understanding why certain variances appear.</td>
             </tr>
           </tbody>
@@ -877,7 +888,7 @@
 
         <h2>What &ldquo;Ready&rdquo; Looks Like</h2>
 
-        <p>Use these milestones to gauge your own progress. Reconciler milestones in the third column don&rsquo;t apply to warehouse-only readers.</p>
+        <p>Use these milestones to gauge your own progress. Inventory accountant milestones in the third column don&rsquo;t apply to warehouse-only readers.</p>
 
         <div class="milestone-row">
           <div class="milestone-card tier-1">
@@ -889,7 +900,7 @@
             <p>Can read TranQty and TranAmt for a pair and explain whether goods are still in transit, fully received, or have a variance.</p>
           </div>
           <div class="milestone-card tier-3">
-            <div class="milestone-when">Month 1 <span style="font-weight:normal;font-size:10px;">(reconciler)</span></div>
+            <div class="milestone-when">Month 1 <span style="font-weight:normal;font-size:10px;">(inventory accountant)</span></div>
             <p>Has run a period-end close on In Transit at least once with supervision. Has applied at least one exclusion with a defensible audit-trail note.</p>
           </div>
         </div>
@@ -923,17 +934,17 @@
             </tr>
             <tr>
               <td><a href="javascript:void(0)" onclick="showView('topic-first-week')">Your First Week</a></td>
-              <td><span class="role-tag reconciler">Reconciler</span></td>
+              <td><span class="role-tag reconciler">Inventory Accountant</span></td>
               <td>The four documents to read &mdash; in order &mdash; and which to defer.</td>
             </tr>
             <tr>
               <td><a href="javascript:void(0)" onclick="showView('topic-first-close')">Your First Period-End Close</a></td>
-              <td><span class="role-tag reconciler">Reconciler</span></td>
-              <td>When period-end is on the calendar. Buddy and mock-close recommendations, plus the top three new-reconciler mistakes.</td>
+              <td><span class="role-tag reconciler">Inventory Accountant</span></td>
+              <td>When period-end is on the calendar. Buddy and mock-close recommendations, plus the top three new-reviewer mistakes.</td>
             </tr>
             <tr>
               <td><a href="javascript:void(0)" onclick="showView('topic-exclusion')">The Exclusion Decision</a></td>
-              <td><span class="role-tag reconciler">Reconciler</span></td>
+              <td><span class="role-tag reconciler">Inventory Accountant</span></td>
               <td>When to exclude a pair, when not to, and what the consequences are.</td>
             </tr>
             <tr>
@@ -952,7 +963,7 @@
         <div class="callout tip">
           <div class="callout-icon">i</div>
           <div>
-            <p><strong>Recommended at most sites.</strong> Reconcilers should pair with an experienced reviewer for the first period-end close, and walk a closed prior period before doing one live. Warehouse personnel benefit from a 15-minute walkthrough with someone who has handled exception cases (cost variances, mismatched receipts) before they encounter their first one. Neither is enforced &mdash; both noticeably reduce stress.</p>
+            <p><strong>Recommended at most sites.</strong> Inventory accountants should pair with an experienced reviewer for the first period-end close, and walk a closed prior period before doing one live. Warehouse personnel benefit from a 15-minute walkthrough with someone who has handled exception cases (cost variances, mismatched receipts) before they encounter their first one. Neither is enforced &mdash; both noticeably reduce stress.</p>
           </div>
         </div>
 
@@ -967,7 +978,7 @@
         <table>
           <thead><tr><th style="width:42%;">Document</th><th>Relevance</th></tr></thead>
           <tbody>
-            <tr><td><a href="in-transit-rec-walkthrough.html">In Transit Reconciliation Walkthrough</a></td><td>The full procedural reference for In-Transit reconciliation. Reconcilers will live in this doc.</td></tr>
+            <tr><td><a href="in-transit-rec-walkthrough.html">In Transit Reconciliation Walkthrough</a></td><td>The full procedural reference for In-Transit reconciliation. Inventory accountants will live in this doc.</td></tr>
             <tr><td><a href="transfer-order-exclusion-guide.html">Transfer Order Exclusion Guide</a></td><td>Deep dive on the exclusion mechanism &mdash; when to use it, how to apply it, and how to reverse it.</td></tr>
             <tr><td><a href="transfer-order-reference.html">Transfer Order Reference Guide</a></td><td>JDE-side concepts: ST/OT order types, the F4211 record structure, related order linkage.</td></tr>
             <tr><td><a href="getting-started-with-rapidreconciler.html">Application Basics</a></td><td>Login, navigation, and application overview.</td></tr>
@@ -979,7 +990,7 @@
         <p>Five minutes of orientation. The aim is to translate what you already know about JD Edwards transfer orders into where it lives and what it&rsquo;s called inside RapidReconciler &mdash; and to set boundaries on what RR can and cannot change.</p>
 
         <div class="role-banner">
-          <strong>For everyone.</strong> Both warehouse personnel and reconcilers benefit from this orientation. Skip nothing.
+          <strong>For everyone.</strong> Both warehouse personnel and inventory accountants benefit from this orientation. Skip nothing.
         </div>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
@@ -1006,7 +1017,7 @@
 
         <p>The headline question RapidReconciler answers for In Transit is: <em>does the sum of all open transfer order pair values agree to the In-Transit GL clearing account balance?</em></p>
 
-        <p>In a clean environment, every shipment (ST) is eventually offset by a matching receipt (OT), the order pair&rsquo;s TranQty and TranAmt fall to zero, and that pair stops contributing to the In-Transit balance. In practice, certain pairs never clear &mdash; cost variances between branches, items shipped against the wrong OT, partial receipts that nobody completed, transfers cancelled mid-flight. Those are the items the reconciler investigates.</p>
+        <p>In a clean environment, every shipment (ST) is eventually offset by a matching receipt (OT), the order pair&rsquo;s TranQty and TranAmt fall to zero, and that pair stops contributing to the In-Transit balance. In practice, certain pairs never clear &mdash; cost variances between branches, items shipped against the wrong OT, partial receipts that nobody completed, transfers cancelled mid-flight. Those are the items the inventory accountant investigates.</p>
 
         <h2>Where JDE Concepts Live in RapidReconciler</h2>
 
@@ -1050,7 +1061,7 @@
         <p>The single most important concept in In-Transit reconciliation. If you understand order pairs, almost everything else on the screen follows. If you don&rsquo;t, the rest of the doc will feel arbitrary.</p>
 
         <div class="role-banner">
-          <strong>For everyone.</strong> Warehouse personnel use this to verify their transfers; reconcilers use it to investigate variances. Same concept, different uses.
+          <strong>For everyone.</strong> Warehouse personnel use this to verify their transfers; inventory accountants use it to investigate variances. Same concept, different uses.
         </div>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
@@ -1134,7 +1145,7 @@
             <tr>
               <td><strong>Variance</strong></td>
               <td>= 0 but TranAmt &ne; 0</td>
-              <td>Quantity matched but dollars don&rsquo;t. Cost difference between source and destination &mdash; the pair will <em>never</em> clear without action. <span class="role-tag reconciler">Reconciler</span> needs to investigate.</td>
+              <td>Quantity matched but dollars don&rsquo;t. Cost difference between source and destination &mdash; the pair will <em>never</em> clear without action. <span class="role-tag reconciler">Inventory Accountant</span> needs to investigate.</td>
             </tr>
           </tbody>
         </table>
@@ -1165,7 +1176,7 @@
         <p>How RapidReconciler fits into a typical day for warehouse personnel who ship or receive transfers between branches. The aim isn&rsquo;t to make you a reconciler &mdash; it&rsquo;s to give you enough RR awareness to confirm your work and to flag the things that need someone else&rsquo;s attention.</p>
 
         <div class="role-banner">
-          <strong>For warehouse personnel.</strong> Reconcilers should still skim this topic &mdash; understanding what warehouse staff see (and don&rsquo;t) explains many of the variances you&rsquo;ll investigate.
+          <strong>For warehouse personnel.</strong> Inventory accountants should still skim this topic &mdash; understanding what warehouse staff see (and don&rsquo;t) explains many of the variances you&rsquo;ll investigate.
         </div>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
@@ -1182,7 +1193,7 @@
 
         <h2>What to Do When a Transfer Is Complete</h2>
 
-        <p>For most transfers, no RR action is needed &mdash; the pair clears automatically when the receipt posts in JDE. But verifying that the pair actually cleared is worth ten seconds, and saves the reconciler from chasing it later.</p>
+        <p>For most transfers, no RR action is needed &mdash; the pair clears automatically when the receipt posts in JDE. But verifying that the pair actually cleared is worth ten seconds, and saves the inventory accountant from chasing it later.</p>
 
         <table>
           <thead>
@@ -1214,7 +1225,7 @@
 
         <h2>When to Flag Something</h2>
 
-        <p>Three situations warrant raising a hand to your reconciler or supervisor before period close. Each one means &ldquo;this pair will probably never clear by itself.&rdquo;</p>
+        <p>Three situations warrant raising a hand to your inventory accountant or supervisor before period close. Each one means &ldquo;this pair will probably never clear by itself.&rdquo;</p>
 
         <table>
           <thead>
@@ -1224,17 +1235,17 @@
             <tr>
               <td><strong>TranQty matches, TranAmt doesn&rsquo;t.</strong></td>
               <td>The ST cost and OT cost are different &mdash; usually a frozen-cost difference between branches. The pair will never clear without a JE.</td>
-              <td>Reconciler.</td>
+              <td>Inventory accountant.</td>
             </tr>
             <tr>
               <td><strong>Partial receipt sitting open for more than a few days.</strong></td>
               <td>Either short-shipped, items damaged, or the receiver didn&rsquo;t complete the receipt. The pair won&rsquo;t clear until someone resolves the missing quantity.</td>
-              <td>Receiving supervisor first; reconciler if unresolved by week-end.</td>
+              <td>Receiving supervisor first; inventory accountant if unresolved by week-end.</td>
             </tr>
             <tr>
               <td><strong>You shipped to the wrong OT, or received against the wrong OT.</strong></td>
               <td>An orphaned shipment with no match, or a receipt that crosses pairs. RR will show two pairs that won&rsquo;t clear individually.</td>
-              <td>Reconciler &mdash; this typically requires JDE-side cleanup that warehouse staff shouldn&rsquo;t self-correct.</td>
+              <td>Inventory accountant &mdash; this typically requires JDE-side cleanup that warehouse staff shouldn&rsquo;t self-correct.</td>
             </tr>
           </tbody>
         </table>
@@ -1253,8 +1264,8 @@
         <p>A short list, mostly to prevent well-intentioned over-correction:</p>
 
         <ul>
-          <li><strong>Don&rsquo;t make corrective receipts in JDE without a paper trail.</strong> If a receipt was missed, post it through normal procedure with proper documentation. Improvised &ldquo;cleanup&rdquo; receipts make reconcilers&rsquo; lives hard a month later.</li>
-          <li><strong>Don&rsquo;t apply exclusions in RR.</strong> Exclusions are a reconciler tool. Even if you have access to the Edit Note popup, leave the exclusion checkbox alone unless the reconciler explicitly asks you to act.</li>
+          <li><strong>Don&rsquo;t make corrective receipts in JDE without a paper trail.</strong> If a receipt was missed, post it through normal procedure with proper documentation. Improvised &ldquo;cleanup&rdquo; receipts make inventory accountants&rsquo; lives hard a month later.</li>
+          <li><strong>Don&rsquo;t apply exclusions in RR.</strong> Exclusions are an inventory-accountant tool. Even if you have access to the Edit Note popup, leave the exclusion checkbox alone unless the inventory accountant explicitly asks you to act.</li>
           <li><strong>Don&rsquo;t adjust costs to make a variance disappear.</strong> Cost variances mean something &mdash; usually a frozen cost out of date on one branch. Hiding the variance hides the configuration issue that caused it.</li>
         </ul>
 
@@ -1272,7 +1283,7 @@
         <p>The top operational errors that cause In-Transit variances. Most of these can be prevented with attention at the moment of shipping or receipt &mdash; far easier than fixing them after the period closes.</p>
 
         <div class="role-banner">
-          <strong>For warehouse personnel.</strong> Reconcilers should also read this so they can recognize the patterns when investigating later.
+          <strong>For warehouse personnel.</strong> Inventory accountants should also read this so they can recognize the patterns when investigating later.
         </div>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
@@ -1307,7 +1318,7 @@
 
         <p><strong>What you see in RR:</strong> TranQty = 0 (full quantity received), but TranAmt &ne; 0 (residual dollars sitting in the In-Transit account).</p>
 
-        <p><strong>This is not a warehouse error.</strong> It&rsquo;s a configuration issue with the cost setup. Flag it to your reconciler &mdash; they&rsquo;ll either address it through a standard cost roll, post a JE, or apply an exclusion depending on materiality. Do not change costs in JDE to make the variance go away.</p>
+        <p><strong>This is not a warehouse error.</strong> It&rsquo;s a configuration issue with the cost setup. Flag it to your inventory accountant &mdash; they&rsquo;ll either address it through a standard cost roll, post a JE, or apply an exclusion depending on materiality. Do not change costs in JDE to make the variance go away.</p>
 
         <h2>UOM Mismatches</h2>
 
@@ -1332,7 +1343,7 @@
             <tr>
               <td>Receipted against wrong OT</td>
               <td>Two unresolvable pairs from one event</td>
-              <td>Reverse and re-receipt in JDE; reconciler may need to apply exclusions.</td>
+              <td>Reverse and re-receipt in JDE; inventory accountant may need to apply exclusions.</td>
             </tr>
             <tr>
               <td>Partial shipment, ST left open</td>
@@ -1342,12 +1353,12 @@
             <tr>
               <td>Cost difference between branches</td>
               <td>TranQty = 0 but TranAmt &ne; 0</td>
-              <td>Reconciler decides: cost roll, JE, or exclusion. Not a warehouse fix.</td>
+              <td>Inventory accountant decides: cost roll, JE, or exclusion. Not a warehouse fix.</td>
             </tr>
             <tr>
               <td>UOM mismatch</td>
               <td>TranQty wildly off scale</td>
-              <td>JDE administrator fixes UOM configuration; reconciler may exclude historical pairs.</td>
+              <td>JDE administrator fixes UOM configuration; inventory accountant may exclude historical pairs.</td>
             </tr>
           </tbody>
         </table>
@@ -1359,10 +1370,10 @@
       </section>
       <section id="topic-first-week" class="view">
         <h1>Your First Week</h1>
-        <p>A reading roadmap for week one as an In-Transit reconciler. The order is procedure-first: open the Walkthrough, follow it, and dip into the Reference Guide only when something stops making sense. Reading reference cover-to-cover before doing anything is a slower path to competence.</p>
+        <p>A reading roadmap for week one as an inventory accountant taking on In-Transit reconciliation. The order is procedure-first: open the Walkthrough, follow it, and dip into the Reference Guide only when something stops making sense. Reading reference cover-to-cover before doing anything is a slower path to competence.</p>
 
         <div class="role-banner reconciler">
-          <strong>For reconcilers.</strong> Warehouse-only readers can skip ahead to the Self-Check.
+          <strong>For inventory accountants.</strong> Warehouse-only readers can skip ahead to the Self-Check.
         </div>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
@@ -1416,7 +1427,7 @@
             </tr>
             <tr>
               <td><a href="javascript:void(0)" onclick="showView('topic-mistakes')">Common Mistakes</a> (the warehouse topic)</td>
-              <td>Skim now if you have time &mdash; the patterns help you investigate variances faster. The doc is targeted at warehouse personnel but the diagnostic value is high for reconcilers too.</td>
+              <td>Skim now if you have time &mdash; the patterns help you investigate variances faster. The doc is targeted at warehouse personnel but the diagnostic value is high for inventory accountants too.</td>
             </tr>
           </tbody>
         </table>
@@ -1465,7 +1476,7 @@
         <p>The transition from monitoring In-Transit variances day-to-day to closing and posting at period end. The procedure is fully documented in the <a href="in-transit-rec-walkthrough.html#topic-step5">Walkthrough &mdash; Step 5 (Investigate Transactions)</a>, <a href="in-transit-rec-walkthrough.html#topic-step6">Step 6 (Post Journal Entries)</a>, and <a href="in-transit-rec-walkthrough.html#topic-step7">Step 7 (Run Integrity Reports)</a>. This topic covers the things <em>around</em> the procedure.</p>
 
         <div class="role-banner reconciler">
-          <strong>For reconcilers.</strong> Warehouse-only readers: this topic doesn&rsquo;t apply to your role.
+          <strong>For inventory accountants.</strong> Warehouse-only readers: this topic doesn&rsquo;t apply to your role.
         </div>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
@@ -1495,7 +1506,7 @@
           <li>Integrity Report 4 (cost variances) has been reviewed; cost-difference pairs are either being addressed via standard cost roll or will be excluded.</li>
         </ul>
 
-        <h2>Top Three New-Reconciler Mistakes</h2>
+        <h2>Top Three Mistakes New Inventory Accountants Make</h2>
 
         <p>Drawn from the Walkthrough&rsquo;s Best Practices and Troubleshooting sections, narrowed to the three that catch first-time closers.</p>
 
@@ -1516,7 +1527,7 @@
         <div class="callout important">
           <div class="callout-icon">!</div>
           <div>
-            <p><strong>3. Posting on stale data.</strong> Same as the other reconciler roles &mdash; if the import status is yellow or red, the data isn&rsquo;t ready. Wait for green before producing your closing JE. The cost of a delayed close is small; the cost of a closed period that doesn&rsquo;t actually agree to JDE is much larger.</p>
+            <p><strong>3. Posting on stale data.</strong> Same as the inventory and A/P close procedures &mdash; if the import status is yellow or red, the data isn&rsquo;t ready. Wait for green before producing your closing JE. The cost of a delayed close is small; the cost of a closed period that doesn&rsquo;t actually agree to JDE is much larger.</p>
           </div>
         </div>
 
@@ -1547,7 +1558,7 @@
         <p>Excluding a pair removes it from the In-Transit balance and clears it from the unreconciled view. It&rsquo;s the most consequential action available in the In Transit module. This topic covers when to exclude, when not to, and what happens after.</p>
 
         <div class="role-banner reconciler">
-          <strong>For reconcilers.</strong> Warehouse personnel should not apply exclusions; this topic explains why &mdash; and gives reconcilers the framework for making the call.
+          <strong>For inventory accountants.</strong> Warehouse personnel should not apply exclusions; this topic explains why &mdash; and gives inventory accountants the framework for making the call.
         </div>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
@@ -1625,9 +1636,9 @@
 
         <h2>The Risk of Excluding an Open Order</h2>
 
-        <p>This deserves its own emphasis because new reconcilers often miss it. When you exclude a pair where TranQty &ne; 0 (still &ldquo;in transit&rdquo;), and a receipt later posts in JDE for that pair, RapidReconciler doesn&rsquo;t automatically notice that the situation has changed. The exclusion stays in place; the new receipt activity sits inside the excluded pair, invisible by default.</p>
+        <p>This deserves its own emphasis because new inventory accountants often miss it. When you exclude a pair where TranQty &ne; 0 (still &ldquo;in transit&rdquo;), and a receipt later posts in JDE for that pair, RapidReconciler doesn&rsquo;t automatically notice that the situation has changed. The exclusion stays in place; the new receipt activity sits inside the excluded pair, invisible by default.</p>
 
-        <p>The unexclude/re-exclude procedure in the <a href="transfer-order-exclusion-guide.html">Exclusion Guide</a> exists precisely to handle this: each period close, the reconciler reviews previously-excluded pairs for new activity and acts accordingly. If you exclude an open pair, you&rsquo;re committing to that ongoing review &mdash; not just signing off on the current period.</p>
+        <p>The unexclude/re-exclude procedure in the <a href="transfer-order-exclusion-guide.html">Exclusion Guide</a> exists precisely to handle this: each period close, the inventory accountant reviews previously-excluded pairs for new activity and acts accordingly. If you exclude an open pair, you&rsquo;re committing to that ongoing review &mdash; not just signing off on the current period.</p>
 
         <h2>Quick Reference</h2>
 
@@ -1674,7 +1685,7 @@
       </section>
       <section id="topic-self-check" class="view">
         <h1>Self-Check</h1>
-        <p>Six scenarios to test your reading. Read each one, decide what you&rsquo;d do, and click <strong>Where to find this</strong> to confirm. If a scenario surprises you or you&rsquo;d guess wrong, that&rsquo;s the topic to re-read &mdash; not a failure. The first three scenarios apply to warehouse personnel; the last three are reconciler-focused.</p>
+        <p>Six scenarios to test your reading. Read each one, decide what you&rsquo;d do, and click <strong>Where to find this</strong> to confirm. If a scenario surprises you or you&rsquo;d guess wrong, that&rsquo;s the topic to re-read &mdash; not a failure. The first three scenarios apply to warehouse personnel; the last three are inventory-accountant-focused.</p>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
 
@@ -1702,21 +1713,21 @@
           </div>
 
           <div class="self-check-card">
-            <div class="self-check-num">Scenario 4 &middot; <span class="role-tag reconciler">Reconciler</span></div>
+            <div class="self-check-num">Scenario 4 &middot; <span class="role-tag reconciler">Inventory Accountant</span></div>
             <p class="scenario">A pair on the Orders page shows TranQty = 0 (full quantity received) but TranAmt = $147 (still in the In-Transit clearing account).</p>
             <p class="prompt">What&rsquo;s the most likely cause? Is this a candidate for exclusion, a candidate for cost roll, or something else?</p>
             <a class="where" href="javascript:void(0)" onclick="showView('topic-order-pairs')">Where to find this: <strong>Order Pairs Explained &rarr; The Three States</strong></a>
           </div>
 
           <div class="self-check-card">
-            <div class="self-check-num">Scenario 5 &middot; <span class="role-tag reconciler">Reconciler</span></div>
+            <div class="self-check-num">Scenario 5 &middot; <span class="role-tag reconciler">Inventory Accountant</span></div>
             <p class="scenario">Period close is Friday. A pair has been sitting open for 23 days with TranQty &gt; 0. The receiving branch supervisor confirms the goods never arrived &mdash; presumed lost in transit, no recovery expected.</p>
             <p class="prompt">Apply an exclusion now to clean up the close, or post a JE first and then exclude? Or some other order?</p>
             <a class="where" href="javascript:void(0)" onclick="showView('topic-exclusion')">Where to find this: <strong>The Exclusion Decision &rarr; When to Exclude</strong></a>
           </div>
 
           <div class="self-check-card">
-            <div class="self-check-num">Scenario 6 &middot; <span class="role-tag reconciler">Reconciler</span></div>
+            <div class="self-check-num">Scenario 6 &middot; <span class="role-tag reconciler">Inventory Accountant</span></div>
             <p class="scenario">Three months ago, you excluded a pair because the receipt &ldquo;was never going to arrive.&rdquo; This morning, you notice that JDE has new receipt activity against that exact pair as of yesterday.</p>
             <p class="prompt">Is the new activity contributing to the In-Transit balance? What&rsquo;s the procedure to handle this, and does the original closing JE need to be reversed?</p>
             <a class="where" href="javascript:void(0)" onclick="showView('topic-exclusion')">Where to find this: <strong>The Exclusion Decision &rarr; The Risk of Excluding an Open Order</strong></a>
@@ -1727,7 +1738,7 @@
         <div class="callout note">
           <div class="callout-icon">i</div>
           <div>
-            <p><strong>How to use this.</strong> The questions don&rsquo;t have a score. They&rsquo;re a self-test for whether the doc landed. If three or more felt uncertain, the doc didn&rsquo;t land and is worth a re-read &mdash; ideally with the specific topic each scenario points to. If they all felt obvious, you&rsquo;re ready to start working real cases (warehouse) or your first close (reconciler).</p>
+            <p><strong>How to use this.</strong> The questions don&rsquo;t have a score. They&rsquo;re a self-test for whether the doc landed. If three or more felt uncertain, the doc didn&rsquo;t land and is worth a re-read &mdash; ideally with the specific topic each scenario points to. If they all felt obvious, you&rsquo;re ready to start working real cases (warehouse) or your first close (inventory accountant).</p>
           </div>
         </div>
 
@@ -1778,7 +1789,7 @@
           <dd>The workflow for handling a previously-excluded pair that has had new JDE activity. Remove the exclusion, review the new state, then re-apply the exclusion (or not) based on the updated facts. <a href="transfer-order-exclusion-guide.html">Transfer Order Exclusion Guide</a>.</dd>
 
           <dt>Worked Transactions Filter</dt>
-          <dd>A filter option on the Transactions investigation screen (Walkthrough Step 5) that lets reconcilers hide transactions that have already been reviewed and noted. Helps focus on the unreviewed remainder during a long investigation.</dd>
+          <dd>A filter option on the Transactions investigation screen (Walkthrough Step 5) that lets inventory accountants hide transactions that have already been reviewed and noted. Helps focus on the unreviewed remainder during a long investigation.</dd>
 
         </dl>
 

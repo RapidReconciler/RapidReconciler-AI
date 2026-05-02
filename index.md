@@ -1,8 +1,4 @@
-# GSI RapidReconciler Knowledge Base
-
-Stop chasing reconciliation discrepancies across spreadsheets and manual processes.
-RapidReconciler gives JD Edwards teams a faster, smarter way to reconcile inventory and general
-ledger accounts - and this library is your complete guide to getting the most out of it.
+# RapidReconciler Knowledge Base Directory
 
 Browse documentation covering everything from initial setup to advanced reconciliation workflows
 for inventory, in-transit transfers, and PO receipts - plus worked examples of AI-powered
@@ -10,7 +6,7 @@ analysis that turn RapidReconciler exports into actionable insights in minutes.
 
 ---
 
-## Collateral Pages
+## Sales Tools
 
 Here are some key collateral documents that provide an overview of RapidReconciler's benefits and features. These resources are intended to help you understand the value proposition of the application and how it can assist your JD Edwards reconciliation processes. Click on each document name to view the full content.
 
@@ -25,7 +21,7 @@ Here are some key collateral documents that provide an overview of RapidReconcil
 
 ---
 
-## RapidReconciler AI Touchpoints
+## AI Example Reports
 
 The following examples demonstrate AI-powered analysis of JD Edwards data using RapidReconciler. Each example was sourced from RapidReconciler existing reports into Excel and analyzed using a functional template.
 The result produces AI-generated insights: root causes, recommended actions, and prioritized next steps for resolution. Clicking on each report name will allow you to reviewing source data and to see how AI interpreted the issue:
@@ -43,18 +39,13 @@ The result produces AI-generated insights: root causes, recommended actions, and
 
 ---
 
-## Technical Documentation
+## GSI RR Tech Knowledge Base
 
 These technical documents provide detailed guidance on the installation, configuration, and maintenance of RapidReconciler. They cover everything from initial setup requirements to server migration and certificate management. Whether you're a system administrator responsible for maintaining the application or an IT professional involved in the deployment process, these resources will help ensure a smooth and successful implementation of RapidReconciler in your JD Edwards environment.
 
 | Document | Description |
 |----------|-------------|
-| [Technical Requirements](/RapidReconciler-AI/HowToTech/tech-requirements.html)           | Installation and configuration requirements |
-| [Certificate Management](/RapidReconciler-AI/HowToTech/tech-certificate-management.html) | SSL certificate scope, DNS 'A' record configuration, certificate renewal process, responsibilities by role, and troubleshooting common connectivity issues |
-| [Installation Prep](/RapidReconciler-AI/HowToTech/tech-installation-prep.html)           | Customer preparation process for RapidReconciler installation |
-| [Installing the Database](/RapidReconciler-AI/HowToTech/tech-database-installation.html) | Step-by-step database installation including skill sets, architecture overview, SSISDB catalog setup, SSIS package deployment, initial data load, and security requirements |
-| [Valc Onboarding](/RapidReconciler-AI/HowToTech/tech-valc-walkthrough.html)	           | A Companion doc used to familiarize RapidReconciler support technicians with VALC (version an license control)|
-| [Client Management](/RapidReconciler-AI/HowToTech/tech-client-management.html)           | End-to-end VALC client setup including creating the client record, user accounts, module configuration, RR Agent installation, SQL Server connection validation, and company licensing |
+| [RR Tech Home](/RapidReconciler-AI/GSIRRTech/tech-client-management.html)           | Installation and configuration requirements |
 
 ---
 
