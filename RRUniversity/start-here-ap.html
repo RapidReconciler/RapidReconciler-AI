@@ -504,7 +504,11 @@
     font-size: 14.5px;
     line-height: 1.55;
   }
-  .view .checklist li::before {
+  .view .checklist li.checklist-title {
+    padding: 10px 18px;
+    border-top: none;
+  }
+  .view .checklist li:not(.checklist-title)::before {
     content: '';
     position: absolute;
     left: 18px;
@@ -910,6 +914,13 @@
       <section id="home" class="view active">
         <h1>Start Here &mdash; A/P Clerks</h1>
         <p class="lead">A wayfinding guide for accounts payable clerks new to RapidReconciler. JD Edwards experience is assumed throughout. The focus here is the PO Receipts module &mdash; the Received-Not-Vouchered (RNV) reconciliation, suspensions and exclusions, and the AP-side journal entries that clear what voucher matching alone cannot.</p>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>Module availability.</strong> If you can&rsquo;t find the PO Receipts module in your main navigation, contact your RapidReconciler administrator. They will either grant you access (if the module is already enabled at your site) or open a request with GSI support to enable it.</p>
+          </div>
+        </div>
 
         <div class="page-meta">
           <span class="meta-item"><strong>Last reviewed:</strong>&nbsp;January 2026</span>

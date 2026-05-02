@@ -504,7 +504,11 @@
     font-size: 14.5px;
     line-height: 1.55;
   }
-  .view .checklist li::before {
+  .view .checklist li.checklist-title {
+    padding: 10px 18px;
+    border-top: none;
+  }
+  .view .checklist li:not(.checklist-title)::before {
     content: '';
     position: absolute;
     left: 18px;
@@ -1253,6 +1257,54 @@
             </tr>
           </tbody>
         </table>
+
+        <h2>The Five Variance Sources at a Glance</h2>
+
+        <p>Each non-zero line in the Variance Calculation section corresponds to a different kind of discrepancy with its own corrective procedure. This table is a routing map: when you see a non-zero variance on your account, it tells you what the source likely means and where to find the full procedure for clearing it. The table doesn&rsquo;t replace reading the procedure &mdash; it points you at the right one.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="width:18%;">Variance Source</th>
+              <th style="width:38%;">What It Likely Means</th>
+              <th>Where to Find the Procedure</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Carry Forward</strong></td>
+              <td>A prior-period variance was left unresolved. The amount carried into this period and is still open.</td>
+              <td><a href="inventory-reconciliation.html#step2">Reconciliation Walkthrough &rarr; Step 2.2 (Carry Forward)</a></td>
+            </tr>
+            <tr>
+              <td><strong>GL Batches</strong></td>
+              <td>One or more GL batches haven&rsquo;t posted &mdash; usually approval holds, posting errors, or missing batch headers. <em>Must be $0 before close.</em></td>
+              <td><a href="inventory-reconciliation.html#step2">Reconciliation Walkthrough &rarr; Step 2.2 (GL Batches)</a></td>
+            </tr>
+            <tr>
+              <td><strong>End of Day</strong></td>
+              <td>Item ledger records exist but no GL batch has been created yet &mdash; usually because nightly Sales Update or Manufacturing Accounting jobs haven&rsquo;t run. <em>Must be $0 before close.</em></td>
+              <td><a href="inventory-reconciliation.html#step2">Reconciliation Walkthrough &rarr; Step 2.2 (End of Day)</a></td>
+            </tr>
+            <tr>
+              <td><strong>Transactions</strong></td>
+              <td>Dollar differences between item ledger and GL entries that didn&rsquo;t match on company, account, period, or document. The corrective action is always an offsetting manual JE in JDE.</td>
+              <td><a href="inventory-reconciliation.html#step2">Reconciliation Walkthrough &rarr; Step 2.2 (Transactions)</a></td>
+            </tr>
+            <tr>
+              <td><strong>Cardex</strong></td>
+              <td>Items where the summarized item ledger doesn&rsquo;t match the on-hand balance. Either a quantity variance (needs IT SQL correction) or an amount variance (cleared via dollars-only IA in JDE).</td>
+              <td><a href="cardex-variance.html">Handling Cardex Variance</a> &mdash; the dedicated walkthrough</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout note">
+          <div class="callout-icon">i</div>
+          <div>
+            <p><strong>About Manual Journal Entries.</strong> A sixth line on the Variance Calculation section, <strong>Manual Journal Entries</strong>, surfaces manual entries posted directly to the inventory GL account. This is informational rather than investigational &mdash; the line shows that manual entries are accounted for in the variance math, not that something is wrong. No corrective action.</p>
+          </div>
+        </div>
 
         <h2>Defer These</h2>
 

@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Installing the Production Database &mdash; GSI RR Tech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:        #1f2d4a;
+    --navy-deep:   #142037;
+    --navy-soft:   #2c3e63;
+    --blue:        #2b5fb0;
+    --blue-bright: #3d8fd6;
+    --blue-pale:   #d6e6f5;
+    --orange:      #f08a24;
+    --orange-deep: #d97316;
+    --bg:          #ffffff;
+    --bg-soft:     #f6f8fb;
+    --bg-panel:    #eef3f9;
+    --text:        #1f2d4a;
+    --text-soft:   #5a6479;
+    --text-muted:  #8a93a6;
+    --rule:        #e1e7ef;
+    --rule-strong: #c9d3e0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Open Sans', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* ============== TOP NAV ============== */
+  header.topnav {
+    background: #fff;
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 0 rgba(31, 45, 74, 0.04);
+  }
+
+  .topnav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    gap: 32px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: var(--navy);
+  }
+  .brand img { height: 42px; width: auto; display: block; }
+  .brand-divider { width: 1px; height: 28px; background: var(--rule-strong); }
+  .brand-product { display: flex; flex-direction: column; line-height: 1.1; }
+  .brand-product-name {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 17px; color: var(--navy);
+    letter-spacing: -0.005em;
+  }
+  .brand-product-tag {
+    font-size: 11px; color: var(--text-muted); font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px;
+  }
+
+  nav.section-nav {
+    display: flex; gap: 28px; font-size: 14px; font-weight: 600; margin-left: auto;
+  }
+  nav.section-nav a {
+    color: var(--navy); text-decoration: none; position: relative; padding: 6px 0;
+    transition: color 0.2s;
+  }
+  nav.section-nav a:hover { color: var(--blue); }
+  nav.section-nav a::after {
+    content: ''; position: absolute; left: 0; bottom: 0; width: 0;
+    height: 2px; background: var(--orange); transition: width 0.3s ease;
+  }
+  nav.section-nav a:hover::after { width: 100%; }
+  .nav-cta {
+    background: var(--orange); color: #fff !important; padding: 10px 22px !important;
+    border-radius: 4px; font-weight: 700 !important; font-size: 13px !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--orange-deep); color: #fff !important; }
+  .nav-cta::after { display: none !important; }
+
+  /* ============== PAGE HEADER (thin) ============== */
+  .page-header {
+    background: linear-gradient(180deg, var(--bg-soft) 0%, #fff 100%);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px;
+  }
+  .breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-soft);
+    margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .breadcrumb a { color: var(--blue); text-decoration: none; font-weight: 600; transition: color 0.2s; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb .sep { color: var(--rule-strong); }
+  .breadcrumb .current { color: var(--text-soft); font-weight: 500; }
+  .page-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 800; font-size: clamp(28px, 3.6vw, 36px);
+    line-height: 1.15; letter-spacing: -0.02em;
+    color: var(--navy);
+    margin: 0;
+  }
+  .page-title em {
+    color: var(--blue-bright); font-style: normal;
+  }
+
+  /* ============== SPA LAYOUT (sidebar + content) ============== */
+  .spa-wrap {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 48px;
+    padding: 48px 0 80px;
+    align-items: start;
+  }
+
+  aside.sidebar {
+    position: sticky;
+    top: 96px;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px 0;
+    overflow: hidden;
+  }
+  .sidebar-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange);
+    padding: 0 24px 16px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 12px;
+  }
+  ul.sidebar-nav { list-style: none; }
+  ul.sidebar-nav li {}
+  ul.sidebar-nav li button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 11px 24px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14.5px;
+    color: var(--text);
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  ul.sidebar-nav li button:hover {
+    background: #fff;
+    color: var(--blue);
+    border-left-color: var(--blue-bright);
+  }
+  ul.sidebar-nav li.active button {
+    background: #fff;
+    color: var(--navy);
+    font-weight: 700;
+    border-left-color: var(--orange);
+  }
+
+  main.content-card {
+    background: #fff;
+    min-width: 0; /* prevent grid blowout */
+  }
+
+  /* SPA view switching */
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============== ARTICLE / TYPOGRAPHY ============== */
+  .view h1 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 36px;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+  .view h2 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 24px;
+    color: var(--navy);
+    margin-top: 40px; margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--rule);
+    letter-spacing: -0.015em;
+  }
+  .view h3 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700; font-size: 18px;
+    color: var(--navy);
+    margin-top: 28px; margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .view h4 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600; font-size: 15px;
+    color: var(--navy-soft);
+    margin-top: 20px; margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .view p {
+    font-size: 15px; line-height: 1.7; margin-bottom: 14px;
+    color: var(--text);
+  }
+  .view p strong { color: var(--navy); font-weight: 700; }
+  .view a {
+    color: var(--blue); text-decoration: none;
+    border-bottom: 1px solid var(--blue-pale);
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .view a:hover { color: var(--orange); border-bottom-color: var(--orange); }
+  .view ul, .view ol { margin: 0 0 18px 22px; font-size: 15px; line-height: 1.7; }
+  .view li { margin-bottom: 6px; }
+  .view li strong { color: var(--navy); font-weight: 700; }
+  .view code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--bg-panel);
+    color: var(--navy);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  /* Tables */
+  .view table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0 24px;
+    font-size: 14px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .view thead { background: var(--navy); color: #fff; }
+  .view th {
+    text-align: left; padding: 12px 16px;
+    font-weight: 700; font-size: 12px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .view td {
+    padding: 13px 16px; border-bottom: 1px solid var(--rule);
+    vertical-align: top; line-height: 1.55;
+  }
+  .view tr:last-child td { border-bottom: none; }
+  .view tbody tr:nth-child(even) { background: var(--bg-soft); }
+  .view tbody tr:hover { background: var(--blue-pale); }
+
+  /* Callouts */
+  .view .callout {
+    display: flex; gap: 14px;
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin: 22px 0;
+    border-left: 4px solid;
+  }
+  .view .callout-icon {
+    flex-shrink: 0; width: 24px; height: 24px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-weight: 700; font-size: 13px; color: #fff;
+  }
+  .view .callout p { margin-bottom: 0; font-size: 14.5px; }
+  .view .callout.important { background: #fef5e7; border-color: var(--orange); }
+  .view .callout.important .callout-icon { background: var(--orange); }
+  .view .callout.warning { background: #fef5e7; border-color: var(--orange); }
+  .view .callout.warning .callout-icon { background: var(--orange); }
+  .view .callout.note, .view .callout.tip, .view .callout.info {
+    background: var(--blue-pale); border-color: var(--blue);
+  }
+  .view .callout.note .callout-icon, .view .callout.tip .callout-icon, .view .callout.info .callout-icon {
+    background: var(--blue);
+  }
+  /* Original used callout-label as a heading inside the box */
+  .view .callout-label {
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+    font-size: 14.5px;
+  }
+  /* When a callout has no callout-icon (uses callout-label pattern instead),
+     stack vertically so label and body don't sit side-by-side as flex items */
+  .view .callout:not(:has(.callout-icon)) {
+    flex-direction: column;
+    gap: 0;
+  }
+  .view .callout:not(:has(.callout-icon)) > p { margin-bottom: 8px; }
+  .view .callout:not(:has(.callout-icon)) > p:last-child { margin-bottom: 0; }
+  .view .callout:not(:has(.callout-icon)) ul,
+  .view .callout:not(:has(.callout-icon)) ol { margin: 6px 0 6px 22px; font-size: 14.5px; }
+
+  /* Images */
+  .view img, .view .screenshot {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    margin: 14px 0;
+    background: var(--bg-soft);
+  }
+
+  /* Topic footer nav (back to index, prev/next) */
+  .topic-footer-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .back-btn, .next-btn {
+    background: transparent;
+    border: 1px solid var(--rule-strong);
+    color: var(--navy);
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .back-btn:hover, .next-btn:hover {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .next-btn {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: #fff;
+  }
+  .next-btn:hover {
+    background: var(--orange-deep);
+    border-color: var(--orange-deep);
+  }
+
+  /* Email card / video link styling from original */
+  .view .email-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 20px;
+    margin: 18px 0;
+  }
+  .view .email-card .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .view .email-card .addr {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--navy);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .view .email-compose-btn {
+    display: inline-block;
+    background: var(--orange);
+    color: #fff !important;
+    text-decoration: none !important;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    border: none !important;
+  }
+  .view .email-compose-btn:hover { background: var(--orange-deep); }
+
+  .view .video-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue-pale);
+    color: var(--blue) !important;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none !important;
+    border: none !important;
+    margin: 6px 0;
+  }
+  .view .video-link:hover { background: var(--blue); color: #fff !important; }
+
+  /* Hide original branding header/yellow bar/sidebar (we replace with GSI nav) */
+  .blue-header, .yellow-bar, aside.sidebar.original { display: none; }
+
+  /* Diamond divider — give it GSI styling */
+  .view .diamond-divider {
+    text-align: center;
+    margin: 28px 0;
+  }
+  .view .diamond {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--orange);
+    transform: rotate(45deg);
+  }
+
+  /* ============== FOOTER ============== */
+  /* ============== EXTRA CLASSES (PO Receipts Walkthrough) ============== */
+  /* Lead paragraph */
+  .view .lead {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--text-soft);
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+  .view .lead strong { color: var(--navy); font-weight: 700; }
+
+  /* "principle" callout variant - blue tone for guiding principles */
+  .view .callout.principle {
+    background: var(--blue-pale);
+    border-color: var(--blue);
+  }
+  .view .callout.principle .callout-icon { background: var(--blue); }
+
+  /* Checklist - styled as a card with rule-bordered items */
+  .view .checklist {
+    list-style: none;
+    margin: 16px 0 24px;
+    padding: 0;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .view .checklist .checklist-title {
+    background: var(--navy);
+    color: #fff;
+    padding: 10px 18px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .view .checklist li {
+    padding: 12px 18px 12px 46px;
+    position: relative;
+    margin-bottom: 0;
+    border-top: 1px solid var(--rule);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .view .checklist li::before {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 16px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--rule-strong);
+    border-radius: 3px;
+    background: #fff;
+  }
+
+  /* Status pills (green/yellow/red) */
+  .view .status-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+  .view .status-pill.green { background: #e2efd9; color: #3d6927; border: 1px solid #b3d49a; }
+  .view .status-pill.yellow { background: #fef5e7; color: #8a5a0c; border: 1px solid #f5cb35; }
+  .view .status-pill.red { background: #fdeae5; color: #8a3520; border: 1px solid #e8a895; }
+
+  /* Step badge inline */
+  .view .step-badge {
+    display: inline-block;
+    background: var(--orange);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    margin-right: 8px;
+  }
+
+  /* num-cell for table sequence numbers */
+  .view td.num-cell {
+    width: 36px;
+    text-align: center;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    color: var(--orange);
+    font-size: 15px;
+  }
+
+  /* Key-value cards (KV grid) */
+  .view .kv-grid {
+    display: grid;
+    gap: 16px;
+    margin: 18px 0 24px;
+  }
+  .view .kv-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 16px 18px;
+  }
+  .view .kv-card .kv-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .view .kv-card .kv-value {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .view .kv-card .kv-value strong { color: var(--navy); }
+
+  /* Flow container (for SVG flowchart) */
+  .view .flow-container {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+    text-align: center;
+  }
+  .view .flow-svg { max-width: 100%; height: auto; display: inline-block; }
+
+  /* Sidebar section label (for grouping nav items) */
+  .sidebar-section-label {
+    padding: 16px 24px 8px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-top: 1px solid var(--rule);
+    margin-top: 8px;
+  }
+  .sidebar-section-label:first-of-type { border-top: none; margin-top: 0; }
+
+  /* Step number indicator for sidebar items */
+  ul.sidebar-nav li.step-num button { padding-left: 50px; position: relative; }
+  ul.sidebar-nav li.step-num button::before {
+    content: counter(step-counter);
+    position: absolute;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--orange);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  ul#sidebar-steps { counter-reset: step-counter; }
+  ul#sidebar-steps li.step-num { counter-increment: step-counter; }
+
+  /* ============== FOOTER (thin, single line) ============== */
+  footer {
+    background: var(--navy-deep);
+    color: rgba(255,255,255,0.7);
+    padding: 18px 0;
+    font-size: 13px;
+    border-top: 3px solid var(--blue);
+  }
+  .footer-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .footer-line strong { color: #fff; font-weight: 700; }
+  .footer-line a {
+    color: var(--blue-bright);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .footer-line a:hover { color: #fff; }
+  .footer-sep { color: rgba(255,255,255,0.25); margin: 0 6px; }
+
+  /* ============== RESPONSIVE ============== */
+  @media (max-width: 960px) {
+    .spa-wrap { grid-template-columns: 1fr; gap: 28px; }
+    aside.sidebar { position: static; }
+  }
+  @media (max-width: 800px) {
+    .container { padding: 0 22px; }
+    nav.section-nav { display: none; }
+    .footer-line { gap: 12px; font-size: 12px; }
+  }
+  /* ============== ADDITIONAL COMPONENTS ============== */
+
+  /* Page meta (last reviewed / time / search hint) */
+  .page-meta {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin: 0 0 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .page-meta .meta-item { display: inline-flex; align-items: center; gap: 6px; }
+  .page-meta .meta-item strong { color: var(--text-soft); font-weight: 600; }
+  .page-meta kbd {
+    background: #fff;
+    border: 1px solid var(--rule-strong);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--navy);
+  }
+
+  /* Figure with caption (for screenshots) */
+  .view figure {
+    margin: 22px 0;
+  }
+  .view figure img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--bg-soft);
+  }
+  .view figcaption {
+    font-size: 13px;
+    color: var(--text-soft);
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.55;
+    padding: 0 8px;
+  }
+  .view figcaption strong {
+    display: block;
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 13.5px;
+    margin-bottom: 3px;
+  }
+
+  /* Step card (numbered procedure block, used inside Tours) */
+  .view .step-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--blue);
+    border-radius: 4px;
+    padding: 22px 26px 22px 78px;
+    margin: 24px 0 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .view .step-card .step-badge {
+    position: absolute;
+    top: 22px;
+    left: 22px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  .view .step-card .step-meta {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .view .step-card .step-title {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .view .step-card > p:first-of-type { margin-top: 0; }
+  .view .step-card ol,
+  .view .step-card ul { margin: 8px 0 8px 22px; }
+  .view .step-card .callout,
+  .view .step-card figure { margin: 14px 0; }
+  /* Section h2 inside step-card stays compact */
+  .view .step-card h2 {
+    font-size: 16px;
+    margin-top: 18px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+  }
+  .view .step-card h3 {
+    font-size: 14px;
+    margin-top: 14px;
+    margin-bottom: 6px;
+  }
+
+  /* Previous button (matches back-btn styling but for in-doc nav) */
+  .view .topic-footer-nav .prev-btn {
+    background: #fff;
+    border: 1px solid var(--rule-strong);
+    color: var(--text-soft);
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .view .topic-footer-nav .prev-btn:hover {
+    background: var(--bg-soft);
+    border-color: var(--text-soft);
+    color: var(--navy);
+  }
+
+  /* Done button (green, used on last topic instead of next-btn) */
+  .view .topic-footer-nav .done-btn {
+    background: #2e8b57;
+    border: 1px solid #2e8b57;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .view .topic-footer-nav .done-btn:hover {
+    background: #246e44;
+    border-color: #246e44;
+  }
+
+  /* Three-button footer: space them out evenly */
+  .view .topic-footer-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .view .topic-footer-nav .prev-btn { margin-left: auto; margin-right: auto; }
+  /* Single-row layout: back left, prev center, next/done right */
+  @media (min-width: 600px) {
+    .view .topic-footer-nav { flex-wrap: nowrap; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ============ TOP NAV ============ -->
+<header class="topnav">
+  <div class="container topnav-inner">
+    <a class="brand" href="tech-client-management.html">
+      <img src="images/gsi-logo.jpeg" alt="GSI" />
+      <div class="brand-divider"></div>
+      <div class="brand-product">
+        <span class="brand-product-name">RapidReconciler</span>
+        <span class="brand-product-tag">University</span>
+      </div>
+    </a>
+    <nav class="section-nav">
+      <a href="tech-client-management.html#installations">Installations</a>
+      <a href="tech-client-management.html#migrations">Migrations</a>
+      <a href="tech-client-management.html#client-mgmt">Onboarding</a>
+      <a href="tech-client-management.html#troubleshooting">Troubleshooting</a>
+      <a href="tech-client-management.html#reference">Reference</a>
+      <a href="mailto:rrsupport@getgsi.com" class="nav-cta">Contact Support</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ PAGE HEADER ============ -->
+<section class="page-header">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="tech-client-management.html">Tech Client Management</a>
+      <span class="sep">/</span>
+      <a href="tech-client-management.html#installations">Installations</a>
+      <span class="sep">/</span>
+      <span class="current">Installing the Production Database</span>
+    </div>
+    <h1 class="page-title">Installing the production <em>database</em></h1>
+  </div>
+</section>
+
+<!-- ============ SPA LAYOUT ============ -->
+<div class="container">
+  <div class="spa-wrap">
+    <aside class="sidebar">
+      <div class="sidebar-title">Database Installation</div>
+
+      
+
+      <div class="sidebar-section-label">Pre-Install</div>
+      <ul class="sidebar-nav">
+        <li data-target="home"><button onclick="showView('home')">Index</button></li>
+        <li data-target="getting-started"><button onclick="showView('topic-getting-started')">Before You Start</button></li>
+        <li data-target="architecture"><button onclick="showView('topic-architecture')">Architecture &amp; Reqs</button></li>
+        <li data-target="new-client"><button onclick="showView('topic-new-client')">Working with a New Client</button></li>
+      </ul>
+
+      <div class="sidebar-section-label">Tours &amp; Post-Install</div>
+      <ul class="sidebar-nav" id="sidebar-steps">
+        <li data-target="ssis-catalog" class="step-num"><button onclick="showView('topic-ssis-catalog')">Tour 1: SSISDB Catalog</button></li>
+        <li data-target="install-database" class="step-num"><button onclick="showView('topic-install-database')">Tour 2: Install Database</button></li>
+        <li data-target="ssis-deploy" class="step-num"><button onclick="showView('topic-ssis-deploy')">Tour 3: Deploy SSIS</button></li>
+        <li data-target="initial-load" class="step-num"><button onclick="showView('topic-initial-load')">Tour 4: Initial Data Load</button></li>
+        <li data-target="security"><button onclick="showView('topic-security')">Security Requirements</button></li>
+        <li data-target="next-steps"><button onclick="showView('topic-next-steps')">What to Do Next</button></li>
+      </ul>
+    
+    </aside>
+
+    <main class="content-card">
+
+      <!-- ============ INDEX (HOME) VIEW ============ -->
+            <section id="home" class="view active">
+        <h1>Installing the Production Database</h1>
+        <p class="lead">A complete guide for the GSI tech team to install RapidReconciler at a new client. Covers the database, application, and SSIS components &mdash; from pre-install requirements through the four installation tours and post-install verification.</p>
+
+        <div class="page-meta">
+          <span class="meta-item"><strong>Audience:</strong>&nbsp;GSI Tech Team / DBA</span>
+          <span class="meta-item"><strong>Time required:</strong>&nbsp;~2 hours (web meeting with client IT)</span>
+          <span class="meta-item">Press <kbd>Ctrl</kbd>+<kbd>F</kbd> (or <kbd>&#8984;</kbd>+<kbd>F</kbd>) to search this page</span>
+        </div>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>Getting Started</h2>
+        <p>If this is your first install, begin with <a href="javascript:void(0)" onclick="showView('topic-getting-started')">Before You Start</a> &mdash; it covers the skills, tools, and zip-file contents to verify before kicking off an install. From there, work through the topics in order.</p>
+
+        <h2>Topics</h2>
+        <table>
+          <thead><tr><th>Topic</th><th>What it covers</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-getting-started')">Before You Start</a></td>
+              <td>Skills, tools, and the install zip contents to verify before kicking off an install.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-architecture')">Architecture &amp; Requirements</a></td>
+              <td>Hardware and software requirements for the database, application, and SSIS servers.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-new-client')">Working with a New Client</a></td>
+              <td>Information to gather from the customer's IT contact and how to schedule the 2-hour install web meeting.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-ssis-catalog')">Tour 1: Create the SSISDB Catalog</a></td>
+              <td>Create the SSISDB Integration Services Catalog and the RapidReconciler folder.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-install-database')">Tour 2: Install the RapidReconciler Database</a></td>
+              <td>Run the four installation scripts to create the database, objects, login, and SQL Agent job.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-ssis-deploy')">Tour 3: Configure &amp; Deploy the SSIS Package</a></td>
+              <td>Configure the JDE source connection in the SSIS package, then deploy it to the SSIS catalog.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-initial-load')">Tour 4: Perform the Initial Data Load</a></td>
+              <td>Run the SQL Agent job to perform the first data load and verify it completes successfully.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-security')">Security Requirements</a></td>
+              <td>SQL Server logins, service accounts, and SSIS catalog permissions required by RR.</td>
+            </tr>
+            <tr>
+              <td><a href="javascript:void(0)" onclick="showView('topic-next-steps')">What to Do Next</a></td>
+              <td>Verification steps and how to hand the install off to the GSI tech team.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout principle">
+          <div class="callout-label">Key principle</div>
+          <p>The full installation is a 2-hour web meeting with the customer's IT contact. Do <strong>Pre-Install</strong> work yourself ahead of the meeting; do the <strong>Tours</strong> live with the customer's IT person on the call.</p>
+        </div>
+      </section>
+
+      <section id="topic-getting-started" class="view">
+        <h1>Before You Start</h1>
+        <p>This walkthrough assumes you are an entry-level SQL Server DBA or a developer with comparable familiarity. A quick check of skills and inputs before beginning saves rework later.</p>
+
+        <div class="callout tip">
+          <div class="callout-label">Time required</div>
+          <p>The full installation typically takes about <strong>2 hours</strong>. Plan to do it in one sitting alongside the customer's IT contact during a scheduled web meeting.</p>
+        </div>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>Required Skills</h2>
+        <p>RapidReconciler is a Microsoft SQL Server based product. You should be comfortable with:</p>
+        <ul>
+          <li>Running scripts in <strong>SQL Server Management Studio (SSMS)</strong></li>
+          <li>Basic SQL Server <strong>database configuration</strong> (creating databases, logins, users, role memberships)</li>
+          <li><strong>SQL Server Agent</strong> job configuration — opening jobs, editing steps, configuring schedules</li>
+          <li><strong>SQL Server Integration Services (SSIS)</strong> — opening a package in Visual Studio, working with connection managers, deploying to a catalog</li>
+        </ul>
+        <p>If any of these is unfamiliar, pair with a senior DBA on the first install.</p>
+
+        <h2>Required Tools on the Database Server</h2>
+        <ul>
+          <li><strong>SQL Server Management Studio</strong> (SSMS)</li>
+          <li><strong>Visual Studio Community</strong> with the <strong>SQL Server Integration Services</strong> extension installed</li>
+          <li>The appropriate <strong>OLE DB provider</strong> for the customer's JDE source (covered in Architecture &amp; Requirements)</li>
+        </ul>
+
+        <h2>What's in the Installation Zip</h2>
+        <p>The customer's IT contact will receive a zip file from GSI containing the scripts and SSIS package needed for the install. The zip contains:</p>
+        <table>
+          <thead>
+            <tr><th>File</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>1 - RapidReconciler Database Creation Script.sql</code></td><td>Creates the database, mdf/ldf files, and sets initial size</td></tr>
+            <tr><td><code>2 - RapidReconciler Database Object Script 178.sql</code></td><td>Creates all database objects (tables, views, procedures)</td></tr>
+            <tr><td><code>3 - RapidReconciler User Creation Script.sql</code></td><td>Creates the <code>rruser</code> SQL login</td></tr>
+            <tr><td><code>4 - RapidReconciler SQL Agent Job Creation Script.sql</code></td><td>Creates the SQL Agent job</td></tr>
+            <tr><td><code>RapidReconciler-Prod.dtsx</code></td><td>The SSIS package to be deployed to the SSIS catalog</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">Note</div>
+          <p>The zip is downloaded by the customer's IT contact directly from GSI's distribution location and unzipped on the target database server. The exact distribution method (email, secure link, etc.) varies by customer; coordinate with the GSI sales or support contact assigned to the install.</p>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="next-btn" onclick="showView('topic-architecture')">Next: Architecture &amp; Requirements &rarr;</button>
+        </div>
+      </section>
+
+      <section id="topic-architecture" class="view">
+        <h1>Architecture &amp; Requirements</h1>
+        <p>This section covers the components of a RapidReconciler deployment and the minimum hardware and software requirements for each. Read this before scheduling the install with the customer — many install delays come from server requirements not being met.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>Architecture Overview</h2>
+        <p>RapidReconciler consists of several components. Setup is flexible and can vary based on the customer's needs. The main components are:</p>
+        <table>
+          <thead>
+            <tr><th>Component</th><th>Role</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Database server</strong></td><td>Runs Microsoft SQL Server. Hosts the RapidReconciler database. Data is extracted from JDE using Integration Services in read-only mode.</td></tr>
+            <tr><td><strong>Application server</strong></td><td>Hosts the RapidReconciler application services. Can be the same machine as the database server if the customer dedicates a server to RR.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          <div class="callout-label">Notes on deployment</div>
+          <ul>
+            <li>If a server is dedicated for RapidReconciler, both the database and application services can be on the same machine.</li>
+            <li>Port <strong>443 outbound</strong> is used by RapidReconciler for JMS communications.</li>
+            <li>Work with the customer's IT support to decide how RapidReconciler will be deployed.</li>
+          </ul>
+        </div>
+
+        <h2>Database Server — Minimum Requirements</h2>
+        <table>
+          <thead>
+            <tr><th>Requirement</th><th>Details</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Operating System</td><td>Windows Server 2016 or later</td></tr>
+            <tr><td>Processor</td><td>Quad core</td></tr>
+            <tr><td>SQL Server</td><td>Standard Edition minimum, Version 2017 or later</td></tr>
+            <tr><td>RAM</td><td>16 GB minimum</td></tr>
+            <tr><td>Authentication</td><td>Mixed mode (Windows + SQL Authentication)</td></tr>
+            <tr><td>Other</td><td>Integration Services installed</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Disk Space</h3>
+        <p>Estimate disk space based on the customer's transaction volume:</p>
+        <ul>
+          <li><strong>100 GB</strong> per 1 million cardex (F4111) records per month</li>
+          <li>Estimate covers 1 year of data; records may be purged after year-end close</li>
+        </ul>
+        <p><strong>Example:</strong> a customer generating 2,000,000 cardex records/month requires <strong>200 GB</strong> of disk space allocated to the RapidReconciler database.</p>
+
+        <h2>Separate Application Server — When Required</h2>
+        <p>If the customer is using a separate application server (not co-located with the database), the application server must meet these requirements:</p>
+        <table>
+          <thead>
+            <tr><th>Requirement</th><th>Details</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Operating System</td><td>Windows Server 2008 or later</td></tr>
+            <tr><td>RAM</td><td>16 GB minimum</td></tr>
+            <tr><td>Credentials</td><td>Local administrative credentials for configuration</td></tr>
+            <tr><td>Browser</td><td>Microsoft Edge, Safari, or Chrome</td></tr>
+            <tr><td>IP Address</td><td>Static external IP address</td></tr>
+          </tbody>
+        </table>
+
+        <h2>SSIS Server — When Different from the Database Server</h2>
+        <p>If SSIS is run on a separate server (uncommon, but possible), that server must have:</p>
+        <ul>
+          <li>Windows Server 2016 or later</li>
+          <li>16 GB RAM minimum</li>
+          <li>SQL Server Management Studio</li>
+          <li>Visual Studio Community with the SQL Server Integration Services extension</li>
+        </ul>
+
+        <h2>JDE Source Driver Requirements</h2>
+        <p>The OLE DB provider needed depends on what the customer's JDE database runs on:</p>
+        <table>
+          <thead>
+            <tr><th>JDE Data Source</th><th>Requirement</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>AS/400 / iSeries</td><td>iSeries Access (Client Access) — ensure the OLE DB component is installed for both 32-bit and 64-bit</td></tr>
+            <tr><td>Oracle</td><td>Oracle 32-bit client (64-bit optional). Select the <strong>Administrator</strong> install option, make applicable <code>tnsnames.ora</code> entries; if installing both architectures, place in the same Oracle home.</td></tr>
+            <tr><td>SQL Server</td><td>No additional configuration required.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout warning">
+          <div class="callout-label">Common cause of install delays</div>
+          <p>Driver mismatch (e.g. only 64-bit installed when both are needed) is a frequent cause of SSIS connection failures. Verify the OLE DB provider is installed correctly <em>before</em> the install meeting.</p>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="prev-btn" onclick="showView('topic-getting-started')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-new-client')">Next: Working with a New Client &rarr;</button>
+        </div>
+      </section>
+
+      <section id="topic-new-client" class="view">
+        <h1>Working with a New Client</h1>
+        <p>Before scheduling the install meeting, gather the information below. Missing inputs at install time are the most common reason an install meeting runs over the planned 2 hours or has to be rescheduled.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>Information from the Customer's IT Contact</h2>
+        <p>Send the GSI <strong>Tech Requirements</strong> document to the customer's IT contact ahead of the install meeting. Have them complete and return the requested information from page 3, which captures:</p>
+        <ul>
+          <li>Server topology (dedicated vs. separate database/application servers)</li>
+          <li>SQL Server version and authentication mode</li>
+          <li>JDE database type (AS/400, Oracle, SQL Server) and connection details</li>
+          <li>Read-only credentials for the JDE database (use <code>rapidrec</code>/<code>rapidrec</code> if possible)</li>
+          <li>Application server IP addresses (internal and external)</li>
+          <li>Maintenance window preferences for the SQL Agent job</li>
+        </ul>
+
+        <div class="callout">
+          <div class="callout-label">Note</div>
+          <p>The Tech Requirements document is a separate file maintained by GSI. If you are unsure where to obtain the current version, contact your team lead or check the team's shared documentation location.</p>
+        </div>
+
+        <h2>Schedule a 2-Hour Web Meeting</h2>
+        <p>Once the Tech Requirements have been returned, schedule a <strong>2-hour web meeting</strong> with the customer's IT contact. The agenda for that meeting is:</p>
+        <ol>
+          <li>Confirm the server(s) meet the minimum requirements (drivers, Visual Studio, SSMS, etc.)</li>
+          <li>Install the RapidReconciler database, create the <code>rruser</code> login, and create the <code>RapidReconciler_Prod</code> SQL Agent job (Tour 2)</li>
+          <li>Create the Integration Services Catalog (Tour 1)</li>
+          <li>Configure and deploy the SSIS package (Tour 3)</li>
+          <li>Perform the initial data load (Tour 4)</li>
+        </ol>
+
+        <div class="callout tip">
+          <div class="callout-label">Tip</div>
+          <p>The order of operations during the meeting is flexible — Tour 1 (creating the SSIS catalog) can be done before Tour 2 (database install) if convenient, since they are independent. The remaining tours must be completed in the order shown above.</p>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="prev-btn" onclick="showView('topic-architecture')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-ssis-catalog')">Next: Tour 1: Create the SSISDB Catalog &rarr;</button>
+        </div>
+      </section>
+
+      <section id="topic-ssis-catalog" class="view">
+        <h1>Tour 1: Create the SSISDB Catalog</h1>
+        <p>The Integration Services Catalog (SSISDB) must exist on the target SQL Server before the RapidReconciler SSIS package can be deployed. If the catalog has already been created on this server, skip to Step 2 to create the RapidReconciler folder.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <div class="step-card">
+          <div class="step-badge">1</div>
+          <div class="step-meta">Tour 1 · Step 1 of 2</div>
+          <div class="step-title">Create the SSISDB Catalog</div>
+          <ol>
+            <li>Open <strong>SQL Server Management Studio</strong> and connect to the target SQL Server instance.</li>
+            <li>In <strong>Object Explorer</strong>, expand the server node.</li>
+            <li>Right-click <strong>Integration Services Catalogs</strong> and select <strong>Create Catalog</strong>.</li>
+            <li>In the <strong>Create Catalog</strong> dialog:
+              <ul>
+                <li>Check <strong>Enable CLR Integration</strong> if not already enabled.</li>
+                <li>Check <strong>Enable automatic execution of Integration Services stored procedure at SQL Server startup</strong>.</li>
+                <li>Enter and confirm a <strong>Password</strong> to protect the database master key.</li>
+              </ul>
+            </li>
+            <li>Click <strong>OK</strong> to create the catalog.</li>
+            <li>Confirm <strong>SSISDB</strong> now appears under <strong>Integration Services Catalogs</strong> in Object Explorer.</li>
+          </ol>
+
+          <div class="callout warning">
+            <div class="callout-label">Important</div>
+            <p>Creation of the SSISDB catalog requires <strong>sysadmin</strong> privileges on the SQL Server instance. The password entered here will be required if the catalog ever needs to be restored from backup — store it in a secure location.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">2</div>
+          <div class="step-meta">Tour 1 · Step 2 of 2</div>
+          <div class="step-title">Create the RapidReconciler Folder</div>
+          <ol>
+            <li>In <strong>Object Explorer</strong>, expand <strong>Integration Services Catalogs &rarr; SSISDB</strong>.</li>
+            <li>Right-click <strong>SSISDB</strong> and select <strong>Create Folder</strong>.</li>
+            <li>In the <strong>Create Folder</strong> dialog:
+              <ul>
+                <li>Set <strong>Folder name</strong> to <code>RapidReconciler</code> (or <code>RR</code>).</li>
+                <li>Optionally enter a description such as <code>RapidReconciler SSIS packages</code>.</li>
+              </ul>
+            </li>
+            <li>Click <strong>OK</strong> to create the folder.</li>
+            <li>Confirm the <code>RapidReconciler</code> folder now appears under <strong>SSISDB</strong> in Object Explorer.</li>
+          </ol>
+
+          <figure>
+            <img src="images/ssis-catalog.jpeg" alt="SSMS Object Explorer showing the SSISDB catalog with RR folder, Projects, RapidReconciler project, and the deployed RapidReconciler_Prod.dtsx package">
+            <figcaption><strong>SSMS Object Explorer — SSISDB folder hierarchy</strong>The expanded view of <strong>Integration Services Catalogs &rarr; SSISDB</strong> showing the <code>RR</code> folder created in this step. The <code>Projects</code>, <code>RapidReconciler</code>, and <code>Packages</code> entries below it are populated later by Tour 3 (deployment) — this image previews the full hierarchy you will see once everything is in place.</figcaption>
+          </figure>
+
+          <div class="callout">
+            <div class="callout-label">Note</div>
+            <p>This folder name must match the deployment path used in Tour 3, Step 6. The path <code>/SSISDB/RapidReconciler/RapidReconciler</code> references this folder as the first <code>RapidReconciler</code> segment.</p>
+          </div>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="prev-btn" onclick="showView('topic-new-client')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-install-database')">Next: Tour 2: Install the RapidReconciler Database &rarr;</button>
+        </div>
+      </section>
+
+      <section id="topic-install-database" class="view">
+        <h1>Tour 2: Install the RapidReconciler Database</h1>
+        <p>This tour runs the four installation scripts in sequence to create the database, install all database objects, create the <code>rruser</code> SQL login, and create the <code>RapidReconciler_Prod</code> SQL Agent job.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <div class="step-card">
+          <div class="step-badge">1</div>
+          <div class="step-meta">Tour 2 · Step 1 of 5</div>
+          <div class="step-title">Confirm the Installation Files Are on the Server</div>
+          <p>Confirm with the customer's IT contact that the GSI installation zip has been downloaded and unzipped on the target database server. The unzipped folder should contain the four <code>.sql</code> scripts and the <code>RapidReconciler-Prod.dtsx</code> SSIS package listed in <strong>Before You Start</strong>.</p>
+          <p>If the zip is not yet on the server, pause and have the customer download and unzip it before continuing.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">2</div>
+          <div class="step-meta">Tour 2 · Step 2 of 5</div>
+          <div class="step-title">Create the Database</div>
+          <ol>
+            <li>Log on to the database server alongside the customer's IT contact.</li>
+            <li>Open <strong>SQL Server Management Studio</strong>.</li>
+            <li>Log in with an account that has <strong>sysadmin</strong> privileges.</li>
+            <li>Open and run <code>1 - RapidReconciler Database Creation Script.sql</code>.</li>
+          </ol>
+          <p>The script will:</p>
+          <ul>
+            <li>Create <code>mdf</code> and <code>ldf</code> files in the default locations specified by the server instance</li>
+            <li>Set the initial database size to <strong>5 GB</strong></li>
+            <li>Create the database with the default name <strong><code>RapidReconciler_Prod</code></strong></li>
+          </ul>
+
+          <div class="callout warning">
+            <div class="callout-label">Important — Change the database context</div>
+            <p>After this script completes, change the database context from <strong>master</strong> to <strong><code>RapidReconciler_Prod</code></strong> in the SSMS connection dropdown <em>before</em> opening any of the remaining scripts. Each subsequent script must run against <code>RapidReconciler_Prod</code>, not <code>master</code>.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">3</div>
+          <div class="step-meta">Tour 2 · Step 3 of 5</div>
+          <div class="step-title">Add Database Objects</div>
+          <p>Run <code>2 - RapidReconciler Database Object Script 178.sql</code> against <code>RapidReconciler_Prod</code>.</p>
+          <p>Wait for the <strong>Successfully Completed</strong> message before continuing. This script creates all tables, views, and stored procedures the application requires.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">4</div>
+          <div class="step-meta">Tour 2 · Step 4 of 5</div>
+          <div class="step-title">Create the SQL User ID</div>
+          <p>Run <code>3 - RapidReconciler User Creation Script.sql</code>.</p>
+          <p>This creates the <code>rruser</code> SQL login. These are the credentials the application uses to read and write data to the SQL database. The script handles both the server-level login creation and the database-level user mapping.</p>
+          <p>Permissions detail is covered in <strong>Security Requirements</strong>.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">5</div>
+          <div class="step-meta">Tour 2 · Step 5 of 5</div>
+          <div class="step-title">Create the SQL Agent Job</div>
+          <p>Run <code>4 - RapidReconciler SQL Agent Job Creation Script.sql</code>.</p>
+          <p>This creates the <code>RapidReconciler_Prod</code> SQL Agent job. The job's package path will be configured in Tour 3 once the SSIS package is deployed, and the job's schedule will be enabled in Tour 4.</p>
+
+          <div class="callout">
+            <div class="callout-label">Verify before continuing</div>
+            <p>In SSMS Object Explorer, expand <strong>SQL Server Agent &rarr; Jobs</strong>. Confirm the <code>RapidReconciler_Prod</code> job appears in the list. If it does not, re-check that the script ran without errors.</p>
+          </div>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="prev-btn" onclick="showView('topic-ssis-catalog')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-ssis-deploy')">Next: Tour 3: Configure &amp; Deploy the SSIS Package &rarr;</button>
+        </div>
+      </section>
+
+      <section id="topic-ssis-deploy" class="view">
+        <h1>Tour 3: Configure &amp; Deploy the SSIS Package</h1>
+        <p>This is the longest tour. You'll create a Visual Studio solution, add the prebuilt SSIS package, configure its connection managers and variables, deploy the project to the SSISDB catalog, and wire the deployed package up to the SQL Agent job created in Tour 2.</p>
+
+        <h2>Prerequisites</h2>
+        <ul>
+          <li>Visual Studio Community with the <strong>SQL Server Integration Services</strong> extension installed</li>
+          <li>The <code>RapidReconciler-Prod.dtsx</code> file extracted from the installation zip</li>
+          <li>The SSISDB catalog and <code>RapidReconciler</code> folder created in Tour 1</li>
+          <li>The database, <code>rruser</code> login, and SQL Agent job created in Tour 2</li>
+        </ul>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <div class="step-card">
+          <div class="step-badge">1</div>
+          <div class="step-meta">Tour 3 · Step 1 of 8</div>
+          <div class="step-title">Gather Configuration Information</div>
+          <p>Before opening Visual Studio, gather the following from the Tech Requirements document the customer's IT contact filled out:</p>
+          <h3>JD Edwards Connection Details</h3>
+          <ul>
+            <li>Name or IP address of the JDE data server</li>
+            <li>Read-only credentials for the JDE database <em>(use <code>rapidrec</code>/<code>rapidrec</code> if possible)</em></li>
+            <li>JDE server type: <strong>iSeries</strong>, <strong>Oracle</strong>, or <strong>Microsoft SQL Server</strong></li>
+          </ul>
+          <h3>JDE Data Configuration</h3>
+          <ul>
+            <li>Table qualifier for JDE data (e.g. <code>proddta.</code> — note the trailing period)</li>
+            <li>Decimal places for: extended cost, unit cost, quantity on hand, transaction quantities</li>
+            <li>Customer's fiscal year start date (used to compute the <code>aaStartDateGr</code> variable — see Step 5)</li>
+          </ul>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">2</div>
+          <div class="step-meta">Tour 3 · Step 2 of 8</div>
+          <div class="step-title">Create the Visual Studio Solution</div>
+          <ol>
+            <li>Launch <strong>Visual Studio Community</strong>. Run as administrator if possible to avoid permission issues during deployment.</li>
+            <li>Select <strong>Create a new project</strong>.</li>
+          </ol>
+
+          <figure>
+            <img src="images/ssis-deploy-1.jpeg" alt="Visual Studio Get Started page with Create a new project highlighted">
+            <figcaption><strong>Visual Studio &rarr; Get Started</strong>From the start page, click <strong>Create a new project</strong> (highlighted in red).</figcaption>
+          </figure>
+
+          <ol start="3">
+            <li>Search for and select <strong>Integration Services Project</strong>, then click <strong>Next</strong>.</li>
+          </ol>
+
+          <figure>
+            <img src="images/ssis-deploy-2.jpeg" alt="Visual Studio Create a new project dialog with Integration Services Project template selected">
+            <figcaption><strong>Create a new project &rarr; Template selection</strong>Select <strong>Integration Services Project</strong> (highlighted in blue) and click <strong>Next</strong>. Note that <strong>Integration Services Project (Azure-Enabled)</strong> is a different template — make sure you pick the standard one.</figcaption>
+          </figure>
+
+          <ol start="4">
+            <li>Set the <strong>Project name</strong> to <code>RapidReconciler</code>.</li>
+            <li>Choose an appropriate location on the server to save the solution.</li>
+            <li>Click <strong>Create</strong>.</li>
+          </ol>
+
+          <figure>
+            <img src="images/ssis-deploy-3.jpeg" alt="Visual Studio Configure your new project dialog with Project name set to RapidReconciler">
+            <figcaption><strong>Configure your new project</strong>Set <strong>Project name</strong> to <code>RapidReconciler</code> and choose an appropriate location. Click <strong>Create</strong>.</figcaption>
+          </figure>
+
+          <ol start="7">
+            <li>Once the solution loads, confirm the project appears in <strong>Solution Explorer</strong> as <code>RapidReconciler</code>.</li>
+          </ol>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">3</div>
+          <div class="step-meta">Tour 3 · Step 3 of 8</div>
+          <div class="step-title">Add the Existing SSIS Package</div>
+          <ol>
+            <li>In <strong>Solution Explorer</strong>, expand the <code>RapidReconciler</code> project and right-click the <strong>SSIS Packages</strong> folder.</li>
+            <li>Select <strong>Add Existing Package</strong>.</li>
+            <li>In the <strong>Add Copy of Existing Package</strong> dialog, set <strong>Package location</strong> to <strong>File system</strong>, then browse to where the installation zip was extracted.</li>
+            <li>Select <code>RapidReconciler-Prod.dtsx</code> and click <strong>OK</strong>.</li>
+            <li>Confirm the package appears under the <code>RapidReconciler</code> project in Solution Explorer.</li>
+            <li>Double-click the package to open it in the designer and verify the control flow and variables load.</li>
+            <li>If prompted to upgrade the package, click <strong>OK</strong> to allow Visual Studio to update the package format.</li>
+          </ol>
+
+          <figure>
+            <img src="images/ssis-deploy-4.jpeg" alt="Solution Explorer SSIS Packages folder right-click menu showing Add Existing Package option">
+            <figcaption><strong>Solution Explorer &rarr; Add Existing Package</strong>Right-click the <strong>SSIS Packages</strong> folder under the <code>RapidReconciler</code> project and select <strong>Add Existing Package</strong> (highlighted in red). This opens a dialog tailored to package files; browse to the extracted installation zip and select <code>RapidReconciler-Prod.dtsx</code>.</figcaption>
+          </figure>
+
+          <div class="callout">
+            <div class="callout-label">Connection errors are expected at this stage</div>
+            <p>The package may show connection errors when it first opens — this is normal. The connection managers will be updated in Step 4. Passwords also need to be re-entered after deployment.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">4</div>
+          <div class="step-meta">Tour 3 · Step 4 of 8</div>
+          <div class="step-title">Configure the Connection Managers</div>
+          <p>Connection managers appear at the bottom-center of the package designer.</p>
+
+          <figure>
+            <img src="images/ssis-deploy-5.jpeg" alt="RapidReconciler SSIS package open in Visual Studio designer with Variables panel and Connection Managers visible">
+            <figcaption><strong>Figure 1 &mdash; RapidReconciler package in the Visual Studio designer</strong>The control flow shows the package's execution sequence from <strong>Initialize</strong> through <strong>Complete</strong>. The <strong>Variables</strong> window on the left lists the variables you will configure in Step 5 (the highlighted rows are the most commonly tuned values). The <strong>Connection Managers</strong> pane at the bottom-center shows <strong>JDESource</strong> and <strong>RRLocal</strong> (highlighted) &mdash; the two connections you update in this step.</figcaption>
+          </figure>
+
+          <h3>JDE Source Connection</h3>
+          <ol>
+            <li>Double-click the <strong>JDE source connection</strong>.</li>
+            <li>Update the <strong>Server name or IP address</strong> to the JDE data server.</li>
+            <li>Enter the database credentials gathered in Step 1 <em>(<code>rapidrec</code>/<code>rapidrec</code> if available)</em>.</li>
+            <li>Click <strong>Test Connection</strong> to verify connectivity to the JDE data source.</li>
+            <li>Click <strong>OK</strong> to save changes.</li>
+          </ol>
+          <h3>RapidReconciler Destination Connection</h3>
+          <ol>
+            <li>Double-click the <strong>RapidReconciler destination connection</strong>.</li>
+            <li>Set the <strong>Server name</strong> to the database server hosting <code>RapidReconciler_Prod</code>.</li>
+            <li>Select <code>RapidReconciler_Prod</code> from the database dropdown.</li>
+            <li>Enter the <code>rruser</code> credentials created in Tour 2.</li>
+            <li>Click <strong>Test Connection</strong> to verify connectivity to <code>RapidReconciler_Prod</code>.</li>
+            <li>Click <strong>OK</strong> to save changes.</li>
+          </ol>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">5</div>
+          <div class="step-meta">Tour 3 · Step 5 of 8</div>
+          <div class="step-title">Configure the Variables</div>
+          <ol>
+            <li>Open the <strong>Variables</strong> window. If not visible, go to <strong>View &rarr; Other Windows &rarr; Variables</strong>.</li>
+            <li>Reference Figure 1 (Step 4) for the variable names — they appear highlighted in yellow.</li>
+            <li>Update each variable using the values gathered in Step 1:</li>
+          </ol>
+
+          <table>
+            <thead>
+              <tr><th>Variable</th><th>Value to Enter</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>aaStartDateGr</code></td><td>Start date for data extraction. Set to 2 months prior to the current fiscal year.</td></tr>
+              <tr><td><code>dbowner</code></td><td>Table qualifier for JDE data (e.g. <code>proddta.</code>). <strong>Ensure there is a period at the end.</strong></td></tr>
+              <tr><td><code>DecExtCost</code></td><td>Decimal places for extended cost: <code>1</code> followed by the number of zeros for ECST.</td></tr>
+              <tr><td><code>DecUnitCost</code></td><td>Decimal places for unit cost: <code>1</code> followed by the number of zeros for UNCS.</td></tr>
+              <tr><td><code>DecQTY</code></td><td>Decimal places for quantity on hand: <code>1</code> followed by the number of zeros for PQOH.</td></tr>
+              <tr><td><code>DecQtyCX</code></td><td>Decimal places for transaction quantities in cardex: <code>1</code> followed by the number of zeros for TRQT.</td></tr>
+            </tbody>
+          </table>
+
+          <ol start="4">
+            <li>Save all changes by clicking <strong>File &rarr; Save All</strong> or pressing <code>Ctrl + Shift + S</code>.</li>
+          </ol>
+
+          <div class="callout warning">
+            <div class="callout-label">Common mistake</div>
+            <p>Forgetting the trailing period on <code>dbowner</code> (e.g. entering <code>proddta</code> instead of <code>proddta.</code>) is the single most common cause of "package deployed but extracts no data" tickets. Double-check before saving.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">6</div>
+          <div class="step-meta">Tour 3 · Step 6 of 8</div>
+          <div class="step-title">Deploy the Project to the SSIS Catalog</div>
+          <ol>
+            <li>In <strong>Solution Explorer</strong>, right-click the <code>RapidReconciler</code> project and select <strong>Deploy</strong>.</li>
+            <li>The <strong>Integration Services Deployment Wizard</strong> opens. Click <strong>Next</strong>.</li>
+            <li>On the <strong>Select Destination</strong> page:
+              <ul>
+                <li>Set <strong>Server name</strong> to the target SQL Server instance.</li>
+                <li>Connect using <strong>Windows Authentication</strong>.</li>
+                <li>Set <strong>Path</strong> to <code>/SSISDB/RapidReconciler/RapidReconciler</code>.</li>
+              </ul>
+            </li>
+            <li>Click <strong>Next</strong>, review the summary, then click <strong>Deploy</strong>.</li>
+            <li>Wait for all deployment steps to show a <strong>Passed</strong> status.</li>
+            <li>Click <strong>Close</strong> when complete.</li>
+          </ol>
+
+          <div class="callout warning">
+            <div class="callout-label">Authentication requirement</div>
+            <p>Windows Authentication is required for deployment to the SSIS catalog. Ensure the account you are logged in with has <strong>sysadmin</strong> or <strong>ssis_admin</strong> privileges on the target SQL Server instance before proceeding.</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">7</div>
+          <div class="step-meta">Tour 3 · Step 7 of 8</div>
+          <div class="step-title">Verify the Deployment</div>
+          <ol>
+            <li>Open <strong>SSMS</strong> and connect to the target server.</li>
+            <li>Expand <strong>Integration Services Catalogs &rarr; SSISDB &rarr; RapidReconciler</strong>.</li>
+            <li>Confirm the deployed RapidReconciler project appears and is accessible.</li>
+          </ol>
+          <p>If the project is missing, re-run the deployment wizard. Common causes: insufficient permissions on SSISDB, or the path was set incorrectly in Step 6.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">8</div>
+          <div class="step-meta">Tour 3 · Step 8 of 8</div>
+          <div class="step-title">Configure the SQL Agent Package Path</div>
+          <p>The SQL Agent job created in Tour 2 needs to be pointed at the deployed SSIS package.</p>
+
+          <figure>
+            <img src="images/ssis-deploy-6.jpeg" alt="SQL Agent Job Step Properties dialog with the SSIS Catalog package path field highlighted">
+            <figcaption><strong>Job Step Properties &mdash; SSIS package path</strong>Set <strong>Type</strong> to <strong>SQL Server Integration Services Package</strong> and <strong>Package source</strong> to <strong>SSIS Catalog</strong>. Enter the SSIS server name in <strong>Server</strong>, then click the ellipsis next to <strong>Package</strong> to browse the catalog and select the deployed package. The resulting path (highlighted in yellow) should resolve to <code>\SSISDB\RapidReconciler\RapidReconciler\RapidReconciler_Prod.dtsx</code>.</figcaption>
+          </figure>
+
+          <ol>
+            <li>In SSMS, navigate to <strong>SQL Server Agent &rarr; Jobs &rarr; RapidReconciler_Prod</strong>.</li>
+            <li>Right-click the job and select <strong>Properties</strong>.</li>
+            <li>Click <strong>Steps</strong> in the left panel.</li>
+            <li>Edit step 1 to point to the deployed SSIS package path in the SSISDB catalog (use the path <code>/SSISDB/RapidReconciler/RapidReconciler/RapidReconciler-Prod.dtsx</code> or browse to the package via the SSIS Catalog browser).</li>
+            <li>Click <strong>OK</strong> to save the step.</li>
+            <li>Click <strong>OK</strong> to save the job properties.</li>
+          </ol>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="prev-btn" onclick="showView('topic-install-database')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-initial-load')">Next: Tour 4: Perform the Initial Data Load &rarr;</button>
+        </div>
+      </section>
+
+      <section id="topic-initial-load" class="view">
+        <h1>Tour 4: Perform the Initial Data Load</h1>
+        <p>The database, SSIS package, and SQL Agent job are all in place. The final tour enables the job's schedule and triggers the first run, which populates <code>RapidReconciler_Prod</code> with the customer's JDE data.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <div class="step-card">
+          <div class="step-badge">1</div>
+          <div class="step-meta">Tour 4 · Step 1 of 6</div>
+          <div class="step-title">Open SQL Server Agent</div>
+          <ol>
+            <li>Launch <strong>SSMS</strong> and connect to the SQL Server instance.</li>
+            <li>In <strong>Object Explorer</strong>, expand the server node.</li>
+            <li>Expand <strong>SQL Server Agent</strong>.</li>
+            <li>Expand <strong>Jobs</strong>.</li>
+          </ol>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">2</div>
+          <div class="step-meta">Tour 4 · Step 2 of 6</div>
+          <div class="step-title">Open the Job Properties</div>
+          <ol>
+            <li>Right-click the job <strong><code>RapidReconciler_Prod</code></strong>.</li>
+            <li>Select <strong>Properties</strong> from the context menu.</li>
+            <li>The <strong>Job Properties</strong> dialog opens.</li>
+          </ol>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">3</div>
+          <div class="step-meta">Tour 4 · Step 3 of 6</div>
+          <div class="step-title">Navigate to the Schedules Tab</div>
+          <ol>
+            <li>In the left panel of the Job Properties dialog, click <strong>Schedules</strong>.</li>
+            <li>You will see a list of schedules currently associated with the job.</li>
+          </ol>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">4</div>
+          <div class="step-meta">Tour 4 · Step 4 of 6</div>
+          <div class="step-title">Enable the Job Schedule</div>
+
+          <figure>
+            <img src="images/initial-load.jpeg" alt="SQL Server Agent Job Schedule Properties dialog with the Enabled checkbox and Daily frequency section highlighted">
+            <figcaption><strong>Job Schedule Properties &mdash; Daily recurring schedule</strong>Configure the schedule to recur daily at a single time (highlighted in red, lower box) and confirm the <strong>Enabled</strong> checkbox is cleared (highlighted in red, upper right) before saving. Leaving the schedule disabled at creation lets you finish configuration without the job firing prematurely; you will enable it from SQL Server Agent &rarr; Jobs once everything is in place.</figcaption>
+          </figure>
+
+          <ol>
+            <li>Select the schedule from the list and click <strong>Edit</strong>.</li>
+            <li>In the <strong>Job Schedule Properties</strong> dialog, check the <strong>Enabled</strong> checkbox at the top.</li>
+          </ol>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">5</div>
+          <div class="step-meta">Tour 4 · Step 5 of 6</div>
+          <div class="step-title">Update the Run Time</div>
+
+          <div class="callout">
+            <div class="callout-label">Scheduling guidance</div>
+            <p>The RapidReconciler job should run during off-peak hours (typically overnight) to minimize impact on system performance and provide the most accurate snapshot. Coordinate with the customer's IT contact to determine the best time. The initial load may take longer than subsequent runs.</p>
+          </div>
+
+          <ol>
+            <li>Under <strong>Daily frequency</strong>, update the <strong>Occurs once at</strong> or <strong>Occurs every</strong> time fields to the agreed run time.</li>
+            <li>Adjust the <strong>Start date</strong> and <strong>End date</strong> in the <strong>Duration</strong> section if needed.</li>
+            <li>Click <strong>OK</strong> to save the schedule changes.</li>
+          </ol>
+        </div>
+
+        <div class="step-card">
+          <div class="step-badge">6</div>
+          <div class="step-meta">Tour 4 · Step 6 of 6</div>
+          <div class="step-title">Save the Job</div>
+          <ol>
+            <li>Click <strong>OK</strong> in the Job Properties dialog to apply all changes.</li>
+            <li>The job schedule is now enabled and will run at the next scheduled time.</li>
+          </ol>
+
+          <div class="callout">
+            <div class="callout-label">Note</div>
+            <p>Schedule changes take effect at the next scheduled run time and will not interrupt a currently running job. After the initial load completes, the schedule can be adjusted as needed to meet the customer's data refresh requirements.</p>
+          </div>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="prev-btn" onclick="showView('topic-ssis-deploy')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-security')">Next: Security Requirements &rarr;</button>
+        </div>
+      </section>
+
+      <section id="topic-security" class="view">
+        <h1>Security Requirements</h1>
+        <p>This section is the permissions reference for the install. Most of these permissions are set by the scripts in Tour 2, but they are documented here for verification, troubleshooting, and any cases where manual configuration is required.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>SQL Server Login and User Permissions</h2>
+        <p>The <code>rruser</code> SQL login must be configured with the following permissions:</p>
+        <table>
+          <thead>
+            <tr><th>Object</th><th>Account</th><th>Permission</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>RapidReconciler_Prod</code> database</td><td><code>rruser</code></td><td><code>db_datareader</code></td></tr>
+            <tr><td><code>RapidReconciler_Prod</code> database</td><td><code>rruser</code></td><td><code>db_datawriter</code></td></tr>
+            <tr><td><code>msdb</code></td><td><code>rruser</code></td><td><code>SQLAgentOperatorRole</code></td></tr>
+          </tbody>
+        </table>
+
+        <h3>Configuring rruser Manually</h3>
+        <ol>
+          <li>In SSMS, navigate to <strong>Security &rarr; Logins</strong> and open the <code>rruser</code> login properties.</li>
+          <li>Under <strong>User Mapping</strong>, select <code>RapidReconciler_Prod</code> and assign <code>db_datareader</code> and <code>db_datawriter</code>.</li>
+          <li>Also map to <code>msdb</code> and assign <code>SQLAgentOperatorRole</code>.</li>
+          <li>Click <strong>OK</strong> to save.</li>
+        </ol>
+
+        <h2>SQL Server Agent Service Account</h2>
+        <p>The SQL Server Agent service account is configured separately from <code>rruser</code>. Ensure:</p>
+        <ul>
+          <li>The service account has <code>db_datareader</code> and <code>db_datawriter</code> on <code>RapidReconciler_Prod</code>.</li>
+          <li>The service account has <strong>Log on as a service</strong> rights on the server running the agent job.</li>
+          <li>If a <strong>proxy account</strong> is used for job steps instead of the service account, the proxy must be explicitly granted access to the <strong>SSIS subsystem</strong> under <strong>SQL Server Agent &rarr; Proxies</strong>.</li>
+        </ul>
+
+        <h2>SSIS Catalog Permissions</h2>
+        <p>The account running the SQL Agent job must have access to execute the SSIS packages in the catalog:</p>
+        <table>
+          <thead>
+            <tr><th>Role</th><th>Account</th><th>Purpose</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>ssis_admin</code></td><td>SQL Agent service account or proxy</td><td>Full administrative access to the SSIS catalog</td></tr>
+            <tr><td><code>ssis_logreader</code></td><td>SQL Agent service account or proxy</td><td>Read access to execution logs for troubleshooting</td></tr>
+            <tr><td><code>dc_operator</code></td><td>SQL Agent service account or proxy</td><td>Permission to execute packages</td></tr>
+            <tr><td><code>READ</code> on SSIS Environment</td><td>SQL Agent service account or proxy</td><td>Required if environments are used to store connection credentials</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Configuring SSIS Catalog Permissions</h3>
+        <ol>
+          <li>In SSMS, expand <strong>Integration Services Catalogs &rarr; SSISDB</strong>.</li>
+          <li>Right-click <strong>SSISDB</strong> and select <strong>Properties</strong>.</li>
+          <li>Click <strong>Permissions</strong> and add the SQL Agent service account or <code>rruser</code>.</li>
+          <li>Grant <strong><code>dc_operator</code></strong> at minimum to allow package execution.</li>
+          <li>Grant <strong><code>ssis_logreader</code></strong> to allow log visibility for troubleshooting.</li>
+          <li>If SSIS environments are used to store connection-manager parameters, grant <strong><code>READ</code></strong> on the environment and ensure it is referenced in the package execution properties.</li>
+          <li>Click <strong>OK</strong> to save.</li>
+        </ol>
+
+        <div class="callout warning">
+          <div class="callout-label">Proxy account note</div>
+          <p>If the SQL Agent job steps run under a proxy account, the proxy must also be granted access to any network shares or UNC paths used by the SSIS package, in addition to the SSIS catalog permissions above.</p>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="prev-btn" onclick="showView('topic-initial-load')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-next-steps')">Next: What to Do Next &rarr;</button>
+        </div>
+      </section>
+
+      <section id="topic-next-steps" class="view">
+        <h1>What to Do Next</h1>
+        <p>The database is installed, the SSIS package is deployed and configured, and the SQL Agent job is scheduled. The first scheduled run will populate <code>RapidReconciler_Prod</code> with the customer's JDE data.</p>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <h2>Verify the Initial Load</h2>
+        <p>After the first scheduled run completes, verify the load succeeded:</p>
+        <ol>
+          <li>In SSMS, expand <strong>SQL Server Agent &rarr; Jobs</strong> and right-click <code>RapidReconciler_Prod</code>.</li>
+          <li>Select <strong>View History</strong>.</li>
+          <li>Confirm the most recent run shows a green checkmark and a non-zero duration.</li>
+          <li>If the run failed, expand the failed step in the history view to see the error message — the agent log files in the SSISDB catalog also have detailed execution logs.</li>
+        </ol>
+
+        <div class="callout">
+          <div class="callout-label">Timing</div>
+          <p>The initial load can take longer than subsequent runs and may not finish inside the 2-hour install meeting. That's expected. The customer's IT contact can complete the verification once the run finishes and communicate the result back to the DBA — the meeting does not need to be held open until the load is done.</p>
+        </div>
+
+        <h2>Hand Off to the GSI Tech Team</h2>
+        <p>Once the database installation is verified, the remaining client setup steps are handled by the GSI tech team and are documented separately. Hand the customer's information off to the team responsible for completing the install. Include:</p>
+        <ul>
+          <li>The <strong>internal IP address of the database server</strong> — needed to register the database in VALC.</li>
+          <li>The <strong>SQL Server communication port</strong>, but only if it is something other than the default <code>1433</code>. If the default port is in use, no need to specify.</li>
+          <li>The <strong>password for the <code>rruser</code> account</strong>, but only if it was set to something other than the default <code>rruser</code>. If the default password is in use, no need to specify.</li>
+        </ul>
+
+        <div class="callout tip">
+          <div class="callout-label">You're done</div>
+          <p>The database side of the install is complete. The customer is one step closer to going live with RapidReconciler.</p>
+        </div>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="prev-btn" onclick="showView('topic-security')">&larr; Previous</button>
+          <button class="done-btn" onclick="goHome()">Done &mdash; Back to Index &#x2713;</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="footer-line">
+      <span><strong>RapidReconciler University</strong> <span class="footer-sep">&middot;</span> a GSI knowledge base for JD Edwards reconciliation</span>
+      <span>&copy; 2026 GSI <span class="footer-sep">&middot;</span> <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> <span class="footer-sep">&middot;</span> <a href="https://www.getgsi.com" target="_blank" rel="noopener">getgsi.com</a></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      const slug = id === 'home' ? 'home' : id.replace('topic-', '');
+      // Update active state across all sidebar groups
+      document.querySelectorAll('.sidebar-nav li').forEach(li => {
+        li.classList.toggle('active', li.dataset.target === slug);
+      });
+
+      try {
+        if (window.location.protocol !== 'about:') {
+          history.replaceState(null, '', slug === 'home' ? ' ' : '#' + slug);
+        }
+      } catch (e) { /* sandboxed context */ }
+    }
+  }
+
+  function goHome() { showView('home'); }
+
+  document.querySelectorAll('.sidebar-nav li[data-target="home"]').forEach(li => li.classList.add('active'));
+
+  window.addEventListener('DOMContentLoaded', () => {
+    try {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && hash !== 'home') showView('topic-' + hash);
+    } catch (e) { /* ignore */ }
+  });
+
+  window.addEventListener('popstate', () => {
+    try {
+      const hash = window.location.hash.replace('#', '');
+      showView(hash && hash !== 'home' ? 'topic-' + hash : 'home');
+    } catch (e) { /* ignore */ }
+  });
+</script>
+
+</body>
+</html>
