@@ -447,6 +447,44 @@
   }
   .view .callout.principle .callout-icon { background: var(--blue); }
 
+  /* Email preview block — used to show what an inbound submission looks like.
+     Two parts: a header strip with the subject line, and a monospaced body. */
+  .view .email-preview {
+    margin: 18px 0 22px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(31, 45, 74, 0.04);
+  }
+  .view .email-preview-header {
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--text-soft);
+    font-family: 'Open Sans', sans-serif;
+  }
+  .view .email-preview-header .label {
+    font-weight: 700;
+    color: var(--navy);
+    margin-right: 6px;
+  }
+  .view .email-preview-header .subject {
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .view .email-preview-body {
+    margin: 0;
+    padding: 14px 18px;
+    background: #fafbfd;
+    font-family: 'JetBrains Mono', 'Source Code Pro', Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--text);
+    white-space: pre;
+    overflow-x: auto;
+  }
   /* Checklist - styled as a card with rule-bordered items */
   .view .checklist {
     list-style: none;
@@ -756,6 +794,56 @@
     margin-bottom: 6px;
   }
 
+  /* Flowchart prev/next nav strip — appears at the end of each step that
+     corresponds to a flowchart step, so users can walk the doc in flowchart
+     order without going back to the diagram. Designed to also work outside
+     a step-card (used at the end of Part 3 step h2 sections too). */
+  .view .flow-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 22px 0 4px;
+    padding: 10px 14px;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .view .step-card .flow-nav { margin-bottom: 0; }
+  .view .flow-nav .flow-nav-label {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    flex: 0 0 auto;
+  }
+  .view .flow-nav a {
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 3px;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .view .flow-nav a:hover {
+    background: var(--blue-pale);
+    color: var(--navy);
+  }
+  .view .flow-nav .flow-nav-spacer {
+    flex: 1 1 auto;
+  }
+  .view .flow-nav .flow-nav-disabled {
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 4px 8px;
+    white-space: nowrap;
+    opacity: 0.55;
+  }
+
   /* Previous button (matches back-btn styling but for in-doc nav) */
   .view .topic-footer-nav .prev-btn {
     background: #fff;
@@ -1051,7 +1139,7 @@
         <h2 id="process-flow">Process Flow</h2>
         <p>This diagram maps the end-to-end install across the three teams involved. Use it to see where handoffs occur and what to wait for at each stage. Numbered steps reference the detailed phases.</p>
         <figure class="process-flow">
-                <svg viewBox="0 0 880 1115" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Client install process flow with swim lanes for GSI Tech Team, Customer IT, and GSI I/T" font-family="'Open Sans', sans-serif" style="width:100%;height:auto;display:block;">
+                <svg viewBox="0 0 740 1235" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Client install process flow with swim lanes for RR Network Tech and Customer I/T. The process is triggered by the customer's pre-install submission email arriving in the rrsupport inbox. Each step is a clickable link to the related documentation section." font-family="'Open Sans', sans-serif" style="width:100%;height:auto;display:block;">
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
@@ -1062,114 +1150,216 @@
           <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#a04030"/>
           </marker>
+          <style>
+            a .step-box { transition: fill 0.15s ease; cursor: pointer; }
+            a:hover .step-box { fill: #eef3f9; }
+            a:focus { outline: none; }
+            a:focus .step-box { stroke-width: 3; }
+          </style>
         </defs>
-        <rect x="0" y="0" width="880" height="1115" fill="#fdf6e3"/>
-        <rect x="10" y="44" width="280" height="1071" fill="#ffffff" stroke="#d6d2c4" stroke-width="1" rx="3"/>
-        <rect x="10" y="0" width="280" height="36" fill="#4d77b4" rx="3"/>
-        <text x="150" y="23" text-anchor="middle" fill="white" font-size="14" font-weight="700" letter-spacing="0.04em">GSI TECH TEAM</text>
-        <rect x="300" y="44" width="280" height="1071" fill="#ffffff" stroke="#d6d2c4" stroke-width="1" rx="3"/>
-        <rect x="300" y="0" width="280" height="36" fill="#6b8e4e" rx="3"/>
-        <text x="440" y="23" text-anchor="middle" fill="white" font-size="14" font-weight="700" letter-spacing="0.04em">CUSTOMER IT</text>
-        <rect x="590" y="44" width="280" height="1071" fill="#ffffff" stroke="#d6d2c4" stroke-width="1" rx="3"/>
-        <rect x="590" y="0" width="280" height="36" fill="#b87333" rx="3"/>
-        <text x="730" y="23" text-anchor="middle" fill="white" font-size="14" font-weight="700" letter-spacing="0.04em">GSI I/T</text>
-        <rect x="30" y="70" width="240" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
-        <circle cx="48" cy="98" r="13" fill="#4d77b4"/>
-        <text x="48" y="103" text-anchor="middle" fill="white" font-size="14" font-weight="700">1</text>
-        <text x="68" y="89" font-size="12.5" font-weight="600" fill="#333">Create client record</text>
-        <text x="68" y="104" font-size="12.5" font-weight="600" fill="#333">in VALC</text>
-        <text x="68" y="118" font-size="10" font-style="italic" fill="#777">Part 1 — Step 1</text>
-        <rect x="30" y="145" width="240" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
-        <circle cx="48" cy="173" r="13" fill="#4d77b4"/>
-        <text x="48" y="178" text-anchor="middle" fill="white" font-size="14" font-weight="700">2</text>
-        <text x="68" y="164" font-size="12.5" font-weight="600" fill="#333">Create initial</text>
-        <text x="68" y="179" font-size="12.5" font-weight="600" fill="#333">GSI Admin user</text>
-        <text x="68" y="193" font-size="10" font-style="italic" fill="#777">Part 1 — Step 2</text>
-        <rect x="30" y="220" width="240" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
-        <circle cx="48" cy="248" r="13" fill="#4d77b4"/>
-        <text x="48" y="253" text-anchor="middle" fill="white" font-size="14" font-weight="700">3</text>
-        <text x="68" y="239" font-size="12.5" font-weight="600" fill="#333">Configure modules</text>
-        <text x="68" y="254" font-size="12.5" font-weight="600" fill="#333">and additional fields</text>
-        <text x="68" y="268" font-size="10" font-style="italic" fill="#777">Part 1 — Step 3</text>
-        <rect x="610" y="295" width="240" height="56" fill="white" stroke="#b87333" stroke-width="2" rx="4"/>
-        <circle cx="628" cy="323" r="13" fill="#b87333"/>
-        <text x="628" y="328" text-anchor="middle" fill="white" font-size="14" font-weight="700">4</text>
-        <text x="648" y="314" font-size="12.5" font-weight="600" fill="#333">Add DNS 'A' record</text>
-        <text x="648" y="329" font-size="12.5" font-weight="600" fill="#333">Certificate Mgmt request</text>
-        <text x="648" y="343" font-size="10" font-style="italic" fill="#777">Part 1 — Step 4</text>
-        <rect x="320" y="445" width="240" height="56" fill="white" stroke="#6b8e4e" stroke-width="2" rx="4"/>
-        <circle cx="338" cy="473" r="13" fill="#6b8e4e"/>
-        <text x="338" y="478" text-anchor="middle" fill="white" font-size="14" font-weight="700">5</text>
-        <text x="358" y="464" font-size="12.5" font-weight="600" fill="#333">IT joins</text>
-        <text x="358" y="479" font-size="12.5" font-weight="600" fill="#333">working session</text>
-        <text x="358" y="493" font-size="10" font-style="italic" fill="#777">Part 2 — prereq</text>
-        <rect x="30" y="520" width="240" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
-        <circle cx="48" cy="548" r="13" fill="#4d77b4"/>
-        <text x="48" y="553" text-anchor="middle" fill="white" font-size="14" font-weight="700">6</text>
-        <text x="68" y="539" font-size="12.5" font-weight="600" fill="#333">Install agent on</text>
-        <text x="68" y="554" font-size="12.5" font-weight="600" fill="#333">customer server</text>
-        <text x="68" y="568" font-size="10" font-style="italic" fill="#777">Part 2 — Step 1</text>
-        <rect x="30" y="595" width="240" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
-        <circle cx="48" cy="623" r="13" fill="#4d77b4"/>
-        <text x="48" y="628" text-anchor="middle" fill="white" font-size="14" font-weight="700">7</text>
-        <text x="68" y="614" font-size="12.5" font-weight="600" fill="#333">Validate SQL</text>
-        <text x="68" y="629" font-size="12.5" font-weight="600" fill="#333">Server connection</text>
-        <text x="68" y="643" font-size="10" font-style="italic" fill="#777">Part 2 — Step 2</text>
-        <rect x="30" y="765" width="240" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
-        <circle cx="48" cy="793" r="13" fill="#4d77b4"/>
-        <text x="48" y="798" text-anchor="middle" fill="white" font-size="14" font-weight="700">8</text>
-        <text x="68" y="784" font-size="12.5" font-weight="600" fill="#333">Register database</text>
-        <text x="68" y="799" font-size="12.5" font-weight="600" fill="#333">in VALC</text>
-        <text x="68" y="813" font-size="10" font-style="italic" fill="#777">Part 3 — Step 1</text>
-        <rect x="30" y="840" width="240" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
-        <circle cx="48" cy="868" r="13" fill="#4d77b4"/>
-        <text x="48" y="873" text-anchor="middle" fill="white" font-size="14" font-weight="700">9</text>
-        <text x="68" y="859" font-size="12.5" font-weight="600" fill="#333">Verify databases</text>
-        <text x="68" y="874" font-size="12.5" font-weight="600" fill="#333">show Online</text>
-        <text x="68" y="888" font-size="10" font-style="italic" fill="#777">Part 3 — Step 2</text>
-        <rect x="30" y="915" width="240" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
-        <circle cx="48" cy="943" r="13" fill="#4d77b4"/>
-        <text x="48" y="948" text-anchor="middle" fill="white" font-size="14" font-weight="700">10</text>
-        <text x="68" y="934" font-size="12.5" font-weight="600" fill="#333">License company</text>
-        <text x="68" y="949" font-size="12.5" font-weight="600" fill="#333">numbers</text>
-        <text x="68" y="963" font-size="10" font-style="italic" fill="#777">Part 3 — Step 3</text>
-        <rect x="30" y="990" width="240" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
-        <circle cx="48" cy="1018" r="13" fill="#4d77b4"/>
-        <text x="48" y="1023" text-anchor="middle" fill="white" font-size="14" font-weight="700">11</text>
-        <text x="68" y="1009" font-size="12.5" font-weight="600" fill="#333">Customer handoff</text>
-        <text x="68" y="1024" font-size="12.5" font-weight="600" fill="#333">(login URL + credentials)</text>
-        <text x="68" y="1038" font-size="10" font-style="italic" fill="#777">Part 3 — Step 4</text>
-        <rect x="330" y="365" width="510" height="50" fill="#fdf6e3" stroke="#b8941a" stroke-width="2" stroke-dasharray="6,4" rx="4"/>
-        <text x="585" y="387" text-anchor="middle" font-size="12.5" font-weight="700" fill="#7a5e0a">Wait — DNS propagation</text>
-        <text x="585" y="403" text-anchor="middle" font-size="10" font-style="italic" fill="#7a5e0a">Allow time before proceeding to Part 2</text>
-        <polygon points="150,670 270,698 150,726 30,698" fill="#fdf6e3" stroke="#b8941a" stroke-width="2"/>
-        <text x="150" y="696" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7a5e0a">Verification</text>
-        <text x="150" y="711" text-anchor="middle" font-size="11" fill="#7a5e0a">Status = Connected?</text>
-        <rect x="330" y="745" width="510" height="56" fill="#fbe9e4" stroke="#a04030" stroke-width="2" rx="4"/>
-        <text x="585" y="767" text-anchor="middle" font-size="12.5" font-weight="700" fill="#7a2d20">Troubleshoot connectivity</text>
-        <text x="585" y="785" text-anchor="middle" font-size="10" font-style="italic" fill="#7a2d20">Customer IT and GSI I/T collaborate to resolve issues</text>
-        <line x1="150" y1="126" x2="150" y2="145" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
-        <line x1="150" y1="201" x2="150" y2="220" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
-        <path d="M 150 276 L 150 285.5 L 730 285.5 L 730 295" stroke="#555" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-        <line x1="730" y1="351" x2="730" y2="365" stroke="#b8941a" stroke-width="2" marker-end="url(#arrowYellow)"/>
-        <path d="M 730 415 L 730 430 L 440 430 L 440 445" stroke="#b8941a" stroke-width="2" fill="none" marker-end="url(#arrowYellow)"/>
-        <path d="M 440 501 L 440 510.5 L 150 510.5 L 150 520" stroke="#555" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-        <line x1="150" y1="576" x2="150" y2="595" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
-        <line x1="150" y1="651" x2="150" y2="670" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
-        <line x1="150" y1="726" x2="150" y2="765" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
-        <text x="162" y="745" font-size="10" font-weight="700" fill="#4a6b3a">YES</text>
-        <path d="M 270 698 L 310 698 L 310 773 L 330 773" stroke="#a04030" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
-        <text x="276" y="694" font-size="10" font-weight="700" fill="#a04030">NO</text>
-        <path d="M 585 745 L 585 568 L 300 568 L 300 623 L 270 623" stroke="#a04030" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#arrowRed)"/>
-        <text x="593" y="739" font-size="10" font-weight="700" fill="#a04030">Resolved — re-validate</text>
-        <line x1="150" y1="821" x2="150" y2="840" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
-        <line x1="150" y1="896" x2="150" y2="915" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
-        <line x1="150" y1="971" x2="150" y2="990" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
-        <path d="M 150 1046 L 150 1087 L 335 1087" stroke="#4a6b3a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-        <rect x="340" y="1071" width="200" height="32" fill="#d8e8d4" stroke="#4a6b3a" stroke-width="2" rx="16"/>
-        <text x="440" y="1092" text-anchor="middle" font-size="13" font-weight="700" fill="#4a6b3a">Customer Live</text>
+        <rect x="0" y="0" width="740" height="1235" fill="#fdf6e3"/>
+
+        <!-- Lane backgrounds -->
+        <rect x="10" y="44" width="350" height="1191" fill="#ffffff" stroke="#d6d2c4" stroke-width="1" rx="3"/>
+        <rect x="10" y="0" width="350" height="36" fill="#4d77b4" rx="3"/>
+        <text x="185" y="23" text-anchor="middle" fill="white" font-size="14" font-weight="700" letter-spacing="0.04em">RR NETWORK TECH</text>
+        <rect x="370" y="44" width="350" height="1191" fill="#ffffff" stroke="#d6d2c4" stroke-width="1" rx="3"/>
+        <rect x="370" y="0" width="350" height="36" fill="#6b8e4e" rx="3"/>
+        <text x="545" y="23" text-anchor="middle" fill="white" font-size="14" font-weight="700" letter-spacing="0.04em">CUSTOMER I/T</text>
+
+        <!-- STEP 1: Receive prep submission email -->
+        <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'prep-email')" role="link" aria-label="Step 1: Receive customer pre-install submission email in the rrsupport inbox. Opens the Customer Pre-Install Submission section in Part 1.">
+          <rect class="step-box" x="40" y="70" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
+          <circle cx="58" cy="98" r="13" fill="#4d77b4"/>
+          <text x="58" y="103" text-anchor="middle" fill="white" font-size="14" font-weight="700">1</text>
+          <text x="78" y="89" font-size="12.5" font-weight="600" fill="#333">Receive prep submission email</text>
+          <text x="78" y="104" font-size="12.5" font-weight="600" fill="#333">(rrsupport@getgsi.com inbox)</text>
+          <text x="78" y="118" font-size="10" font-style="italic" fill="#2b5fb0">Part 1 — Pre-Install Submission ↗</text>
+        </a>
+
+        <!-- STEP 2: Create client record in VALC -->
+        <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-create-client')" role="link" aria-label="Step 2: Create client record in VALC. Opens Part 1 — Step 1.">
+          <rect class="step-box" x="40" y="145" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
+          <circle cx="58" cy="173" r="13" fill="#4d77b4"/>
+          <text x="58" y="178" text-anchor="middle" fill="white" font-size="14" font-weight="700">2</text>
+          <text x="78" y="164" font-size="12.5" font-weight="600" fill="#333">Create client record</text>
+          <text x="78" y="179" font-size="12.5" font-weight="600" fill="#333">in VALC</text>
+          <text x="78" y="193" font-size="10" font-style="italic" fill="#2b5fb0">Part 1 — Step 1 ↗</text>
+        </a>
+
+        <!-- STEP 3: Create initial GSI Admin user -->
+        <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-admin-user')" role="link" aria-label="Step 3: Create initial GSI Admin user. Opens Part 1 — Step 2.">
+          <rect class="step-box" x="40" y="220" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
+          <circle cx="58" cy="248" r="13" fill="#4d77b4"/>
+          <text x="58" y="253" text-anchor="middle" fill="white" font-size="14" font-weight="700">3</text>
+          <text x="78" y="239" font-size="12.5" font-weight="600" fill="#333">Create initial</text>
+          <text x="78" y="254" font-size="12.5" font-weight="600" fill="#333">GSI Admin user</text>
+          <text x="78" y="268" font-size="10" font-style="italic" fill="#2b5fb0">Part 1 — Step 2 ↗</text>
+        </a>
+
+        <!-- STEP 4: Configure modules -->
+        <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-modules')" role="link" aria-label="Step 4: Configure modules and additional fields. Opens Part 1 — Step 3.">
+          <rect class="step-box" x="40" y="295" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
+          <circle cx="58" cy="323" r="13" fill="#4d77b4"/>
+          <text x="58" y="328" text-anchor="middle" fill="white" font-size="14" font-weight="700">4</text>
+          <text x="78" y="314" font-size="12.5" font-weight="600" fill="#333">Configure modules</text>
+          <text x="78" y="329" font-size="12.5" font-weight="600" fill="#333">and additional fields</text>
+          <text x="78" y="343" font-size="10" font-style="italic" fill="#2b5fb0">Part 1 — Step 3 ↗</text>
+        </a>
+
+        <!-- STEP 5: Submit DNS / Cert Mgmt request -->
+        <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-dns-cert')" role="link" aria-label="Step 5: Submit DNS A record and Certificate Management request. Opens Part 1 — Step 4.">
+          <rect class="step-box" x="40" y="370" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
+          <circle cx="58" cy="398" r="13" fill="#4d77b4"/>
+          <text x="58" y="403" text-anchor="middle" fill="white" font-size="14" font-weight="700">5</text>
+          <text x="78" y="389" font-size="12.5" font-weight="600" fill="#333">Submit DNS 'A' record /</text>
+          <text x="78" y="404" font-size="12.5" font-weight="600" fill="#333">Cert Mgmt request</text>
+          <text x="78" y="418" font-size="10" font-style="italic" fill="#2b5fb0">Part 1 — Step 4 ↗</text>
+        </a>
+
+        <!-- Wait — DNS propagation -->
+        <rect x="40" y="445" width="290" height="50" fill="#fdf6e3" stroke="#b8941a" stroke-width="2" stroke-dasharray="6,4" rx="4"/>
+        <text x="185" y="467" text-anchor="middle" font-size="12.5" font-weight="700" fill="#7a5e0a">Wait — DNS propagation</text>
+        <text x="185" y="483" text-anchor="middle" font-size="10" font-style="italic" fill="#7a5e0a">Allow time before proceeding</text>
+
+        <!-- STEP 6: Schedule meeting with customer I/T (NEW, unlinked — no doc section) -->
+        <g aria-label="Step 6: Schedule meeting with customer I/T. No detailed documentation section.">
+          <rect x="40" y="515" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
+          <circle cx="58" cy="543" r="13" fill="#4d77b4"/>
+          <text x="58" y="548" text-anchor="middle" fill="white" font-size="14" font-weight="700">6</text>
+          <text x="78" y="534" font-size="12.5" font-weight="600" fill="#333">Schedule meeting with</text>
+          <text x="78" y="549" font-size="12.5" font-weight="600" fill="#333">customer I/T</text>
+          <text x="78" y="563" font-size="10" font-style="italic" fill="#888">(no doc section)</text>
+        </g>
+
+        <!-- STEP 7: Customer I/T joins working session (CUSTOMER LANE, unlinked — no doc section) -->
+        <g aria-label="Step 7: Customer I/T joins working session. No detailed documentation section.">
+          <rect x="400" y="590" width="290" height="56" fill="white" stroke="#6b8e4e" stroke-width="2" rx="4"/>
+          <circle cx="418" cy="618" r="13" fill="#6b8e4e"/>
+          <text x="418" y="623" text-anchor="middle" fill="white" font-size="14" font-weight="700">7</text>
+          <text x="438" y="609" font-size="12.5" font-weight="600" fill="#333">Customer I/T joins</text>
+          <text x="438" y="624" font-size="12.5" font-weight="600" fill="#333">working session</text>
+          <text x="438" y="638" font-size="10" font-style="italic" fill="#888">(no doc section)</text>
+        </g>
+
+        <!-- STEP 8: Install agent (SHARED — spans both lanes; RR Network Tech runs the install with Customer I/T present) -->
+        <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-install-agent')" role="link" aria-label="Step 8: Install agent on customer server. Shared task between RR Network Tech and Customer I/T. Opens Part 2 — Step 1.">
+          <rect class="step-box" x="40" y="665" width="650" height="56" fill="white" stroke="#4d77b4" stroke-width="2" stroke-dasharray="6,3" rx="4"/>
+          <circle cx="58" cy="693" r="13" fill="#4d77b4"/>
+          <text x="58" y="698" text-anchor="middle" fill="white" font-size="14" font-weight="700">8</text>
+          <text x="78" y="684" font-size="12.5" font-weight="600" fill="#333">Install agent on customer server</text>
+          <text x="78" y="699" font-size="11" font-style="italic" fill="#5a6479">Shared task — RR Network Tech runs the install; Customer I/T is on-session</text>
+          <text x="78" y="714" font-size="10" font-style="italic" fill="#2b5fb0">Part 2 — Step 1 ↗</text>
+          <!-- Shared-task badge in the upper-right of the box -->
+          <rect x="600" y="673" width="80" height="18" fill="#eef3f9" stroke="#4d77b4" stroke-width="1" rx="9"/>
+          <text x="640" y="685" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1f2d4a" letter-spacing="0.05em">SHARED</text>
+        </a>
+
+        <!-- STEP 9: Validate SQL Server connection -->
+        <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-validate-sql')" role="link" aria-label="Step 9: Validate SQL Server connection. Opens Part 2 — Step 2.">
+          <rect class="step-box" x="40" y="740" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
+          <circle cx="58" cy="768" r="13" fill="#4d77b4"/>
+          <text x="58" y="773" text-anchor="middle" fill="white" font-size="14" font-weight="700">9</text>
+          <text x="78" y="759" font-size="12.5" font-weight="600" fill="#333">Validate SQL</text>
+          <text x="78" y="774" font-size="12.5" font-weight="600" fill="#333">Server connection</text>
+          <text x="78" y="788" font-size="10" font-style="italic" fill="#2b5fb0">Part 2 — Step 2 ↗</text>
+        </a>
+
+        <!-- Verification diamond -->
+        <polygon points="185,815 330,843 185,871 40,843" fill="#fdf6e3" stroke="#b8941a" stroke-width="2"/>
+        <text x="185" y="841" text-anchor="middle" font-size="11.5" font-weight="700" fill="#7a5e0a">Verification</text>
+        <text x="185" y="856" text-anchor="middle" font-size="11" fill="#7a5e0a">Status = Connected?</text>
+
+        <!-- Troubleshoot box (right of diamond, links to troubleshooting topic) -->
+        <a href="javascript:void(0)" onclick="showView('topic-troubleshooting')" role="link" aria-label="Troubleshoot connectivity issues. Opens the Troubleshooting topic.">
+          <rect class="step-box" x="400" y="815" width="290" height="56" fill="#fbe9e4" stroke="#a04030" stroke-width="2" rx="4"/>
+          <text x="545" y="837" text-anchor="middle" font-size="12.5" font-weight="700" fill="#7a2d20">Troubleshoot connectivity</text>
+          <text x="545" y="853" text-anchor="middle" font-size="10" font-style="italic" fill="#7a2d20">Customer I/T + RR Network Tech collaborate</text>
+          <text x="545" y="867" text-anchor="middle" font-size="10" font-style="italic" fill="#2b5fb0">Troubleshooting ↗</text>
+        </a>
+
+        <!-- STEP 10: Register database -->
+        <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-1-register-the-database-in-valc')" role="link" aria-label="Step 10: Register database in VALC. Opens Part 3 — Step 1.">
+          <rect class="step-box" x="40" y="895" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
+          <circle cx="58" cy="923" r="13" fill="#4d77b4"/>
+          <text x="58" y="928" text-anchor="middle" fill="white" font-size="14" font-weight="700">10</text>
+          <text x="78" y="914" font-size="12.5" font-weight="600" fill="#333">Register database</text>
+          <text x="78" y="929" font-size="12.5" font-weight="600" fill="#333">in VALC</text>
+          <text x="78" y="943" font-size="10" font-style="italic" fill="#2b5fb0">Part 3 — Step 1 ↗</text>
+        </a>
+
+        <!-- STEP 11: Verify databases show Online -->
+        <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-2-verify-database-status')" role="link" aria-label="Step 11: Verify databases show Online. Opens Part 3 — Step 2.">
+          <rect class="step-box" x="40" y="970" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
+          <circle cx="58" cy="998" r="13" fill="#4d77b4"/>
+          <text x="58" y="1003" text-anchor="middle" fill="white" font-size="14" font-weight="700">11</text>
+          <text x="78" y="989" font-size="12.5" font-weight="600" fill="#333">Verify databases</text>
+          <text x="78" y="1004" font-size="12.5" font-weight="600" fill="#333">show Online</text>
+          <text x="78" y="1018" font-size="10" font-style="italic" fill="#2b5fb0">Part 3 — Step 2 ↗</text>
+        </a>
+
+        <!-- STEP 12: License company numbers -->
+        <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-3-license-company-numbers')" role="link" aria-label="Step 12: License company numbers. Opens Part 3 — Step 3.">
+          <rect class="step-box" x="40" y="1045" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
+          <circle cx="58" cy="1073" r="13" fill="#4d77b4"/>
+          <text x="58" y="1078" text-anchor="middle" fill="white" font-size="14" font-weight="700">12</text>
+          <text x="78" y="1064" font-size="12.5" font-weight="600" fill="#333">License company</text>
+          <text x="78" y="1079" font-size="12.5" font-weight="600" fill="#333">numbers</text>
+          <text x="78" y="1093" font-size="10" font-style="italic" fill="#2b5fb0">Part 3 — Step 3 ↗</text>
+        </a>
+
+        <!-- STEP 13: Customer handoff -->
+        <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-4-customer-handoff')" role="link" aria-label="Step 13: Customer handoff with login URL and credentials. Opens Part 3 — Step 4.">
+          <rect class="step-box" x="40" y="1120" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
+          <circle cx="58" cy="1148" r="13" fill="#4d77b4"/>
+          <text x="58" y="1153" text-anchor="middle" fill="white" font-size="14" font-weight="700">13</text>
+          <text x="78" y="1139" font-size="12.5" font-weight="600" fill="#333">Customer handoff</text>
+          <text x="78" y="1154" font-size="12.5" font-weight="600" fill="#333">(login URL + credentials)</text>
+          <text x="78" y="1168" font-size="10" font-style="italic" fill="#2b5fb0">Part 3 — Step 4 ↗</text>
+        </a>
+
+        <!-- Customer Live terminator -->
+        <rect x="240" y="1190" width="200" height="32" fill="#d8e8d4" stroke="#4a6b3a" stroke-width="2" rx="16"/>
+        <text x="340" y="1211" text-anchor="middle" font-size="13" font-weight="700" fill="#4a6b3a">Customer Live</text>
+
+        <!-- Connectors (vertical between sequential steps in tech lane) -->
+        <line x1="185" y1="126" x2="185" y2="145" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="185" y1="201" x2="185" y2="220" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="185" y1="276" x2="185" y2="295" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="185" y1="351" x2="185" y2="370" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="185" y1="426" x2="185" y2="445" stroke="#b8941a" stroke-width="2" marker-end="url(#arrowYellow)"/>
+        <line x1="185" y1="495" x2="185" y2="515" stroke="#b8941a" stroke-width="2" marker-end="url(#arrowYellow)"/>
+
+        <!-- Step 6 → Step 7 (cross-lane, tech schedules → customer joins) -->
+        <path d="M 185 571 L 185 580 L 545 580 L 545 590" stroke="#555" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+        <!-- Step 7 → Step 8 (customer joins → tech installs agent) -->
+        <path d="M 545 646 L 545 655 L 185 655 L 185 665" stroke="#555" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+        <line x1="185" y1="721" x2="185" y2="740" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="185" y1="796" x2="185" y2="815" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- Diamond YES → Step 10 -->
+        <line x1="185" y1="871" x2="185" y2="895" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="197" y="888" font-size="10" font-weight="700" fill="#4a6b3a">YES</text>
+
+        <!-- Diamond NO → Troubleshoot -->
+        <path d="M 330 843 L 400 843" stroke="#a04030" stroke-width="2" fill="none" marker-end="url(#arrowRed)"/>
+        <text x="345" y="838" font-size="10" font-weight="700" fill="#a04030">NO</text>
+
+        <!-- Troubleshoot → re-validate (loop back to Step 9) -->
+        <path d="M 545 815 L 545 768 L 330 768" stroke="#a04030" stroke-width="2" fill="none" stroke-dasharray="5,3" marker-end="url(#arrowRed)"/>
+        <text x="438" y="762" font-size="10" font-weight="700" fill="#a04030">Resolved — re-validate</text>
+
+        <!-- Step 10 → 11 → 12 → 13 -->
+        <line x1="185" y1="951" x2="185" y2="970" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="185" y1="1026" x2="185" y2="1045" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+        <line x1="185" y1="1101" x2="185" y2="1120" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- Step 13 → Customer Live -->
+        <path d="M 185 1176 L 185 1206 L 240 1206" stroke="#4a6b3a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
         </svg>
-                <figcaption><strong>Client install — End-to-end flow</strong>Three swim lanes show ownership: GSI Tech Team handles VALC setup, agent install, and the four Part 3 steps (Register database, Verify Online, License companies, Customer handoff); the customer's IT contact joins the working session for Part 2; GSI I/T handles DNS configuration. Dashed yellow elements indicate wait states. The diamond is a verification gate after Part 2 — the YES branch continues into Part 3, while the NO branch hands off to a troubleshooting collaboration between Customer IT and GSI I/T, looping back to re-validate once issues are resolved.</figcaption>
+                <figcaption><strong>Client install — End-to-end flow</strong>Two swim lanes show ownership: the RR Network Tech owns VALC setup, the DNS/Cert Mgmt request, scheduling and running the working session, agent install, and the four Part 3 steps; Customer I/T joins the working session for Part 2 and collaborates on troubleshooting if connectivity validation fails. The process is triggered by Step 1 — the customer's pre-install submission email landing in the <code>rrsupport@getgsi.com</code> inbox. Step 8 (Install agent) spans both lanes — it is a shared task that requires Customer I/T to be on-session while the RR Network Tech runs the install, indicated by the dashed border and SHARED badge. Each step is a clickable link to the related section in this guide. The dashed yellow band marks a wait state for DNS propagation. The diamond is a verification gate after the SQL Server connection check — the YES branch continues into Part 3, while the NO branch routes to a troubleshooting collaboration that loops back to re-validate once issues are resolved.</figcaption>
               </figure>
       </section>
 
@@ -1315,6 +1505,127 @@
 
         <div class="diamond-divider"><span class="diamond"></span></div>
 
+        <h2 id="prep-email">Before You Begin: Customer Pre-Install Submission</h2>
+        <p>Before opening VALC, confirm that the customer's I/T contact has submitted their pre-installation email. This email is generated by the <em>Tech Installation Prep</em> guide and contains every value you need to fill out the VALC client record correctly on the first pass — topology, server names and internal IPs, source platform, JD Edwards connection details, and a complete environment readiness checklist.</p>
+
+        <div class="callout warning">
+          <div class="callout-label">Do not start Part 1 without this email</div>
+          <p>The submission email is the trigger for VALC setup. If you haven't received it, contact the customer's I/T lead and direct them to the Tech Installation Prep guide. Starting VALC entry from a partial discovery call risks recording the wrong server names or IPs, which causes rework during Part 2.</p>
+        </div>
+
+        <p>The submission lands in the <code>rrsupport@getgsi.com</code> inbox with a subject line of the form <strong>RapidReconciler Pre-Install Submission — {Customer Name}</strong>. A real example is shown below.</p>
+
+        <figure class="email-preview" aria-label="Example pre-install submission email from a customer">
+          <div class="email-preview-header">
+            <span class="label">Subject:</span><span class="subject">RapidReconciler Pre-Install Submission — Acme Mfg</span>
+          </div>
+<pre class="email-preview-body">RapidReconciler — Pre-Installation Submission
+================================================
+
+TOPOLOGY SELECTED
+  Configuration 2: Separate Database and Application Servers
+
+SOURCE PLATFORM
+  Microsoft SQL Server
+
+SERVER NAMES &amp; INTERNAL IPs
+  Database Server:                rrdb01    (internal IP: 10.0.0.1)
+  Application Server:             RRAPP01   (internal IP: 10.0.0.2)
+
+CHECKLIST SUMMARY
+  30 of 30 items complete
+
+CHECKLIST DETAIL
+  [Step Completion]
+    [x] Step 1 — Topology selected and server names recorded
+    [x] Step 2 — Source platform identified and driver guidance reviewed
+    [x] Step 3 — Server requirements reviewed
+    [x] Step 4 — Windows security and network rules reviewed
+    [x] Step 5 — Pre-install checklist worked through
+    [x] Step 6 — JDE connection details gathered and ready to submit
+  [Database Server]
+    [x] Servers identified or provisioned for the chosen topology
+    [x] Windows Server 2019 or later installed
+    [x] Quad-core processor minimum
+    [x] SQL Server 2019 or later, Standard edition or higher, with Mixed Mode authentication
+    [x] 16 GB RAM minimum allocated to SQL Server
+    [x] Disk space sized per the storage estimate (100 GB per 1M cardex records/month)
+    [x] SQL administrative access available for the GSI installer
+    [x] Database server IP address recorded; named-instance port noted if not 1433
+  [Application Server]
+    [x] Dedicated Windows Server 2019 or later (recommended)
+    [x] 16 GB RAM minimum, static IP address assigned
+    [x] Local administrative credentials available for installer use
+    [x] Microsoft Edge or Google Chrome installed
+  [SQL Server Management Tools]
+    [x] SQL Server Management Studio installed somewhere in the environment
+    [x] Visual Studio Community 2019 or later with the Integration Services extension installed somewhere in the environment
+  [Windows Security — Baseline]
+    [x] Dedicated SQL Server service account configured with appropriate password policy
+    [x] Antivirus exclusions in place for SQL Server data and log files (.mdf, .ldf, .ndf)
+    [x] Local administrator credentials available on every server for the install meeting
+  [Windows Security — Config 2 Additions]
+    [x] Database server firewall: inbound TCP 1433 (or custom port) allowed from application server static IP
+    [x] Database and application server clocks synchronized to the same time source
+  [Network Access]
+    [x] Outbound port 443 access from the application server to rapidreconciler.getgsi.com, rr-valc-spa.cloudapp.net, and rr-spa.cloudapp.net
+    [x] Internal port range 32145–49152 open between application server and the user network
+    [x] Internal URL pattern (rrprod-[companyname].getgsi.com) resolvable; internal IP of the app server provided to GSI
+    [x] Browser test from application server to https://rapidreconciler.getgsi.com succeeds
+  [Source Platform Drivers]
+    [x] SQL Server OLE DB driver verified on the database server (built-in — no install required); network connectivity to the JDE SQL Server confirmed
+
+JD EDWARDS — DATA DICTIONARY VARIABLES
+  ECST (extended cost decimals): 2
+  UNCS (unit cost decimals):     4
+  PQOH (qty on hand decimals):   0
+  TRQT (cardex qty decimals):    0
+
+JD EDWARDS — CONNECTION DETAILS
+  JDE data server / warehouse:   jdeprod01
+  Database username:             rapidrec
+  Database password:             Customer assigned password
+  JDE server type:               Microsoft SQL Server
+  Table qualifier:               proddta92
+
+SUBMITTED BY
+  Customer / Company:            Acme Mfg
+  Name:                          It's just me
+  Title:                         I/T manager
+  Email:                         justme@acme.com
+  Phone:                         800-get-gsi1
+  Date:                          2026-05-02
+</pre>
+        </figure>
+
+        <h3 id="prep-email-mapping">How the Submission Maps to VALC</h3>
+        <p>The table below shows where each section of the email lands during the install. Use it as your input map when creating the client record and during later phases.</p>
+        <table>
+          <thead>
+            <tr><th>Submission Section</th><th>Used In</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Topology Selected</strong> and <strong>Server Names &amp; Internal IPs</strong></td><td>Part 1 — Step 1 (Client Details: Agent Internal IP Address) and Part 3 — Step 1 (Databases tab: database server IP and port).</td></tr>
+            <tr><td><strong>Source Platform</strong></td><td>Confirms which JDE database driver is installed on the SSIS host; drives Part 2 troubleshooting if the SQL Server connection fails.</td></tr>
+            <tr><td><strong>Checklist Summary</strong> and <strong>Checklist Detail</strong></td><td>Verifies the customer's environment is install-ready. Any unchecked item is a blocker — pause and resolve before proceeding to Part 2.</td></tr>
+            <tr><td><strong>JD Edwards — Data Dictionary Variables</strong></td><td>Used during Part 3 — Step 3 to license company numbers and confirm decimal handling matches the customer's JDE configuration.</td></tr>
+            <tr><td><strong>JD Edwards — Connection Details</strong></td><td>Used by the agent during Part 2 — Step 2 (Validate SQL Server connection) and recorded on the Databases tab in Part 3 — Step 1.</td></tr>
+            <tr><td><strong>Submitted By</strong></td><td>The named contact becomes the customer's RapidReconciler administrator; their email is used when creating the initial GSI Admin user (Part 1 — Step 2).</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout tip">
+          <div class="callout-label">Tip</div>
+          <p>Save or print the email and keep it open in a second window while you work through Part 1. Most VALC fields can be filled directly from the submission without needing to ask the customer for clarification.</p>
+        </div>
+
+        <div class="flow-nav" aria-label="Flowchart navigation">
+          <span class="flow-nav-label">Flowchart</span>
+          <span class="flow-nav-disabled">← Step 1 is the first step</span>
+          <span class="flow-nav-spacer"></span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-create-client')">Step 2: Create client record →</a>
+        </div>
+
         <h2 id="about-valc">About VALC</h2>
         <p>VALC (Version and Licensing Control) is a GSI-developed web application hosted on Microsoft Azure. It is used to manage RapidReconciler and Genius customers. All new customers must be added to VALC before the installation process can begin.</p>
 
@@ -1345,7 +1656,7 @@
           </tbody>
         </table>
 
-        <div class="step-card">
+        <div class="step-card" id="flow-step-create-client">
           <div class="step-badge">1</div>
           <div class="step-meta">Part 1 · Step 1 of 4</div>
           <div class="step-title">Create the Client Record</div>
@@ -1410,9 +1721,16 @@
           <img src="images/valc-part1-3.jpeg" alt="VALC Clients grid showing connected clients with status, version, and management options">
           <figcaption><strong>VALC &gt; Clients</strong>The Clients grid lists all client records and is the entry point to per-client management. The <strong>Actives</strong> filter (top-right) toggles between active and inactive records.</figcaption>
         </figure>
+
+        <div class="flow-nav" aria-label="Flowchart navigation">
+          <span class="flow-nav-label">Flowchart</span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'prep-email')">← Step 1: Pre-Install Submission</a>
+          <span class="flow-nav-spacer"></span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-admin-user')">Step 3: Create initial GSI Admin user →</a>
+        </div>
         </div>
 
-        <div class="step-card">
+        <div class="step-card" id="flow-step-admin-user">
           <div class="step-badge">2</div>
           <div class="step-meta">Part 1 · Step 2 of 4</div>
           <div class="step-title">Create the Initial User Account</div>
@@ -1450,9 +1768,16 @@
           <div class="callout-label">User Administration Ownership</div>
           <p>Although users can be created and managed in VALC, ongoing user administration (adding new users, updating rights, locking out staff who change positions, deleting accounts of staff who leave the company) is the responsibility of the customer's on-site administrator. When a customer requests a user change, direct them to their on-site admin unless explicitly contracted otherwise. See <a href="javascript:void(0)" onclick="showView('topic-requests')">Common Requests</a> for the full ownership matrix.</p>
         </div>
+
+        <div class="flow-nav" aria-label="Flowchart navigation">
+          <span class="flow-nav-label">Flowchart</span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-create-client')">← Step 2: Create client record</a>
+          <span class="flow-nav-spacer"></span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-modules')">Step 4: Configure modules →</a>
+        </div>
         </div>
 
-        <div class="step-card">
+        <div class="step-card" id="flow-step-modules">
           <div class="step-badge">3</div>
           <div class="step-meta">Part 1 · Step 3 of 4</div>
           <div class="step-title">Configure Modules and Additional Fields</div>
@@ -1507,9 +1832,16 @@
         </div>
 
         <p>The <strong>Setup Step</strong> field will display <code>Created</code> at this stage and will cycle through subsequent steps as the installation progresses.</p>
+
+        <div class="flow-nav" aria-label="Flowchart navigation">
+          <span class="flow-nav-label">Flowchart</span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-admin-user')">← Step 3: Create initial GSI Admin user</a>
+          <span class="flow-nav-spacer"></span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-dns-cert')">Step 5: Submit DNS / Cert Mgmt request →</a>
+        </div>
         </div>
 
-        <div class="step-card">
+        <div class="step-card" id="flow-step-dns-cert">
           <div class="step-badge">4</div>
           <div class="step-meta">Part 1 · Step 4 of 4</div>
           <div class="step-title">Certificate Management</div>
@@ -1521,6 +1853,13 @@
         <div class="callout">
           <div class="callout-label">Note</div>
           <p>This step ensures the application UI will use the <code>*.getgsi.com</code> certificate, which is required for the agent to communicate with the database server. Allow time for DNS propagation before proceeding to Part 2.</p>
+        </div>
+
+        <div class="flow-nav" aria-label="Flowchart navigation">
+          <span class="flow-nav-label">Flowchart</span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-modules')">← Step 4: Configure modules</a>
+          <span class="flow-nav-spacer"></span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-install-agent')">Step 8: Install agent →</a>
         </div>
         </div>
 
@@ -1548,10 +1887,16 @@
           <li>The <strong>Setup Step</strong> in the client's VALC record must show <code>Created</code> in order for the agent download prompt to appear.</li>
         </ul>
 
-        <div class="step-card">
+        <div class="step-card" id="flow-step-install-agent">
           <div class="step-badge">1</div>
           <div class="step-meta">Part 2 · Step 1 of 3</div>
           <div class="step-title">Download and Install the Agent</div>
+
+          <div class="callout principle">
+            <div class="callout-label">Shared task with Customer I/T</div>
+            <p>This step is performed jointly: the RR Network Tech runs the install, and Customer I/T is on-session to provide application-server access, run the installer with local administrator credentials, and confirm the install completes from their side. Both parties should be on the working session before starting.</p>
+          </div>
+
           <figure>
           <img src="images/valc-part2-1.png" alt="RapidReconciler welcome screen with download buttons for 64-bit and 32-bit agent installer">
           <figcaption><strong>RapidReconciler &gt; First Login</strong>The agent download screen presented on first login. Choose the appropriate version for the customer's application server (64-bit in most cases).</figcaption>
@@ -1570,9 +1915,16 @@
           <div class="callout-label">Note</div>
           <p>If the download screen does not appear after login, verify the Setup Step in VALC still shows <code>Created</code> and that the user account credentials were entered correctly.</p>
         </div>
+
+        <div class="flow-nav" aria-label="Flowchart navigation">
+          <span class="flow-nav-label">Flowchart</span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-dns-cert')">← Step 5: Submit DNS / Cert Mgmt request</a>
+          <span class="flow-nav-spacer"></span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-validate-sql')">Step 9: Validate SQL Server connection →</a>
+        </div>
         </div>
 
-        <div class="step-card">
+        <div class="step-card" id="flow-step-validate-sql">
           <div class="step-badge">2</div>
           <div class="step-meta">Part 2 · Step 2 of 3</div>
           <div class="step-title">Validate the SQL Server Connection</div>
@@ -1600,6 +1952,13 @@
         <div class="callout tip">
           <div class="callout-label">Tip</div>
           <p>If the connection fails, verify the RapidReconciler database server is reachable from the customer's application server on the specified port, and that the firewall allows inbound traffic on that port.</p>
+        </div>
+
+        <div class="flow-nav" aria-label="Flowchart navigation">
+          <span class="flow-nav-label">Flowchart</span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-install-agent')">← Step 8: Install agent</a>
+          <span class="flow-nav-spacer"></span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-1-register-the-database-in-valc')">Step 10: Register database in VALC →</a>
         </div>
         </div>
 
@@ -1681,6 +2040,13 @@
 
         <p>The new database appears as a row on the Databases tab. Once the agent is connected and the registration is correct, the <strong>Status</strong> column updates to <strong>Online</strong>.</p>
 
+        <div class="flow-nav" aria-label="Flowchart navigation">
+          <span class="flow-nav-label">Flowchart</span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-validate-sql')">← Step 9: Validate SQL Server connection</a>
+          <span class="flow-nav-spacer"></span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-2-verify-database-status')">Step 11: Verify databases show Online →</a>
+        </div>
+
         <h2 id="step-2-verify-database-status">Step 2 — Verify Database Status</h2>
         <p>On the <strong>Databases</strong> tab, confirm that every registered database shows a status of <strong>Online</strong>.</p>
 
@@ -1701,6 +2067,13 @@
           <figcaption><strong>VALC &gt; Manage Client &gt; Databases (failure states)</strong><strong>Unknown</strong> typically means the agent has lost contact with a database it had previously reached — the row still has a revision number from a prior successful connection. <strong>Stopped</strong> means the database has not yet connected since registration; the Revision Number column is blank because no revision has been reported. Investigate the agent connection and database server reachability before proceeding.</figcaption>
         </figure>
 
+        <div class="flow-nav" aria-label="Flowchart navigation">
+          <span class="flow-nav-label">Flowchart</span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-1-register-the-database-in-valc')">← Step 10: Register database in VALC</a>
+          <span class="flow-nav-spacer"></span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-3-license-company-numbers')">Step 12: License company numbers →</a>
+        </div>
+
         <h2 id="step-3-license-company-numbers">Step 3 — License Company Numbers</h2>
         <p>With the database showing <strong>Online</strong>, the customer's company numbers become available on the <strong>Companies</strong> tab.</p>
         <ol>
@@ -1717,6 +2090,13 @@
         <div class="callout">
           <div class="callout-label">Note</div>
           <p>If more than one RapidReconciler database has been registered for this client, company licensing must be completed for each database separately. Use the database dropdown to switch between them.</p>
+        </div>
+
+        <div class="flow-nav" aria-label="Flowchart navigation">
+          <span class="flow-nav-label">Flowchart</span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-2-verify-database-status')">← Step 11: Verify databases show Online</a>
+          <span class="flow-nav-spacer"></span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-4-customer-handoff')">Step 13: Customer handoff →</a>
         </div>
 
         <h2 id="step-4-customer-handoff">Step 4 — Customer Handoff</h2>
@@ -1749,6 +2129,13 @@
             <li>Day-to-day use of the application</li>
           </ul>
           <p>GSI continues to own the underlying environment — VALC configuration, agent and database health, server-side updates, and the kinds of changes captured in <a href="javascript:void(0)" onclick="showView('topic-requests')">Common Requests</a>.</p>
+        </div>
+
+        <div class="flow-nav" aria-label="Flowchart navigation">
+          <span class="flow-nav-label">Flowchart</span>
+          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-3-license-company-numbers')">← Step 12: License company numbers</a>
+          <span class="flow-nav-spacer"></span>
+          <span class="flow-nav-disabled">Step 13 is the final step — Customer Live ✓</span>
         </div>
 
         <div class="topic-footer-nav">
@@ -2383,6 +2770,20 @@
   }
 
   function goHome() { showView('home'); }
+
+  /* Switch to a topic view and scroll to an anchor inside it. Used by the
+     flowchart step links and the flow-nav prev/next strips so a click lands
+     directly on the relevant step instead of the top of a long page. The
+     setTimeout gives the view-switch a tick to render before we scroll. */
+  function goToStep(topicId, anchorId) {
+    showView(topicId);
+    if (anchorId) {
+      setTimeout(function() {
+        var el = document.getElementById(anchorId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  }
 
   document.querySelectorAll('.sidebar-nav li[data-target="home"]').forEach(li => li.classList.add('active'));
 
