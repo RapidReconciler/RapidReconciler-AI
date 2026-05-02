@@ -636,10 +636,10 @@
   }
   .server-name-row {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 200px 1fr 200px;
     grid-template-areas:
-      "label input"
-      "hint  hint";
+      "label input ip"
+      "hint  hint  hint";
     gap: 4px 14px;
     align-items: center;
     padding: 12px 14px;
@@ -677,6 +677,41 @@
     border-color: var(--yellow-dark);
     background: var(--warning-bg);
   }
+  /* IP input — same look as the name input but in its own grid cell */
+  .server-ip-input {
+    grid-area: ip;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid var(--table-border);
+    border-radius: 3px;
+    background: var(--paper);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .server-ip-input::placeholder {
+    color: var(--muted);
+    font-style: italic;
+  }
+  .server-ip-input:hover { border-color: var(--blue); }
+  .server-ip-input:focus {
+    border-color: var(--yellow-dark);
+    background: var(--warning-bg);
+  }
+  /* Invalid state — applied by JS when the IP is non-empty but not a valid
+     IPv4 address. Also used by the name input if we ever flag it. */
+  .server-ip-input.invalid,
+  .server-name-input.invalid {
+    border-color: #c14545;
+    background: #fdecea;
+  }
+  .server-ip-input.invalid:focus,
+  .server-name-input.invalid:focus {
+    border-color: #c14545;
+    background: #fdecea;
+  }
   .server-name-hint {
     grid-area: hint;
     font-size: 12px;
@@ -684,17 +719,19 @@
     font-style: italic;
     padding-left: 0;
   }
-  @media (max-width: 600px) {
+  @media (max-width: 720px) {
     .server-name-row {
       grid-template-columns: 1fr;
       grid-template-areas:
         "label"
         "input"
+        "ip"
         "hint";
     }
   }
   @media print {
-    .server-name-input {
+    .server-name-input,
+    .server-ip-input {
       border: none;
       border-bottom: 1px solid var(--ink);
       background: transparent !important;
@@ -1415,14 +1452,15 @@
       </div>
 
       <div class="topo-conditional" data-topology="1 2 3">
-        <h2>Server Names</h2>
-        <p>Record the hostname or fully-qualified DNS name of each server in your chosen topology. These names will be included in your submission to GSI and used during the install meeting to confirm we're working against the right machines.</p>
+        <h2>Server Names &amp; Internal IP Addresses</h2>
+        <p>Record the hostname (or fully-qualified DNS name) <strong>and</strong> the internal IP address of each server in your chosen topology. Both fields are required for every server before you can advance to the next step. These values will be included in your submission to GSI and used during the install meeting to confirm we're working against the right machines.</p>
 
         <div class="topo-conditional" data-topology="1">
           <ul class="server-name-list">
             <li class="server-name-row">
               <span class="server-name-label">Dedicated RR Server</span>
               <input class="server-name-input" type="text" id="srv-rr" aria-label="Dedicated RR server name" placeholder="e.g., RRPROD01.contoso.local">
+              <input class="server-ip-input" type="text" id="srv-rr-ip" aria-label="Dedicated RR server internal IP" placeholder="e.g., 10.0.1.5" inputmode="decimal" autocomplete="off">
               <span class="server-name-hint">Hosts SQL Server, SSIS, and the RR application</span>
             </li>
           </ul>
@@ -1433,11 +1471,13 @@
             <li class="server-name-row">
               <span class="server-name-label">Database Server</span>
               <input class="server-name-input" type="text" id="srv-db-c2" aria-label="Database server name" placeholder="e.g., RRDB01.contoso.local">
+              <input class="server-ip-input" type="text" id="srv-db-c2-ip" aria-label="Database server internal IP" placeholder="e.g., 10.0.1.5" inputmode="decimal" autocomplete="off">
               <span class="server-name-hint">Hosts SQL Server and SSIS</span>
             </li>
             <li class="server-name-row">
               <span class="server-name-label">Application Server</span>
               <input class="server-name-input" type="text" id="srv-app-c2" aria-label="Application server name" placeholder="e.g., RRAPP01.contoso.local">
+              <input class="server-ip-input" type="text" id="srv-app-c2-ip" aria-label="Application server internal IP" placeholder="e.g., 10.0.1.6" inputmode="decimal" autocomplete="off">
               <span class="server-name-hint">Hosts the RR web application</span>
             </li>
           </ul>
@@ -1448,16 +1488,19 @@
             <li class="server-name-row">
               <span class="server-name-label">Database Server</span>
               <input class="server-name-input" type="text" id="srv-db-c3" aria-label="Database server name" placeholder="e.g., RRDB01.contoso.local">
+              <input class="server-ip-input" type="text" id="srv-db-c3-ip" aria-label="Database server internal IP" placeholder="e.g., 10.0.1.5" inputmode="decimal" autocomplete="off">
               <span class="server-name-hint">Hosts SQL Server only</span>
             </li>
             <li class="server-name-row">
               <span class="server-name-label">SSIS Server</span>
               <input class="server-name-input" type="text" id="srv-ssis-c3" aria-label="SSIS server name" placeholder="e.g., RRSSIS01.contoso.local">
+              <input class="server-ip-input" type="text" id="srv-ssis-c3-ip" aria-label="SSIS server internal IP" placeholder="e.g., 10.0.1.6" inputmode="decimal" autocomplete="off">
               <span class="server-name-hint">Hosts Integration Services</span>
             </li>
             <li class="server-name-row">
               <span class="server-name-label">Application Server</span>
               <input class="server-name-input" type="text" id="srv-app-c3" aria-label="Application server name" placeholder="e.g., RRAPP01.contoso.local">
+              <input class="server-ip-input" type="text" id="srv-app-c3-ip" aria-label="Application server internal IP" placeholder="e.g., 10.0.1.7" inputmode="decimal" autocomplete="off">
               <span class="server-name-hint">Hosts the RR web application</span>
             </li>
           </ul>
@@ -2303,24 +2346,43 @@
     'submit':    '6. JDE Info & Submit'
   };
 
-  // Server-name input fields keyed by topology — drives the email export and
-  // determines which fields are visible at any given time. IDs are suffixed
-  // with the config number where they are reused across configurations, so
-  // each input has a unique id (HTML requirement).
+  // Server fields keyed by topology — each entry has a friendly label, the
+  // server-name input id, and the internal-IP input id. Both name and IP are
+  // mandatory before the user can advance from the Topology step. IDs are
+  // suffixed with the config number where they are reused across configurations
+  // so each input has a unique id (HTML requirement).
   var SERVER_FIELDS_BY_TOPOLOGY = {
     '1': [
-      { id: 'srv-rr',      label: 'Dedicated RR Server' }
+      { label: 'Dedicated RR Server', nameId: 'srv-rr',      ipId: 'srv-rr-ip'      }
     ],
     '2': [
-      { id: 'srv-db-c2',   label: 'Database Server' },
-      { id: 'srv-app-c2',  label: 'Application Server' }
+      { label: 'Database Server',     nameId: 'srv-db-c2',   ipId: 'srv-db-c2-ip'   },
+      { label: 'Application Server',  nameId: 'srv-app-c2',  ipId: 'srv-app-c2-ip'  }
     ],
     '3': [
-      { id: 'srv-db-c3',   label: 'Database Server' },
-      { id: 'srv-ssis-c3', label: 'SSIS Server' },
-      { id: 'srv-app-c3',  label: 'Application Server' }
+      { label: 'Database Server',     nameId: 'srv-db-c3',   ipId: 'srv-db-c3-ip'   },
+      { label: 'SSIS Server',         nameId: 'srv-ssis-c3', ipId: 'srv-ssis-c3-ip' },
+      { label: 'Application Server',  nameId: 'srv-app-c3',  ipId: 'srv-app-c3-ip'  }
     ]
   };
+
+  // Strict IPv4 validator: four dotted octets, each 0–255, no leading zeros
+  // beyond a single zero, no leading/trailing whitespace (caller passes a
+  // trimmed value). Empty string returns false — callers distinguish
+  // "missing" from "invalid format" themselves.
+  function isValidIPv4(s) {
+    if (!s) return false;
+    var parts = s.split('.');
+    if (parts.length !== 4) return false;
+    for (var i = 0; i < 4; i++) {
+      var p = parts[i];
+      if (!/^\d+$/.test(p)) return false;
+      if (p.length > 1 && p.charAt(0) === '0') return false; // no leading zeros
+      var n = parseInt(p, 10);
+      if (n < 0 || n > 255) return false;
+    }
+    return true;
+  }
 
   function countMissingJde() {
     var n = 0;
@@ -2524,30 +2586,54 @@
       if (!topo) {
         missing.push('select a topology');
       } else if (SERVER_FIELDS_BY_TOPOLOGY[topo]) {
-        // Walk every server-name input that applies to the chosen topology and
-        // count any blank ones
+        // Walk every server entry that applies to the chosen topology and
+        // tally three classes of problem: missing name, missing IP, and
+        // present-but-malformed IP. Each problem on its own blocks Next.
         var fields = SERVER_FIELDS_BY_TOPOLOGY[topo];
-        var blank = 0;
+        var blankNames = 0;
+        var blankIps   = 0;
+        var badIps     = 0;
         for (var i = 0; i < fields.length; i++) {
-          if (!getValue(fields[i].id)) blank++;
-        }
-        if (blank > 0) {
-          if (blank === fields.length) {
-            // Nothing filled yet
-            missing.push(fields.length === 1
-              ? 'fill in the server name'
-              : 'fill in all ' + fields.length + ' server names');
-          } else {
-            // Partial — N of M still blank
-            missing.push(blank === 1
-              ? '1 server name still needs to be filled in'
-              : blank + ' of ' + fields.length + ' server names still need to be filled in');
+          var nameVal = getValue(fields[i].nameId);
+          var ipVal   = getValue(fields[i].ipId);
+          if (!nameVal) blankNames++;
+          if (!ipVal) {
+            blankIps++;
+          } else if (!isValidIPv4(ipVal)) {
+            badIps++;
           }
+          // Apply/remove the .invalid visual marker on the IP input. We only
+          // flag IPs that have content but fail the format check — empty
+          // fields are conveyed by the gate message, not by red borders, to
+          // avoid yelling at users who haven't started typing yet.
+          var ipEl = getField(fields[i].ipId);
+          if (ipEl) {
+            if (ipVal && !isValidIPv4(ipVal)) {
+              ipEl.classList.add('invalid');
+            } else {
+              ipEl.classList.remove('invalid');
+            }
+          }
+        }
+        if (blankNames > 0) {
+          missing.push(blankNames === 1
+            ? '1 server name is still blank'
+            : blankNames + ' server names are still blank');
+        }
+        if (blankIps > 0) {
+          missing.push(blankIps === 1
+            ? '1 internal IP address is still blank'
+            : blankIps + ' internal IP addresses are still blank');
+        }
+        if (badIps > 0) {
+          missing.push(badIps === 1
+            ? '1 internal IP address is not a valid IPv4 address'
+            : badIps + ' internal IP addresses are not valid IPv4 addresses');
         }
       }
       if (missing.length > 0) {
         topoBtn.disabled = true;
-        topoWarn.textContent = capitalizeFirst(missing.join(' and ')) + ' before continuing.';
+        topoWarn.textContent = capitalizeFirst(missing.join('; ')) + '. Fix before continuing.';
         topoWarn.classList.add('show');
       } else {
         topoBtn.disabled = false;
@@ -2581,7 +2667,9 @@
       if (SERVER_FIELDS_BY_TOPOLOGY[topo]) {
         var fields = SERVER_FIELDS_BY_TOPOLOGY[topo];
         for (var i = 0; i < fields.length; i++) {
-          if (!getValue(fields[i].id)) return false;
+          if (!getValue(fields[i].nameId)) return false;
+          var ipVal = getValue(fields[i].ipId);
+          if (!ipVal || !isValidIPv4(ipVal)) return false;
         }
       }
       return true;
@@ -2814,16 +2902,18 @@
       if (box.checked) checkedCount++;
     }
 
-    // Build server-name lines for the chosen topology
+    // Build server-name + IP lines for the chosen topology
     var serverLines = [];
     if (topo && SERVER_FIELDS_BY_TOPOLOGY[topo]) {
       var fields = SERVER_FIELDS_BY_TOPOLOGY[topo];
       for (var f = 0; f < fields.length; f++) {
         var pad = '                                  '.substring(0, 31 - fields[f].label.length);
-        serverLines.push('  ' + fields[f].label + ':' + pad + v(fields[f].id));
+        var nameVal = v(fields[f].nameId);
+        var ipVal   = v(fields[f].ipId);
+        serverLines.push('  ' + fields[f].label + ':' + pad + nameVal + '   (internal IP: ' + ipVal + ')');
       }
     } else {
-      serverLines.push('  [topology not selected — server names not provided]');
+      serverLines.push('  [topology not selected — server names and IPs not provided]');
     }
 
     var lines = [
@@ -2836,7 +2926,7 @@
       'SOURCE PLATFORM',
       '  ' + sourceLabel,
       '',
-      'SERVER NAMES'
+      'SERVER NAMES & INTERNAL IPs'
     ].concat(serverLines).concat([
       '',
       'CHECKLIST SUMMARY',
@@ -2957,6 +3047,15 @@
     var serverNameInputs = document.querySelectorAll('.server-name-input');
     for (var sn = 0; sn < serverNameInputs.length; sn++) {
       serverNameInputs[sn].addEventListener('input', function() {
+        applyNavGates();
+      });
+    }
+    // Wire up server IP input changes — same gating implications. Listening
+    // to 'input' (rather than 'change') gives users live feedback as they
+    // type so the red border on a malformed IP clears the moment it's fixed.
+    var serverIpInputs = document.querySelectorAll('.server-ip-input');
+    for (var si = 0; si < serverIpInputs.length; si++) {
+      serverIpInputs[si].addEventListener('input', function() {
         applyNavGates();
       });
     }
