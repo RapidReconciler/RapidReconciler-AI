@@ -234,8 +234,12 @@
   }
   .hero-left-inner .hero-actions a {
     width: 100%;
-    justify-content: center;
     margin-left: 0 !important;
+  }
+  /* btn-hero needs space-between layout (marker | centered text | arrow);
+     don't apply justify-content: center which would collapse the gap distribution */
+  .hero-left-inner .hero-actions a:not(.btn-hero) {
+    justify-content: center;
   }
 
   /* RIGHT CARD: flowchart */
@@ -301,22 +305,8 @@
   }
 
   .hero-title span {
-    color: var(--blue-bright);
-    position: relative;
-    white-space: nowrap;
-  }
-
-  .hero-title span::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 4px;
-    height: 8px;
-    background: var(--orange);
-    z-index: -1;
-    opacity: 0.85;
-    border-radius: 2px;
+    color: #ffd23f;
+    font-weight: 900;
   }
 
   .hero-sub {
@@ -369,6 +359,56 @@
   .btn-secondary:hover {
     border-color: var(--blue-bright);
     color: var(--blue-bright);
+  }
+
+  /* Matched-pair hero buttons: outlined, identical size, centered text.
+     Designed for the navy card on the home hero. The orange marker on the
+     left provides a touch of accent color without making the whole button
+     orange (which would be visually heavy when stacked). */
+  .btn-hero {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
+    color: #fff;
+    text-decoration: none;
+    padding: 14px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  }
+  .btn-hero-marker {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    background: var(--orange);
+    border-radius: 1px;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .btn-hero-text {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+  .btn-hero-arrow {
+    flex: 0 0 auto;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 16px;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+  .btn-hero:hover {
+    border-color: var(--orange);
+    background: rgba(241, 138, 36, 0.08);
+    transform: translateY(-1px);
+  }
+  .btn-hero:hover .btn-hero-marker {
+    transform: scale(1.4);
+  }
+  .btn-hero:hover .btn-hero-arrow {
+    color: var(--orange);
+    transform: translateX(2px);
   }
 
   /* Hero stat panel on the right */
@@ -1119,15 +1159,23 @@
       <div class="hero-left-inner">
         <div class="hero-eyebrow"><span class="dot"></span>Internal Knowledge Base &middot; Tech Team</div>
         <h1 class="hero-title">
-          Deploy, migrate, <span>configure.</span><br>
+          <span>Deploy, Migrate, Configure.</span><br>
           The RR tech team Client Management guide.
         </h1>
         <p class="hero-sub">
           Process documentation for GSI&rsquo;s RapidReconciler tech team. The end-to-end install workflow is shown to the right &mdash; click any blue or orange box to jump to its referenced procedure.
         </p>
         <div class="hero-actions">
-          <a href="#reference" class="btn-primary">Reference &amp; Internal Tools &rarr;</a>
-          <a href="#procedures" class="btn-secondary" style="margin-left:10px;">Install Procedures</a>
+          <a href="start-here-tech.html" class="btn-hero">
+            <span class="btn-hero-marker"></span>
+            <span class="btn-hero-text">Start Here &mdash; New Techs</span>
+            <span class="btn-hero-arrow">&rarr;</span>
+          </a>
+          <a href="#procedures" class="btn-hero">
+            <span class="btn-hero-marker"></span>
+            <span class="btn-hero-text">Install Procedures</span>
+            <span class="btn-hero-arrow">&rarr;</span>
+          </a>
         </div>
       </div>
     </div>
