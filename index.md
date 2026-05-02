@@ -12,7 +12,7 @@ Here are some key collateral documents that provide an overview of RapidReconcil
 
 | Document                                                                                   | Description                                                                                      |
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| [How RapidReconciler Helps](/RapidReconciler-AI/GSIRRSales/sales-client-management.html)   | Process controls for the RR Sales Team to ensure consistent and effective communication of RapidReconciler's value proposition to potential clients. |
+| [Sales Procedures and Collateral](/RapidReconciler-AI/GSIRRSales/sales-client-management.html)   | Process controls for the RR Sales Team to ensure consistent and effective communication of RapidReconciler's value proposition to potential clients. |
 
 ---
 
@@ -60,7 +60,6 @@ The following examples demonstrate AI-powered analysis of JD Edwards data using 
 
 | Document | Description |
 |----------|-------------|
-
 | [Inventory Dashboard](/RapidReconciler-AI/DashboardExamples/inventory-dashboard.html)             | Executive summary of inventory reconciliation challenges and how RapidReconciler addresses them  |
 | [In-Transit Dashboard](/RapidReconciler-AI/DashboardExamples/in-transit-dashboard.html)           | Executive
 | [PO Receipts Dashboard Sample](/RapidReconciler-AI/DashboardExamples/po-receipts-dashboard.html)  | Executive summary of PO receipt reconciliation challenges and how RapidReconciler addresses them |

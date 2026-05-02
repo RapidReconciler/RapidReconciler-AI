@@ -1325,13 +1325,13 @@
         <p class="doc-desc">Used at Step 2A &mdash; the optional PoC side path. Covers when to propose a PoC, scope of the preliminary install (always run on the customer's servers), billable GSI time, and the preliminary agreement template. Sales should only raise the PoC option when necessary.</p>
       </a>
 
-      <a class="doc-card placeholder-card" id="doc-provisioning" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
+      <a class="doc-card" id="doc-provisioning" href="rr-provisioning.html">
         <div class="doc-card-top">
           <span class="doc-index">01 / B</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
         <h3 class="doc-title">Provisioning Document</h3>
-        <p class="doc-desc">Sent by Sales at Step 3. Captures the technical and infrastructure requirements the customer needs to confirm before a Purchase Agreement can be drafted. Placeholder &mdash; document to be added.</p>
+        <p class="doc-desc">Sent by Sales at Step 3. Customer-facing technical requirements covering deployment topology, server specs, JD Edwards source platform connectivity, software &amp; licensing breakdown, network requirements, and security posture. Customer reviews this with their I/T, security, and JDE teams before commercial conversations begin.</p>
       </a>
 
       <a class="doc-card placeholder-card" id="doc-contract" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
@@ -1343,22 +1343,22 @@
         <p class="doc-desc">Generated and sent by Sales at Step 5, after a Yes on the Purchase Agreement decision. Standard contract that the customer signs to formalize the engagement before the discovery call is scheduled. Placeholder &mdash; document to be added.</p>
       </a>
 
-      <a class="doc-card placeholder-card" id="doc-discovery-call" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
+      <a class="doc-card" id="doc-discovery-call" href="rr-discovery-call.html">
         <div class="doc-card-top">
           <span class="doc-index">01 / D</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
         <h3 class="doc-title">Discovery Call</h3>
-        <p class="doc-desc">Used at Step 6. Agenda, participant list, and pre-call prep for the joint discovery call between Sales, Customer I/T, RR DBA, and RR Network Tech &mdash; the technical handoff that sets up the install. Placeholder &mdash; document to be added.</p>
+        <p class="doc-desc">Used at Step 6. Agenda, participant list, and pre-call prep for the joint discovery call between Sales, Customer I/T, RR DBA, and RR Network Tech &mdash; the technical handoff that sets up the install.</p>
       </a>
 
-      <a class="doc-card placeholder-card" id="doc-install-prep" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
+      <a class="doc-card" id="doc-install-prep" href="rr-installation-prep.html">
         <div class="doc-card-top">
           <span class="doc-index">01 / E</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
         <h3 class="doc-title">Installation Prep Document</h3>
-        <p class="doc-desc">Sent to the customer at Step 7, after the discovery call. Walks Customer I/T through the pre-install steps they need to complete and ends with the email handoff to <code>rrsupport@getgsi.com</code> that triggers the technical install. Placeholder &mdash; document to be added.</p>
+        <p class="doc-desc">Sent to the customer at Step 7, after the discovery call. Walks Customer I/T through the pre-install steps they need to complete &mdash; topology selection, source platform identification, server provisioning, Windows security, and the pre-install checklist &mdash; and ends with the email handoff to <code>rrsupport@getgsi.com</code> that triggers the technical install.</p>
       </a>
     </div>
   </div>
@@ -1379,31 +1379,31 @@
     </div>
 
     <div class="doc-grid">
-      <a class="doc-card placeholder-card" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
+      <a class="doc-card" href="rr-self-guided-tour.html">
         <div class="doc-card-top">
           <span class="doc-index">02 / A</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
         <h3 class="doc-title">Self-Guided Tour</h3>
-        <p class="doc-desc">Interactive walk-through of RapidReconciler that prospects can run on their own time, without a live demo. Best used after first contact to qualify interest before booking a discovery call. Placeholder &mdash; document to be added.</p>
+        <p class="doc-desc">Interactive walk-through of RapidReconciler that prospects can run on their own time, without a live demo. Best used after first contact to qualify interest before booking a discovery call.</p>
       </a>
 
-      <a class="doc-card placeholder-card" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
+      <a class="doc-card" href="rr-overview.html">
         <div class="doc-card-top">
           <span class="doc-index">02 / B</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
         <h3 class="doc-title">Overview</h3>
-        <p class="doc-desc">High-level product overview suitable for first-touch outreach and executive-level conversations. Covers what RapidReconciler does, who it&rsquo;s for, and the key business outcomes. Placeholder &mdash; document to be added.</p>
+        <p class="doc-desc">High-level product overview suitable for first-touch outreach and executive-level conversations. Covers what RapidReconciler does, who it&rsquo;s for, and the key business outcomes.</p>
       </a>
 
-      <a class="doc-card placeholder-card" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
+      <a class="doc-card" href="rr-fact-sheet.html">
         <div class="doc-card-top">
           <span class="doc-index">02 / C</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
         <h3 class="doc-title">Fact Sheet</h3>
-        <p class="doc-desc">One-page reference with feature list, supported environments, integration points, and licensing tiers. Best for technical evaluators and procurement. Placeholder &mdash; document to be added.</p>
+        <p class="doc-desc">One-page reference with feature list, supported environments, integration points, and licensing tiers. Best for technical evaluators and procurement.</p>
       </a>
     </div>
   </div>
@@ -1459,6 +1459,12 @@
     // Anything listed here is matched in addition to the visible title and description.
     // Other sales placeholders still use href="#" — replace with real filenames as docs come in.
     'proof-of-concept.html': 'PoC proof of concept preliminary install pilot trial customer servers billable GSI time JDE production sandbox preliminary agreement scope cost duration step 2A side path optional install on customer infrastructure RR DBA demo session walkthrough conversion provisioning rejoin main path management pricing rate sheet',
+    'rr-provisioning.html': 'provisioning technical requirements deployment topology architecture co-located separate database SSIS server hardware specs Windows Server 2019 SQL Server mixed-mode authentication F4111 cardex JDE JD Edwards Oracle AS/400 IBM i Access OLE DB ODAC firewall ports 1433 HTTPS 443 outbound antivirus exclusions service accounts rruser security posture network requirements end-user workstations browser Excel PDF licensing customer GSI provides Microsoft Visual Studio SSMS Integration Services storage planning RAM CPU static IP install prep next steps contract',
+    'rr-installation-prep.html': 'installation prep pre-install pre install guide customer IT topology configuration co-located separate database application SSIS server source platform Oracle AS/400 I-Series IBM SQL Server OLE DB ODAC drivers Windows Server 2019 SQL mixed-mode authentication rruser firewall ports 1433 HTTPS 443 outbound GSI hosts antivirus exclusions service accounts checklist JDE connection details ECST UNCS PQOH TRQT data dictionary decimals proddta table qualifier rapidrec credentials submit email rrsupport handoff step 7 discovery call install meeting hardware RAM CPU static IP server name internal IP provision walkthrough',
+    'rr-overview.html': 'overview product summary executive first-touch outreach intro introduction what is RapidReconciler JD Edwards JDE inventory reconciliation in-transit in transit PO receipts RNV cardex variances period-end month-end close books volume multiple companies multiple cost methods frequent cost changes staff turnover timing backdating report definition DMAAI misconfiguration GL class code changes business outcomes value proposition pitch elevator',
+    'rr-fact-sheet.html': 'fact sheet data sheet one-page one pager reference features feature list supported environments integration points licensing tiers technical evaluators procurement RapidReconciler key features valuation section variance calculation cardex integrity as-of page audit report orders page exclusion process integrity report aging report line analysis JD Edwards JDE Oracle AS/400 SQL Server requirements specs',
+    'rr-self-guided-tour.html': 'self-guided tour self guided interactive walkthrough walk-through demo prospect prospects qualify interest discovery call first contact RapidReconciler product tour click through screens screenshots without live demo on their own time',
+    'rr-discovery-call.html': 'discovery call kickoff step 6 sales customer IT RR DBA RR Network Tech agenda participants pre-call prep playbook internal joint working session technical handoff company count JDE company numbers maintenance window go-live date additional databases test dev train password policy customer administrator email install meeting agent handoff licensing FAQ change control security review',
   };
 
   const searchInput = document.getElementById('docSearch');
