@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>GSI RR Tech &mdash; Client Management</title>
+<title>GSI RR Sales &mdash; Client Management</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -596,6 +596,7 @@
     min-height: 200px;
     position: relative;
     overflow: hidden;
+    scroll-margin-top: 80px; /* offset for sticky topnav when card is the anchor target */
   }
 
   .doc-card::before {
@@ -830,6 +831,14 @@
     opacity: 0.3;
   }
 
+  /* When a card is the URL hash target (e.g. linked from the flowchart),
+     give it a brief blue glow so the user can see which card the
+     flowchart step pointed to. */
+  .doc-card:target {
+    box-shadow: 0 0 0 2px var(--blue-bright), 0 4px 16px rgba(43, 95, 176, 0.18);
+    border-color: var(--blue);
+  }
+
   /* ============== PROCESS FLOW (template style) ============== */
   .process-flow-section {
     background: var(--bg-soft);
@@ -945,13 +954,13 @@
       <img src="images/gsi-logo.jpeg" alt="GSI" />
       <div class="brand-divider"></div>
       <div class="brand-product">
-        <span class="brand-product-name">GSI RR Tech</span>
+        <span class="brand-product-name">GSI RR Sales</span>
         <span class="brand-product-tag">Client Management</span>
       </div>
     </a>
     <nav class="section-nav">
-      <a href="#reference">Reference</a>
-      <a href="#procedures">Procedures</a>
+      <a href="#documents">Process Documents</a>
+      <a href="#collateral">Collateral</a>
       <a href="mailto:rrsupport@getgsi.com" class="nav-cta">Contact Support</a>
     </nav>
   </div>
@@ -962,23 +971,23 @@
   <div class="container">
     <div class="hero-bar">
       <div class="hero-text">
-        <div class="hero-eyebrow"><span class="dot"></span>Internal Knowledge Base &middot; Tech Team</div>
+        <div class="hero-eyebrow"><span class="dot"></span>Internal Knowledge Base &middot; Sales Team</div>
         <h1 class="hero-title">
-          <span>Deploy, Migrate, Configure.</span> The RR tech team Client Management guide.
+          <span>Prospect, Provision, Close.</span> The RR sales team Client Management guide.
         </h1>
         <p class="hero-sub">
-          Process documentation for GSI&rsquo;s RapidReconciler tech team. The end-to-end install workflow is shown below &mdash; click any blue or orange box to jump to its referenced procedure.
+          Process documentation for GSI&rsquo;s RapidReconciler sales team. The end-to-end sales-to-install workflow is shown below &mdash; click any blue or orange box to jump to its referenced document.
         </p>
       </div>
       <div class="hero-actions hero-actions-stack">
-        <a href="start-here-tech.html" class="btn-hero">
+        <a href="#documents" class="btn-hero">
           <span class="btn-hero-marker"></span>
-          <span class="btn-hero-text">Start Here &mdash; New Techs</span>
+          <span class="btn-hero-text">Process Documents</span>
           <span class="btn-hero-arrow">&rarr;</span>
         </a>
-        <a href="#procedures" class="btn-hero">
+        <a href="#collateral" class="btn-hero">
           <span class="btn-hero-marker"></span>
-          <span class="btn-hero-text">Install Procedures</span>
+          <span class="btn-hero-text">Collateral</span>
           <span class="btn-hero-arrow">&rarr;</span>
         </a>
       </div>
@@ -991,16 +1000,16 @@
   <div class="container">
     <div class="process-flow-header">
       <div class="process-flow-kicker">Workflow</div>
-      <h2 class="process-flow-title">Client Install &mdash; End-to-End Process</h2>
+      <h2 class="process-flow-title">Sales-to-Install &mdash; End-to-End Process</h2>
       <div class="diamond-divider"><span class="diamond"></span></div>
       <p class="process-flow-desc">
-        Three swim lanes divide the work by ownership. Click any numbered block with a blue or orange border to open its referenced procedure document.
+        Three swim lanes divide the work by ownership: Sales, Customer I/T, and RR DBA. Click any numbered block with a blue or orange border to open its referenced document.
       </p>
     </div>
 
     <figure class="process-flow">
-      <svg viewBox="0 0 760 620" xmlns="http://www.w3.org/2000/svg" role="img"
-           aria-label="Client install process flowchart with three swim lanes: RR DBA, Customer I/T, and RR Network Tech."
+      <svg viewBox="0 0 760 990" xmlns="http://www.w3.org/2000/svg" role="img"
+           aria-label="Sales-to-install process flowchart with three swim lanes: Sales, Customer I/T, and RR DBA. Includes an optional Proof of Concept side path."
            font-family="'Open Sans', sans-serif">
         <defs>
           <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -1012,118 +1021,248 @@
           <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#2e8b57"/>
           </marker>
+          <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#a64646"/>
+          </marker>
+          <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b4a8a"/>
+          </marker>
         </defs>
 
         <!-- Canvas background -->
-        <rect x="0" y="0" width="760" height="620" fill="#fdf6e3"/>
+        <rect x="0" y="0" width="760" height="990" fill="#fdf6e3"/>
 
         <!-- ===== SWIM LANE BACKGROUNDS + HEADERS (3 lanes) ===== -->
-        <!-- Lane 1: RR DBA -->
-        <rect x="10"  y="44" width="245" height="516" fill="#ffffff" stroke="#d6d2c4" stroke-width="1" rx="3"/>
+        <!-- Lane 1: Sales -->
+        <rect x="10"  y="44" width="245" height="896" fill="#ffffff" stroke="#d6d2c4" stroke-width="1" rx="3"/>
         <rect x="10"  y="0"  width="245" height="36"  fill="#2c3e63" rx="3"/>
-        <text x="132" y="23" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" letter-spacing="0.06em">RR DBA</text>
+        <text x="132" y="23" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" letter-spacing="0.06em">SALES</text>
 
         <!-- Lane 2: Customer I/T -->
-        <rect x="265" y="44" width="245" height="516" fill="#ffffff" stroke="#d6d2c4" stroke-width="1" rx="3"/>
+        <rect x="265" y="44" width="245" height="896" fill="#ffffff" stroke="#d6d2c4" stroke-width="1" rx="3"/>
         <rect x="265" y="0"  width="245" height="36"  fill="#4d77b4" rx="3"/>
         <text x="387" y="23" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" letter-spacing="0.06em">CUSTOMER I/T</text>
 
-        <!-- Lane 3: RR Network Tech -->
-        <rect x="520" y="44" width="230" height="516" fill="#ffffff" stroke="#d6d2c4" stroke-width="1" rx="3"/>
+        <!-- Lane 3: RR DBA -->
+        <rect x="520" y="44" width="230" height="896" fill="#ffffff" stroke="#d6d2c4" stroke-width="1" rx="3"/>
         <rect x="520" y="0"  width="230" height="36"  fill="#6b8e4e" rx="3"/>
-        <text x="635" y="23" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" letter-spacing="0.06em">RR NETWORK TECH</text>
+        <text x="635" y="23" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" letter-spacing="0.06em">RR DBA</text>
 
         <!-- ============================================================
-             STEP 1 — RR DBA receives installation prep email (no doc page)
+             STEP 1 — Sales: Identifies prospect (no doc)
              ============================================================ -->
-        <g aria-label="Step 1: RR DBA receives installation prep email from RR Support. No documentation page.">
+        <g aria-label="Step 1: Sales identifies prospect. No documentation page.">
           <rect x="20" y="70" width="225" height="60" fill="white" stroke="#5a6479" stroke-width="2" rx="4"/>
           <circle cx="40" cy="100" r="13" fill="#5a6479"/>
           <text x="40" y="105" text-anchor="middle" fill="white" font-size="13" font-weight="700">1</text>
-          <text x="60" y="94"  font-size="11" font-weight="600" fill="#333">Receives install prep email</text>
-          <text x="60" y="108" font-size="11" font-weight="600" fill="#333">from RR Support</text>
-          <text x="60" y="122" font-size="9" font-style="italic" fill="#888">(intake)</text>
+          <text x="60" y="96"  font-size="11" font-weight="600" fill="#333">Identifies prospect</text>
+          <text x="60" y="118" font-size="9" font-style="italic" fill="#888">(prospecting)</text>
         </g>
 
         <!-- ============================================================
-             STEP 2 — RR DBA schedules meeting (no doc page)
+             STEP 2 — Decision diamond: PoC needed? (Sales lane)
+             "No" is the default path; "Yes" peels off into the side loop.
              ============================================================ -->
-        <g aria-label="Step 2: Schedules meeting with Customer I/T. No documentation page.">
-          <rect x="20" y="160" width="225" height="60" fill="white" stroke="#5a6479" stroke-width="2" rx="4"/>
-          <circle cx="40" cy="190" r="13" fill="#5a6479"/>
-          <text x="40" y="195" text-anchor="middle" fill="white" font-size="13" font-weight="700">2</text>
-          <text x="60" y="184" font-size="11" font-weight="600" fill="#333">Schedules meeting</text>
-          <text x="60" y="198" font-size="11" font-weight="600" fill="#333">with Customer I/T</text>
-          <text x="60" y="212" font-size="9" font-style="italic" fill="#888">(coordination)</text>
+        <g aria-label="Step 2: Proof of Concept needed decision. No proceeds to Step 3. Yes enters the optional Proof of Concept side path.">
+          <polygon points="132,160 222,200 132,240 42,200"
+                   fill="white" stroke="#b8941a" stroke-width="2.5"/>
+          <circle cx="132" cy="178" r="11" fill="#b8941a"/>
+          <text x="132" y="182" text-anchor="middle" fill="white" font-size="11" font-weight="700">2</text>
+          <text x="132" y="202" text-anchor="middle" font-size="11" font-weight="700" fill="#7a5e0a">PoC</text>
+          <text x="132" y="216" text-anchor="middle" font-size="11" font-weight="700" fill="#7a5e0a">needed?</text>
         </g>
 
+        <!-- "No" label on diamond bottom (default path) → Step 3 -->
+        <text x="140" y="258" font-size="10" font-weight="700" fill="#555">No (default)</text>
+
         <!-- ============================================================
-             STEP 3 — Joint task, spans RR DBA + Customer I/T (clickable)
+             POC SIDE PATH (Yes branch from Step 2) — frame & label
              ============================================================ -->
-        <a href="installing-production-database.html" role="link"
-           aria-label="Step 3: Configure RR Database and SSIS Package. Joint working session.">
-          <rect class="step-box" x="20" y="250" width="490" height="80"
-                fill="white" stroke="#2b5fb0" stroke-width="2.5"
+        <rect x="278" y="142" width="465" height="166"
+              fill="rgba(107,74,138,0.04)" stroke="#6b4a8a" stroke-width="1"
+              stroke-dasharray="4,3" rx="6"/>
+        <rect x="284" y="134" width="130" height="18" fill="#fdf6e3" rx="9"/>
+        <text x="349" y="147" text-anchor="middle" font-size="10" font-weight="700"
+              fill="#6b4a8a" letter-spacing="0.05em">OPTIONAL POC PATH</text>
+
+        <!-- ============================================================
+             STEP 2A — Sales: Preliminary PoC Agreement (clickable → POC doc)
+             Owned by Sales but visually placed in the side path.
+             ============================================================ -->
+        <a href="#doc-poc" role="link"
+           aria-label="Step 2A: Sales sends a preliminary PoC agreement covering scope and cost. Opens the Proof of Concept document.">
+          <rect class="step-box" x="293" y="160" width="225" height="68"
+                fill="white" stroke="#6b4a8a" stroke-width="2.5" rx="4"/>
+          <rect x="293" y="160" width="225" height="6" fill="#6b4a8a"/>
+          <circle cx="315" cy="194" r="12" fill="#6b4a8a"/>
+          <text x="315" y="198" text-anchor="middle" fill="white" font-size="11" font-weight="700">2A</text>
+          <text x="334" y="186" font-size="11" font-weight="700" fill="#1f2d4a">Preliminary PoC Agreement</text>
+          <text x="334" y="200" font-size="10" font-style="italic" fill="#5a6479">Sales &middot; covers scope &amp; cost</text>
+          <text x="334" y="216" font-size="10" font-weight="700" fill="#6b4a8a">&rarr; Proof of Concept</text>
+        </a>
+
+        <!-- ============================================================
+             STEP 2B — SHARED Customer I/T + RR DBA: PoC engagement
+             (preliminary install on customer servers, billable GSI time)
+             ============================================================ -->
+        <g aria-label="Step 2B: PoC engagement — preliminary installation on customer servers. Shared between Customer I/T and RR DBA. No documentation page; covered in the Proof of Concept document.">
+          <rect x="293" y="240" width="440" height="62"
+                fill="white" stroke="#6b4a8a" stroke-width="2"
                 stroke-dasharray="6,3" rx="4"/>
-          <rect x="20" y="250" width="490" height="6" fill="#2b5fb0"/>
-          <rect x="446" y="265" width="58" height="16" fill="#eef3f9" stroke="#2b5fb0" stroke-width="1" rx="8"/>
-          <text x="475" y="276" text-anchor="middle" font-size="9" font-weight="700" fill="#1f2d4a" letter-spacing="0.05em">SHARED</text>
-          <circle cx="42" cy="290" r="13" fill="#2b5fb0"/>
-          <text x="42" y="295" text-anchor="middle" fill="white" font-size="13" font-weight="700">3</text>
-          <text x="62" y="287" font-size="12" font-weight="700" fill="#1f2d4a">Configure RR Database &amp; SSIS Package</text>
-          <text x="62" y="304" font-size="11" font-style="italic" fill="#5a6479">DBA leads &middot; Customer I/T provides server access &amp; JDE details</text>
-          <text x="62" y="321" font-size="11" font-weight="700" fill="#2b5fb0">&rarr; Installing the Production Database</text>
-        </a>
-
-        <!-- ============================================================
-             STEP 4 — RR DBA submits completion email (no doc page)
-             ============================================================ -->
-        <g aria-label="Step 4: RR DBA submits completion email to RR Support. No documentation page.">
-          <rect x="20" y="360" width="225" height="60" fill="white" stroke="#5a6479" stroke-width="2" rx="4"/>
-          <circle cx="40" cy="390" r="13" fill="#5a6479"/>
-          <text x="40" y="395" text-anchor="middle" fill="white" font-size="13" font-weight="700">4</text>
-          <text x="60" y="384" font-size="11" font-weight="600" fill="#333">Submits completion email</text>
-          <text x="60" y="398" font-size="11" font-weight="600" fill="#333">to RR Support</text>
-          <text x="60" y="412" font-size="9" font-style="italic" fill="#888">(handoff)</text>
+          <rect x="293" y="240" width="440" height="6" fill="#6b4a8a"/>
+          <rect x="666" y="252" width="62" height="16" fill="#f0eaf6" stroke="#6b4a8a" stroke-width="1" rx="8"/>
+          <text x="697" y="263" text-anchor="middle" font-size="9" font-weight="700" fill="#3a2a4a" letter-spacing="0.05em">SHARED</text>
+          <circle cx="315" cy="272" r="12" fill="#6b4a8a"/>
+          <text x="315" y="276" text-anchor="middle" fill="white" font-size="11" font-weight="700">2B</text>
+          <text x="334" y="264" font-size="11" font-weight="700" fill="#1f2d4a">PoC engagement &mdash; preliminary install</text>
+          <text x="334" y="278" font-size="10" font-style="italic" fill="#5a6479">On customer servers &middot; Customer I/T provides access &middot; RR DBA does the work</text>
+          <text x="334" y="294" font-size="9" font-weight="700" fill="#6b4a8a">Billable GSI time per the preliminary agreement</text>
         </g>
 
         <!-- ============================================================
-             STEP 5 — RR Network Tech (clickable)
+             STEP 3 — Sales: Send provisioning document (clickable, Sales-only)
              ============================================================ -->
-        <a href="installing-client-in-valc.html" role="link"
-           aria-label="Step 5: Prepares for VALC installation. Opens Installing a Client in VALC.">
-          <rect class="step-box" x="530" y="450" width="210" height="66" fill="white" stroke="#f08a24" stroke-width="2.5" rx="4"/>
-          <rect x="530" y="450" width="210" height="6" fill="#f08a24"/>
-          <circle cx="552" cy="484" r="13" fill="#f08a24"/>
-          <text x="552" y="489" text-anchor="middle" fill="white" font-size="13" font-weight="700">5</text>
-          <text x="572" y="478" font-size="11" font-weight="700" fill="#1f2d4a">Prepares for VALC</text>
-          <text x="572" y="492" font-size="11" font-weight="700" fill="#1f2d4a">installation</text>
-          <text x="572" y="508" font-size="10" font-weight="700" fill="#f08a24">&rarr; Installing a Client in VALC</text>
+        <a href="#doc-provisioning" role="link"
+           aria-label="Step 3: Sales sends the provisioning document. Opens the provisioning document.">
+          <rect class="step-box" x="20" y="340" width="225" height="72"
+                fill="white" stroke="#2b5fb0" stroke-width="2.5" rx="4"/>
+          <rect x="20" y="340" width="225" height="6" fill="#2b5fb0"/>
+          <circle cx="42" cy="376" r="13" fill="#2b5fb0"/>
+          <text x="42" y="381" text-anchor="middle" fill="white" font-size="13" font-weight="700">3</text>
+          <text x="62" y="368" font-size="11" font-weight="700" fill="#1f2d4a">Send provisioning</text>
+          <text x="62" y="382" font-size="11" font-weight="700" fill="#1f2d4a">document</text>
+          <text x="62" y="400" font-size="11" font-weight="700" fill="#2b5fb0">&rarr; Provisioning Document</text>
         </a>
+
+        <!-- ============================================================
+             STEP 4 — Decision diamond: Purchase Agreement? (Sales lane)
+             ============================================================ -->
+        <g aria-label="Step 4: Purchase Agreement decision. Yes proceeds to Step 5. No ends the process.">
+          <polygon points="132,438 222,478 132,518 42,478"
+                   fill="white" stroke="#b8941a" stroke-width="2.5"/>
+          <circle cx="132" cy="456" r="11" fill="#b8941a"/>
+          <text x="132" y="460" text-anchor="middle" fill="white" font-size="11" font-weight="700">4</text>
+          <text x="132" y="480" text-anchor="middle" font-size="11" font-weight="700" fill="#7a5e0a">Purchase</text>
+          <text x="132" y="494" text-anchor="middle" font-size="11" font-weight="700" fill="#7a5e0a">Agreement?</text>
+        </g>
+
+        <!-- Decision NO branch: arrow right to "Process ends" pill -->
+        <path d="M 222 478 L 290 478" stroke="#a64646" stroke-width="2" fill="none" marker-end="url(#arrow-red)"/>
+        <text x="248" y="471" font-size="10" font-weight="700" fill="#a64646">No</text>
+        <rect x="295" y="464" width="160" height="28" fill="#f5e0e0" stroke="#a64646" stroke-width="2" rx="14"/>
+        <text x="375" y="483" text-anchor="middle" font-size="12" font-weight="700" fill="#a64646">Process Ends</text>
+
+        <!-- "Yes" label on diamond → Step 5 arrow -->
+        <text x="140" y="536" font-size="10" font-weight="700" fill="#2e8b57">Yes</text>
+
+        <!-- ============================================================
+             STEP 5 — Sales: Signed contract (clickable → contract template doc)
+             ============================================================ -->
+        <a href="#doc-contract" role="link"
+           aria-label="Step 5: Sales generates and sends the signed contract. Opens the Contract Template document.">
+          <rect class="step-box" x="20" y="552" width="225" height="72"
+                fill="white" stroke="#2b5fb0" stroke-width="2.5" rx="4"/>
+          <rect x="20" y="552" width="225" height="6" fill="#2b5fb0"/>
+          <circle cx="42" cy="588" r="13" fill="#2b5fb0"/>
+          <text x="42" y="593" text-anchor="middle" fill="white" font-size="13" font-weight="700">5</text>
+          <text x="62" y="580" font-size="11" font-weight="700" fill="#1f2d4a">Generate &amp; send</text>
+          <text x="62" y="594" font-size="11" font-weight="700" fill="#1f2d4a">signed contract</text>
+          <text x="62" y="612" font-size="11" font-weight="700" fill="#2b5fb0">&rarr; Contract Template</text>
+        </a>
+
+        <!-- ============================================================
+             STEP 6 — Sales arranges discovery call (clickable → discovery call doc)
+             ============================================================ -->
+        <a href="#doc-discovery-call" role="link"
+           aria-label="Step 6: Sales arranges discovery call with RR DBA and RR Network Tech. Opens the Discovery Call document.">
+          <rect class="step-box" x="20" y="656" width="225" height="80"
+                fill="white" stroke="#2b5fb0" stroke-width="2.5" rx="4"/>
+          <rect x="20" y="656" width="225" height="6" fill="#2b5fb0"/>
+          <circle cx="42" cy="692" r="13" fill="#2b5fb0"/>
+          <text x="42" y="697" text-anchor="middle" fill="white" font-size="13" font-weight="700">6</text>
+          <text x="62" y="684" font-size="11" font-weight="700" fill="#1f2d4a">Arranges discovery call</text>
+          <text x="62" y="698" font-size="11" font-weight="700" fill="#1f2d4a">with GSI tech team</text>
+          <text x="62" y="716" font-size="9" font-style="italic" fill="#888">RR DBA + RR Network Tech join</text>
+          <text x="62" y="730" font-size="11" font-weight="700" fill="#2b5fb0">&rarr; Discovery Call</text>
+        </a>
+
+        <!-- Step 6 → RR DBA lane annotation (dashed bridge) -->
+        <path d="M 245 692 L 520 692" stroke="#6b8e4e" stroke-width="1.5" stroke-dasharray="4,3" fill="none" marker-end="url(#arrow)"/>
+        <text x="382" y="686" text-anchor="middle" font-size="9" font-style="italic" fill="#6b8e4e">RR DBA joins call</text>
+
+        <!-- ============================================================
+             STEP 7 — Sales sends installation prep doc (clickable)
+             ============================================================ -->
+        <a href="#doc-install-prep" role="link"
+           aria-label="Step 7: Sends installation prep document to customer. Opens the installation prep document.">
+          <rect class="step-box" x="20" y="760" width="225" height="72"
+                fill="white" stroke="#2b5fb0" stroke-width="2.5" rx="4"/>
+          <rect x="20" y="760" width="225" height="6" fill="#2b5fb0"/>
+          <circle cx="42" cy="796" r="13" fill="#2b5fb0"/>
+          <text x="42" y="801" text-anchor="middle" fill="white" font-size="13" font-weight="700">7</text>
+          <text x="62" y="788" font-size="11" font-weight="700" fill="#1f2d4a">Sends installation prep</text>
+          <text x="62" y="802" font-size="11" font-weight="700" fill="#1f2d4a">document to customer</text>
+          <text x="62" y="820" font-size="11" font-weight="700" fill="#2b5fb0">&rarr; Installation Prep Doc</text>
+        </a>
+
+        <!-- ============================================================
+             STEP 8 — Customer I/T completes install steps & emails support
+             ============================================================ -->
+        <g aria-label="Step 8: Customer I/T completes installation steps and submits email to RR Support.">
+          <rect x="275" y="860" width="225" height="72" fill="white" stroke="#f08a24" stroke-width="2.5" rx="4"/>
+          <rect x="275" y="860" width="225" height="6" fill="#f08a24"/>
+          <circle cx="297" cy="896" r="13" fill="#f08a24"/>
+          <text x="297" y="901" text-anchor="middle" fill="white" font-size="13" font-weight="700">8</text>
+          <text x="317" y="888" font-size="11" font-weight="700" fill="#1f2d4a">Completes install steps</text>
+          <text x="317" y="902" font-size="11" font-weight="700" fill="#1f2d4a">&amp; emails RR Support</text>
+          <text x="317" y="919" font-size="9" font-style="italic" fill="#f08a24">rrsupport@getgsi.com</text>
+        </g>
 
         <!-- ============================================================
              FLOWCHART CONNECTORS
              ============================================================ -->
-        <!-- Step 1 → Step 2 (in RR DBA lane, vertical) -->
+        <!-- Step 1 → Step 2 diamond (vertical in Sales lane) -->
         <line x1="132" y1="130" x2="132" y2="160" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
 
-        <!-- Step 2 → Step 3 (in RR DBA lane, vertical) -->
-        <line x1="132" y1="220" x2="132" y2="250" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+        <!-- Step 2 diamond NO → Step 3 (vertical in Sales lane, default path) -->
+        <line x1="132" y1="240" x2="132" y2="340" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
 
-        <!-- Step 3 → Step 4 (in RR DBA lane, vertical from bottom of shared block) -->
-        <line x1="132" y1="330" x2="132" y2="360" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+        <!-- Step 2 diamond YES → Step 2A (right, into PoC side path) -->
+        <path d="M 222 200 L 293 200" stroke="#6b4a8a" stroke-width="2" fill="none" marker-end="url(#arrow-purple)"/>
+        <text x="246" y="194" font-size="10" font-weight="700" fill="#6b4a8a">Yes</text>
 
-        <!-- Step 4 (RR DBA, x=132) → Step 5 (Network Tech, x=635): cross-lane down-then-right -->
-        <path d="M 132 420 L 132 438 L 635 438 L 635 450" stroke="#f08a24" stroke-width="2" fill="none" marker-end="url(#arrow-orange)"/>
+        <!-- Step 2A → Step 2B (vertical, inside side path) -->
+        <line x1="405" y1="228" x2="405" y2="240" stroke="#6b4a8a" stroke-width="2" marker-end="url(#arrow-purple)"/>
 
-        <!-- Step 5 → Customer Live terminator (pill below lanes) -->
-        <path d="M 635 516 L 635 580" stroke="#2e8b57" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
-        <rect x="555" y="588" width="160" height="26" fill="#d8e8d4" stroke="#2e8b57" stroke-width="2" rx="13"/>
-        <text x="635" y="606" text-anchor="middle" font-size="12" font-weight="700" fill="#2e8b57">Customer Live</text>
+        <!-- Step 2B → rejoin main path at Step 3 -->
+        <!-- Path: down from 2B bottom → left across to Sales lane → down into Step 3 top -->
+        <path d="M 405 302 L 405 322 L 132 322 L 132 340"
+              stroke="#6b4a8a" stroke-width="2" fill="none" marker-end="url(#arrow-purple)"/>
+        <text x="270" y="316" text-anchor="middle" font-size="9" font-style="italic" fill="#6b4a8a">PoC complete &mdash; rejoin main path</text>
+
+        <!-- Step 3 → Step 4 diamond (vertical in Sales lane) -->
+        <line x1="132" y1="412" x2="132" y2="438" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- Step 4 diamond YES → Step 5 Signed Contract (vertical in Sales lane) -->
+        <line x1="132" y1="518" x2="132" y2="552" stroke="#2e8b57" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+        <!-- Step 5 → Step 6 (vertical in Sales lane) -->
+        <line x1="132" y1="624" x2="132" y2="656" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- Step 6 → Step 7 (vertical in Sales lane) -->
+        <line x1="132" y1="736" x2="132" y2="760" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- Step 7 → Step 8 (cross-lane Sales → Customer I/T, down-then-right) -->
+        <path d="M 132 832 L 132 846 L 387 846 L 387 860" stroke="#f08a24" stroke-width="2" fill="none" marker-end="url(#arrow-orange)"/>
+
+        <!-- Step 8 → Customer Live terminator (pill at bottom, inside Customer I/T lane) -->
+        <path d="M 387 932 L 387 952" stroke="#2e8b57" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+        <rect x="307" y="958" width="160" height="24" fill="#d8e8d4" stroke="#2e8b57" stroke-width="2" rx="12"/>
+        <text x="387" y="975" text-anchor="middle" font-size="12" font-weight="700" fill="#2e8b57">Customer Live</text>
       </svg>
       <figcaption>
-        <strong>Install workflow flowchart</strong>
-        Step 3 (blue, dashed border) is a SHARED working session between RR DBA and Customer I/T &mdash; click it to open the production-database install procedure. Step 5 (orange) opens the Installing a Client in VALC procedure. Steps 1, 2, and 4 are RR DBA coordination steps (intake email, meeting scheduling, completion handoff) without dedicated documents.
+        <strong>Sales-to-install workflow</strong>
+        Step 1 is Sales' prospecting work. Step 2 is a decision diamond &mdash; <strong>No</strong> is the default; Sales only raises a PoC when necessary. The optional <strong>Yes</strong> path (purple, right side) sends Sales into Step 2A (a preliminary agreement covering scope and billable GSI time) and Step 2B (a preliminary install on the customer's servers, shared between Customer I/T and RR DBA) before rejoining the main flow at Step 3. Step 3 (Sales-only) sends the provisioning document. Step 4 is the Purchase Agreement decision: <strong>Yes</strong> proceeds, <strong>No</strong> ends the process. Step 5 generates and sends the signed contract. Steps 6 and 7 (blue) open the discovery-call and installation-prep documents respectively &mdash; the discovery call has RR DBA and RR Network Tech as participants. Step 8 (orange) is the customer's installation handoff &mdash; they email RR Support to go live.
       </figcaption>
     </figure>
   </div>
@@ -1135,9 +1274,9 @@
     <div class="strip-inner">
       <span><strong>Quick jump &rarr;</strong></span>
       <span class="strip-divider"></span>
-      <a href="#reference">Reference &amp; Internal Tools</a>
+      <a href="#documents">Process Documents</a>
       <span class="strip-divider"></span>
-      <a href="#procedures">Install Procedures</a>
+      <a href="#collateral">Collateral</a>
       <span class="strip-divider"></span>
       <a href="#search">Search the Knowledge Base</a>
     </div>
@@ -1162,91 +1301,109 @@
   </div>
 </section>
 
-<!-- ============ REFERENCE & INTERNAL TOOLS ============ -->
-<section class="module-section reveal" id="reference">
+<!-- ============ 01 PROCESS DOCUMENTS ============ -->
+<section class="module-section reveal" id="documents">
   <div class="container">
     <div class="module-header">
       <div class="module-number">01</div>
       <div class="module-title-block">
-        <div class="module-kicker">Library</div>
-        <h2 class="module-title">Reference &amp; Internal Tools</h2>
+        <div class="module-kicker">Documents</div>
+        <h2 class="module-title">Process Documents</h2>
       </div>
       <p class="module-description">
-        Start here for orientation, day-to-day reference material, and shared internal tooling. New techs should begin with the Start Here guide.
+        The five customer-facing and internal documents the sales workflow above references, listed in the order they come into play. Each one is linked from its corresponding flowchart step. The Proof of Concept document covers the optional PoC side path off Step 2 &mdash; only used when a PoC is necessary.
       </p>
     </div>
 
     <div class="doc-grid">
-      <a class="doc-card" href="start-here-tech.html">
+      <a class="doc-card" id="doc-poc" href="proof-of-concept.html">
         <div class="doc-card-top">
           <span class="doc-index">01 / A</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
-        <h3 class="doc-title">Start Here &mdash; GSI Tech Team</h3>
-        <p class="doc-desc">Wayfinding guide for new GSI tech-team hires. Read-only tour of VALC, the four reference docs to read in your first week, what to expect from your first install, a self-check, and a vocabulary glossary.</p>
+        <h3 class="doc-title">Proof of Concept</h3>
+        <p class="doc-desc">Used at Step 2A &mdash; the optional PoC side path. Covers when to propose a PoC, scope of the preliminary install (always run on the customer's servers), billable GSI time, and the preliminary agreement template. Sales should only raise the PoC option when necessary.</p>
       </a>
 
-      <a class="doc-card" href="certificate-management.html">
+      <a class="doc-card placeholder-card" id="doc-provisioning" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
         <div class="doc-card-top">
           <span class="doc-index">01 / B</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
-        <h3 class="doc-title">SSL Certificate &amp; DNS Management</h3>
-        <p class="doc-desc">How the wildcard <code>*.getgsi.com</code> certificate works, when to request DNS A-record changes, the three-step certificate renewal procedure, and who owns each piece of the infrastructure.</p>
+        <h3 class="doc-title">Provisioning Document</h3>
+        <p class="doc-desc">Sent by Sales at Step 3. Captures the technical and infrastructure requirements the customer needs to confirm before a Purchase Agreement can be drafted. Placeholder &mdash; document to be added.</p>
       </a>
 
-      <a class="doc-card" href="troubleshooting.html">
+      <a class="doc-card placeholder-card" id="doc-contract" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
         <div class="doc-card-top">
           <span class="doc-index">01 / C</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
-        <h3 class="doc-title">Troubleshooting</h3>
-        <p class="doc-desc">Standalone troubleshooting reference covering the most common install, migration, and post-go-live issues. 22 scenarios across five categories, each with role assignment and copy-to-clipboard remediation steps.</p>
+        <h3 class="doc-title">Contract Template</h3>
+        <p class="doc-desc">Generated and sent by Sales at Step 5, after a Yes on the Purchase Agreement decision. Standard contract that the customer signs to formalize the engagement before the discovery call is scheduled. Placeholder &mdash; document to be added.</p>
+      </a>
+
+      <a class="doc-card placeholder-card" id="doc-discovery-call" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
+        <div class="doc-card-top">
+          <span class="doc-index">01 / D</span>
+          <span class="doc-arrow">&rarr;</span>
+        </div>
+        <h3 class="doc-title">Discovery Call</h3>
+        <p class="doc-desc">Used at Step 6. Agenda, participant list, and pre-call prep for the joint discovery call between Sales, Customer I/T, RR DBA, and RR Network Tech &mdash; the technical handoff that sets up the install. Placeholder &mdash; document to be added.</p>
+      </a>
+
+      <a class="doc-card placeholder-card" id="doc-install-prep" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
+        <div class="doc-card-top">
+          <span class="doc-index">01 / E</span>
+          <span class="doc-arrow">&rarr;</span>
+        </div>
+        <h3 class="doc-title">Installation Prep Document</h3>
+        <p class="doc-desc">Sent to the customer at Step 7, after the discovery call. Walks Customer I/T through the pre-install steps they need to complete and ends with the email handoff to <code>rrsupport@getgsi.com</code> that triggers the technical install. Placeholder &mdash; document to be added.</p>
       </a>
     </div>
   </div>
 </section>
 
-<!-- ============ 02 INSTALL PROCEDURES (merged Database / VALC / Migrations) ============ -->
-<section class="module-section reveal" id="procedures" style="border-bottom:none;">
+<!-- ============ 02 COLLATERAL ============ -->
+<section class="module-section reveal" id="collateral" style="border-bottom:none;">
   <div class="container">
     <div class="module-header">
       <div class="module-number">02</div>
       <div class="module-title-block">
-        <div class="module-kicker">Procedures</div>
-        <h2 class="module-title">Install Procedures</h2>
+        <div class="module-kicker">Marketing</div>
+        <h2 class="module-title">Collateral</h2>
       </div>
       <p class="module-description">
-        The three procedural documents the install workflow above references, plus the migration procedure for moving an existing client to new infrastructure. The two most-clicked are linked from the flowchart.
+        Sales collateral for prospect outreach, demos, and follow-up. Use these alongside the process documents above to move a prospect from first conversation through to discovery call.
       </p>
     </div>
 
     <div class="doc-grid">
-      <a class="doc-card" href="installing-production-database.html">
+      <a class="doc-card placeholder-card" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
         <div class="doc-card-top">
           <span class="doc-index">02 / A</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
-        <h3 class="doc-title">Installing the Production Database</h3>
-        <p class="doc-desc">Step 3 of the install flow &mdash; SSISDB catalog setup, RR database creation scripts, SSIS package configuration and deployment, initial data load. RR DBA owns this; the joint working session with Customer I/T happens here.</p>
+        <h3 class="doc-title">Self-Guided Tour</h3>
+        <p class="doc-desc">Interactive walk-through of RapidReconciler that prospects can run on their own time, without a live demo. Best used after first contact to qualify interest before booking a discovery call. Placeholder &mdash; document to be added.</p>
       </a>
 
-      <a class="doc-card" href="installing-client-in-valc.html">
+      <a class="doc-card placeholder-card" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
         <div class="doc-card-top">
           <span class="doc-index">02 / B</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
-        <h3 class="doc-title">Installing a Client in VALC</h3>
-        <p class="doc-desc">Step 5 of the install flow &mdash; client registration, agent installation, database registration in VALC, license configuration, and customer handoff. RR Network Tech owns this; runs after the database is configured.</p>
+        <h3 class="doc-title">Overview</h3>
+        <p class="doc-desc">High-level product overview suitable for first-touch outreach and executive-level conversations. Covers what RapidReconciler does, who it&rsquo;s for, and the key business outcomes. Placeholder &mdash; document to be added.</p>
       </a>
 
-      <a class="doc-card" href="server-migration.html">
+      <a class="doc-card placeholder-card" href="#" aria-disabled="true" onclick="event.preventDefault(); return false;">
         <div class="doc-card-top">
           <span class="doc-index">02 / C</span>
           <span class="doc-arrow">&rarr;</span>
         </div>
-        <h3 class="doc-title">Server Migration</h3>
-        <p class="doc-desc">Procedure for moving an existing client to new infrastructure &mdash; covers both dedicated and separate-server topologies, plus the VALC and Cloudflare cutover and the post-migration verification checklist.</p>
+        <h3 class="doc-title">Fact Sheet</h3>
+        <p class="doc-desc">One-page reference with feature list, supported environments, integration points, and licensing tiers. Best for technical evaluators and procurement. Placeholder &mdash; document to be added.</p>
       </a>
     </div>
   </div>
@@ -1260,8 +1417,8 @@
       <div class="feedback-icon" aria-hidden="true">i</div>
       <div class="feedback-text">
         <strong>Spot something off?</strong>
-        Found an error, missing step, or out-of-date procedure in any of these tech docs?
-        Email <a href="mailto:rrsupport@getgsi.com?subject=GSI%20RR%20Tech%20-%20Documentation%20Feedback">rrsupport@getgsi.com</a> &mdash;
+        Found an error, missing step, or out-of-date document in any of these sales docs?
+        Email <a href="mailto:rrsupport@getgsi.com?subject=GSI%20RR%20Sales%20-%20Documentation%20Feedback">rrsupport@getgsi.com</a> &mdash;
         corrections, new procedures, and field notes from real installs are all welcome.
       </div>
     </div>
@@ -1272,7 +1429,7 @@
 <footer>
   <div class="container">
     <div class="footer-line">
-      <span><strong>GSI RR Tech &middot; Client Management</strong> <span class="footer-sep">&middot;</span> internal knowledge base for the GSI RapidReconciler tech team</span>
+      <span><strong>GSI RR Sales &middot; Client Management</strong> <span class="footer-sep">&middot;</span> internal knowledge base for the GSI RapidReconciler sales team</span>
       <span>&copy; 2026 GSI <span class="footer-sep">&middot;</span> <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> <span class="footer-sep">&middot;</span> <a href="https://www.getgsi.com" target="_blank" rel="noopener">getgsi.com</a></span>
     </div>
   </div>
@@ -1297,15 +1454,11 @@
   // to the visible title and description. Keys are filenames (href values).
   // Add freely; no harm in duplicates.
   const KEYWORDS = {
-    // Add per-document keyword enrichment as docs are converted.
+    // Add per-document keyword enrichment as docs are added.
     // Keys are filenames (the href value of the .doc-card link).
     // Anything listed here is matched in addition to the visible title and description.
-    'installing-production-database.html': 'install installation database SSIS SSISDB SQL Server SSMS Visual Studio JDE source connection rruser SQL Agent job initial load deploy DTSX OLE DB catalog production new client',
-    'server-migration.html': 'migration migrate server move new server cutover VALC Cloudflare DNS dedicated separate IP address backup restore DTSX SSIS package SQL Agent schedule rruser RRUSER GSIADMIN agent install Daren maintenance window',
-    'installing-client-in-valc.html': 'VALC client setup add client new customer install agent GSI Admin password policy DNS A record Cloudflare Daren license company numbers troubleshooting message users SQL Scripts setup step Created Connected discovery call topology firewall ports modules',
-    'start-here-tech.html': 'start here new tech onboarding training first install vocabulary glossary self-check walkthrough VALC tour read-only orientation getting started newbie senior shadow first week first day milestones',
-    'certificate-management.html': 'SSL certificate DNS A record wildcard getgsi.com domain URL renewal Cloudflare ISP propagation TTL Manage Deploys browser warning expired expiry agent deployment GSI I/T Daren UI developer backend',
-    'troubleshooting.html': 'troubleshooting issues errors symptoms problems agent install hangs Validating Data download prompt Setup Step Created not advancing database Unknown Stopped Online Companies tab empty SSIS package extracts no data driver mismatch OLE DB permission denied Cloudflare data not appearing services not running Not Secure certificate warning domain URL not resolving propagation migration data not flowing diagnostic tools log files quick triage role customer remote VPN hard reload Shift F5 browser local network access Edge Chrome firewall IP filter clear browser data cookies cache no data displayed customer reports first-line',
+    // Other sales placeholders still use href="#" — replace with real filenames as docs come in.
+    'proof-of-concept.html': 'PoC proof of concept preliminary install pilot trial customer servers billable GSI time JDE production sandbox preliminary agreement scope cost duration step 2A side path optional install on customer infrastructure RR DBA demo session walkthrough conversion provisioning rejoin main path management pricing rate sheet',
   };
 
   const searchInput = document.getElementById('docSearch');

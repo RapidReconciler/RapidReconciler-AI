@@ -619,17 +619,22 @@
   }
   .sidebar-section-label:first-of-type { border-top: none; margin-top: 0; }
 
-  /* Step number indicator for sidebar items */
-  ul.sidebar-nav li.step-num button { padding-left: 50px; position: relative; }
+  /* Step number indicator for sidebar items.
+     Number is taken from the button's data-step attribute so we can match
+     the flowchart's actual numbering (which skips steps that have no
+     documentation section, e.g. Steps 6 and 7). The pill is wide enough
+     to fit two-digit numbers (10–13). */
+  ul.sidebar-nav li.step-num button { padding-left: 56px; position: relative; }
   ul.sidebar-nav li.step-num button::before {
-    content: counter(step-counter);
+    content: attr(data-step);
     position: absolute;
-    left: 22px;
+    left: 18px;
     top: 50%;
     transform: translateY(-50%);
-    width: 22px;
+    min-width: 28px;
     height: 22px;
-    border-radius: 50%;
+    padding: 0 6px;
+    border-radius: 11px;
     background: var(--orange);
     color: #fff;
     display: flex;
@@ -637,9 +642,8 @@
     justify-content: center;
     font-size: 11px;
     font-weight: 700;
+    box-sizing: border-box;
   }
-  ul#sidebar-steps { counter-reset: step-counter; }
-  ul#sidebar-steps li.step-num { counter-increment: step-counter; }
 
   /* ============== FOOTER (thin, single line) ============== */
   footer {
@@ -797,7 +801,7 @@
   /* Flowchart prev/next nav strip — appears at the end of each step that
      corresponds to a flowchart step, so users can walk the doc in flowchart
      order without going back to the diagram. Designed to also work outside
-     a step-card (used at the end of Part 3 step h2 sections too). */
+     a step-card (used by the per-step pages too). */
   .view .flow-nav {
     display: flex;
     align-items: center;
@@ -1034,16 +1038,22 @@
     <aside class="sidebar">
       <div class="sidebar-title">VALC Client Setup</div>
 
-      
-
       <div class="sidebar-section-label">Install Workflow</div>
       <ul class="sidebar-nav" id="sidebar-steps">
-        <li data-target="home"><button onclick="showView('home')">Index</button></li>
-        <li data-target="overview" class="step-num"><button onclick="showView('topic-overview')">Overview &amp; Prereqs</button></li>
-        <li data-target="part1" class="step-num"><button onclick="showView('topic-part1')">Part 1: VALC Setup</button></li>
-        <li data-target="part2" class="step-num"><button onclick="showView('topic-part2')">Part 2: Install Agent</button></li>
-        <li data-target="part3" class="step-num"><button onclick="showView('topic-part3')">Part 3: Complete Setup</button></li>
-        <li data-target="checklist" class="step-num"><button onclick="showView('topic-checklist')">Summary Checklist</button></li>
+        <li data-target="overview"><button onclick="showView('topic-overview')">Overview &amp; Prereqs</button></li>
+        <li data-target="flowchart"><button onclick="showView('topic-flowchart')">Process Flowchart</button></li>
+        <li data-target="step-1" class="step-num"><button data-step="1" onclick="showView('topic-step-1')">Pre-Install Submission</button></li>
+        <li data-target="step-2" class="step-num"><button data-step="2" onclick="showView('topic-step-2')">Create Client Record</button></li>
+        <li data-target="step-3" class="step-num"><button data-step="3" onclick="showView('topic-step-3')">Create GSI Admin User</button></li>
+        <li data-target="step-4" class="step-num"><button data-step="4" onclick="showView('topic-step-4')">Configure Modules</button></li>
+        <li data-target="step-5" class="step-num"><button data-step="5" onclick="showView('topic-step-5')">DNS / Cert Mgmt Request</button></li>
+        <li data-target="step-8" class="step-num"><button data-step="8" onclick="showView('topic-step-8')">Install Agent</button></li>
+        <li data-target="step-9" class="step-num"><button data-step="9" onclick="showView('topic-step-9')">Validate SQL Server</button></li>
+        <li data-target="step-10" class="step-num"><button data-step="10" onclick="showView('topic-step-10')">Register Database</button></li>
+        <li data-target="step-11" class="step-num"><button data-step="11" onclick="showView('topic-step-11')">Verify Databases Online</button></li>
+        <li data-target="step-12" class="step-num"><button data-step="12" onclick="showView('topic-step-12')">License Company Numbers</button></li>
+        <li data-target="step-13" class="step-num"><button data-step="13" onclick="showView('topic-step-13')">Customer Handoff</button></li>
+        <li data-target="checklist"><button onclick="showView('topic-checklist')">Summary Checklist</button></li>
       </ul>
 
       <div class="sidebar-section-label">Reference</div>
@@ -1059,85 +1069,27 @@
         <li data-target="message-users"><button onclick="showView('topic-message-users')">Message Users</button></li>
         <li data-target="sql-scripts"><button onclick="showView('topic-sql-scripts')">SQL Scripts</button></li>
       </ul>
-    
     </aside>
 
     <main class="content-card">
 
-      <!-- ============ INDEX (HOME) VIEW ============ -->
-            <section id="home" class="view active">
-        <h1>Installing a Client in VALC <span class="internal-badge">Internal Use Only</span></h1>
-        <p class="lead">End-to-end procedure for the GSI tech team to set up a new customer in VALC and install the RapidReconciler Agent on the customer's application server. Three sequential phases (Overview, Part 1, Part 2, Part 3) plus a summary checklist, followed by reference material for everyday support work after go-live.</p>
+<!-- ============ FLOWCHART VIEW ============ -->
+      <section id="topic-flowchart" class="view">
+        <h1>Process Flowchart</h1>
+        <p>End-to-end flow for installing a client in VALC. The flowchart uses two swim lanes &mdash; <strong>RR Network Tech</strong> (left) and <strong>Customer I/T</strong> (right) &mdash; with shared work shown as wider blocks spanning both lanes. Click any numbered block to jump to its documentation.</p>
 
-        <div class="callout warning">
-          <div class="callout-label">Internal Document</div>
-          <p>This guide is for GSI staff only. Adding a customer in VALC is a GSI-only task &mdash; do not distribute externally.</p>
+        <div class="callout">
+          <div class="callout-label">How to read this</div>
+          <p>The install kicks off when the customer's pre-install submission email arrives in the <code>rrsupport@getgsi.com</code> inbox (Step 1). The RR Network Tech owns most of the VALC setup work; the Customer I/T joins for the agent install (Step 8) and collaborates on troubleshooting if the SQL Server connectivity check fails. A wait state for DNS propagation sits between Steps 5 and 8. The diamond after Step 9 is a verification gate &mdash; YES continues to database registration; NO routes to troubleshooting collaboration that loops back to re-validate.</p>
         </div>
 
-        <div class="page-meta">
-          <span class="meta-item"><strong>Audience:</strong>&nbsp;GSI Tech Team</span>
-          <span class="meta-item"><strong>Time required:</strong>&nbsp;Multi-stage &mdash; depends on customer IT availability</span>
-          <span class="meta-item">Press <kbd>Ctrl</kbd>+<kbd>F</kbd> (or <kbd>&#8984;</kbd>+<kbd>F</kbd>) to search this page</span>
+        <div class="callout tip">
+          <div class="callout-label">Companion document</div>
+          <p>The database side of the install runs <em>before</em> this guide and is documented separately in <strong>Installing the Production Database</strong>. Both processes start from the same pre-install submission email; the database tech notifies you via a second email at <code>rrsupport@getgsi.com</code> when the database is ready and the VALC install can begin.</p>
         </div>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
 
-        <h2 id="phases">Phases</h2>
-        <p>Follow the phases in order. Each builds on the work done in the previous phase, and connectivity checks at each handoff catch problems before they compound.</p>
-
-        <h2 id="topics">Topics</h2>
-        <table>
-          <thead><tr><th>Topic</th><th>What it covers</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-overview')">Overview &amp; Prerequisites</a></td>
-              <td>About the install process, the discovery call, and the information to collect from the customer before kicking off Part 1.</td>
-            </tr>
-            <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-part1')">Part 1: Initial VALC Setup</a></td>
-              <td>Add the client record to VALC, create the initial GSI Admin user, and explain the toggles and tabs the user will encounter during install.</td>
-            </tr>
-            <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-part2')">Part 2: Installing the RapidReconciler Agent</a></td>
-              <td>Run the agent installer on the customer's application server and verify connectivity back to VALC.</td>
-            </tr>
-            <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3: Completing the Setup in VALC</a></td>
-              <td>Register the database, verify it goes Online, license company numbers, and complete the customer handoff.</td>
-            </tr>
-            <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-checklist')">Summary Checklist</a></td>
-              <td>End-to-end verification list across all three parts. Run it before signing off the install.</td>
-            </tr>
-            <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-requests')">Common Requests</a></td>
-              <td>How to handle the day-to-day asks that come in for a live customer &mdash; toggle Active, change license dates, enable a module, etc.</td>
-            </tr>
-            <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-troubleshooting')">Troubleshooting</a></td>
-              <td>Six diagnostic patterns for the most common install problems, with the agent log file as the primary diagnostic tool.</td>
-            </tr>
-            <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-password-policy')">Password Policy</a></td>
-              <td>The complex password policy: requirements, login, reset, administration, and how to flip the per-customer toggle.</td>
-            </tr>
-            <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-server-migration')">Server Migration</a></td>
-              <td>Pointer to the standalone Server Migration guide for moving an existing client to new infrastructure.</td>
-            </tr>
-            <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-message-users')">Message Users</a></td>
-              <td>How to post system-wide messages users see at login &mdash; for maintenance windows, version changes, and similar broadcasts.</td>
-            </tr>
-            <tr>
-              <td><a href="javascript:void(0)" onclick="showView('topic-sql-scripts')">SQL Scripts <span class="dev-tag">(Developer Reference)</span></a></td>
-              <td>Developer-only tool for applying SQL update scripts across customer databases. Tech support uses this rarely; included for completeness.</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h2 id="process-flow">Process Flow</h2>
-        <p>This diagram maps the end-to-end install across the three teams involved. Use it to see where handoffs occur and what to wait for at each stage. Numbered steps reference the detailed phases.</p>
         <figure class="process-flow">
                 <svg viewBox="0 0 740 1235" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Client install process flow with swim lanes for RR Network Tech and Customer I/T. The process is triggered by the customer's pre-install submission email arriving in the rrsupport inbox. Each step is a clickable link to the related documentation section." font-family="'Open Sans', sans-serif" style="width:100%;height:auto;display:block;">
         <defs>
@@ -1168,54 +1120,44 @@
         <text x="545" y="23" text-anchor="middle" fill="white" font-size="14" font-weight="700" letter-spacing="0.04em">CUSTOMER I/T</text>
 
         <!-- STEP 1: Receive prep submission email -->
-        <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'prep-email')" role="link" aria-label="Step 1: Receive customer pre-install submission email in the rrsupport inbox. Opens the Customer Pre-Install Submission section in Part 1.">
+        <a href="javascript:void(0)" onclick="showView('topic-step-1')" role="link" aria-label="Step 1: Receive customer pre-install submission email in the rrsupport inbox. Opens Step 1.">
           <rect class="step-box" x="40" y="70" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
           <circle cx="58" cy="98" r="13" fill="#4d77b4"/>
           <text x="58" y="103" text-anchor="middle" fill="white" font-size="14" font-weight="700">1</text>
           <text x="78" y="89" font-size="12.5" font-weight="600" fill="#333">Receive prep submission email</text>
-          <text x="78" y="104" font-size="12.5" font-weight="600" fill="#333">(rrsupport@getgsi.com inbox)</text>
-          <text x="78" y="118" font-size="10" font-style="italic" fill="#2b5fb0">Part 1 — Pre-Install Submission ↗</text>
-        </a>
+          <text x="78" y="104" font-size="12.5" font-weight="600" fill="#333">(rrsupport@getgsi.com inbox)</text>        </a>
 
         <!-- STEP 2: Create client record in VALC -->
-        <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-create-client')" role="link" aria-label="Step 2: Create client record in VALC. Opens Part 1 — Step 1.">
+        <a href="javascript:void(0)" onclick="showView('topic-step-2')" role="link" aria-label="Step 2: Create client record in VALC. Opens Step 2.">
           <rect class="step-box" x="40" y="145" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
           <circle cx="58" cy="173" r="13" fill="#4d77b4"/>
           <text x="58" y="178" text-anchor="middle" fill="white" font-size="14" font-weight="700">2</text>
           <text x="78" y="164" font-size="12.5" font-weight="600" fill="#333">Create client record</text>
-          <text x="78" y="179" font-size="12.5" font-weight="600" fill="#333">in VALC</text>
-          <text x="78" y="193" font-size="10" font-style="italic" fill="#2b5fb0">Part 1 — Step 1 ↗</text>
-        </a>
+          <text x="78" y="179" font-size="12.5" font-weight="600" fill="#333">in VALC</text>        </a>
 
         <!-- STEP 3: Create initial GSI Admin user -->
-        <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-admin-user')" role="link" aria-label="Step 3: Create initial GSI Admin user. Opens Part 1 — Step 2.">
+        <a href="javascript:void(0)" onclick="showView('topic-step-3')" role="link" aria-label="Step 3: Create initial GSI Admin user. Opens Step 3.">
           <rect class="step-box" x="40" y="220" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
           <circle cx="58" cy="248" r="13" fill="#4d77b4"/>
           <text x="58" y="253" text-anchor="middle" fill="white" font-size="14" font-weight="700">3</text>
           <text x="78" y="239" font-size="12.5" font-weight="600" fill="#333">Create initial</text>
-          <text x="78" y="254" font-size="12.5" font-weight="600" fill="#333">GSI Admin user</text>
-          <text x="78" y="268" font-size="10" font-style="italic" fill="#2b5fb0">Part 1 — Step 2 ↗</text>
-        </a>
+          <text x="78" y="254" font-size="12.5" font-weight="600" fill="#333">GSI Admin user</text>        </a>
 
         <!-- STEP 4: Configure modules -->
-        <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-modules')" role="link" aria-label="Step 4: Configure modules and additional fields. Opens Part 1 — Step 3.">
+        <a href="javascript:void(0)" onclick="showView('topic-step-4')" role="link" aria-label="Step 4: Configure modules and additional fields. Opens Step 4.">
           <rect class="step-box" x="40" y="295" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
           <circle cx="58" cy="323" r="13" fill="#4d77b4"/>
           <text x="58" y="328" text-anchor="middle" fill="white" font-size="14" font-weight="700">4</text>
           <text x="78" y="314" font-size="12.5" font-weight="600" fill="#333">Configure modules</text>
-          <text x="78" y="329" font-size="12.5" font-weight="600" fill="#333">and additional fields</text>
-          <text x="78" y="343" font-size="10" font-style="italic" fill="#2b5fb0">Part 1 — Step 3 ↗</text>
-        </a>
+          <text x="78" y="329" font-size="12.5" font-weight="600" fill="#333">and additional fields</text>        </a>
 
         <!-- STEP 5: Submit DNS / Cert Mgmt request -->
-        <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-dns-cert')" role="link" aria-label="Step 5: Submit DNS A record and Certificate Management request. Opens Part 1 — Step 4.">
+        <a href="javascript:void(0)" onclick="showView('topic-step-5')" role="link" aria-label="Step 5: Submit DNS A record and Certificate Management request. Opens Step 5.">
           <rect class="step-box" x="40" y="370" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
           <circle cx="58" cy="398" r="13" fill="#4d77b4"/>
           <text x="58" y="403" text-anchor="middle" fill="white" font-size="14" font-weight="700">5</text>
           <text x="78" y="389" font-size="12.5" font-weight="600" fill="#333">Submit DNS 'A' record /</text>
-          <text x="78" y="404" font-size="12.5" font-weight="600" fill="#333">Cert Mgmt request</text>
-          <text x="78" y="418" font-size="10" font-style="italic" fill="#2b5fb0">Part 1 — Step 4 ↗</text>
-        </a>
+          <text x="78" y="404" font-size="12.5" font-weight="600" fill="#333">Cert Mgmt request</text>        </a>
 
         <!-- Wait — DNS propagation -->
         <rect x="40" y="445" width="290" height="50" fill="#fdf6e3" stroke="#b8941a" stroke-width="2" stroke-dasharray="6,4" rx="4"/>
@@ -1243,27 +1185,23 @@
         </g>
 
         <!-- STEP 8: Install agent (SHARED — spans both lanes; RR Network Tech runs the install with Customer I/T present) -->
-        <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-install-agent')" role="link" aria-label="Step 8: Install agent on customer server. Shared task between RR Network Tech and Customer I/T. Opens Part 2 — Step 1.">
+        <a href="javascript:void(0)" onclick="showView('topic-step-8')" role="link" aria-label="Step 8: Install agent on customer server. Shared task between RR Network Tech and Customer I/T. Opens Step 8.">
           <rect class="step-box" x="40" y="665" width="650" height="56" fill="white" stroke="#4d77b4" stroke-width="2" stroke-dasharray="6,3" rx="4"/>
           <circle cx="58" cy="693" r="13" fill="#4d77b4"/>
           <text x="58" y="698" text-anchor="middle" fill="white" font-size="14" font-weight="700">8</text>
           <text x="78" y="684" font-size="12.5" font-weight="600" fill="#333">Install agent on customer server</text>
-          <text x="78" y="699" font-size="11" font-style="italic" fill="#5a6479">Shared task — RR Network Tech runs the install; Customer I/T is on-session</text>
-          <text x="78" y="714" font-size="10" font-style="italic" fill="#2b5fb0">Part 2 — Step 1 ↗</text>
-          <!-- Shared-task badge in the upper-right of the box -->
+          <text x="78" y="699" font-size="11" font-style="italic" fill="#5a6479">Shared task — RR Network Tech runs the install; Customer I/T is on-session</text>          <!-- Shared-task badge in the upper-right of the box -->
           <rect x="600" y="673" width="80" height="18" fill="#eef3f9" stroke="#4d77b4" stroke-width="1" rx="9"/>
           <text x="640" y="685" text-anchor="middle" font-size="9.5" font-weight="700" fill="#1f2d4a" letter-spacing="0.05em">SHARED</text>
         </a>
 
         <!-- STEP 9: Validate SQL Server connection -->
-        <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-validate-sql')" role="link" aria-label="Step 9: Validate SQL Server connection. Opens Part 2 — Step 2.">
+        <a href="javascript:void(0)" onclick="showView('topic-step-9')" role="link" aria-label="Step 9: Validate SQL Server connection. Opens Step 9.">
           <rect class="step-box" x="40" y="740" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
           <circle cx="58" cy="768" r="13" fill="#4d77b4"/>
           <text x="58" y="773" text-anchor="middle" fill="white" font-size="14" font-weight="700">9</text>
           <text x="78" y="759" font-size="12.5" font-weight="600" fill="#333">Validate SQL</text>
-          <text x="78" y="774" font-size="12.5" font-weight="600" fill="#333">Server connection</text>
-          <text x="78" y="788" font-size="10" font-style="italic" fill="#2b5fb0">Part 2 — Step 2 ↗</text>
-        </a>
+          <text x="78" y="774" font-size="12.5" font-weight="600" fill="#333">Server connection</text>        </a>
 
         <!-- Verification diamond -->
         <polygon points="185,815 330,843 185,871 40,843" fill="#fdf6e3" stroke="#b8941a" stroke-width="2"/>
@@ -1279,44 +1217,36 @@
         </a>
 
         <!-- STEP 10: Register database -->
-        <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-1-register-the-database-in-valc')" role="link" aria-label="Step 10: Register database in VALC. Opens Part 3 — Step 1.">
+        <a href="javascript:void(0)" onclick="showView('topic-step-10')" role="link" aria-label="Step 10: Register database in VALC. Opens Step 10.">
           <rect class="step-box" x="40" y="895" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
           <circle cx="58" cy="923" r="13" fill="#4d77b4"/>
           <text x="58" y="928" text-anchor="middle" fill="white" font-size="14" font-weight="700">10</text>
           <text x="78" y="914" font-size="12.5" font-weight="600" fill="#333">Register database</text>
-          <text x="78" y="929" font-size="12.5" font-weight="600" fill="#333">in VALC</text>
-          <text x="78" y="943" font-size="10" font-style="italic" fill="#2b5fb0">Part 3 — Step 1 ↗</text>
-        </a>
+          <text x="78" y="929" font-size="12.5" font-weight="600" fill="#333">in VALC</text>        </a>
 
         <!-- STEP 11: Verify databases show Online -->
-        <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-2-verify-database-status')" role="link" aria-label="Step 11: Verify databases show Online. Opens Part 3 — Step 2.">
+        <a href="javascript:void(0)" onclick="showView('topic-step-11')" role="link" aria-label="Step 11: Verify databases show Online. Opens Step 11.">
           <rect class="step-box" x="40" y="970" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
           <circle cx="58" cy="998" r="13" fill="#4d77b4"/>
           <text x="58" y="1003" text-anchor="middle" fill="white" font-size="14" font-weight="700">11</text>
           <text x="78" y="989" font-size="12.5" font-weight="600" fill="#333">Verify databases</text>
-          <text x="78" y="1004" font-size="12.5" font-weight="600" fill="#333">show Online</text>
-          <text x="78" y="1018" font-size="10" font-style="italic" fill="#2b5fb0">Part 3 — Step 2 ↗</text>
-        </a>
+          <text x="78" y="1004" font-size="12.5" font-weight="600" fill="#333">show Online</text>        </a>
 
         <!-- STEP 12: License company numbers -->
-        <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-3-license-company-numbers')" role="link" aria-label="Step 12: License company numbers. Opens Part 3 — Step 3.">
+        <a href="javascript:void(0)" onclick="showView('topic-step-12')" role="link" aria-label="Step 12: License company numbers. Opens Step 12.">
           <rect class="step-box" x="40" y="1045" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
           <circle cx="58" cy="1073" r="13" fill="#4d77b4"/>
           <text x="58" y="1078" text-anchor="middle" fill="white" font-size="14" font-weight="700">12</text>
           <text x="78" y="1064" font-size="12.5" font-weight="600" fill="#333">License company</text>
-          <text x="78" y="1079" font-size="12.5" font-weight="600" fill="#333">numbers</text>
-          <text x="78" y="1093" font-size="10" font-style="italic" fill="#2b5fb0">Part 3 — Step 3 ↗</text>
-        </a>
+          <text x="78" y="1079" font-size="12.5" font-weight="600" fill="#333">numbers</text>        </a>
 
         <!-- STEP 13: Customer handoff -->
-        <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-4-customer-handoff')" role="link" aria-label="Step 13: Customer handoff with login URL and credentials. Opens Part 3 — Step 4.">
+        <a href="javascript:void(0)" onclick="showView('topic-step-13')" role="link" aria-label="Step 13: Customer handoff with login URL and credentials. Opens Step 13.">
           <rect class="step-box" x="40" y="1120" width="290" height="56" fill="white" stroke="#4d77b4" stroke-width="2" rx="4"/>
           <circle cx="58" cy="1148" r="13" fill="#4d77b4"/>
           <text x="58" y="1153" text-anchor="middle" fill="white" font-size="14" font-weight="700">13</text>
           <text x="78" y="1139" font-size="12.5" font-weight="600" fill="#333">Customer handoff</text>
-          <text x="78" y="1154" font-size="12.5" font-weight="600" fill="#333">(login URL + credentials)</text>
-          <text x="78" y="1168" font-size="10" font-style="italic" fill="#2b5fb0">Part 3 — Step 4 ↗</text>
-        </a>
+          <text x="78" y="1154" font-size="12.5" font-weight="600" fill="#333">(login URL + credentials)</text>        </a>
 
         <!-- Customer Live terminator -->
         <rect x="240" y="1190" width="200" height="32" fill="#d8e8d4" stroke="#4a6b3a" stroke-width="2" rx="16"/>
@@ -1359,33 +1289,59 @@
         <!-- Step 13 → Customer Live -->
         <path d="M 185 1176 L 185 1206 L 240 1206" stroke="#4a6b3a" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
         </svg>
-                <figcaption><strong>Client install — End-to-end flow</strong>Two swim lanes show ownership: the RR Network Tech owns VALC setup, the DNS/Cert Mgmt request, scheduling and running the working session, agent install, and the four Part 3 steps; Customer I/T joins the working session for Part 2 and collaborates on troubleshooting if connectivity validation fails. The process is triggered by Step 1 — the customer's pre-install submission email landing in the <code>rrsupport@getgsi.com</code> inbox. Step 8 (Install agent) spans both lanes — it is a shared task that requires Customer I/T to be on-session while the RR Network Tech runs the install, indicated by the dashed border and SHARED badge. Each step is a clickable link to the related section in this guide. The dashed yellow band marks a wait state for DNS propagation. The diamond is a verification gate after the SQL Server connection check — the YES branch continues into Part 3, while the NO branch routes to a troubleshooting collaboration that loops back to re-validate once issues are resolved.</figcaption>
+                <figcaption><strong>Client install — End-to-end flow</strong>Two swim lanes show ownership: the RR Network Tech owns VALC setup, the DNS/Cert Mgmt request, scheduling and running the working session, agent install, and Steps 10–13; Customer I/T joins the working session for the agent install and collaborates on troubleshooting if connectivity validation fails. The process is triggered by Step 1 — the customer's pre-install submission email landing in the <code>rrsupport@getgsi.com</code> inbox. Step 8 (Install agent) spans both lanes — it is a shared task that requires Customer I/T to be on-session while the RR Network Tech runs the install, indicated by the dashed border and SHARED badge. Each step is a clickable link to the related section in this guide. The dashed yellow band marks a wait state for DNS propagation. The diamond is a verification gate after the SQL Server connection check — the YES branch continues into the database registration steps, while the NO branch routes to a troubleshooting collaboration that loops back to re-validate once issues are resolved.</figcaption>
               </figure>
+
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="goHome()">&larr; Back to Overview</button>
+          <button class="next-btn" onclick="showView('topic-step-1')">Start: Step 1 &mdash; Pre-Install Email &rarr;</button>
+        </div>
       </section>
 
-      <section id="topic-overview" class="view">
-        <h1>Overview &amp; Prerequisites</h1>
-        <p>About the install process, the discovery call, and the information to collect from the customer before kicking off Part 1.</p>
+      <section id="topic-overview" class="view active">
+        <h1>Overview &amp; Prerequisites <span class="internal-badge">Internal Use Only</span></h1>
+        <p class="lead">End-to-end procedure for the GSI tech team to set up a new customer in VALC and install the RapidReconciler Agent on the customer's application server. Use the sidebar or the <a href="javascript:void(0)" onclick="showView('topic-flowchart')">Process Flowchart</a> to navigate the install &mdash; click any numbered step in the flowchart to open its documentation.</p>
+
+        <div class="callout warning">
+          <div class="callout-label">Internal Document</div>
+          <p>This guide is for GSI staff only. Adding a customer in VALC is a GSI-only task &mdash; do not distribute externally.</p>
+        </div>
+
+        <div class="page-meta">
+          <span class="meta-item"><strong>Audience:</strong>&nbsp;GSI Tech Team</span>
+          <span class="meta-item"><strong>Time required:</strong>&nbsp;Multi-stage &mdash; depends on customer IT availability</span>
+          <span class="meta-item">Press <kbd>Ctrl</kbd>+<kbd>F</kbd> (or <kbd>&#8984;</kbd>+<kbd>F</kbd>) to search this page</span>
+        </div>
+
+        <div class="callout principle">
+          <div class="callout-label">Key principle</div>
+          <p>The VALC install is a <strong>multi-stage</strong> process &mdash; not a single 2-hour meeting. Pre-install (Steps 1&ndash;5) and post-DNS (Steps 8&ndash;13) are separated by a wait for DNS propagation. Plan accordingly.</p>
+        </div>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
 
-<p>This section covers what you need to know and gather before opening VALC. Don't skip it — missing information here causes rework later in the install.</p>
+        <p>This section covers what you need to know and gather before opening VALC. Don't skip it &mdash; missing information here causes rework later in the install.</p>
+
+        <div class="callout">
+          <div class="callout-label">Companion document &mdash; Installing the Production Database</div>
+          <p>The VALC install runs <em>after</em> the database side of the install is complete. Both processes start from the <strong>same pre-install submission email</strong> (see <a href="javascript:void(0)" onclick="showView('topic-step-1')">Step 1</a>) and are performed by different techs in the same group. The RR DBA installs the database first; you pick up from their hand-off and complete the VALC side. If a customer's database is not yet installed, pause and confirm with the DBA before continuing.</p>
+        </div>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
 
         <h2 id="about-the-process">About the Process</h2>
         <p>Setting up a new customer in VALC and installing the RapidReconciler Agent on their application server is a three-phase process:</p>
         <ul>
-          <li><strong>Part 1: Initial VALC Setup</strong> — Creating the client record, initial user account, and module configuration in the VALC portal.</li>
-          <li><strong>Part 2: RapidReconciler Agent Installation</strong> — Downloading, installing, and validating the agent on the customer's server.</li>
-          <li><strong>Part 3: Completing the Setup in VALC</strong> — Verifying connectivity, database status, and licensing company numbers.</li>
+          <li><strong>VALC setup (Steps 2&ndash;5)</strong> &mdash; Creating the client record, initial user account, module configuration, and the DNS/cert request in the VALC portal.</li>
+          <li><strong>Agent installation (Steps 8&ndash;9)</strong> &mdash; Downloading, installing, and validating the agent on the customer's server.</li>
+          <li><strong>Completing setup (Steps 10&ndash;13)</strong> &mdash; Verifying connectivity, database status, licensing company numbers, and customer handoff.</li>
         </ul>
 
         <h3 id="agent-deployment-constraints">Agent Deployment Constraints</h3>
         <p>Two architectural rules that shape every install and migration:</p>
         <ul>
           <li><strong>One agent per customer network.</strong> Only a single instance of the RapidReconciler Agent should be installed on the customer's internal network. Multiple agents pointing at the same VALC client record will compete and produce inconsistent state.</li>
-          <li><strong>One agent supports multiple databases.</strong> A single agent can serve any number of RapidReconciler databases (Prod, Test, Dev, Train) — including databases hosted on different SQL Servers. Each database is registered separately in VALC (see <a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3, Step 1</a>) but they all communicate through the same agent.</li>
+          <li><strong>One agent supports multiple databases.</strong> A single agent can serve any number of RapidReconciler databases (Prod, Test, Dev, Train) — including databases hosted on different SQL Servers. Each database is registered separately in VALC (see <a href="javascript:void(0)" onclick="showView('topic-step-10')">Step 10</a>) but they all communicate through the same agent.</li>
         </ul>
 
         <h3 id="what-the-rr-agent-transmits-to-gsi">What the RR Agent Transmits to GSI</h3>
@@ -1407,61 +1363,90 @@
         </table>
         <p>Knowing what the agent reports back is useful when answering customer security questions, when explaining why a value appears in VALC without being entered there manually, and when triaging mismatches between the customer's environment and what VALC shows.</p>
 
-        <h2 id="information-to-collect">Information to Collect</h2>
-        <p>Before beginning, gather the following from the sales contract or the customer's IT contact:</p>
+        <h2 id="about-valc">About VALC</h2>
+        <p>VALC (Version and Licensing Control) is a GSI-developed web application hosted on Microsoft Azure. It is used to manage RapidReconciler and Genius customers. All new customers must be added to VALC before the installation process can begin.</p>
+
+        <div class="callout warning">
+          <div class="callout-label">Important</div>
+          <p>Adding a customer in VALC is performed by GSI staff only. This process will be transitioning to Active Directory control in a future update.</p>
+        </div>
+
+        <p><strong>Login URL:</strong> <a href="https://rr-valc-spa.cloudapp.net/" target="_blank" rel="noopener">https://rr-valc-spa.cloudapp.net/</a> &mdash; Use the login credentials provided to you by GSI (SSO).</p>
+
+        <h2 id="navigating-valc">Navigating VALC</h2>
+        <p>VALC has five main pages accessible from the top navigation:</p>
+
+        <figure>
+          <img src="images/valc-part1-1.jpeg" alt="VALC main navigation showing Clients link spotlighted">
+          <figcaption><strong>VALC &gt; Main Navigation</strong>Click <strong>Clients</strong> to begin. The main navigation also provides access to SQL Scripts, Message Users, Key Generator, and Genius pages.</figcaption>
+        </figure>
+
         <table>
           <thead>
-            <tr><th>Item</th><th>Source / Notes</th></tr>
+            <tr><th>Page</th><th>Description</th></tr>
           </thead>
           <tbody>
-            <tr><td>Number of companies purchased</td><td>From the sales contract — drives the Maximum Companies Allowed value.</td></tr>
-            <tr><td>Exact JD Edwards company numbers</td><td>From the sales contract — the specific 5-digit company numbers the customer has purchased (e.g., <code>00001</code>, <code>00002</code>). Needed at install time to verify the right boxes are checked on the <strong>Companies</strong> tab. See <a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3, Step 3</a>.</td></tr>
-            <tr><td>Customer name</td><td>e.g., Acme Manufacturing.</td></tr>
-            <tr><td>IT contact email and phone</td><td>Needed to schedule the install web meeting.</td></tr>
-            <tr><td>Server topology</td><td>Whether the customer is using a single dedicated server or separate application and database servers — confirmed during the discovery call. This determines which IPs are recorded where (see note below).</td></tr>
-            <tr><td>JD Edwards version</td><td>Optional — for reference only.</td></tr>
+            <tr><td>Clients <em>(default)</em></td><td>Where RapidReconciler clients are added and maintained.</td></tr>
+            <tr><td>SQL Scripts</td><td>Used to deploy RapidReconciler database updates &mdash; <em>RR developers only</em>.</td></tr>
+            <tr><td>Message Users</td><td>Displays messages to users at login; messages include expiration dates.</td></tr>
+            <tr><td>Genius Pages</td><td>Two pages dedicated to Genius customers, including Key Generator.</td></tr>
           </tbody>
         </table>
 
-        <h2 id="discovery-call">Discovery Call</h2>
-        <p>A discovery call is normally held with the customer's IT contact before installation begins. The goal is to confirm everything needed to schedule and execute the install without back-and-forth during the work itself. Use the checklist below as a guide.</p>
+        <h2 id="information-to-collect">What You Still Need to Collect</h2>
+        <p>Most of the technical information needed for the install &mdash; server topology, server names and internal IPs, JDE version, database type, JDE connection details, decimal handling, and a complete environment readiness checklist &mdash; comes from the customer's <a href="javascript:void(0)" onclick="showView('topic-step-1')">pre-install submission email</a>. The <em>Tech Installation Prep</em> guide that the customer fills out before submitting that email is comprehensive, so a separate technical discovery call is not required.</p>
 
-        <h3 id="server-topology">Server Topology</h3>
-        <p>Confirm whether the customer is deploying RapidReconciler on a <strong>single dedicated server</strong> (application and database co-located) or on <strong>separate application and database servers</strong>. This determines where each IP address is recorded in VALC:</p>
-        <ul>
-          <li>The <strong>application server</strong> IP information is captured on the <strong>Client Details</strong> tab (Agent Internal IP Address, Agent External IP Address).</li>
-          <li>The <strong>database server</strong> IP and port are captured on the <strong>Databases</strong> tab, on each database record.</li>
-        </ul>
-        <p>If the customer is using a single dedicated server, the same IP appears in both places. The same topology question also drives the procedure used during a future <a href="javascript:void(0)" onclick="showView('topic-server-migration')">Server Migration</a>.</p>
-
-        <h3 id="discovery-checklist">Discovery Checklist</h3>
-        <p>Confirm each of the following with the customer's IT contact:</p>
+        <p>A few items are <em>not</em> in the submission email and must still be confirmed before or at the start of the working session. Most of these come from the sales contract or a brief touch-base with the customer's I/T lead:</p>
         <table>
           <thead>
-            <tr><th>Item</th><th>Why It Matters</th></tr>
+            <tr><th>Item</th><th>Source</th><th>Why It Matters</th></tr>
           </thead>
           <tbody>
-            <tr><td>Server topology (dedicated vs. separate)</td><td>Determines IP placement in VALC and shapes the install sequence.</td></tr>
-            <tr><td>Maintenance window timezone and preferred install time</td><td>The install briefly disrupts data flow. Schedule for a low-impact window in the customer's timezone.</td></tr>
-            <tr><td>Primary IT contact (email and phone)</td><td>Needed for the install web meeting and for follow-up if anything fails. Confirm availability for the scheduled window.</td></tr>
-            <tr><td>JDE version</td><td>Verify against the Version field captured on the Add Client form. Drives any version-specific handling.</td></tr>
-            <tr><td>JDE database type</td><td>AS/400 or Oracle — drives which JDE database drivers must be installed on the customer's application server.</td></tr>
-            <tr><td>Planned go-live date</td><td>Sets the timing target and informs the customer-side communication plan.</td></tr>
-            <tr><td>Number of company numbers to license initially</td><td>Cross-check against the sales contract; flag any discrepancy before install day. See <a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3, Step 3</a> for the licensing step.</td></tr>
-            <tr><td>Additional databases beyond Production</td><td>Whether Test, Dev, or Training databases are required at install time. Each needs the backup-restore process and a separate registration in VALC. See <a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3, Step 1</a>.</td></tr>
-            <tr><td>Complex password policy required at go-live?</td><td>If yes, the toggle is enabled at install time rather than later. See the <a href="javascript:void(0)" onclick="showView('topic-password-policy')">Password Policy</a> reference for details.</td></tr>
-            <tr><td>Customer's RapidReconciler administrator</td><td>The customer-side person who will manage their users, assign passwords, and own day-to-day administration. Their email is needed for the initial GSI Admin user record.</td></tr>
-            <tr><td>Existing firewall rules on the database server</td><td>Confirm the application server can reach the database on the configured SQL port. Common cause of install hangs — see <a href="javascript:void(0)" onclick="showView('topic-troubleshooting')">Troubleshooting</a>.</td></tr>
+            <tr>
+              <td>Number of companies purchased</td>
+              <td>Sales contract</td>
+              <td>Drives the <strong>Maximum Companies Allowed</strong> value on the client record (<a href="javascript:void(0)" onclick="showView('topic-step-2')">Step 2</a>).</td>
+            </tr>
+            <tr>
+              <td>Exact JDE company numbers (5-digit)</td>
+              <td>Sales contract</td>
+              <td>The specific company numbers purchased (e.g., <code>00001</code>, <code>00002</code>). Used at <a href="javascript:void(0)" onclick="showView('topic-step-12')">Step 12</a> to verify the right boxes are checked on the <strong>Companies</strong> tab.</td>
+            </tr>
+            <tr>
+              <td>Maintenance window timezone &amp; preferred install time</td>
+              <td>Customer I/T contact</td>
+              <td>The agent install briefly disrupts data flow. Schedule for a low-impact window in the customer's timezone.</td>
+            </tr>
+            <tr>
+              <td>Planned go-live date</td>
+              <td>Sales / customer I/T</td>
+              <td>Sets the timing target and informs the customer-side communication plan.</td>
+            </tr>
+            <tr>
+              <td>Additional databases beyond Production</td>
+              <td>Customer I/T contact</td>
+              <td>Whether Test, Dev, or Training databases are required at install time. Each needs the backup-restore process and a separate registration in VALC. See <a href="javascript:void(0)" onclick="showView('topic-step-10')">Step 10</a>.</td>
+            </tr>
+            <tr>
+              <td>Complex password policy required at go-live?</td>
+              <td>Customer I/T contact</td>
+              <td>If yes, the toggle is enabled at install time rather than later. See the <a href="javascript:void(0)" onclick="showView('topic-password-policy')">Password Policy</a> reference.</td>
+            </tr>
+            <tr>
+              <td>Customer's RapidReconciler administrator (email)</td>
+              <td>Customer I/T contact</td>
+              <td>The customer-side person who will manage their users, assign passwords, and own day-to-day administration. Their email is needed for the initial GSI Admin user record (<a href="javascript:void(0)" onclick="showView('topic-step-3')">Step 3</a>).</td>
+            </tr>
           </tbody>
         </table>
 
         <div class="callout tip">
           <div class="callout-label">Tip</div>
-          <p>Document the answers to the checklist in the customer's record (or wherever your team tracks install prep) so they're available to anyone who picks up the work later. Discovery answers also feed directly into the <strong>Information to Collect</strong> table below — capture them once.</p>
+          <p>Document these answers in the customer's record (or wherever your team tracks install prep) so they're available to anyone who picks up the work later.</p>
         </div>
 
-        <h3 id="network-access-requirements">Network Access Requirements</h3>
-        <p>The customer's application server must be able to reach the following GSI hosts on the indicated ports for the agent to install and run. Confirm with the customer's IT contact that outbound traffic to these hosts is permitted; access by hostname is preferred over IP.</p>
+        <h3 id="network-access-requirements">Network Access Requirements (Reference)</h3>
+        <p>The customer's checklist in the submission email already confirms outbound access to GSI hosts. The values are reproduced here for reference and for troubleshooting if connectivity issues come up during agent install:</p>
         <table>
           <thead>
             <tr><th>Host</th><th>IP Address</th><th>Ports</th></tr>
@@ -1471,17 +1456,17 @@
             <tr><td><code>rr-spa.cloudapp.net</code></td><td>52.170.255.174</td><td>443 outbound</td></tr>
           </tbody>
         </table>
-        <p>To verify connectivity before install day, have the customer's IT contact open a browser on the application server and navigate to <a href="https://rapidreconciler.getgsi.com" target="_blank" rel="noopener">https://rapidreconciler.getgsi.com</a>. The login page should appear. If it does not, the firewall or proxy rules need to be addressed before <a href="javascript:void(0)" onclick="showView('topic-part2')">Part 2</a>.</p>
+        <p>To verify connectivity ahead of <a href="javascript:void(0)" onclick="showView('topic-step-8')">Step 8</a>, have the customer's I/T contact open a browser on the application server and navigate to <a href="https://rapidreconciler.getgsi.com" target="_blank" rel="noopener">https://rapidreconciler.getgsi.com</a>. The login page should appear. If it does not, the firewall or proxy rules need to be addressed before the agent install.</p>
 
         <h2 id="pre-install-checks">Pre-Install Checks</h2>
         <ol>
           <li>Confirm you have permissions to access VALC and perform client setup tasks.</li>
-          <li>Confirm the customer's <code>RapidReconciler_Prod</code> database has been created and populated on the customer's SQL Server. This is the responsibility of the GSI database administrator (or the customer's DBA in coordination with GSI). See the <em>Installing Production Database</em> guide for that procedure. Once the database exists on SQL Server, VALC is told how to reach it as part of Part 3 of this guide.</li>
+          <li>Confirm the customer's <code>RapidReconciler_Prod</code> database has been created and populated on the customer's SQL Server. This is the responsibility of the GSI database administrator (or the customer's DBA in coordination with GSI). See the <em>Installing Production Database</em> guide for that procedure. Once the database exists on SQL Server, VALC is told how to reach it at Step 10 of this guide.</li>
         </ol>
 
         <div class="callout tip">
           <div class="callout-label">Tip</div>
-          <p>Verify the customer's IT contact is available for a working session before you begin Part 2 — the agent install requires you to be on their application server, and waiting on access mid-install is the most common cause of delays.</p>
+          <p>Verify the customer's IT contact is available for a working session before you begin Step 8 — the agent install requires you to be on their application server, and waiting on access mid-install is the most common cause of delays.</p>
         </div>
 
         <div class="callout">
@@ -1490,27 +1475,29 @@
         </div>
 
         <div class="topic-footer-nav">
-          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
-          <button class="next-btn" onclick="showView('topic-part1')">Next: Part 1: VALC Setup &rarr;</button>
+          <button class="back-btn" onclick="goHome()">&larr; Back to Overview</button>
+          <button class="next-btn" onclick="showView('topic-step-1')">Next: Step 1 &mdash; Pre-Install Submission &rarr;</button>
         </div>
       </section>
 
-      <section id="topic-part1" class="view">
-        <h1>Part 1: Initial VALC Setup</h1>
-        <p>Add the client record to VALC, create the initial GSI Admin user, and explain the toggles and tabs the user will encounter during install.</p>
+      <!-- =================================================================
+           Flowchart Step 1 — Receive Pre-Install Submission Email
+           ================================================================= -->
+      <section id="topic-step-1" class="view">
+        <h1>Step 1 &mdash; Receive Pre-Install Submission Email</h1>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
 
-<p>In this phase you'll create the client record in VALC, set up the initial GSI Admin user, configure starter modules, and request DNS configuration from I/T. Once this part is complete, the customer is ready for the agent install.</p>
-
-        <div class="diamond-divider"><span class="diamond"></span></div>
-
-        <h2 id="prep-email">Before You Begin: Customer Pre-Install Submission</h2>
         <p>Before opening VALC, confirm that the customer's I/T contact has submitted their pre-installation email. This email is generated by the <em>Tech Installation Prep</em> guide and contains every value you need to fill out the VALC client record correctly on the first pass — topology, server names and internal IPs, source platform, JD Edwards connection details, and a complete environment readiness checklist.</p>
 
         <div class="callout warning">
-          <div class="callout-label">Do not start Part 1 without this email</div>
-          <p>The submission email is the trigger for VALC setup. If you haven't received it, contact the customer's I/T lead and direct them to the Tech Installation Prep guide. Starting VALC entry from a partial discovery call risks recording the wrong server names or IPs, which causes rework during Part 2.</p>
+          <div class="callout-label">Do not start without this email</div>
+          <p>The submission email is the trigger for VALC setup. If you haven't received it, contact the customer's I/T lead and direct them to the Tech Installation Prep guide. Starting VALC entry from a partial discovery call risks recording the wrong server names or IPs, which causes rework during agent install (Step 8).</p>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-label">Same email, two roles &mdash; plus a database-ready notification</div>
+          <p>This same submission email also kicked off the <strong>database install</strong> (performed by the RR DBA in your group). The DBA used it to install <code>RapidReconciler_Prod</code> and configure the SSIS package; you'll use it to create the VALC client record, register the database, and complete the install. The DBA's final step is to send a <strong>second email</strong> to <code>rrsupport@getgsi.com</code> with subject <em>"RapidReconciler Database Ready &mdash; {Customer Name} &mdash; VALC Install Can Begin"</em> &mdash; that notification is your trigger to start. It contains the database server's internal IP, the SQL Server port (if non-default), and the <code>rruser</code> password (if non-default), all of which you'll need at <a href="javascript:void(0)" onclick="showView('topic-step-10')">Step 10 (Register Database in VALC)</a>. If you haven't received the database-ready notification, pause and check with the DBA before continuing.</p>
         </div>
 
         <p>The submission lands in the <code>rrsupport@getgsi.com</code> inbox with a subject line of the form <strong>RapidReconciler Pre-Install Submission — {Customer Name}</strong>. A real example is shown below.</p>
@@ -1598,69 +1585,44 @@ SUBMITTED BY
 </pre>
         </figure>
 
-        <h3 id="prep-email-mapping">How the Submission Maps to VALC</h3>
+        <h2 id="prep-email-mapping">How the Submission Maps to VALC</h2>
         <p>The table below shows where each section of the email lands during the install. Use it as your input map when creating the client record and during later phases.</p>
         <table>
           <thead>
             <tr><th>Submission Section</th><th>Used In</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Topology Selected</strong> and <strong>Server Names &amp; Internal IPs</strong></td><td>Part 1 — Step 1 (Client Details: Agent Internal IP Address) and Part 3 — Step 1 (Databases tab: database server IP and port).</td></tr>
-            <tr><td><strong>Source Platform</strong></td><td>Confirms which JDE database driver is installed on the SSIS host; drives Part 2 troubleshooting if the SQL Server connection fails.</td></tr>
-            <tr><td><strong>Checklist Summary</strong> and <strong>Checklist Detail</strong></td><td>Verifies the customer's environment is install-ready. Any unchecked item is a blocker — pause and resolve before proceeding to Part 2.</td></tr>
-            <tr><td><strong>JD Edwards — Data Dictionary Variables</strong></td><td>Used during Part 3 — Step 3 to license company numbers and confirm decimal handling matches the customer's JDE configuration.</td></tr>
-            <tr><td><strong>JD Edwards — Connection Details</strong></td><td>Used by the agent during Part 2 — Step 2 (Validate SQL Server connection) and recorded on the Databases tab in Part 3 — Step 1.</td></tr>
-            <tr><td><strong>Submitted By</strong></td><td>The named contact becomes the customer's RapidReconciler administrator; their email is used when creating the initial GSI Admin user (Part 1 — Step 2).</td></tr>
+            <tr><td><strong>Topology Selected</strong> and <strong>Server Names &amp; Internal IPs</strong></td><td>Step 2 (Client Details: Agent Internal IP Address) and Step 10 (Databases tab: database server IP and port).</td></tr>
+            <tr><td><strong>Source Platform</strong></td><td>Confirms which JDE database driver is installed on the SSIS host; drives troubleshooting at Step 9 if the SQL Server connection fails.</td></tr>
+            <tr><td><strong>Checklist Summary</strong> and <strong>Checklist Detail</strong></td><td>Verifies the customer's environment is install-ready. Any unchecked item is a blocker — pause and resolve before proceeding to Step 8.</td></tr>
+            <tr><td><strong>JD Edwards — Data Dictionary Variables</strong></td><td>Used during Step 12 to license company numbers and confirm decimal handling matches the customer's JDE configuration.</td></tr>
+            <tr><td><strong>JD Edwards — Connection Details</strong></td><td>Used by the agent during Step 9 (Validate SQL Server connection) and recorded on the Databases tab in Step 10.</td></tr>
+            <tr><td><strong>Submitted By</strong></td><td>The named contact becomes the customer's RapidReconciler administrator; their email is used when creating the initial GSI Admin user (Step 3).</td></tr>
           </tbody>
         </table>
 
         <div class="callout tip">
           <div class="callout-label">Tip</div>
-          <p>Save or print the email and keep it open in a second window while you work through Part 1. Most VALC fields can be filled directly from the submission without needing to ask the customer for clarification.</p>
+          <p>Save or print the email and keep it open in a second window while you work through Steps 2&ndash;5. Most VALC fields can be filled directly from the submission without needing to ask the customer for clarification.</p>
         </div>
 
-        <div class="flow-nav" aria-label="Flowchart navigation">
-          <span class="flow-nav-label">Flowchart</span>
-          <span class="flow-nav-disabled">← Step 1 is the first step</span>
-          <span class="flow-nav-spacer"></span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-create-client')">Step 2: Create client record →</a>
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="backToFlowchart()">&larr; Back to Flowchart</button>
+          <span class="flow-nav-disabled">&larr; First step</span>
+          <button class="next-btn" onclick="showView('topic-step-2')">Next: Step 2 — Create Client Record &rarr;</button>
         </div>
+      </section>
 
-        <h2 id="about-valc">About VALC</h2>
-        <p>VALC (Version and Licensing Control) is a GSI-developed web application hosted on Microsoft Azure. It is used to manage RapidReconciler and Genius customers. All new customers must be added to VALC before the installation process can begin.</p>
+      <!-- =================================================================
+           Flowchart Step 2 — Create Client Record in VALC
+           ================================================================= -->
+      <section id="topic-step-2" class="view">
+        <h1>Step 2 &mdash; Create Client Record in VALC</h1>
 
-        <div class="callout warning">
-          <div class="callout-label">Important</div>
-          <p>Adding a customer in VALC is performed by GSI staff only. This process will be transitioning to Active Directory control in a future update.</p>
-        </div>
+        <div class="diamond-divider"><span class="diamond"></span></div>
 
-        <p><strong>Login URL:</strong> <a href="https://rr-valc-spa.cloudapp.net/" target="_blank" rel="noopener">https://rr-valc-spa.cloudapp.net/</a> — Use the login credentials provided to you by GSI (SSO).</p>
-
-        <h2 id="navigating-valc">Navigating VALC</h2>
-        <p>VALC has five main pages accessible from the top navigation:</p>
-
-        <figure>
-          <img src="images/valc-part1-1.jpeg" alt="VALC main navigation showing Clients link spotlighted">
-          <figcaption><strong>VALC &gt; Main Navigation</strong>Click <strong>Clients</strong> to begin. The main navigation also provides access to SQL Scripts, Message Users, Key Generator, and Genius pages.</figcaption>
-        </figure>
-
-        <table>
-          <thead>
-            <tr><th>Page</th><th>Description</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Clients <em>(default)</em></td><td>Where RapidReconciler clients are added and maintained.</td></tr>
-            <tr><td>SQL Scripts</td><td>Used to deploy RapidReconciler database updates — <em>RR developers only</em>.</td></tr>
-            <tr><td>Message Users</td><td>Displays messages to users at login; messages include expiration dates.</td></tr>
-            <tr><td>Genius Pages</td><td>Two pages dedicated to Genius customers, including Key Generator.</td></tr>
-          </tbody>
-        </table>
-
-        <div class="step-card" id="flow-step-create-client">
-          <div class="step-badge">1</div>
-          <div class="step-meta">Part 1 · Step 1 of 4</div>
-          <div class="step-title">Create the Client Record</div>
-          <ol>
+        <h2 id="create-client">Create the Client Record</h2>
+        <ol>
           <li>Click the <strong>Clients</strong> page in the main navigation bar.</li>
           <li>Click <strong>Create Client</strong> in the top-right corner.</li>
         </ol>
@@ -1722,19 +1684,22 @@ SUBMITTED BY
           <figcaption><strong>VALC &gt; Clients</strong>The Clients grid lists all client records and is the entry point to per-client management. The <strong>Actives</strong> filter (top-right) toggles between active and inactive records.</figcaption>
         </figure>
 
-        <div class="flow-nav" aria-label="Flowchart navigation">
-          <span class="flow-nav-label">Flowchart</span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'prep-email')">← Step 1: Pre-Install Submission</a>
-          <span class="flow-nav-spacer"></span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-admin-user')">Step 3: Create initial GSI Admin user →</a>
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="backToFlowchart()">&larr; Back to Flowchart</button>
+          <button class="prev-btn" onclick="showView('topic-step-1')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-step-3')">Next: Step 3 — Create GSI Admin User &rarr;</button>
         </div>
-        </div>
+      </section>
 
-        <div class="step-card" id="flow-step-admin-user">
-          <div class="step-badge">2</div>
-          <div class="step-meta">Part 1 · Step 2 of 4</div>
-          <div class="step-title">Create the Initial User Account</div>
-          <p>An initial user account must be created before the agent can be installed.</p>
+      <!-- =================================================================
+           Flowchart Step 3 — Create Initial GSI Admin User
+           ================================================================= -->
+      <section id="topic-step-3" class="view">
+        <h1>Step 3 &mdash; Create Initial GSI Admin User</h1>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <p>An initial user account must be created before the agent can be installed.</p>
         <ol>
           <li>Click the <strong>Manage Clients</strong> icon for the newly created client.</li>
           <li>Select the <strong>User Accounts</strong> tab.</li>
@@ -1769,19 +1734,22 @@ SUBMITTED BY
           <p>Although users can be created and managed in VALC, ongoing user administration (adding new users, updating rights, locking out staff who change positions, deleting accounts of staff who leave the company) is the responsibility of the customer's on-site administrator. When a customer requests a user change, direct them to their on-site admin unless explicitly contracted otherwise. See <a href="javascript:void(0)" onclick="showView('topic-requests')">Common Requests</a> for the full ownership matrix.</p>
         </div>
 
-        <div class="flow-nav" aria-label="Flowchart navigation">
-          <span class="flow-nav-label">Flowchart</span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-create-client')">← Step 2: Create client record</a>
-          <span class="flow-nav-spacer"></span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-modules')">Step 4: Configure modules →</a>
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="backToFlowchart()">&larr; Back to Flowchart</button>
+          <button class="prev-btn" onclick="showView('topic-step-2')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-step-4')">Next: Step 4 — Configure Modules &rarr;</button>
         </div>
-        </div>
+      </section>
 
-        <div class="step-card" id="flow-step-modules">
-          <div class="step-badge">3</div>
-          <div class="step-meta">Part 1 · Step 3 of 4</div>
-          <div class="step-title">Configure Modules and Additional Fields</div>
-          <ol>
+      <!-- =================================================================
+           Flowchart Step 4 — Configure Modules and Additional Fields
+           ================================================================= -->
+      <section id="topic-step-4" class="view">
+        <h1>Step 4 &mdash; Configure Modules and Additional Fields</h1>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <ol>
           <li>Click the <strong>Manage Clients</strong> icon for the client to open the Manage Client screen.</li>
           <li>On the <strong>Client Details</strong> tab, configure the additional fields described below.</li>
           <li>Under the <strong>Tabs</strong> section, check <strong>Inventory</strong> and <strong>Admin</strong> to start.</li>
@@ -1833,66 +1801,47 @@ SUBMITTED BY
 
         <p>The <strong>Setup Step</strong> field will display <code>Created</code> at this stage and will cycle through subsequent steps as the installation progresses.</p>
 
-        <div class="flow-nav" aria-label="Flowchart navigation">
-          <span class="flow-nav-label">Flowchart</span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-admin-user')">← Step 3: Create initial GSI Admin user</a>
-          <span class="flow-nav-spacer"></span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-dns-cert')">Step 5: Submit DNS / Cert Mgmt request →</a>
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="backToFlowchart()">&larr; Back to Flowchart</button>
+          <button class="prev-btn" onclick="showView('topic-step-3')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-step-5')">Next: Step 5 — DNS / Cert Mgmt Request &rarr;</button>
         </div>
-        </div>
+      </section>
 
-        <div class="step-card" id="flow-step-dns-cert">
-          <div class="step-badge">4</div>
-          <div class="step-meta">Part 1 · Step 4 of 4</div>
-          <div class="step-title">Certificate Management</div>
-          <ol>
+      <!-- =================================================================
+           Flowchart Step 5 — Submit DNS / Certificate Management Request
+           ================================================================= -->
+      <section id="topic-step-5" class="view">
+        <h1>Step 5 &mdash; Submit DNS / Certificate Management Request</h1>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <ol>
           <li>Contact I/T to add an <strong>'A' record</strong> to the GSI IP service provider configuration.</li>
           <li>Provide the Agent Internal IP address and domain URL.</li>
         </ol>
 
         <div class="callout">
           <div class="callout-label">Note</div>
-          <p>This step ensures the application UI will use the <code>*.getgsi.com</code> certificate, which is required for the agent to communicate with the database server. Allow time for DNS propagation before proceeding to Part 2.</p>
-        </div>
-
-        <div class="flow-nav" aria-label="Flowchart navigation">
-          <span class="flow-nav-label">Flowchart</span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-modules')">← Step 4: Configure modules</a>
-          <span class="flow-nav-spacer"></span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-install-agent')">Step 8: Install agent →</a>
-        </div>
+          <p>This step ensures the application UI will use the <code>*.getgsi.com</code> certificate, which is required for the agent to communicate with the database server. Allow time for DNS propagation before proceeding to Step 8.</p>
         </div>
 
         <div class="topic-footer-nav">
-          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
-          <button class="prev-btn" onclick="showView('topic-overview')">&larr; Previous</button>
-          <button class="next-btn" onclick="showView('topic-part2')">Next: Part 2: Install Agent &rarr;</button>
+          <button class="back-btn" onclick="backToFlowchart()">&larr; Back to Flowchart</button>
+          <button class="prev-btn" onclick="showView('topic-step-4')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-step-8')">Next: Step 8 — Install Agent &rarr;</button>
         </div>
       </section>
 
-      <section id="topic-part2" class="view">
-        <h1>Part 2: Installing the RapidReconciler Agent</h1>
-        <p>Run the agent installer on the customer's application server and verify connectivity back to VALC.</p>
+      <!-- =================================================================
+           Flowchart Step 8 — Install Agent on Customer Server
+           ================================================================= -->
+      <section id="topic-step-8" class="view">
+        <h1>Step 8 &mdash; Install Agent on Customer Server</h1>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
 
-<p>In this phase you'll install the RapidReconciler Agent on the customer's application server, validate its SQL connection, and confirm the agent has reported back to VALC.</p>
-
-        <div class="diamond-divider"><span class="diamond"></span></div>
-
-        <h2 id="prerequisites">Prerequisites</h2>
-        <ul>
-          <li>You must be logged in on the <strong>customer's application server</strong> to complete this phase.</li>
-          <li>Schedule a web meeting with the customer's IT contact before proceeding.</li>
-          <li>The <strong>Setup Step</strong> in the client's VALC record must show <code>Created</code> in order for the agent download prompt to appear.</li>
-        </ul>
-
-        <div class="step-card" id="flow-step-install-agent">
-          <div class="step-badge">1</div>
-          <div class="step-meta">Part 2 · Step 1 of 3</div>
-          <div class="step-title">Download and Install the Agent</div>
-
-          <div class="callout principle">
+        <div class="callout principle">
             <div class="callout-label">Shared task with Customer I/T</div>
             <p>This step is performed jointly: the RR Network Tech runs the install, and Customer I/T is on-session to provide application-server access, run the installer with local administrator credentials, and confirm the install completes from their side. Both parties should be on the working session before starting.</p>
           </div>
@@ -1904,7 +1853,7 @@ SUBMITTED BY
 
         <ol>
           <li>From the customer's application server, open a web browser and navigate to <a href="https://rapidreconciler.getgsi.com" target="_blank" rel="noopener">https://rapidreconciler.getgsi.com</a>.</li>
-          <li>Log in using the user credentials created in VALC (Part 1, Step 2).</li>
+          <li>Log in using the user credentials created in VALC (Step 3).</li>
           <li>On first login, the agent download screen will be displayed.</li>
           <li>Download the appropriate version of the agent. In the vast majority of cases, this will be the <strong>64-bit version</strong>.</li>
           <li>Execute the downloaded file and follow the installation prompts on the application server.</li>
@@ -1916,23 +1865,26 @@ SUBMITTED BY
           <p>If the download screen does not appear after login, verify the Setup Step in VALC still shows <code>Created</code> and that the user account credentials were entered correctly.</p>
         </div>
 
-        <div class="flow-nav" aria-label="Flowchart navigation">
-          <span class="flow-nav-label">Flowchart</span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part1', 'flow-step-dns-cert')">← Step 5: Submit DNS / Cert Mgmt request</a>
-          <span class="flow-nav-spacer"></span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-validate-sql')">Step 9: Validate SQL Server connection →</a>
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="backToFlowchart()">&larr; Back to Flowchart</button>
+          <button class="prev-btn" onclick="showView('topic-step-5')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-step-9')">Next: Step 9 — Validate SQL Server &rarr;</button>
         </div>
-        </div>
+      </section>
 
-        <div class="step-card" id="flow-step-validate-sql">
-          <div class="step-badge">2</div>
-          <div class="step-meta">Part 2 · Step 2 of 3</div>
-          <div class="step-title">Validate the SQL Server Connection</div>
-          <p>After installation, return to the web browser. Within a couple of minutes, the <strong>Validating Data</strong> screen will appear, followed by the SQL Server connection properties prompt.</p>
+      <!-- =================================================================
+           Flowchart Step 9 — Validate SQL Server Connection
+           ================================================================= -->
+      <section id="topic-step-9" class="view">
+        <h1>Step 9 &mdash; Validate SQL Server Connection</h1>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
+        <p>After installation, return to the web browser. Within a couple of minutes, the <strong>Validating Data</strong> screen will appear, followed by the SQL Server connection properties prompt.</p>
 
         <div class="callout">
           <div class="callout-label">Screenshot pending</div>
-          <p>A screenshot of the SQL Server connection prompt will be added here. This prompt appears during the agent install and is distinct from the <strong>Edit Database</strong> popup in VALC covered in Part 3 — that one registers an existing database with VALC, while this one provides the agent with the credentials it needs to connect to the database directly. Both capture similar fields, but they serve different purposes at different points in the workflow.</p>
+          <p>A screenshot of the SQL Server connection prompt will be added here. This prompt appears during the agent install and is distinct from the <strong>Edit Database</strong> popup in VALC covered at Step 10 — that one registers an existing database with VALC, while this one provides the agent with the credentials it needs to connect to the database directly. Both capture similar fields, but they serve different purposes at different points in the workflow.</p>
         </div>
 
         <p>Enter the following details:</p>
@@ -1954,19 +1906,8 @@ SUBMITTED BY
           <p>If the connection fails, verify the RapidReconciler database server is reachable from the customer's application server on the specified port, and that the firewall allows inbound traffic on that port.</p>
         </div>
 
-        <div class="flow-nav" aria-label="Flowchart navigation">
-          <span class="flow-nav-label">Flowchart</span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-install-agent')">← Step 8: Install agent</a>
-          <span class="flow-nav-spacer"></span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-1-register-the-database-in-valc')">Step 10: Register database in VALC →</a>
-        </div>
-        </div>
-
-        <div class="step-card">
-          <div class="step-badge">3</div>
-          <div class="step-meta">Part 2 · Step 3 of 3</div>
-          <div class="step-title">Verify Connectivity in VALC</div>
-          <p>Return to your local machine and log in to VALC. On the Clients grid, locate the row for the client and confirm all of the following:</p>
+        <h2 id="verify-connectivity">Verify Connectivity in VALC</h2>
+        <p>Return to your local machine and log in to VALC. On the Clients grid, locate the row for the client and confirm all of the following:</p>
         <ul>
           <li>The client's <strong>Status</strong> badge has updated to <strong>Connected</strong>.</li>
           <li>The <strong>Services</strong> and <strong>Agent</strong> version columns are populated.</li>
@@ -1977,26 +1918,22 @@ SUBMITTED BY
           <img src="images/valc-part2-2.jpeg" alt="Clients grid row showing Connected status, populated versions, and Successful system status">
           <figcaption><strong>VALC &gt; Clients</strong>The client row after a successful agent install. Connected, version columns populated, and System Status Successful confirm end-to-end connectivity.</figcaption>
         </figure>
-        </div>
 
         <div class="topic-footer-nav">
-          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
-          <button class="prev-btn" onclick="showView('topic-part1')">&larr; Previous</button>
-          <button class="next-btn" onclick="showView('topic-part3')">Next: Part 3: Complete Setup &rarr;</button>
+          <button class="back-btn" onclick="backToFlowchart()">&larr; Back to Flowchart</button>
+          <button class="prev-btn" onclick="showView('topic-step-8')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-step-10')">Next: Step 10 — Register Database &rarr;</button>
         </div>
       </section>
 
-      <section id="topic-part3" class="view">
-        <h1>Part 3: Completing the Setup in VALC</h1>
-        <p>Register the database, verify it goes Online, license company numbers, and complete the customer handoff.</p>
+      <!-- =================================================================
+           Flowchart Step 10 — Register Database in VALC
+           ================================================================= -->
+      <section id="topic-step-10" class="view">
+        <h1>Step 10 &mdash; Register Database in VALC</h1>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
 
-<p>With the agent installed and connectivity confirmed, this final phase points VALC at the customer's database, verifies it's reachable, licenses the customer's company numbers per the purchase agreement, and hands the environment off to the customer's RapidReconciler administrator.</p>
-
-        <div class="diamond-divider"><span class="diamond"></span></div>
-
-        <h2 id="step-1-register-the-database-in-valc">Step 1 — Register the Database in VALC</h2>
         <p>The customer's <code>RapidReconciler_Prod</code> database already exists on their SQL Server (created as part of the pre-install database setup). This step tells VALC how to reach it: address, credentials, job name, and so on. The Edit Database popup is also reused to register Test, Dev, or Training databases when those are part of the contract, and to update connection details later in the lifecycle.</p>
 
         <div class="callout">
@@ -2040,14 +1977,21 @@ SUBMITTED BY
 
         <p>The new database appears as a row on the Databases tab. Once the agent is connected and the registration is correct, the <strong>Status</strong> column updates to <strong>Online</strong>.</p>
 
-        <div class="flow-nav" aria-label="Flowchart navigation">
-          <span class="flow-nav-label">Flowchart</span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part2', 'flow-step-validate-sql')">← Step 9: Validate SQL Server connection</a>
-          <span class="flow-nav-spacer"></span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-2-verify-database-status')">Step 11: Verify databases show Online →</a>
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="backToFlowchart()">&larr; Back to Flowchart</button>
+          <button class="prev-btn" onclick="showView('topic-step-9')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-step-11')">Next: Step 11 — Verify Databases Online &rarr;</button>
         </div>
+      </section>
 
-        <h2 id="step-2-verify-database-status">Step 2 — Verify Database Status</h2>
+      <!-- =================================================================
+           Flowchart Step 11 — Verify Databases Show Online
+           ================================================================= -->
+      <section id="topic-step-11" class="view">
+        <h1>Step 11 &mdash; Verify Databases Show Online</h1>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
         <p>On the <strong>Databases</strong> tab, confirm that every registered database shows a status of <strong>Online</strong>.</p>
 
         <figure>
@@ -2067,14 +2011,21 @@ SUBMITTED BY
           <figcaption><strong>VALC &gt; Manage Client &gt; Databases (failure states)</strong><strong>Unknown</strong> typically means the agent has lost contact with a database it had previously reached — the row still has a revision number from a prior successful connection. <strong>Stopped</strong> means the database has not yet connected since registration; the Revision Number column is blank because no revision has been reported. Investigate the agent connection and database server reachability before proceeding.</figcaption>
         </figure>
 
-        <div class="flow-nav" aria-label="Flowchart navigation">
-          <span class="flow-nav-label">Flowchart</span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-1-register-the-database-in-valc')">← Step 10: Register database in VALC</a>
-          <span class="flow-nav-spacer"></span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-3-license-company-numbers')">Step 12: License company numbers →</a>
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="backToFlowchart()">&larr; Back to Flowchart</button>
+          <button class="prev-btn" onclick="showView('topic-step-10')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-step-12')">Next: Step 12 — License Company Numbers &rarr;</button>
         </div>
+      </section>
 
-        <h2 id="step-3-license-company-numbers">Step 3 — License Company Numbers</h2>
+      <!-- =================================================================
+           Flowchart Step 12 — License Company Numbers
+           ================================================================= -->
+      <section id="topic-step-12" class="view">
+        <h1>Step 12 &mdash; License Company Numbers</h1>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
         <p>With the database showing <strong>Online</strong>, the customer's company numbers become available on the <strong>Companies</strong> tab.</p>
         <ol>
           <li>Select the <strong>Companies</strong> tab.</li>
@@ -2092,21 +2043,28 @@ SUBMITTED BY
           <p>If more than one RapidReconciler database has been registered for this client, company licensing must be completed for each database separately. Use the database dropdown to switch between them.</p>
         </div>
 
-        <div class="flow-nav" aria-label="Flowchart navigation">
-          <span class="flow-nav-label">Flowchart</span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-2-verify-database-status')">← Step 11: Verify databases show Online</a>
-          <span class="flow-nav-spacer"></span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-4-customer-handoff')">Step 13: Customer handoff →</a>
+        <div class="topic-footer-nav">
+          <button class="back-btn" onclick="backToFlowchart()">&larr; Back to Flowchart</button>
+          <button class="prev-btn" onclick="showView('topic-step-11')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-step-13')">Next: Step 13 — Customer Handoff &rarr;</button>
         </div>
+      </section>
 
-        <h2 id="step-4-customer-handoff">Step 4 — Customer Handoff</h2>
+      <!-- =================================================================
+           Flowchart Step 13 — Customer Handoff
+           ================================================================= -->
+      <section id="topic-step-13" class="view">
+        <h1>Step 13 &mdash; Customer Handoff</h1>
+
+        <div class="diamond-divider"><span class="diamond"></span></div>
+
         <p>With licensing complete, the install is functionally done. The remaining step is to formally hand the environment off to the customer's RapidReconciler administrator so they can begin setting up their own users and using the application.</p>
 
         <h3 id="what-to-send-the-customer">What to Send the Customer</h3>
         <p>Send the customer's IT contact and RapidReconciler administrator a handoff email containing:</p>
         <ul>
           <li><strong>Login URL</strong> — the customer's <code>.getgsi.com</code> subdomain (from the Domain URL field on the Client Details tab).</li>
-          <li><strong>Initial GSI Admin credentials</strong> — the email and temporary password for the administrator user created in <a href="javascript:void(0)" onclick="showView('topic-part1')">Part 1, Step 2</a>. The administrator will be prompted to reset the password on first login.</li>
+          <li><strong>Initial GSI Admin credentials</strong> — the email and temporary password for the administrator user created in <a href="javascript:void(0)" onclick="showView('topic-step-3')">Step 3</a>. The administrator will be prompted to reset the password on first login.</li>
           <li><strong>Pointer to user management</strong> — a brief note that the administrator can add additional users from the <strong>User Accounts</strong> tab in their environment.</li>
           <li><strong>Password policy status</strong> — whether the complex password policy was enabled at install. If not, mention they can request activation later via <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a>. See the <a href="javascript:void(0)" onclick="showView('topic-password-policy')">Password Policy</a> reference for full details.</li>
           <li><strong>Support contact</strong> — <a href="mailto:rrsupport@getgsi.com">rrsupport@getgsi.com</a> for ongoing questions.</li>
@@ -2131,31 +2089,24 @@ SUBMITTED BY
           <p>GSI continues to own the underlying environment — VALC configuration, agent and database health, server-side updates, and the kinds of changes captured in <a href="javascript:void(0)" onclick="showView('topic-requests')">Common Requests</a>.</p>
         </div>
 
-        <div class="flow-nav" aria-label="Flowchart navigation">
-          <span class="flow-nav-label">Flowchart</span>
-          <a href="javascript:void(0)" onclick="goToStep('topic-part3', 'step-3-license-company-numbers')">← Step 12: License company numbers</a>
-          <span class="flow-nav-spacer"></span>
-          <span class="flow-nav-disabled">Step 13 is the final step — Customer Live ✓</span>
-        </div>
-
         <div class="topic-footer-nav">
-          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
-          <button class="prev-btn" onclick="showView('topic-part2')">&larr; Previous</button>
+          <button class="back-btn" onclick="backToFlowchart()">&larr; Back to Flowchart</button>
+          <button class="prev-btn" onclick="showView('topic-step-12')">&larr; Previous</button>
           <button class="next-btn" onclick="showView('topic-checklist')">Next: Summary Checklist &rarr;</button>
         </div>
       </section>
 
       <section id="topic-checklist" class="view">
         <h1>Summary Checklist</h1>
-        <p>End-to-end verification list across all three parts. Run it before signing off the install.</p>
+        <p>End-to-end verification list across all install steps. Run it before signing off the install.</p>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
 
-<p>Use this checklist to track progress through the installation. The order mirrors the phases in this how-to.</p>
+<p>Use this checklist to track progress through the installation. The order mirrors the flowchart steps in this how-to.</p>
 
         <div class="diamond-divider"><span class="diamond"></span></div>
 
-        <h2 id="part-1-valc-setup">Part 1 — VALC Setup</h2>
+        <h2 id="part-1-valc-setup">VALC Setup (Steps 2&ndash;5)</h2>
         <ul class="checklist">
           <li>Client record created in VALC</li>
           <li>License start and end dates set</li>
@@ -2165,14 +2116,14 @@ SUBMITTED BY
           <li>'A' record added by I/T; DNS confirmed</li>
         </ul>
 
-        <h2 id="part-2-agent-installation">Part 2 — Agent Installation</h2>
+        <h2 id="part-2-agent-installation">Agent Installation (Steps 8&ndash;9)</h2>
         <ul class="checklist">
           <li>Agent downloaded and installed on customer's application server</li>
           <li>SQL Server connection validated</li>
           <li>VALC status shows "Connected" and Agent Version is populated</li>
         </ul>
 
-        <h2 id="part-3-completing-setup">Part 3 — Completing Setup</h2>
+        <h2 id="part-3-completing-setup">Completing Setup (Steps 10&ndash;13)</h2>
         <ul class="checklist">
           <li>RapidReconciler_Prod database registered in VALC (and any additional databases per contract)</li>
           <li>All databases show "Online" on the Databases tab</li>
@@ -2182,8 +2133,8 @@ SUBMITTED BY
         </ul>
 
         <div class="topic-footer-nav">
-          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
-          <button class="prev-btn" onclick="showView('topic-part3')">&larr; Previous</button>
+          <button class="back-btn" onclick="goHome()">&larr; Back to Overview</button>
+          <button class="prev-btn" onclick="showView('topic-step-13')">&larr; Previous</button>
           <button class="next-btn" onclick="showView('topic-requests')">Next: Common Requests &rarr;</button>
         </div>
       </section>
@@ -2250,12 +2201,12 @@ SUBMITTED BY
             </tr>
             <tr>
               <td>Add a new database (Test, Dev, Train, etc.)</td>
-              <td>On the customer's SQL Server, back up <code>RapidReconciler_Prod</code> and restore it under the new name. Then open the client's <strong>Databases</strong> tab in VALC and click <strong>Create Database</strong> to register it. See <a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3, Step 1</a> for the field reference.</td>
+              <td>On the customer's SQL Server, back up <code>RapidReconciler_Prod</code> and restore it under the new name. Then open the client's <strong>Databases</strong> tab in VALC and click <strong>Create Database</strong> to register it. See <a href="javascript:void(0)" onclick="showView('topic-step-10')">Step 10</a> for the field reference.</td>
               <td>GSI</td>
             </tr>
             <tr>
               <td>Update database connection details (IP, port, credentials)</td>
-              <td>Open the client's <strong>Databases</strong> tab, click the edit icon on the row, and update fields in the Edit Database popup. See <a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3, Step 1</a>.</td>
+              <td>Open the client's <strong>Databases</strong> tab, click the edit icon on the row, and update fields in the Edit Database popup. See <a href="javascript:void(0)" onclick="showView('topic-step-10')">Step 10</a>.</td>
               <td>GSI</td>
             </tr>
             <tr>
@@ -2277,7 +2228,7 @@ SUBMITTED BY
         </div>
 
         <div class="topic-footer-nav">
-          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="back-btn" onclick="goHome()">&larr; Back to Overview</button>
           <button class="prev-btn" onclick="showView('topic-checklist')">&larr; Previous</button>
           <button class="next-btn" onclick="showView('topic-troubleshooting')">Next: Troubleshooting &rarr;</button>
         </div>
@@ -2327,7 +2278,7 @@ SUBMITTED BY
         <div class="diamond-divider"><span class="diamond"></span></div>
 
         <h2 id="database-status-unknown-or-stopped">Database Status: Unknown or Stopped</h2>
-        <p><strong>Symptom:</strong> On the <strong>Databases</strong> tab, a row shows <strong>Unknown</strong> (orange) or <strong>Stopped</strong> (orange) instead of <strong>Online</strong> (green). See <a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3, Step 2</a> for an example image.</p>
+        <p><strong>Symptom:</strong> On the <strong>Databases</strong> tab, a row shows <strong>Unknown</strong> (orange) or <strong>Stopped</strong> (orange) instead of <strong>Online</strong> (green). See <a href="javascript:void(0)" onclick="showView('topic-step-11')">Step 11</a> for an example image.</p>
 
         <p><strong>Tell them apart:</strong></p>
         <ul>
@@ -2346,7 +2297,7 @@ SUBMITTED BY
 
         <p><strong>Remediation:</strong></p>
         <ol>
-          <li>Open the Edit Database popup for the failing row and verify every field matches the actual database — see <a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3, Step 1</a> for the field reference.</li>
+          <li>Open the Edit Database popup for the failing row and verify every field matches the actual database — see <a href="javascript:void(0)" onclick="showView('topic-step-10')">Step 10</a> for the field reference.</li>
           <li>Confirm the RR Agent service is running on the customer's application server. If not, start it.</li>
           <li>Check today's agent <code>.out</code> log file (see <a href="javascript:void(0)" onclick="showView('topic-troubleshooting')">Diagnostic Tools</a> above) for connection errors or stack traces.</li>
           <li>From the application server, attempt a manual connection to the database server on the configured port (e.g., <code>telnet 10.x.x.x 1433</code>) to confirm reachability.</li>
@@ -2374,7 +2325,7 @@ SUBMITTED BY
         </ol>
 
         <h2 id="agent-install-hangs-at-validating-data">Agent Install Hangs at "Validating Data"</h2>
-        <p><strong>Symptom:</strong> During agent install (<a href="javascript:void(0)" onclick="showView('topic-part2')">Part 2, Step 2</a>), the browser displays <strong>Validating Data</strong> indefinitely instead of progressing to the SQL Server connection prompt or <strong>Deploying</strong>.</p>
+        <p><strong>Symptom:</strong> During agent install (<a href="javascript:void(0)" onclick="showView('topic-step-9')">Step 9</a>), the browser displays <strong>Validating Data</strong> indefinitely instead of progressing to the SQL Server connection prompt or <strong>Deploying</strong>.</p>
 
         <p><strong>Likely causes:</strong></p>
         <ul>
@@ -2457,7 +2408,7 @@ SUBMITTED BY
         </div>
 
         <div class="topic-footer-nav">
-          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="back-btn" onclick="goHome()">&larr; Back to Overview</button>
           <button class="prev-btn" onclick="showView('topic-requests')">&larr; Previous</button>
           <button class="next-btn" onclick="showView('topic-password-policy')">Next: Password Policy &rarr;</button>
         </div>
@@ -2535,7 +2486,7 @@ SUBMITTED BY
         </div>
 
         <h3 id="enabling-or-disabling-the-password-policy">Enabling or Disabling the Password Policy</h3>
-        <p>The complex password policy is enabled or disabled at the client level via the <strong>Password Policy</strong> toggle on the Client Details tab in VALC (see <a href="javascript:void(0)" onclick="showView('topic-part1')">Part 1, Step 3</a>). When disabled, users are not subject to the complexity, history, or expiry requirements described above.</p>
+        <p>The complex password policy is enabled or disabled at the client level via the <strong>Password Policy</strong> toggle on the Client Details tab in VALC (see <a href="javascript:void(0)" onclick="showView('topic-step-4')">Step 4</a>). When disabled, users are not subject to the complexity, history, or expiry requirements described above.</p>
 
         <div class="callout tip">
           <div class="callout-label">Recommendation</div>
@@ -2574,7 +2525,7 @@ SUBMITTED BY
         </table>
 
         <div class="topic-footer-nav">
-          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="back-btn" onclick="goHome()">&larr; Back to Overview</button>
           <button class="prev-btn" onclick="showView('topic-troubleshooting')">&larr; Previous</button>
           <button class="next-btn" onclick="showView('topic-server-migration')">Next: Server Migration &rarr;</button>
         </div>
@@ -2603,7 +2554,7 @@ SUBMITTED BY
           <p>Just like a fresh install, the VALC <strong>Setup Step</strong> for the client must be set to <strong>Created</strong> before the agent install on the new server will offer the download prompt. The migration guide flags this in each scenario where it applies.</p>
         </div>
         <div class="topic-footer-nav">
-          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="back-btn" onclick="goHome()">&larr; Back to Overview</button>
           <button class="prev-btn" onclick="showView('topic-password-policy')">&larr; Previous</button>
           <button class="next-btn" onclick="showView('topic-message-users')">Next: Message Users &rarr;</button>
         </div>
@@ -2662,7 +2613,7 @@ SUBMITTED BY
         </div>
 
         <div class="topic-footer-nav">
-          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="back-btn" onclick="goHome()">&larr; Back to Overview</button>
           <button class="prev-btn" onclick="showView('topic-server-migration')">&larr; Previous</button>
           <button class="next-btn" onclick="showView('topic-sql-scripts')">Next: SQL Scripts &rarr;</button>
         </div>
@@ -2698,7 +2649,7 @@ SUBMITTED BY
           </thead>
           <tbody>
             <tr><td><strong>Database list (left)</strong></td><td>Lists all databases registered across all customer clients in VALC, formatted as <code>{ClientName} - {DatabaseName} - {RevisionNumber}</code>. Each row has a checkbox for selection.</td></tr>
-            <tr><td><strong>Filters (top-left)</strong></td><td><strong>Database Selection</strong> filters the list by the database's <strong>Category</strong> (Production, Test, Archive, Change Control, Inactive — see <a href="javascript:void(0)" onclick="showView('topic-part3')">Part 3, Step 1</a> for where Category is set). <strong>Revision Number</strong> is a freeform text field — type any portion of a revision number to filter the list to matching rows.</td></tr>
+            <tr><td><strong>Filters (top-left)</strong></td><td><strong>Database Selection</strong> filters the list by the database's <strong>Category</strong> (Production, Test, Archive, Change Control, Inactive — see <a href="javascript:void(0)" onclick="showView('topic-step-10')">Step 10</a> for where Category is set). <strong>Revision Number</strong> is a freeform text field — type any portion of a revision number to filter the list to matching rows.</td></tr>
             <tr><td><strong>Script editor (top-right)</strong></td><td><strong>Choose File</strong> opens a file browser to select the update script provided by the developer (typically a <code>.sql</code> file from the local filesystem). Once a file is selected, its text appears in the dark editor area for review. <strong>EXECUTE</strong> runs the script against the selected databases.</td></tr>
             <tr><td><strong>Results panel (bottom-right)</strong></td><td>Displays a pass/fail line per database after execution completes.</td></tr>
           </tbody>
@@ -2727,9 +2678,9 @@ SUBMITTED BY
         </div>
 
         <div class="topic-footer-nav">
-          <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+          <button class="back-btn" onclick="goHome()">&larr; Back to Overview</button>
           <button class="prev-btn" onclick="showView('topic-message-users')">&larr; Previous</button>
-          <button class="done-btn" onclick="goHome()">Done &mdash; Back to Index &#x2713;</button>
+          <button class="done-btn" onclick="goHome()">Done &mdash; Back to Overview &#x2713;</button>
         </div>
       </section>
 
@@ -2748,6 +2699,10 @@ SUBMITTED BY
 </footer>
 
 <script>
+  /* Show a topic view by id and update the sidebar's active highlight.
+     Each step now has its own view, so the active-anchor matching from
+     the previous version is no longer needed — a single id uniquely
+     identifies the active sidebar entry. */
   function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     const target = document.getElementById(id);
@@ -2756,7 +2711,6 @@ SUBMITTED BY
       window.scrollTo({ top: 0, behavior: 'instant' });
 
       const slug = id === 'home' ? 'home' : id.replace('topic-', '');
-      // Update active state across all sidebar groups
       document.querySelectorAll('.sidebar-nav li').forEach(li => {
         li.classList.toggle('active', li.dataset.target === slug);
       });
@@ -2769,33 +2723,47 @@ SUBMITTED BY
     }
   }
 
-  function goHome() { showView('home'); }
+  function goHome() { showView('topic-overview'); }
 
-  /* Switch to a topic view and scroll to an anchor inside it. Used by the
-     flowchart step links and the flow-nav prev/next strips so a click lands
-     directly on the relevant step instead of the top of a long page. The
-     setTimeout gives the view-switch a tick to render before we scroll. */
-  function goToStep(topicId, anchorId) {
-    showView(topicId);
-    if (anchorId) {
-      setTimeout(function() {
-        var el = document.getElementById(anchorId);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 50);
-    }
+  /* "Back to Flowchart" button on every step page: switch to the
+     dedicated Process Flowchart view. Each step is its own page, so
+     this is just a plain showView call to topic-flowchart. */
+  function backToFlowchart() {
+    showView('topic-flowchart');
   }
 
-  document.querySelectorAll('.sidebar-nav li[data-target="home"]').forEach(li => li.classList.add('active'));
+  /* Backward-compatible shim: any remaining goToStep() calls in the
+     document just delegate to showView(). The anchor argument is
+     ignored because each step is its own view now. */
+  function goToStep(topicId, anchorId) {
+    showView(topicId);
+  }
 
-  /* Hash routing supports three forms:
-     1. #home                     -> home view
-     2. #{topic-slug}              -> topic view (e.g. #part1 -> topic-part1)
-     3. #{anchor-inside-topic}     -> switches to that topic and scrolls to the anchor
-        (e.g. #step-3-license-company-numbers -> topic-part3 + scroll)
+  document.querySelectorAll('.sidebar-nav li[data-target="overview"]').forEach(li => li.classList.add('active'));
+
+  /* Legacy hash redirects: #part1, #part2, #part3 used to point to the
+     three combined Part pages. After the per-step split they redirect
+     to the first step of each part so old links keep working. */
+  const LEGACY_HASH_REDIRECTS = {
+    'part1': 'step-1',
+    'part2': 'step-8',
+    'part3': 'step-10'
+  };
+
+  /* Hash routing supports:
+     1. #home                  -> home view
+     2. #{topic-slug}          -> topic view (e.g. #step-3 -> topic-step-3)
+     3. #{legacy-part-slug}    -> redirected via LEGACY_HASH_REDIRECTS
+     4. #{anchor-inside-topic} -> switches to that topic and scrolls to the anchor
   */
   function routeToHash(hash) {
-    if (!hash || hash === 'home') {
-      showView('home');
+    if (!hash || hash === 'home' || hash === 'overview') {
+      showView('topic-overview');
+      return;
+    }
+    // Legacy redirect?
+    if (LEGACY_HASH_REDIRECTS[hash]) {
+      showView('topic-' + LEGACY_HASH_REDIRECTS[hash]);
       return;
     }
     // Direct topic match?
@@ -2816,8 +2784,8 @@ SUBMITTED BY
         return;
       }
     }
-    // Fallback: home
-    showView('home');
+    // Fallback: overview
+    showView('topic-overview');
   }
 
   window.addEventListener('DOMContentLoaded', () => {

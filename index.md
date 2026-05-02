@@ -6,22 +6,37 @@ analysis that turn RapidReconciler exports into actionable insights in minutes.
 
 ---
 
-## Sales Tools
+## Sales Procedures and Collateral
 
 Here are some key collateral documents that provide an overview of RapidReconciler's benefits and features. These resources are intended to help you understand the value proposition of the application and how it can assist your JD Edwards reconciliation processes. Click on each document name to view the full content.
 
 | Document                                                                                   | Description                                                                                      |
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| [How RapidReconciler Helps](/RapidReconciler-AI/Collateral/how-rr-helps.html)              | Overview of the application's benefits and value proposition                                     |
-| [RapidReconciler Fact Sheet](/RapidReconciler-AI/Collateral/rr-fact-sheet.html)            | One-page summary of key features and benefits                                                    |
-| [Self-Guided Tour](/RapidReconciler-AI/Collateral/rr-self-guided-tour.html)                | Interactive walkthrough of the application interface and features                                |
-| [Inventory Dashboard Sample](/RapidReconciler-AI/Collateral/inventory-dashboard.html)      | Executive summary of inventory reconciliation challenges and how RapidReconciler addresses them  |
-| [In-Transit Dashboard Sample](/RapidReconciler-AI/Collateral/in-transit-dashboard.html)    | Executive summary of in-transit reconciliation challenges and how RapidReconciler addresses them |
-| [PO Receipts Dashboard Sample](/RapidReconciler-AI/Collateral/po-receipts-dashboard.html)  | Executive summary of PO receipt reconciliation challenges and how RapidReconciler addresses them |
+| [How RapidReconciler Helps](/RapidReconciler-AI/GSIRRSales/sales-client-management.html)   | Process controls for the RR Sales Team to ensure consistent and effective communication of RapidReconciler's value proposition to potential clients. |
 
 ---
 
-## AI Example Reports
+## GSI RR Tech Procedures and References
+
+These technical documents provide detailed guidance on the installation, configuration, and maintenance of RapidReconciler. They cover everything from initial setup requirements to server migration and certificate management. Whether you're a system administrator responsible for maintaining the application or an IT professional involved in the deployment process, these resources will help ensure a smooth and successful implementation of RapidReconciler in your JD Edwards environment.
+
+| Document | Description |
+|----------|-------------|
+| [RR Tech Home](/RapidReconciler-AI/GSIRRTech/tech-client-management.html)                  | Installation and configuration requirements |
+
+---
+
+## End User Procedures and References
+
+RapidReconciler University is your go-to resource for learning how to use the application effectively. Whether you're new to RapidReconciler or looking to deepen your understanding of its features, these training materials will guide you through the process. From video tutorials to step-by-step guides, RapidReconciler University offers a comprehensive learning experience that covers everything from basic navigation to advanced reconciliation techniques. Explore the resources below to get started on your journey to mastering RapidReconciler.
+
+| Document | Description |
+|----------|-------------|
+| [RapidReconciler University](/RapidReconciler-AI/RRUniversity/rapidreconciler-university.html) | A comprehensive guide to help new users get up and running with RapidReconciler, covering installation, basic navigation, and initial setup. |
+
+---
+
+## AI Example Reports Future
 
 The following examples demonstrate AI-powered analysis of JD Edwards data using RapidReconciler. Each example was sourced from RapidReconciler existing reports into Excel and analyzed using a functional template.
 The result produces AI-generated insights: root causes, recommended actions, and prioritized next steps for resolution. Clicking on each report name will allow you to reviewing source data and to see how AI interpreted the issue:
@@ -39,20 +54,13 @@ The result produces AI-generated insights: root causes, recommended actions, and
 
 ---
 
-## GSI RR Tech Knowledge Base
+## AI Mock Dashboard Examples Future
 
-These technical documents provide detailed guidance on the installation, configuration, and maintenance of RapidReconciler. They cover everything from initial setup requirements to server migration and certificate management. Whether you're a system administrator responsible for maintaining the application or an IT professional involved in the deployment process, these resources will help ensure a smooth and successful implementation of RapidReconciler in your JD Edwards environment.
-
-| Document | Description |
-|----------|-------------|
-| [RR Tech Home](/RapidReconciler-AI/GSIRRTech/tech-client-management.html)           | Installation and configuration requirements |
-
----
-
-## RapidReconciler University
-
-RapidReconciler University is your go-to resource for learning how to use the application effectively. Whether you're new to RapidReconciler or looking to deepen your understanding of its features, these training materials will guide you through the process. From video tutorials to step-by-step guides, RapidReconciler University offers a comprehensive learning experience that covers everything from basic navigation to advanced reconciliation techniques. Explore the resources below to get started on your journey to mastering RapidReconciler.
+The following examples demonstrate AI-powered analysis of JD Edwards data using RapidReconciler. Each example was sourced from RapidReconciler existing reports into Excel and analyzed using a functional template.
 
 | Document | Description |
 |----------|-------------|
-| [RapidReconciler University](/RapidReconciler-AI/RRUniversity/rapidreconciler-university.html) | A comprehensive guide to help new users get up and running with RapidReconciler, covering installation, basic navigation, and initial setup. |
+
+| [Inventory Dashboard](/RapidReconciler-AI/DashboardExamples/inventory-dashboard.html)             | Executive summary of inventory reconciliation challenges and how RapidReconciler addresses them  |
+| [In-Transit Dashboard](/RapidReconciler-AI/DashboardExamples/in-transit-dashboard.html)           | Executive
+| [PO Receipts Dashboard Sample](/RapidReconciler-AI/DashboardExamples/po-receipts-dashboard.html)  | Executive summary of PO receipt reconciliation challenges and how RapidReconciler addresses them |
