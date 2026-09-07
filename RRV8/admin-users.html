@@ -7,7 +7,7 @@
   cross-DB user registry. Different backend from admin-companies:
   users live in mini-VALC's Postgres (because one analyst spans
   many customer DBs), not in the per-DB SQL Server. The page calls
-  http://localhost:8080/api/v1/admin/users via the new RR_VALC_PREFIXES
+  http://localhost:8080/api/v1/tenant/users via the new RR_VALC_PREFIXES
   routing in config.js.
 
   Columns mirror the legacy admin screenshot: Active badge / Full
@@ -622,7 +622,7 @@
   <div class="toast" id="js-toast" role="status" aria-live="polite"></div>
 
   <!-- Edit-user modal. Opens from the per-row pencil icon. PUT to
-       /api/v1/admin/users/{id}; empty Password = keep existing. -->
+       /api/v1/tenant/users/{id}; empty Password = keep existing. -->
   <div class="modal-backdrop" id="js-edit-modal" role="dialog" aria-modal="true" aria-labelledby="js-edit-title">
     <div class="modal">
       <div class="modal-head">
@@ -667,7 +667,7 @@
 
   <!-- New Team Member modal. Opens from the "+ New Team Member" button. Creates the
        user, role, and database assignments in one shot (POST
-       /api/v1/admin/users/invite) and emails them a set-password link —
+       /api/v1/tenant/users/invite) and emails them a set-password link —
        no password is typed here. -->
   <div class="modal-backdrop" id="js-nu-modal" role="dialog" aria-modal="true" aria-labelledby="js-nu-title">
     <div class="modal is-perms">
@@ -769,7 +769,7 @@
   </div>
 
   <!-- Delete-user confirm modal. Soft-delete via DELETE
-       /api/v1/admin/users/{id}; row stays in Postgres with
+       /api/v1/tenant/users/{id}; row stays in Postgres with
        deleted_at stamped and active=false. -->
   <div class="modal-backdrop" id="js-delete-modal" role="dialog" aria-modal="true" aria-labelledby="js-delete-title">
     <div class="modal" style="width: min(440px, 92vw);">
@@ -852,7 +852,7 @@
       <div id="js-tool">
 
         <div class="fetch-error" id="js-fetch-error" role="alert">
-          Couldn&rsquo;t reach <code>/api/v1/admin/users</code> &mdash;
+          Couldn&rsquo;t reach <code>/api/v1/tenant/users</code> &mdash;
           <span id="js-fetch-error-msg"></span>
         </div>
 
@@ -1258,7 +1258,7 @@
     const btn = document.getElementById('js-edit-save');
     btn.disabled = true;
     btn.textContent = 'Saving…';
-    rrFetch('api/v1/admin/users/' + encodeURIComponent(id), {
+    rrFetch('api/v1/tenant/users/' + encodeURIComponent(id), {
       method: 'PUT',
       body:   body
     })
@@ -1309,7 +1309,7 @@
     btn.textContent = 'Deleting…';
     err.classList.remove('is-visible');
 
-    rrFetch('api/v1/admin/users/' + encodeURIComponent(id), { method: 'DELETE' })
+    rrFetch('api/v1/tenant/users/' + encodeURIComponent(id), { method: 'DELETE' })
       .then(() => {
         removeRow(id);
         closeDeleteModal();
@@ -1349,7 +1349,7 @@
   async function loadRolesV8() {
     if (_rolesCacheV8) return _rolesCacheV8;
     try {
-      const url = (RR_CONFIG.valcBase || 'http://localhost:8080') + '/api/v1/admin/roles';
+      const url = (RR_CONFIG.valcBase || 'http://localhost:8080') + '/api/v1/tenant/roles';
       const r = await fetch(url, { headers: prodHeaders(null), cache: 'no-store' });
       _rolesCacheV8 = r.ok ? await r.json() : [];
     } catch (_) { _rolesCacheV8 = []; }
@@ -1437,7 +1437,7 @@
       let assigns = [];
       try {
         const url = (RR_CONFIG.valcBase || 'http://localhost:8080') +
-          '/api/v1/admin/users/' + encodeURIComponent(_permsUserId) + '/assignments';
+          '/api/v1/tenant/users/' + encodeURIComponent(_permsUserId) + '/assignments';
         const r = await fetch(url, { headers: prodHeaders(null), cache: 'no-store' });
         assigns = r.ok ? await r.json() : [];
       } catch (_) { assigns = []; }
@@ -1538,7 +1538,7 @@
     });
     try {
       const base = (RR_CONFIG.valcBase || 'http://localhost:8080') +
-        '/api/v1/admin/users/' + encodeURIComponent(_permsUserId);
+        '/api/v1/tenant/users/' + encodeURIComponent(_permsUserId);
       const r1 = await fetch(base + '/role', {
         method: 'PUT', headers: prodHeaders('application/json;charset=UTF-8'),
         body: JSON.stringify({ roleId: roleId }) });
@@ -1621,7 +1621,7 @@
     const orig = saveBtn.textContent;
     saveBtn.disabled = true; saveBtn.textContent = 'Sending…';
     try {
-      const url = (RR_CONFIG.valcBase || 'http://localhost:8080') + '/api/v1/admin/users/invite';
+      const url = (RR_CONFIG.valcBase || 'http://localhost:8080') + '/api/v1/tenant/users/invite';
       const r = await fetch(url, {
         method: 'POST', headers: prodHeaders('application/json;charset=UTF-8'),
         body: JSON.stringify({
@@ -1836,7 +1836,7 @@
   //
   //  One styled sheet, one row per (member x database assignment):
   //  identity + role + database + company access + status/recency.
-  //  Access is sourced from /api/v1/admin/users/{id}/assignments (the
+  //  Access is sourced from /api/v1/tenant/users/{id}/assignments (the
   //  role-based model; the retired per-user function/tab flags are not
   //  reported). Built with ExcelJS (loaded on demand from CDN, the same
   //  library the Export Analyzer uses) so the workbook carries a title
@@ -1875,7 +1875,7 @@
       // databases the member is granted (never session-scoped), so one document
       // covers every database — no per-database export needed. Parallel.
       const results = await Promise.all(users.map(u =>
-        rrFetch('api/v1/admin/users/' + encodeURIComponent(u.id) + '/assignments')
+        rrFetch('api/v1/tenant/users/' + encodeURIComponent(u.id) + '/assignments')
           .then(a => ({ u, assigns: Array.isArray(a) ? a : ((a && a.assignments) || []), err: null }))
           .catch(err => ({ u, assigns: [], err: err }))
       ));
@@ -2185,12 +2185,12 @@
 
   // Main fetch (also called after adding a user).
   function reloadUsers() {
-    return rrFetch('api/v1/admin/users')
+    return rrFetch('api/v1/tenant/users')
       // GSI Internal is a GSI-staff role, not a customer team member — drop it
       // so the RR Team roster (and the demo walk) never shows GSI-internal users.
       .then(rows => renderUsers((rows || []).filter(r => !r || r.roleName !== 'GSI Internal')))
       .catch(err => {
-        showFetchError('api/v1/admin/users', err);
+        showFetchError('api/v1/tenant/users', err);
       const tbody = document.getElementById('js-users-tbody');
       if (tbody) {
         tbody.innerHTML =
