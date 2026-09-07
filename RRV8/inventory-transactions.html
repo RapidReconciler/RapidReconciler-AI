@@ -3287,9 +3287,11 @@
     }
     return false;
   }
-  // VALC-served areas (api/v1/admin/*, api/v1/ai/* — the AI gateway keeps the
-  // key server-side). Must route to valcBase, NOT the per-DB agent. Kept in
-  // sync with RR_VALC_PREFIXES + the same helper on every other page.
+  // VALC-served areas (api/v1/tenant/*, api/v1/admin/*, api/v1/ai/* — the AI
+  // gateway keeps the key server-side). Must route to valcBase, NOT the per-DB
+  // agent. Kept in sync with RR_VALC_PREFIXES + the same helper on every other
+  // page. ⚠ api/v1/tenant/* is the CUSTOMER half and api/v1/admin/* is GSI
+  // operator only (VLC-59); a V8 page calling the latter gets 403.
   const _valcPrefixes = window.RR_VALC_PREFIXES || [];
   function _routesToValc(area) {
     for (let i = 0; i < _valcPrefixes.length; i++) if (area.startsWith(_valcPrefixes[i])) return true;

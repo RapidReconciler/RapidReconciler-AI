@@ -4638,7 +4638,7 @@
     // admin-account wizard preview still short-circuits the /admin/users read.
     if (!isAdmin()) { _firstRun = false; return; }
     if (FORCE_FIRSTRUN) { _firstRun = true; renderRoleView(); return; }
-    rrFetch('api/v1/admin/users').then(function (rows) {
+    rrFetch('api/v1/tenant/users').then(function (rows) {
       var list = Array.isArray(rows) ? rows : (rows && rows.users) || [];
       // GSI Internal is a GSI-staff role — never a customer team member. Drop it
       // here so it counts nowhere downstream: team/role counts, the inactivity
@@ -4661,7 +4661,7 @@
   // same as "no review on file" — it is also what you get when the server never
   // answered. Without it, paintTeamHealth's final else read `list.length ?
   // 'Access up to date'`, and the member list arrives from a DIFFERENT endpoint
-  // (api/v1/admin/users, no bearer check), so a failed access-reviews call still
+  // (api/v1/tenant/users, no bearer check), so a failed access-reviews call still
   // left three members on screen and the row went green claiming the access
   // review was current. A compliance row asserting an attestation the server
   // never confirmed (UI-151, measured 2026-08-25).
