@@ -2141,6 +2141,38 @@ ${adminSection}
              'to update the RapidReconciler service on that server. ' +
              'The endpoint contract is in RRV8/API.md. (HTTP 404)';
     }
+    // ⚠ AI GATEWAY 5xx. NOT the data service, and the generic message below
+    // sends the reader to the wrong person entirely.
+    //
+    // Measured 2026-09-07 on the analyst Home: POST api/v1/ai/explain returned
+    // 503 and the banner read "The RapidReconciler data service failed while
+    // handling this request ... ask your IT department to check the service log
+    // on this database's server." Three things wrong with that. It is VALC's AI
+    // gateway, not the per-database data service. There is nothing in that
+    // server's log to find. And the customer's IT department cannot fix it.
+    //
+    // The real cause was ANTHROPIC_API_KEY not being set on VALC, and
+    // AiController says so in the exception it throws -- but the response body
+    // is {"timestamp","status","error","path"} with NO message field, because
+    // server.error.include-message is never. The author-written reason is
+    // stripped before it leaves, exactly as it is on the agent. So this
+    // function cannot read the cause and has to name it from the path, which is
+    // reliable: only the AI gateway lives under api/v1/ai/.
+    //
+    // 503 specifically is the not-configured case. Any other 5xx from the
+    // gateway is a real failure of a call that WAS configured, so it gets a
+    // different sentence rather than being lumped in.
+    if (st !== null && st >= 500 && st <= 599
+        && typeof ep === 'string' && ep.indexOf('api/v1/ai/') !== -1) {
+      return st === 503
+        ? 'The AI assistant is not switched on for this server, so this panel ' +
+          'has nothing to show. Everything else on the page is unaffected and ' +
+          'your data is fine. This is a GSI setting — contact GSI support if you ' +
+          'expected AI to be available. (HTTP 503)'
+        : 'The AI assistant failed while answering this request. Nothing about ' +
+          'your session or your data is at fault, and the rest of the page is ' +
+          'unaffected — contact GSI support if it keeps happening. (HTTP ' + st + ')';
+    }
     // 5xx — the service answered, from its own logic or the database, and
     // failed. Nothing about the reader's session is at fault.
     if (st !== null && st >= 500 && st <= 599) {
