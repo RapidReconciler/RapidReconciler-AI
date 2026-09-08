@@ -186,6 +186,117 @@ Catches drift between docs and code.
 
 ---
 
+### 9. Authorization: the server call surface, run as a least-privileged customer
+
+Added 2026-09-07 after VLC-59, which was a **two-day outage of V8&rsquo;s entire
+administration surface that no instrument found and no person here could
+reproduce**. `valc_operator` is true for exactly two of six users, and the gate
+that broke could only be noticed by someone WITHOUT that grant. Both people who
+use the product daily hold it. There was no persona in the building that could
+see it.
+
+Two halves, because they need different things to run.
+
+| Tool | Needs | Runs | What it asserts |
+|---|---|---|---|
+| [`Tools/v8-callsites.py`](../Tools/v8-callsites.py) | nothing | **CI** &mdash; [`check-v8-callsites.yml`](../.github/workflows/check-v8-callsites.yml), on every PR and push to main touching `RRV8/**` | enumerates every server call site in `RRV8/`, resolves its path, classifies its routing and its client-side guard, and **fails if any call site routes to `api/v1/admin/`** (the operator prefix &mdash; 403 for every customer by construction). Also fails on an unresolved dynamic path, on a stale resolution override, if any `api/v1/` literal in the source is not attributed to a call site it found, and if the enumeration itself collapses. |
+| [`Tools/persona-probe.py`](../Tools/persona-probe.py) | live VALC + agents + Postgres | **the dev box only** | creates three throwaway non-operator personas, signs each in through the real login endpoint, and replays every call site as each of them. |
+
+```
+python Tools/v8-callsites.py --report --json Tools/_out/v8-callsites.json
+python Tools/persona-probe.py --agent
+```
+
+**The split is deliberate and the live half is NOT wired to CI.** A runner has
+no VALC, no agents and no Postgres, so the prober there would pass by finding
+nothing to probe &mdash; the S5 vacuous-test shape `HK-13` names. The static
+half needs none of them, and it is the half that would have caught VLC-59 at PR
+time.
+
+**Assertion A0 exists because A1 passes trivially against zero call sites.** The
+tool asserts its own floors (files, total sites, VALC sites, measured 27 / 263 /
+46 at wire-up and set well below that), and the workflow separately asserts that
+the A0 and A4 lines actually appear in the output &mdash; so a run that crashed
+before reaching its own non-vacuity check cannot be read as a pass. Proven by
+control 2026-09-07: an untokenizable file in `RRV8/` makes A0a **FAIL** and names
+the file and line; removing it returns the gate to exit 0.
+
+**The workflow never pipes the command it gates on.** `python ... | tee out`
+returns `tee`'s status, and GitHub's default shell is `bash -e {0}` with no
+`-o pipefail` &mdash; which is exactly how `check-js-syntax.yml` could not fail
+on a syntax error until HK-11's sweep 5 found it. The report is redirected to a
+file **outside the workspace** (`$RUNNER_TEMP`), read back, and the exit code
+tested explicitly. A final step asserts the run left the working tree clean, so
+the A4 control's mutant can never be one `git add -A` from being committed.
+
+Measured end to end 2026-09-07: a copy of `admin-users.html` with
+`api/v1/tenant/` rewritten to `api/v1/admin/`, dropped into `RRV8/`, takes the
+gate step to **exit 1** naming all 14 sites with file, line and which fetch
+wrapper reached them.
+
+**The assertion is a match, not an absence.** &ldquo;No 403 for a
+least-privileged user&rdquo; is the obvious rule and it is wrong &mdash; plenty
+of endpoints are legitimately administrator-only and gated client-side, so a
+403 there is the design working. What must hold is that the client-side guard
+and the server-side gate agree:
+
+| Guard on the call site | Rule |
+|---|---|
+| none | every role issues this call, so **no persona may be refused** |
+| `page-admin` / `fn-admin` | the page halts for a non-admin, so the **admin persona must not be refused**. A non-admin refusal is the design and is reported, not failed. |
+
+That second row is the whole point. VLC-59&rsquo;s endpoints were all
+admin-guarded and it was the customer **administrator** who got 403 &mdash;
+which is exactly why two GSI operators could not reproduce it.
+
+**Nothing is mutated.** A POST/PUT/PATCH/DELETE site is probed with GET, which
+still reaches the security filter chain (the gate that broke) but stops before
+any handler that could write. Measured 2026-09-07: 403 = chain refused, 405 =
+chain passed with no GET handler, 404 = authenticated and no such route. This
+does **not** reach method-level authorization or `TenantScopeService`&rsquo;s
+in-method guards; those are covered by the GET sites and by VLC-62&rsquo;s unit
+suite.
+
+**Both halves are proven able to fail**, per
+`feedback_test_against_the_known_defect`:
+
+- the static gate re-injects the defect into one page&rsquo;s source in memory
+  and requires its own A1 to catch it (14 sites caught, measured);
+- [`Tools/_persona/make-vlc59-manifest.py`](../Tools/_persona/make-vlc59-manifest.py)
+  writes a manifest with VLC-59 in it, and the prober run against that manifest
+  exits 1 with 20 tenant-admin failures naming the real call sites &mdash;
+  `home.html:4641`, `admin-users.html:2188`, `admin-complex-passwords.html:376`
+  and the rest. The clean manifest exits 0, and a dead VALC exits **2
+  INCONCLUSIVE** rather than 1, so a stopped service cannot read as findings.
+
+And the CI job has a precondition of its own:
+[`Tools/_persona/check-tokenizer.py`](../Tools/_persona/check-tokenizer.py) runs
+before the gate and proves `esprima.tokenize` still behaves as the gate assumes
+&mdash; carries `loc`, keeps quotes on string literals, tokenizes optional
+chaining, and (the control) still cannot *parse* it. Without that step, an
+esprima whose token shape had shifted would import cleanly and then report every
+finding at the wrong line.
+
+**Not covered, named rather than implied:**
+
+- The v359 half of the agent surface. 26 of 113 targets are areas still served
+  by the v359 Services jar, which does not run on this box, so they are
+  reported as unprobed rather than as 404s.
+- The agent&rsquo;s own authorization, which gates on the token and never on
+  role &mdash; a refusal there means the token did not arrive, a much weaker
+  statement than the VALC half.
+- 37 call sites in fetch wrappers that forward a caller&rsquo;s URL, where no
+  path literal exists to resolve.
+- The enumeration is closed for VALC paths (every `api/v1/` literal must be
+  attributed) but there is **no equivalent closure for agent paths**, which
+  have no distinctive prefix to count against.
+
+**Source of truth**: `RRV8/config.js`&rsquo;s `RR_VALC_PREFIXES` /
+`RR_TEST_AGENT_AREAS` for routing, `SecurityConfig` for the gates, and the
+`roles` table for the personas. None of it is copied into either tool.
+
+---
+
 ## Integration with the commit flow
 
 ### Local pre-push hook

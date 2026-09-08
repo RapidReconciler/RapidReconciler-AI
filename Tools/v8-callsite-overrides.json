@@ -1,0 +1,58 @@
+{
+  "_readme": [
+    "Hand resolutions for rrFetch call sites whose area argument is a variable.",
+    "A dynamic area cannot be classified by reading the call, so each one was",
+    "read once, by a person, and recorded here with the reason. v8-callsites.py",
+    "fails if a dynamic site has no entry (A2a) AND if an entry no longer matches",
+    "a live call site (A2b) -- a stale exemption is how a gate goes quiet without",
+    "anyone deciding it should.",
+    "",
+    "Key is \"<file>::<identifier>\", not file:line. A line number shifts on every",
+    "edit above it and the entry silently stops matching; an identifier survives",
+    "edits and fails loudly if renamed.",
+    "",
+    "`area` is the path WITHOUT any query string -- the query is per-call and",
+    "does not change routing or authorization.",
+    "",
+    "Resolved 2026-09-07, each by reading the assignment immediately above its",
+    "rrFetch call."
+  ],
+  "resolutions": {
+    "accounting-model-review.html::url": {
+      "area": "api/v1/ai/explain",
+      "why": "_aiExplain builds 'api/v1/ai/explain' + optional '?ctx=' replay-key discriminator (accounting-model-review.html:765)."
+    },
+    "accounting-model-review.html::area": {
+      "area": "inventory/integrity/model-approval",
+      "why": "loadVerdict builds the model-approval area + optional '?company='. Counts only; the retired sign-off fields are deliberately not read (accounting-model-review.html:1115)."
+    },
+    "home.html::_ctxUrl": {
+      "area": "api/v1/ai/explain",
+      "why": "Analyst day-brief lead sentence; '?ctx=' carries surface/company/period so replay keys stay distinct (home.html:12023)."
+    },
+    "home.html::_acUrl": {
+      "area": "api/v1/ai/explain",
+      "why": "Audit-cover summary, fanned out one call per company; ctx keys on tier as well as company (home.html:14623)."
+    },
+    "home.html::_wlUrl": {
+      "area": "api/v1/ai/explain",
+      "why": "Worklist cause, one call per company; ctx keys on exposure + company + period (home.html:15652)."
+    },
+    "inventory-asof.html::_u": {
+      "area": "api/v1/ai/explain",
+      "why": "As-of Ask surface. Tier rides in the prompt's DATA ACCESS marker, never a `level` body field (inventory-asof.html:2943)."
+    },
+    "inventory-asof.html::_optUrl": {
+      "area": "api/v1/ai/explain",
+      "why": "As-of residual-target optimiser; same explain endpoint, own ctx (inventory-asof.html:3299)."
+    },
+    "inventory-asof.html::PREVIEW_ENDPOINT": {
+      "area": "inventory/as-of/details",
+      "why": "const PREVIEW_ENDPOINT = 'inventory/as-of/details' at inventory-asof.html:3814."
+    },
+    "inventory-transactions.html::_ctxUrl": {
+      "area": "api/v1/ai/explain",
+      "why": "Transaction-variance analyze surface; ctx keys on txv + company + period (inventory-transactions.html:8361)."
+    }
+  }
+}
