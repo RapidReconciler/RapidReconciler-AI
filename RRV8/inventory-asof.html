@@ -2934,9 +2934,17 @@
   }
   function asofAiExplain(prompt) {
     // Tier rides in the prompt's DATA ACCESS marker (dataAccessLine), NOT a `level`
-    // body field — a `level` field 403s at the gateway; the entitled tier is enforced
-    // server-side from the JWT. ?ctx= is a server-ignored replay-key discriminator so
-    // (surface, company, period) stay distinct in the demo capture.
+    // body field. The entitled tier is enforced server-side from the JWT either way.
+    //
+    // ⚠ THE REASON THIS COMMENT USED TO GIVE WAS FALSE, and it is why the server-side
+    // cap has never been wired. It said "a `level` field 403s at the gateway".
+    // Measured 2026-09-08 against the live gateway: a `level` is ACCEPTED, and 403s
+    // only when it exceeds the client's purchased tier — so on a `full` client
+    // nothing 403s at all. An unrecognised level now 400s (VLC-65); before that it
+    // returned 200 with no cap applied.
+    //
+    // ?ctx= is a server-ignored replay-key discriminator so (surface, company,
+    // period) stay distinct in the demo capture.
     let _co = '', _per = '';
     try { _co = _ensureSolo() || ''; } catch (_) {}
     _per = (_data && _data._meta && _data._meta.period) || '';
@@ -3291,7 +3299,9 @@ function updateLotDetailPill() {
       + 'Confirm or adjust the dollar cutoff that best separates rounding dust from a balance worth reviewing. Reply with the FIRST line exactly "TARGET: <dollars>" (a number), then ONE sentence in plain accountant English on why that cutoff. No markdown, no preamble.';
     // AI-tier gate: Off sends nothing to the model — the deterministic cutoff still
     // applies via the same handler (empty text → target unchanged, renderAll). Tier
-    // rides in the DATA ACCESS marker above (no `level` body field — that 403s);
+    // rides in the DATA ACCESS marker above, not a `level` body field. ⚠ The old
+    // parenthetical here said `level` "403s" — false; it 403s only above the client's
+    // purchased tier, and an unrecognised one 400s since VLC-65. See asofAiExplain.
     // ?ctx= keeps the demo replay signature distinct per (surface, company, period).
     let _optCo = '', _optPer = '';
     try { _optCo = _ensureSolo() || ''; } catch (_) {}
