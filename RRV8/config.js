@@ -96,15 +96,31 @@ window.RR_VALC_PREFIXES = [
   // `api/v1/tenant/`, whose handlers derive the client from the bearer token
   // and take no client id.
   //
-  // Both prefixes are listed because ONE call site still legitimately points at
-  // the operator half and cannot move yet: `api/v1/admin/users` returns every
-  // user of every client, so V8's Team pages need a tenant users API built
-  // rather than re-routed. Until then those calls 403 for a customer admin,
-  // which is the correct answer to a request that would otherwise read across
-  // tenants.
+  // ⚠ THE NOTE THAT USED TO SIT HERE IS NO LONGER TRUE, and it asserted the
+  // opposite of the truth. It read: "ONE call site still legitimately points at
+  // the operator half and cannot move yet: `api/v1/admin/users`". VLC-62 built
+  // the tenant users API and UI #527 re-pointed that call, so as of 2026-09-07
+  // ZERO call sites sit on the operator prefix — measured across all 263 of
+  // them by Tools/v8-callsites.py, whose assertion A1 fails the build if one
+  // reappears. The operator prefix stays in this list ONLY so that a stray call
+  // site routes to VALC and gets an honest 403, rather than being sent to the
+  // data-services agent and answering 404.
   'api/v1/tenant/',  // customer-scoped: own client, licensing, report engine
   'api/v1/admin/',   // GSI operator only — see above before adding a call site
-  'api/v1/ai/'       // AI Assistant gateway — key stays server-side in VALC
+  'api/v1/ai/',      // AI Assistant gateway — key stays server-side in VALC
+  // ⚠ NO TRAILING SLASH, unlike every entry above, and that is deliberate: the
+  // endpoint IS `api/v1/messages` (the Message Center list) and dismiss is
+  // `api/v1/messages/{id}/dismiss`. One slash-less prefix covers both.
+  //
+  // WHY IT IS HERE AT ALL. home.html:16788 and :16812 reach these by
+  // hand-building the URL off RR_CONFIG.valcBase, so they worked while this
+  // entry was missing. Move either call to rrFetch — the shape 22 of 23 files
+  // already use, and the obvious tidy-up — and without this line it routes to
+  // the data-services agent instead and answers 404, with nothing failing at
+  // build time and nothing saying why at runtime. Found by assertion A5 of
+  // Tools/v8-callsites.py, which reports every VALC path this table cannot
+  // route.
+  'api/v1/messages'
 ];
 
 // Areas served by the green-field test agent instead of v359. The set

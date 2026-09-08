@@ -779,6 +779,16 @@ def a3_closed_enumeration(m, res):
         ("config.js", "api/v1/tenant/"),
         ("config.js", "api/v1/admin/"),
         ("config.js", "api/v1/ai/"),
+        # Added 2026-09-08 when A5's finding was fixed. `api/v1/messages` joined
+        # RR_VALC_PREFIXES so that moving home.html's hand-built Message Center
+        # calls to rrFetch cannot silently route them to the agent.
+        #
+        # ⚠ A3 FAILED THE MOMENT THAT ENTRY LANDED, WHICH IS THE POINT. Listing
+        # these individually rather than skipping config.js by pattern is what
+        # made a new unattributed literal in the routing table stop the build
+        # instead of being absorbed. It cost one line to re-authorise and it
+        # would have caught a call site added to the table by mistake.
+        ("config.js", "api/v1/messages"),
         ("sidebar.js", "api/v1/admin/"),
         ("sidebar.js", "api/v1/ai/"),
     }
