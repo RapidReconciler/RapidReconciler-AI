@@ -8357,7 +8357,10 @@
       + (window.RRV8 && RRV8.AI_REGISTER ? RRV8.AI_REGISTER : '');
     // ?ctx= is a server-ignored replay-key discriminator (surface/company/period stay
     // distinct in the demo capture); the tier rides in the DATA ACCESS marker above,
-    // never a `level` body field (that 403s at the gateway).
+    // not a `level` body field. ⚠ The old parenthetical said `level` "403s at the
+    // gateway" — false, and it is why the server-side cap has never been wired.
+    // Measured 2026-09-08: `level` is accepted and 403s only when it EXCEEDS the
+    // client's purchased tier; an unrecognised one 400s since VLC-65.
     var _ctxUrl = 'api/v1/ai/explain' + (window.RRV8 && RRV8.aiCtx ? ('?ctx=' + RRV8.aiCtx('txv', co, per)) : '');
     rrFetch(_ctxUrl, { method: 'POST', body: { prompt: prompt } }).then(function (r) {
       if (gen !== _txAnalyzeGen) return;
