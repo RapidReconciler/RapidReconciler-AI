@@ -1,0 +1,139 @@
+name: Check V8 call sites (authorization)
+
+# WHY THIS WORKFLOW EXISTS
+#
+# VLC-59. Between Valc #241 (2026-09-04) and #248 (2026-09-06), every customer
+# administrator got HTTP 403 on the ENTIRE V8 administration surface -- nine
+# endpoints across four pages. It ran for two days. Nobody noticed, because
+# `valc_operator` is true for exactly two of six users, the gate that broke
+# could only be noticed by someone WITHOUT that grant, and both people who use
+# the product daily hold it. VLC-62 then found a FIFTH page still on the
+# operator prefix that a hand enumeration had missed.
+#
+# `/api/v1/admin/**` requires ROLE_VALC_OPERATOR (Valc SecurityConfig:207). V8
+# is a CUSTOMER surface, so a V8 call site under that prefix is 403 for every
+# customer by construction -- and that is decidable from the source alone, with
+# no service running. This job decides it on every PR.
+#
+# WHY THE STATIC HALF ONLY. Tools/persona-probe.py replays the same call sites
+# as three throwaway least-privileged users, and it needs a live VALC, three
+# live agents and Postgres. A runner has none of those, so wiring it here would
+# be the vacuous shape HK-13 names: the job would pass by finding nothing to
+# probe. It stays a local gate on the dev box. See RRV8/TESTING.md section 9.
+#
+# WHAT IT WOULD HAVE CAUGHT, measured 2026-09-07:
+#   * VLC-59 itself -- the gate's own A4 control re-injects it and requires A1
+#     to catch it (14 sites caught).
+#   * VLC-62's fifth page (admin-companies.html:1087, clients/license-usage).
+#   * The enumeration gap that would have made either finding impossible:
+#     rrFetch is only 185 of 263 call sites. There are nine other fetch
+#     wrappers plus bare fetch(), and admin-users.html builds a VALC URL by
+#     hand. Assertion A3 fails if any api/v1 literal in the source is not
+#     attributed to a call site the tool found.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'RRV8/**.html'
+      - 'RRV8/**.js'
+      - 'Tools/v8-callsites.py'
+      - 'Tools/v8-callsite-overrides.json'
+      - '.github/workflows/check-v8-callsites.yml'
+  pull_request:
+    paths:
+      - 'RRV8/**.html'
+      - 'RRV8/**.js'
+      - 'Tools/v8-callsites.py'
+      - 'Tools/v8-callsite-overrides.json'
+      - '.github/workflows/check-v8-callsites.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  callsites:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # esprima is the tokenizer. Pinned: the tool relies on tokenize() surviving
+      # syntax it cannot PARSE (optional chaining), which is a property of this
+      # implementation, not a promise of the API. An unpinned upgrade that
+      # tightened the tokenizer would fail A0a on every file -- loudly, but for
+      # the wrong reason, on a day nobody touched the code.
+      - name: Install esprima
+        run: pip install --quiet 'esprima==4.0.1'
+
+      # The tool exits 2 when esprima is missing, which is neither a pass nor a
+      # verdict. Prove the import works BEFORE the gate runs, so an install that
+      # silently produced nothing usable fails here with a clear cause instead
+      # of inside the gate.
+      #
+      # It calls tokenize() with `loc` rather than checking an attribute, because
+      # that IS what the tool depends on -- an import that succeeds while
+      # tokenize() has changed shape would pass an attribute check and fail the
+      # gate three steps later for a reason nothing named.
+      - name: Assert the tokenizer works, not just that it imports
+        run: python Tools/_persona/check-tokenizer.py
+
+      - name: Gate the V8 call surface
+        run: |
+          # ⚠ NOT PIPED. `python ... | tee out` returns tee's status, and
+          # GitHub's default shell is `bash -e {0}` with NO `-o pipefail`, so the
+          # gate's exit 1 would be discarded and the job would go green on a
+          # real finding. That is HK-8's lost-exit-code family, and it is exactly
+          # how check-js-syntax.yml could not fail on a syntax error until
+          # HK-11's sweep 5 found it. Redirect, capture, read back.
+          #
+          # The log goes OUTSIDE the workspace. Written into it, the report file
+          # would itself be an untracked file and would fail this job's own
+          # tree-clean assertion below -- a gate tripping over its own output.
+          out="${RUNNER_TEMP:-/tmp}/callsites.out"
+          rc=0
+          python Tools/v8-callsites.py --report > "$out" 2>&1 || rc=$?
+          cat "$out"
+
+          # A0 IS CHECKED IN THE OUTPUT AS WELL AS IN THE EXIT CODE, and on
+          # purpose. A1 ("no call site routes to the operator prefix") passes
+          # trivially against zero call sites, so a tokenizer that silently
+          # stopped seeing anything would turn this job green while checking
+          # nothing. The tool asserts its own floors; this asserts that the tool
+          # actually got as far as saying so.
+          if ! grep -q 'A0b call surface is above the floor' "$out"; then
+            echo "::error::the gate did not reach its own non-vacuity check; the result cannot be trusted"
+            exit 1
+          fi
+
+          # Same reasoning for the control. A4 re-injects VLC-59 into one page's
+          # source in memory and requires A1 to catch it. If that line is absent
+          # the gate ran without ever proving it can fail, and every PASS above
+          # it is unfalsifiable.
+          if ! grep -q 'A4  control' "$out"; then
+            echo "::error::the A4 control did not run; the gate is untested this run"
+            exit 1
+          fi
+
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::V8 call-site gate failed (exit $rc). The FAIL lines are above."
+            exit "$rc"
+          fi
+
+      # The A4 control writes its mutant to the system temp dir, never beside the
+      # real file. Asserted rather than trusted: a future edit that put it back
+      # in RRV8/ would leave a near-copy of a shipping page in the tree, and on
+      # a push-to-main workflow that is one `git add -A` away from being
+      # committed.
+      - name: Assert the run left the tree clean
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::the gate modified the working tree:"
+            git status --porcelain
+            exit 1
+          fi
+          echo "working tree clean"

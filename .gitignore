@@ -47,6 +47,12 @@ RRV8/_uitest/fixture.json
 __pycache__/
 *.pyc
 
+# Generated call-site manifests (Tools/v8-callsites.py --json). Derived from the
+# tracked source on every run, so committing one would be a second producer of
+# the same fact and would go stale the first time a page changed. The VLC-59
+# mutant manifest lands here too and must never be mistaken for the real one.
+Tools/_out/
+
 # Customer agent logs — real entity names + credentials. Never commit.
 HelpDesk/_test_logs/*.log
 HelpDesk/_test_logs/*.out.log
