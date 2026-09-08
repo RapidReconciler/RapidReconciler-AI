@@ -147,7 +147,7 @@ footer{background:var(--navy-deep);color:rgba(255,255,255,0.7);padding:18px 0;fo
 
 <section id="setup">
 <h2>3. Setup runbook</h2>
-<p>SSO is configured in the <strong>Deployment Center &rarr; SSO tab</strong> (also reachable from a customer&rsquo;s Manage-Client card &rarr; &ldquo;Single sign-on&rdquo;). Pick the customer, choose the <strong>sign-in protocol</strong> (SAML or OIDC), then work the bands the chosen protocol shows.</p>
+<p>SSO is configured in the <strong>Deployment Center &rarr; SSO tab</strong> (also reachable from the <strong>Manage Client</strong> icon on the customer&rsquo;s row on the Clients page &rarr; &ldquo;Single sign-on&rdquo;). Pick the customer, choose the <strong>sign-in protocol</strong> (SAML or OIDC), then work the bands the chosen protocol shows.</p>
 <h3>OIDC path</h3>
 <p>If you pick <strong>OpenID Connect</strong>, the tab shows a single config band. Register RapidReconciler as an app in the customer&rsquo;s IdP (Entra ID / Okta), hand their admin the <strong>Redirect URI</strong> the tab displays, and paste back the <strong>issuer URL</strong>, <strong>client ID</strong>, and <strong>client secret</strong> the IdP issues. Set scopes if they differ from <code>openid,profile,email</code>. Then set the email domain(s), default role, tick Enable, and Save. There is no certificate or metadata-file exchange &mdash; that&rsquo;s the OIDC simplification.</p>
 <h3>SAML path</h3>
