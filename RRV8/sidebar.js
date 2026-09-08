@@ -2151,13 +2151,25 @@ ${adminSection}
     // gateway, not the per-database data service. There is nothing in that
     // server's log to find. And the customer's IT department cannot fix it.
     //
-    // The real cause was ANTHROPIC_API_KEY not being set on VALC, and
-    // AiController says so in the exception it throws -- but the response body
-    // is {"timestamp","status","error","path"} with NO message field, because
-    // server.error.include-message is never. The author-written reason is
-    // stripped before it leaves, exactly as it is on the agent. So this
-    // function cannot read the cause and has to name it from the path, which is
-    // reliable: only the AI gateway lives under api/v1/ai/.
+    // The real cause was ANTHROPIC_API_KEY not being set on VALC.
+    //
+    // ⚠ THE ORIGINAL REASON THIS BRANCH KEYS OFF THE PATH NO LONGER APPLIES, and
+    // the comment that used to be here asserted it as a live constraint. It said
+    // the body was {"timestamp","status","error","path"} with NO message field
+    // (server.error.include-message defaults to never), so this function COULD
+    // NOT read the cause. VLC-65 fixed that: AiController.error() now builds the
+    // body, and the 503 carries {code:"AI_NOT_CONFIGURED", message, errors}.
+    // Corrected 2026-09-08 during VLC-63's scrub. A stale comment claiming a
+    // constraint that has been lifted is what VLC-65 itself was about -- three
+    // comments asserted a false rule about the AI level field, and that is why
+    // the entitlement cap was never wired.
+    //
+    // KEEP KEYING OFF THE PATH ANYWAY, for a different and better reason: the
+    // server's message is engineer-facing, and the wording below is written for
+    // the person reading the banner. Where a server-named reason genuinely IS
+    // the signal, the generic 5xx branch under this one uses _serverDetail() --
+    // that is the pattern to copy if that ever becomes true here. Path-keying
+    // stays reliable because only the AI gateway lives under api/v1/ai/.
     //
     // 503 specifically is the not-configured case. Any other 5xx from the
     // gateway is a real failure of a call that WAS configured, so it gets a
