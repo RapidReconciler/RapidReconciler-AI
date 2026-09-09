@@ -198,6 +198,7 @@
       <li data-target="overview"><button onclick="showView('topic-overview')">Overview</button></li>
       <li data-target="ticket"><button onclick="showView('topic-ticket')">Change Ticket Text</button></li>
       <li data-target="firewall"><button onclick="showView('topic-firewall')">1. Firewall &amp; DNS</button></li>
+      <li data-target="inspection"><button onclick="showView('topic-inspection')">Zscaler &amp; Gateways</button></li>
       <li data-target="download"><button onclick="showView('topic-download')">2. Download the Agent</button></li>
       <li data-target="uninstall"><button onclick="showView('topic-uninstall')">3. Uninstall the Old Agent</button></li>
       <li data-target="install"><button onclick="showView('topic-install')">4. Install the New Agent</button></li>
@@ -242,6 +243,10 @@
           <tr>
             <td><a href="javascript:void(0)" onclick="showView('topic-firewall')">1. Firewall &amp; DNS</a></td>
             <td>The outbound endpoints and ports to permit, and the PowerShell tests that prove them. Complete this before the Agent is replaced.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-inspection')">Zscaler &amp; Gateways</a></td>
+            <td><strong>Read this before step 2 if you run Zscaler.</strong> It has blocked RapidReconciler at two customer sites, and the fix is a change your Zscaler administrator makes.</td>
           </tr>
           <tr>
             <td><a href="javascript:void(0)" onclick="showView('topic-download')">2. Download the Agent</a></td>
@@ -485,9 +490,10 @@
         <li class="spec-row"><span class="spec-key">False</span><span class="spec-val">The connection is blocked, is not routable, or the destination cannot be reached from this machine. <code>Test-NetConnection</code> prints a WARNING line alongside the failure that separates a name which would not resolve from a port that would not open.</span></li>
       </ul>
 
-      <div class="callout info">
-        <div class="callout-label">If outbound traffic goes through a proxy</div>
-        <p><code>Test-NetConnection</code> opens a direct TCP socket and does not use a configured HTTP proxy. In an environment that forces outbound web traffic through one, a <code>False</code> does not by itself mean RapidReconciler will fail, and a <code>True</code> does not prove it will succeed. Tell GSI if a proxy sits in the path, including its address and whether it performs TLS inspection &mdash; the configuration differs.</p>
+      <div class="callout important">
+        <div class="callout-label">A passing port test is not a clean bill of health</div>
+        <p><code>Test-NetConnection</code> opens a direct TCP socket and does not use a configured HTTP proxy. Where outbound web traffic is forced through a proxy or a secure web gateway, a <code>False</code> does not by itself mean RapidReconciler will fail, and <strong>a <code>True</code> does not prove it will succeed</strong>.</p>
+        <p>If your organization runs <strong>Zscaler</strong>, Netskope, Palo Alto Prisma Access, Cisco Umbrella or Forcepoint, read <a href="javascript:void(0)" onclick="showView('topic-inspection')">Zscaler &amp; Gateways</a> before you go any further. It has blocked RapidReconciler at two customer sites, and it passes every test on this page.</p>
       </div>
 
       <div class="step-complete-block">
@@ -501,6 +507,184 @@
         <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
         <div>
           <button class="prev-btn" onclick="showView('topic-ticket')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-inspection')">Next: Zscaler &amp; Gateways &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: TLS INSPECTION ============
+         Unnumbered on purpose. Steps 1-6 are referenced by number in the
+         checklist, the step-complete data-step keys, and a dozen
+         cross-references; inserting a numbered step here would renumber all
+         of it for no reader benefit.
+
+         ⚠ REORDERED 2026-09-09 AFTER A REAL INCIDENT SURFACED, AND THE FIRST
+         DRAFT LED WITH THE WRONG MECHANISM.
+
+         The first draft led with ZIA SSL Inspection breaking the Agent's
+         outbound Java TLS -- a real mechanism, confirmed by Zscaler's own
+         software-developer TLS guide, but one this project has NO incident
+         record for. Then a customer engineer's message from 2026-08-20
+         turned up: the actual fix at two customer sites was adding users to
+         a ZPA **application segment** for RapidReconciler. That is a
+         different product (Private Access, not Internet Access), a different
+         failure (users cannot reach RR at all, vs the Agent cannot reach
+         GSI), and a different remedy.
+
+         So ZPA now leads because it is the documented cause, and TLS
+         inspection is demoted to a clearly-labelled secondary subsection.
+         Do not re-promote the inspection half without an incident behind it.
+
+         Vendor terminology checked against Zscaler's own help portal
+         2026-09-09: ZPA uses "application segment", "segment group" and
+         "access policy", and ZPA blocks access by default until an explicit
+         allow rule exists. ZIA uses "SSL Inspection" and the "Do Not
+         Inspect" action on a custom URL category. "Zscaler Client Connector"
+         is the endpoint agent in both.
+
+         ⚠ DATA HYGIENE: the source message named a real customer and a real
+         engineer. This repo is PUBLIC. Neither appears here -- "two customer
+         sites" carries the same weight. Do not add them back. The segment
+         name in that message was also misspelled; the doc suggests a correct
+         spelling and says the name is arbitrary. -->
+    <section id="topic-inspection" class="view">
+      <h1>Zscaler and secure web gateways</h1>
+      <p class="lede">If your organization runs Zscaler, read this before step 2. It has blocked RapidReconciler at two customer sites, and the failure looks exactly like a fault in the application.</p>
+
+      <div class="callout important">
+        <div class="callout-label">The one that has actually bitten us</div>
+        <p>At two customer sites, users could not load RapidReconciler until their accounts were granted access to a <strong>Zscaler Private Access application segment</strong> for it. Everything else was configured correctly. This is the first thing to check, and it is a change your Zscaler administrator makes &mdash; not a firewall rule and not anything on the RapidReconciler side.</p>
+      </div>
+
+      <h2>What it looks like</h2>
+      <p>The application loads, or partly loads, and then no data appears. The giveaway is in the browser&rsquo;s own developer console (<strong>F12</strong>, then the <strong>Console</strong> tab), where you will see a failure against your own RapidReconciler hostname on a high port number:</p>
+
+      <div class="cmd-block">
+        <div class="cmd-line">Failed to load resource: rrprod-[companyname].getgsi.com:37626/poll</div>
+        <div class="cmd-line">net::ERR_CONNECTION_TIMED_OUT</div>
+      </div>
+
+      <p>The port will differ on your install; <code>37626</code> is one real example. Two things make this diagnostic reliable:</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">It is per user</span><span class="spec-val">One person cannot load RapidReconciler while a colleague on the same network can. A server-side or firewall problem affects everybody at once; this affects whoever has not been granted access.</span></li>
+        <li class="spec-row"><span class="spec-key">It times out</span><span class="spec-val"><code>ERR_CONNECTION_TIMED_OUT</code> rather than a certificate error or a refused connection. The request is being absorbed, not rejected.</span></li>
+      </ul>
+
+      <div class="callout warning">
+        <div class="callout-label">Virtual desktops are the usual place this appears</div>
+        <p>Where users reach RapidReconciler from a virtual desktop, that traffic goes through Zscaler even though both machines look like they are on your own network. A packet capture at one site confirmed the virtual desktop and the RapidReconciler server were not communicating on any other port &mdash; so there is no fallback path, and the high port either works or nothing loads.</p>
+      </div>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Why RapidReconciler needs a high port at all</h2>
+      <p>The page in the browser reads its data directly from the RapidReconciler application server, and each RapidReconciler <strong>database</strong> is served by its own process listening on its own high-numbered port. That is why the console error above names a port in the thirty-thousands rather than 443.</p>
+      <p>Those ports are <strong>assigned per database and are sticky</strong> &mdash; a given database keeps its port across restarts, so once the access is right it stays right.</p>
+
+      <h2>What your Zscaler administrator needs to do</h2>
+      <ol>
+        <li><strong>An application segment covering RapidReconciler.</strong> It needs your RapidReconciler hostname, <code>rrprod-[companyname].getgsi.com</code>, and the service port for <em>each</em> RapidReconciler database. GSI will confirm the exact ports for your install &mdash; in practice they sit in the mid-30000s to mid-40000s. The segment name is yours to choose; something like <code>RapidReconciler</code> keeps it findable.</li>
+        <li><strong>An access policy rule granting your users.</strong> Zscaler Private Access denies access by default until a rule explicitly allows it, so the segment existing is not enough &mdash; the users or the group must be named in a rule that references it. This is the step described at both sites as &ldquo;adding the users to the app segment&rdquo;.</li>
+        <li><strong>Confirm the group actually synced.</strong> If your team cannot find the right group when writing the rule, it may not have synced to the Zscaler Client Connector Portal yet. That is a known snag and worth ruling out before assuming the group is wrong.</li>
+      </ol>
+
+      <div class="callout important">
+        <div class="callout-label">&#9888; Adding a RapidReconciler database later means adding a port</div>
+        <p>Each database gets its own service port. If GSI adds a database for you after this is set up, its port will not be in the application segment, and users will find that one database will not load while the others are fine. Nothing will have changed on your network that day, which makes it a slow thing to spot. Tell your Zscaler administrator whenever a database is added, and tell GSI that Zscaler is in the path so we can flag it for you.</p>
+      </div>
+
+      <h2>Confirming the fix</h2>
+      <p>Have the affected user reload RapidReconciler with <strong>Shift</strong> + <strong>F5</strong> and re-open the console. The <code>/poll</code> request should now succeed and data should appear. If a different high port then fails the same way, that is another database whose port needs adding to the segment.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>A second, separate problem: HTTPS decryption</h2>
+      <p>Zscaler and its equivalents can also <strong>decrypt outbound HTTPS</strong> for inspection. That is a different feature from the access control above, it breaks a different thing, and <strong>we have no record of it hitting a RapidReconciler install</strong> &mdash; it is here because the mechanism is real and it is cheap to rule out.</p>
+      <p>It would affect the <em>Agent</em> reaching GSI, not users reaching the application, and the signature is distinct: the step 1 port tests pass, a browser on the server reaches GSI without a warning, and the Agent log shows a certificate or SSL handshake error instead of a heartbeat.</p>
+      <p>To decrypt HTTPS, the gateway re-signs traffic with its own certificate. Every client has to trust that certificate. The standard rollout pushes the <strong>Zscaler Root CA</strong> into the <strong>Windows</strong> certificate store by Group Policy, and for almost everything on the server, that is the end of it.</p>
+      <p>The RapidReconciler Agent is a <strong>Java</strong> application, and Java keeps its <strong>own</strong> certificate store. It does not read the Windows one. The Agent runs on a Java runtime bundled inside its own install folder, so its trust list lives here:</p>
+
+      <div class="cmd-block">
+        <div class="cmd-line">C:\Program Files\Rapid Reconciler\jre\lib\security\cacerts</div>
+      </div>
+
+      <p>A Group Policy push that fixes every browser on the machine does not put anything in that file. Zscaler documents this pattern themselves, in their guidance for software developers, as a known cause of inspection breakage.</p>
+
+      <div class="callout warning">
+        <div class="callout-label">If that is what you have, the firewall is not the answer</div>
+        <p>Adding, widening, or re-testing firewall rules will not change it. The connection is being terminated and re-signed in the middle, and the Agent is refusing the certificate it receives. Both sides are working as designed.</p>
+      </div>
+
+      <h3>Fix 1 &mdash; exempt the GSI hostnames from inspection (preferred)</h3>
+      <p>Have whoever administers your gateway stop decrypting traffic to GSI&rsquo;s endpoints. In Zscaler this means putting the hostnames in a <strong>custom URL category</strong> and setting the SSL Inspection policy action for that category to <strong>Do Not Inspect</strong>. Other products use different words for the same idea &mdash; a bypass, an exclusion, a do-not-decrypt list.</p>
+      <p>The hostnames are the ones in the step 1 table:</p>
+      <div class="cmd-block">
+        <div class="cmd-line">rrvalc-prod.getgsi.com</div>
+        <div class="cmd-line">rrvalcadmin-prod.getgsi.com</div>
+        <div class="cmd-line">rrjms-prod.getgsi.com</div>
+        <div class="cmd-line">rrsso-prod.getgsi.com</div>
+        <div class="cmd-line">rapidreconciler-prod.getgsi.com</div>
+        <div class="cmd-line">rapidreconciler.getgsi.com</div>
+      </div>
+      <p><strong>Why this one is better:</strong> it keeps working after an Agent upgrade. Upgrading the Agent replaces the bundled Java runtime, and a replaced runtime brings a fresh, empty certificate store &mdash; so fix 2 has to be redone every time, by someone who remembers it exists. An exemption is configured once, in your gateway, where your security team can see it.</p>
+
+      <h3>Fix 2 &mdash; import the root certificate into the Agent&rsquo;s Java store</h3>
+      <p>If an exemption is not possible, add your gateway&rsquo;s root certificate to the Agent&rsquo;s own trust list. Your security team supplies the certificate file; run this on the application server as an administrator, with the Agent service <strong>stopped</strong>:</p>
+
+      <div class="cmd-block">
+        <div class="cmd-line">&nbsp;&nbsp;&#35; back up the store first</div>
+        <div class="cmd-line">Copy-Item "C:\Program Files\Rapid Reconciler\jre\lib\security\cacerts" `</div>
+        <div class="cmd-line">&nbsp;&nbsp;"C:\Program Files\Rapid Reconciler\jre\lib\security\cacerts.backup"</div>
+        <div class="cmd-line">&nbsp;</div>
+        <div class="cmd-line">&nbsp;&nbsp;&#35; import the root certificate your security team gave you</div>
+        <div class="cmd-line">&amp; "C:\Program Files\Rapid Reconciler\jre\bin\keytool.exe" -importcert -trustcacerts `</div>
+        <div class="cmd-line">&nbsp;&nbsp;-alias gateway-root -file C:\Temp\ZscalerRootCA.crt `</div>
+        <div class="cmd-line">&nbsp;&nbsp;-keystore "C:\Program Files\Rapid Reconciler\jre\lib\security\cacerts"</div>
+      </div>
+
+      <p>It will ask for the keystore password. Java&rsquo;s default for this file is <code>changeit</code>. Answer <code>yes</code> when it asks whether to trust the certificate, then start the Agent service and check the log for heartbeats as in step 4.</p>
+
+      <div class="callout warning">
+        <div class="callout-label">This one expires without warning</div>
+        <p>Record that you did it, and where. The next Agent upgrade replaces the Java runtime and this import goes with it &mdash; the Agent stops connecting, and the reason is a change nobody made that day. If you take this route, put it in your own upgrade runbook, and tell GSI so we can flag it before the next upgrade.</p>
+      </div>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Two smaller things the same gateway can do</h2>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Block the download</span><span class="spec-val">The Agent installer is not code-signed, and gateways commonly block or quarantine unsigned <code>.exe</code> downloads &mdash; sometimes delivering a truncated file rather than an error. If <a href="javascript:void(0)" onclick="showView('topic-download')">step 2</a> misbehaves, check the gateway&rsquo;s log before assuming the download is broken. Ask GSI for the file&rsquo;s SHA-256 hash to confirm what you received.</span></li>
+        <li class="spec-row"><span class="spec-key">Drop port 8002</span><span class="spec-val">The JMS connection on TCP 8002 is not web traffic, and a gateway that proxies web traffic may drop a non-standard port outright &mdash; a firewall rule permitting 8002 does not change that. Symptom: the Agent reaches GSI but the connection never settles. This needs the port allowed at the gateway, not just at the firewall.</span></li>
+      </ul>
+
+      <h2>What to tell GSI</h2>
+      <p>These answers let us rule the whole area in or out in one message instead of three:</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Product</span><span class="spec-val">Which gateway or proxy is in the path, and whether it is Zscaler Private Access, Internet Access, or both.</span></li>
+        <li class="spec-row"><span class="spec-key">App segment</span><span class="spec-val">Whether a RapidReconciler application segment exists, which ports it covers, and which users or groups are granted access to it.</span></li>
+        <li class="spec-row"><span class="spec-key">Users</span><span class="spec-val">Whether your users reach RapidReconciler from virtual desktops. If so, say so early &mdash; that is where this has bitten.</span></li>
+        <li class="spec-row"><span class="spec-key">Inspection</span><span class="spec-val">Whether HTTPS decryption is switched on for the application server, and whether the GSI hostnames and TCP 8002 are exempted.</span></li>
+        <li class="spec-row"><span class="spec-key">Evidence</span><span class="spec-val">For a user-side failure, the browser console output. For an Agent-side one, the newest <code>rr-valc-agent_YYYYMMDD.out.log</code>. Either settles which of the two problems you have.</span></li>
+      </ul>
+
+      <div class="callout tip">
+        <div class="callout-label">Nothing here weakens your security posture</div>
+        <p>Granting named users access to one internal application, or exempting a handful of hostnames you already permit through your firewall, is narrower than loosening anything broadly. Traffic stays encrypted end to end &mdash; an inspection exemption only stops your gateway from opening and re-sealing it in the middle.</p>
+      </div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="inspection">
+          <span class="step-complete-label">Mark TLS Inspection as reviewed</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+        <div>
+          <button class="prev-btn" onclick="showView('topic-firewall')">&larr; Previous</button>
           <button class="next-btn" onclick="showView('topic-download')">Next: Download the Agent &rarr;</button>
         </div>
       </div>
@@ -548,6 +732,7 @@
       <div class="callout warning">
         <div class="callout-label">The installer is not code-signed</div>
         <p>Windows SmartScreen warns on first launch, and strict Group Policy or endpoint-protection products may block it outright. Choose <strong>More info &rarr; Run anyway</strong>, or have the binary allowed by whoever administers your endpoint policy. Ask GSI for the file&rsquo;s SHA-256 hash if your process requires an out-of-band integrity check.</p>
+        <p>A secure web gateway can also block or quarantine the download before it reaches the server, sometimes delivering a truncated file rather than an error &mdash; see <a href="javascript:void(0)" onclick="showView('topic-inspection')">TLS Inspection</a>.</p>
       </div>
 
       <p>Do not start step 3 until the installer is downloaded and sitting on the application server.</p>
@@ -562,7 +747,7 @@
       <div class="topic-footer-nav">
         <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
         <div>
-          <button class="prev-btn" onclick="showView('topic-firewall')">&larr; Previous</button>
+          <button class="prev-btn" onclick="showView('topic-inspection')">&larr; Previous</button>
           <button class="next-btn" onclick="showView('topic-uninstall')">Next: Uninstall the Old Agent &rarr;</button>
         </div>
       </div>
@@ -648,6 +833,7 @@
       <div class="callout important">
         <div class="callout-label">If there is no heartbeat at all</div>
         <p>The usual cause is step 1. A reconnect loop, or a failure to connect at all, points at outbound access to <code>rrvalc-prod.getgsi.com:443</code> or <code>rrjms-prod.getgsi.com:8002</code> &mdash; port 8002 in particular, if a rule still names 8000. Re-run the port test from <a href="javascript:void(0)" onclick="showView('topic-firewall')">step 1</a> on this server and send GSI the result along with the newest <code>.out.log</code>.</p>
+        <p><strong>If that port test passes and there is still no heartbeat, read the log before anything else.</strong> A certificate or SSL handshake error there means the problem is not the firewall &mdash; see the HTTPS-decryption half of <a href="javascript:void(0)" onclick="showView('topic-inspection')">Zscaler &amp; Gateways</a>. That combination, ports open and the Agent refusing the certificate, is the one that costs a day.</p>
       </div>
 
       <div class="step-complete-block">
@@ -728,6 +914,11 @@
       <h3>Checking it from the site itself</h3>
       <p>You do not have to go through Settings to see the current state. With RapidReconciler open, click the icon to the left of the address in the address bar, then <strong>Site settings</strong>. The permission appears in that list as <strong>Local network</strong>, and can be set to <em>Allow</em> there directly. That is the fastest check when a single user reports empty screens.</p>
 
+      <div class="callout warning">
+        <div class="callout-label">If the permission is set and data still does not appear</div>
+        <p>Two different things produce the same empty screen. Open the browser console (<strong>F12</strong> &rarr; <strong>Console</strong>) on the affected workstation. If you see <code>ERR_CONNECTION_TIMED_OUT</code> against your <code>rrprod-[companyname].getgsi.com</code> hostname on a high port number, this permission is not the problem &mdash; the request is being stopped before it reaches your server. Go to <a href="javascript:void(0)" onclick="showView('topic-inspection')">Zscaler &amp; Gateways</a>. The tell is that it affects some users and not others.</p>
+      </div>
+
       <div class="diamond-divider"><span class="diamond"></span></div>
 
       <h2>Rolling it out by policy</h2>
@@ -806,6 +997,7 @@
         <li class="spec-row"><span class="spec-key">Browser permission</span><span class="spec-val">Re-check <a href="javascript:void(0)" onclick="showView('topic-browser')">step 5</a> on this specific workstation. The permission is per browser profile, so it is set for the person who set it and not for the machine.</span></li>
         <li class="spec-row"><span class="spec-key">Agent</span><span class="spec-val">On the application server, confirm the <code>rr-valc-agent</code> service is running and the newest <code>.out.log</code> is still writing heartbeats.</span></li>
         <li class="spec-row"><span class="spec-key">Firewall and proxy</span><span class="spec-val">Re-run the port test from <a href="javascript:void(0)" onclick="showView('topic-firewall')">step 1</a> on the application server. A rule applied to the wrong host or the wrong port shows up here.</span></li>
+        <li class="spec-row"><span class="spec-key">Zscaler</span><span class="spec-val"><strong>Check this before the ones above if only some users are affected.</strong> Open the browser console (<strong>F12</strong>) on an affected workstation. A <code>ERR_CONNECTION_TIMED_OUT</code> against your own <code>rrprod-[companyname].getgsi.com</code> hostname on a high port means the user has not been granted access to the RapidReconciler application segment. See <a href="javascript:void(0)" onclick="showView('topic-inspection')">Zscaler &amp; Gateways</a>.</span></li>
       </ul>
 
       <div class="callout important">
@@ -896,6 +1088,10 @@
         <div class="checklist-row">
           <input type="checkbox" id="c-6" class="checklist-item">
           <label for="c-6">Proxy in the outbound path identified, or confirmed absent, including whether it inspects TLS</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-6b" class="checklist-item">
+          <label for="c-6b">If Zscaler is in the path: a RapidReconciler application segment exists covering every database's service port, and the users who need RapidReconciler are granted access to it <span class="ref">&mdash; see <a href="javascript:void(0)" onclick="showView('topic-inspection')">Zscaler &amp; Gateways</a></span></label>
         </div>
         <div class="checklist-row">
           <input type="checkbox" id="c-7" class="checklist-item">
