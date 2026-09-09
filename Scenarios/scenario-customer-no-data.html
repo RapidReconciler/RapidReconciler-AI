@@ -518,15 +518,72 @@
       <div class="step-result"><strong>Got your answer?</strong> Continue to Step 5.</div>
     </article>
 
-    <!-- ===== Step 5 ===== -->
+<!-- ===== Step 5, added 2026-09-09 =====
+     Finds one specific, documented cause: the user's account not being granted
+     access to RapidReconciler's Zscaler Private Access application segment.
+     Fixed exactly this way at two customer sites in August 2026, where the
+     browser console showed ERR_CONNECTION_TIMED_OUT against the customer's own
+     rrprod-* hostname on a five-digit port.
+
+     It sits AFTER the coworker check on purpose -- "just me, or only some of
+     us" is what makes this cause likely, and the answer to Step 4 is what
+     tells the reader that. Full detail lives in the Zscaler section of
+     RRUniversity/agent-upgrade.html; this step is the customer-facing short
+     form and deliberately stops at "give this line to IT". -->
     <article class="step-card">
       <span class="step-num">Step 5</span>
+      <div class="step-title">Look for a blocked connection in your browser</div>
+      <div class="step-when">
+        <strong>When this applies:</strong> Step 4 showed it&rsquo;s just you, or only some people. Worth thirty seconds even if you&rsquo;re not technical.
+      </div>
+      <div class="step-body">
+        <p>This looks for one specific cause: your account not being allowed to reach RapidReconciler through your company&rsquo;s access service. If that&rsquo;s what it is, nothing you can change will fix it &mdash; but the line below tells your IT exactly what to do, which turns a long investigation into a five-minute change.</p>
+        <ol>
+          <li>With RapidReconciler open, press <code>F12</code>.</li>
+          <li>Click the <strong>Console</strong> tab in the panel that opens.</li>
+          <li>Reload the page with <code>Shift</code> + <code>F5</code>.</li>
+          <li>Look for a red line naming <em>your own</em> RapidReconciler address followed by a colon and a five-digit number.</li>
+        </ol>
+
+        <p>It looks like this:</p>
+        <figure style="margin: 12px 0;">
+          <div style="background:#2b0f10;border:1px solid #7a2a2c;border-radius:5px;padding:11px 14px;font-family:'Source Code Pro',ui-monospace,Consolas,monospace;font-size:12.5px;line-height:1.6;color:#ffb4b4;overflow-x:auto;">
+            <span style="color:#ff8a8a;">&#10007;</span> Failed to load resource: rrprod-<em style="font-style:normal;opacity:.8;">[yourcompany]</em>.getgsi.com:<strong style="color:#ffd9d9;">37626</strong>/poll<br>
+            <span style="padding-left:16px;">net::<strong style="color:#ffd9d9;">ERR_CONNECTION_TIMED_OUT</strong></span>
+          </div>
+          <figcaption style="font-size:12.5px;color:var(--text-muted);margin-top:6px;line-height:1.55;">The five-digit port will be different on your system, and there may be several lines. What matters is the words <code>ERR_CONNECTION_TIMED_OUT</code> against your own RapidReconciler address.</figcaption>
+        </figure>
+
+<!-- Uses this page's own .escalate-block / .escalate-title.
+     ⚠ The first draft of this block used .key-callout, copied from the sibling
+     scenario post-deploy-rruser-login-error.html. THIS page defines no callout
+     class at all, so it would have rendered half-styled -- the same
+     used-but-never-defined defect that had already shipped once on
+     GSIRRTech/install-scenarios/scenario-agent-services-not-running.html.
+     Caught before commit by a used-vs-defined sweep over every page's own
+     <style> plus its linked stylesheets. Reuse a class this page already
+     defines rather than importing one by eye. -->
+        <div class="escalate-block">
+          <div class="escalate-title">If you see that line, send this to IT</div>
+          <p>Copy the whole red line, and send it with this sentence:</p>
+          <p><em>&ldquo;Please grant my account access to the RapidReconciler application segment in Zscaler. The connection to this address and port is timing out.&rdquo;</em></p>
+          <p>This was the fix at two other companies. It is a permissions change on their side &mdash; not a fault in RapidReconciler, and not something you can set yourself.</p>
+        </div>
+
+        <p>If the console is empty, or shows something different, this isn&rsquo;t your cause. Continue to Step 6.</p>
+      </div>
+      <div class="step-result"><strong>Found that line?</strong> Send it to IT and stop here. Otherwise, continue to Step 6.</div>
+    </article>
+
+    <!-- ===== Step 6 ===== -->
+    <article class="step-card">
+      <span class="step-num">Step 6</span>
       <div class="step-title">
         Contact your IT and share what you&rsquo;ve found
         <span class="it-badge">For your IT</span>
       </div>
       <div class="step-when">
-        <strong>When this applies:</strong> Steps 1&ndash;4 didn&rsquo;t fix it.
+        <strong>When this applies:</strong> Steps 1&ndash;5 didn&rsquo;t fix it.
       </div>
       <div class="step-body">
         <p>You won&rsquo;t be able to fix this yourself &mdash; it&rsquo;s a network, machine, or server issue your IT needs to investigate.</p>
@@ -605,6 +662,12 @@
     if (selected.value === 'just-me') {
       leadIn = 'I can\'t see any data in RapidReconciler after logging in (screenshot attached). I checked with coworkers — only I am affected. The issue looks isolated to my machine.';
       checks = [
+        // Zscaler ZPA app-segment membership goes FIRST in the just-me branch:
+        // it is the one documented cause of a per-user failure (two customer
+        // sites, 2026-08), and every other check here points at the machine,
+        // which would send IT hunting in the wrong place. See the Zscaler
+        // section of RRUniversity/agent-upgrade.html.
+        'If we use Zscaler (or a similar zero-trust access service): is my account granted access to the RapidReconciler application segment? At other companies this exact symptom was fixed by adding the affected users to it. A browser-console line reading ERR_CONNECTION_TIMED_OUT against our RapidReconciler address on a five-digit port number confirms it.',
         'Local firewall on my workstation — is anything blocking outbound traffic to RapidReconciler?',
         'Browser policy or Windows Group Policy that might restrict site permissions or local-network access on my account.',
         'DNS settings on this specific machine: custom DNS server, hosts file, browser DNS-over-HTTPS.',
@@ -614,6 +677,7 @@
       leadIn = 'I can\'t see any data in RapidReconciler after logging in (screenshot attached). I checked with coworkers — multiple users are affected at the same time.';
       checks = [
         'Has anything been turned on, updated, or changed recently for web filtering, DNS filtering, secure web gateways, or endpoint security? Common products: Cisco Umbrella, Zscaler, Cloudflare Gateway, Forcepoint, Palo Alto/Prisma, Fortinet, SonicWall, CrowdStrike, SentinelOne, Microsoft Defender.',
+        'If we use Zscaler: does the RapidReconciler application segment cover the service port for EVERY RapidReconciler database? Each database is served on its own five-digit port, so a database added recently would have a port that is not in the segment — that database fails for everyone while the others work.',
         'Was there a Windows update, a new VPN client, or a switch from split-tunnel to full-tunnel VPN recently?',
         'Are other *.getgsi.com domains also blocked — e.g., a related GSI SharePoint site? If yes, the web-filter rule is scoped broader than just RR.',
         'Quick cross-network test: try RapidReconciler from a different network (a mobile hotspot is fine). If it works from a different network, the issue is on the corporate network — whitelist rapidreconciler-prod.getgsi.com on whichever product is responsible.',
