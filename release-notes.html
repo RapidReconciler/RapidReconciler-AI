@@ -281,6 +281,16 @@
        newest entry stays at the top of the list. -->
   <!-- RELEASE_NOTES_INSERTION_POINT -->
 
+  <article class="rn-entry" data-sha="16eb03a">
+    <div class="rn-entry-meta">
+      <time class="rn-entry-date" datetime="2026-09-09">September 9, 2026</time>
+    </div>
+    <div class="rn-entry-body">
+      <p>If your organization uses Zscaler, the Agent Upgrade guide now has a section for it. At two customer sites, users could not see their data until their accounts were granted access to a RapidReconciler application segment in Zscaler -- everything else was configured correctly. The section shows the exact line to look for in your browser, explains why it affects some users and not others, and gives your Zscaler administrator the three things to set up. It also flags something easy to miss later: each RapidReconciler database is served on its own port, so adding a database means adding a port.</p>
+      <p>The &quot;no data after logging in&quot; troubleshooting page has a matching step. It walks you through checking your browser for a blocked connection and gives you a ready-made sentence to send to your IT team, so a permissions change on their side does not turn into a long investigation.</p>
+    </div>
+  </article>
+
   <article class="rn-entry" data-sha="3212032">
     <div class="rn-entry-meta">
       <time class="rn-entry-date" datetime="2026-09-09">September 9, 2026</time>
@@ -361,15 +371,6 @@
     </div>
     <div class="rn-entry-body">
       <p>A user who has not been granted either the Reconciliation Analyst or the Accountant lane on a database now sees a clear message saying so, naming the database, instead of being shown the Accountant dashboard they cannot use.</p>
-    </div>
-  </article>
-
-  <article class="rn-entry" data-sha="c434d87">
-    <div class="rn-entry-meta">
-      <time class="rn-entry-date" datetime="2026-09-03">September 3, 2026</time>
-    </div>
-    <div class="rn-entry-body">
-      <p>Fixed a defect in the Export Analyzer that could silently drop rows from the end of a dropped workbook. Any blank row in the sheet caused one row to be skipped, always from the end, with no warning -- so a report could be missing whole trailing sections, most often the DMAAI detail. All report types are affected and all are fixed. If a past analysis looked incomplete at the bottom, re-run it.</p>
     </div>
   </article>
 
