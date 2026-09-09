@@ -281,6 +281,15 @@
        newest entry stays at the top of the list. -->
   <!-- RELEASE_NOTES_INSERTION_POINT -->
 
+  <article class="rn-entry" data-sha="c7c65ed">
+    <div class="rn-entry-meta">
+      <time class="rn-entry-date" datetime="2026-09-09">September 9, 2026</time>
+    </div>
+    <div class="rn-entry-body">
+      <p>The Sign-in column on the Team page now shows how each member actually signs in, rather than reading &quot;Password&quot; for everyone until their first single sign-on. The same correction applies to the downloaded user report.</p>
+    </div>
+  </article>
+
   <article class="rn-entry" data-sha="bfe316c">
     <div class="rn-entry-meta">
       <time class="rn-entry-date" datetime="2026-09-05">September 5, 2026</time>
@@ -359,15 +368,6 @@
     </div>
     <div class="rn-entry-body">
       <p>Fixed a false finding in the Export Analyzer&#x27;s Transaction Detail report. On documents where several accounts already reconcile, the analyzer could report an &quot;account mismatch&quot; naming the same account on both sides and recommend a journal entry that moved nothing. It now reports the account that is genuinely missing its general-ledger counterpart, and names that account, its amount and its batches directly on the report. Genuine account mismatches between two different accounts are unaffected.</p>
-    </div>
-  </article>
-
-  <article class="rn-entry" data-sha="d95b2e4">
-    <div class="rn-entry-meta">
-      <time class="rn-entry-date" datetime="2026-09-01">September 1, 2026</time>
-    </div>
-    <div class="rn-entry-body">
-      <p>The Account Roll Forward screen can now rebuild the roll-forward report itself when the general ledger has been corrected, instead of only reporting that accounts are out of balance. The sign-in page also refuses to send your password when it has not been told which server to use, rather than failing in a way that looked successful.</p>
     </div>
   </article>
 
