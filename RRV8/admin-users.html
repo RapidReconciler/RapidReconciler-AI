@@ -234,8 +234,14 @@
   .grid-table tr.row-health-red:hover td { background: #f8d7d0; }
 
   /* Sign-in method pill — its own column, shown for EVERY member (not
-     gated on SSO config). Password members read "Password"; once a member
-     signs in through single sign-on (ssoProvider set) it reads "SSO". */
+     gated on SSO config). The text is whatever VALC's appSignIn says:
+     "Entra", "SSO" or "Password". Only the colour is decided here —
+     is-pw for Password, is-sso for either identity-provider value.
+
+     ⚠ The rule this comment used to state was the defect. It said the pill
+     reads "SSO" "once a member signs in through single sign-on (ssoProvider
+     set)" — describing a field VALC documents as NOT a statement of how
+     anyone signs in. See signInCell() for what replaced it and why. */
   .signin-pill {
     display: inline-block; padding: 2px 9px;
     border-radius: 100px;
@@ -1142,6 +1148,46 @@
     return '';   // green needs no note
   }
 
+  // The Sign-in cell.
+  //
+  // ⚠ READS appSignIn, NOT ssoProvider (UI-182, 2026-09-09). This cell used to
+  // be `r.ssoProvider ? 'SSO' : 'Password'`, and VALC's own DTO says of that
+  // field: "NOT a statement of how this person signs in." It is written ONLY by
+  // SsoBridgeService.provision() on a FIRST SSO login, so it is null until
+  // someone has already signed in that way. Measured 2026-09-08 on this
+  // deployment: 6 live users, 0 with sso_provider -- the column read "Password"
+  // for the entire team.
+  //
+  // It was right only by accident: client_sso.email_domains was empty and
+  // EmailDomainAllowlist.domainAllowed fails closed on blank, so everyone did
+  // in fact use a password. Setting email_domains would have made this false
+  // for every Entra user, and a password cannot succeed for them -- an SSO
+  // account holds bcrypt of a random UUID (Valc AuthController:667).
+  //
+  // appSignIn is the derived truth, computed once server-side in
+  // AdminUsersController.appSignInFor() from the member's email domain against
+  // client_sso, and served to this page on the same UserDto by
+  // TenantUsersController. It is one of exactly three grid-sized strings --
+  // "Entra", "SSO", "Password" -- from SsoProtocol.
+  //
+  // ⚠ PRINT IT VERBATIM. Do not map it to wording here: the operator console
+  // shows these same words for the same member, and a second mapping is how
+  // the two surfaces drift. Only the PILL COLOUR is decided locally, which is
+  // presentation and not a fact about the member.
+  function signInCell(r) {
+    const method = r.appSignIn;
+    // Missing field (an older VALC than this page) -- make NO claim. Defaulting
+    // to "Password" is what produced UI-182 in the first place.
+    if (!method) return '<span style="color:var(--text-soft,#5b6677);">&mdash;</span>';
+    const cls = (method === 'Password') ? 'is-pw' : 'is-sso';
+    // ssoProvider still has a job, just not this one: it is EVIDENCE that this
+    // person has actually completed an SSO sign-in, which is worth showing as
+    // history beside the configured method.
+    const seen = r.ssoProvider ? ' · has signed in via ' + fmt(r.ssoProvider) : '';
+    return '<span class="signin-pill ' + cls + '" title="Set by this member’s '
+         + 'email domain, not per person' + seen + '">' + fmt(method) + '</span>';
+  }
+
   // One row's <tr> markup. Extracted so patchRow/removeRow can
   // re-render just one row after a successful PUT or DELETE.
   function rowHtml(r) {
@@ -1158,9 +1204,7 @@
       '<td data-label="Full Name">' + fmt(r.fullName) + '</td>' +
       '<td data-label="Username">' + username + '</td>' +
       '<td data-label="Role">' + (r.roleName ? fmt(r.roleName) : '<span style="color:var(--text-soft,#5b6677);">&mdash;</span>') + '</td>' +
-      '<td data-label="Sign-in">' + (r.ssoProvider
-        ? '<span class="signin-pill is-sso" title="Signs in via single sign-on (' + fmt(r.ssoProvider) + ')">SSO</span>'
-        : '<span class="signin-pill is-pw">Password</span>') + '</td>' +
+      '<td data-label="Sign-in">' + signInCell(r) + '</td>' +
       '<td class="col-opt" data-label="Last Login">' + fmtDate(r.lastLoginAt) + '</td>' +
       '<td class="col-opt" data-label="Last Pass Change">' + fmtDate(r.passwordChangedAt) + '</td>' +
       '<td class="is-action" data-label="Options">' +
@@ -1903,7 +1947,12 @@
         if (rows.length) rows.push({ spacer: true });   // blank row between members
         const identity = [
           u.fullName || '', u.username || '',
-          u.ssoProvider ? 'SSO' : 'Password',
+          // ⚠ appSignIn, NOT ssoProvider — see signInCell(). This was the SECOND
+          // sink carrying the same defect, and the more expensive one: the grid
+          // is refreshed on every visit, but this workbook is downloaded and
+          // kept, so a wrong value here outlives the page that produced it.
+          // Same "make no claim" fallback rather than assuming Password.
+          u.appSignIn || '—',
           u.roleName || '—',
           u.active ? 'Active' : 'Inactive',
           fmtIsoForExport(u.lastLoginAt)       || '—',
