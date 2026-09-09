@@ -1,0 +1,251 @@
+@charset "UTF-8";
+/* ============================================================
+   local-network-panel.css -- the Edge "Local network" settings
+   page, drawn rather than screenshotted.
+
+   Rendered by local-network-panel.js into any element carrying
+   data-lnp-panel. Markup and labels live in that one script so a
+   future browser rename is a single edit, not three.
+
+   WHY THIS REPLACED A PNG (2026-09-09)
+   ------------------------------------
+   Images/edge-local-network-access.png was captured 2026-05-01
+   and had gone wrong three ways at once:
+
+     1. It showed the OLD host, rapidreconciler.getgsi.com, while
+        the surrounding prose named rapidreconciler-prod. Flagged
+        as a TODO under UI-160 on 2026-08-27 and never re-shot.
+     2. Its panel label, "Allowed to connect to any device on your
+        local network", returns ZERO hits in Edge 152's en-US.pak.
+        Microsoft reworded it to "Allowed to access other devices
+        on your local network". A screenshot cannot be grepped, so
+        nothing caught this.
+     3. In getting-started-with-rapidreconciler.html the src was
+        "Images/..." with no "../", which from RRUniversity/
+        resolves to RRUniversity/Images/ -- a directory that does
+        not exist. That image had never loaded on the live site.
+
+   PROVENANCE OF EVERY LABEL
+   -------------------------
+   The layout, the breadcrumb, the Default-behavior toggle and the
+   ORDER of the two lists come from a screenshot of Edge 152 the
+   owner supplied on 2026-09-09. The label text was cross-checked
+   against the installed browsers' own resource files the same day
+   (Edge 152.0.4191.66 and Chrome 152.0.7977.83, Locales\en-US.pak).
+
+   Two corrections that screenshot forced, both already shipped
+   wrong once:
+     - The page is titled "Local network", NOT "Local network
+       access". Edge's pak carries both strings; only the shorter
+       one is what the breadcrumb shows. Chrome uses "Local
+       network" too, so the two browsers agree on the name and
+       differ only in the path to reach it.
+     - "Not allowed" is listed ABOVE "Allowed". Drawing it the
+        other way round would have had readers checking the wrong
+        block first.
+
+   Colours are literal hex on purpose. The three documents that
+   include this file carry three different :root token sets, so a
+   var() reference would render differently -- or not at all --
+   depending on which document loaded it.
+   ============================================================ */
+
+.lnp {
+  max-width: 900px;
+  margin: 18px 0 0;
+  border: 1px solid #d8dee7;
+  border-radius: 8px;
+  background: #ffffff;
+  font-family: 'Segoe UI', 'Open Sans', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #1b1b1b;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(31, 45, 74, 0.09);
+  display: grid;
+  grid-template-columns: 232px 1fr;
+}
+
+/* ---------- left: the Settings nav ---------- */
+.lnp-nav { padding: 18px 0 22px; background: #ffffff; border-right: 1px solid #f0f2f5; }
+.lnp-nav-title {
+  font-size: 19px;
+  font-weight: 600;
+  padding: 0 18px 16px;
+  color: #1b1b1b;
+}
+.lnp-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px 7px 18px;
+  color: #2f2f2f;
+  font-size: 12.5px;
+  border-left: 3px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lnp-nav-item.is-active {
+  background: #ededed;
+  border-left-color: #0f6cbd;
+  border-radius: 0 4px 4px 0;
+  font-weight: 600;
+  color: #1b1b1b;
+}
+.lnp-nav-gap { height: 12px; }
+
+/* ---------- right: the page itself ---------- */
+.lnp-main { padding: 16px 20px 22px; min-width: 0; }
+
+.lnp-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #d8dee7;
+  border-radius: 18px;
+  padding: 7px 14px;
+  color: #767676;
+  font-size: 12.5px;
+  margin-bottom: 22px;
+  background: #ffffff;
+}
+.lnp-search .lnp-mag {
+  width: 11px;
+  height: 11px;
+  border: 1.6px solid #767676;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.lnp-crumb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1b1b1b;
+  margin-bottom: 18px;
+}
+.lnp-crumb .lnp-back { color: #767676; font-weight: 400; margin-right: 4px; }
+.lnp-crumb .lnp-sep { color: #b9b9b9; font-weight: 400; }
+.lnp-crumb .lnp-here { color: #1b1b1b; }
+
+.lnp-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1b1b1b;
+  margin: 0 0 6px;
+}
+.lnp-sublabel {
+  font-size: 12.5px;
+  color: #3d6472;
+  margin: 0 0 12px;
+}
+
+/* Default behavior: one card with a toggle, not a radio group. */
+.lnp-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid #eceff3;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+}
+.lnp-card-text { min-width: 0; }
+.lnp-card-main { font-size: 13px; color: #1b1b1b; }
+.lnp-card-note { font-size: 12px; color: #3d6472; margin-top: 2px; }
+.lnp-toggle {
+  flex-shrink: 0;
+  width: 40px;
+  height: 20px;
+  border-radius: 10px;
+  background: #16a34a;
+  position: relative;
+}
+.lnp-toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+/* Each allow/block block: label + Add site, then rows. */
+.lnp-block { margin-bottom: 22px; }
+.lnp-block:last-child { margin-bottom: 0; }
+.lnp-block-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.lnp-block-title { font-size: 13px; color: #1b1b1b; min-width: 0; }
+.lnp-block.is-target .lnp-block-title { font-weight: 700; }
+.lnp-block-note { font-size: 12px; color: #3d6472; margin-top: 2px; }
+.lnp-add {
+  flex-shrink: 0;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 5px 15px;
+  background: #ffffff;
+  font-size: 12.5px;
+  color: #1b1b1b;
+}
+
+.lnp-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0 10px 14px;
+  border-bottom: 1px solid #f4f6f8;
+}
+.lnp-row:last-child { border-bottom: none; }
+.lnp-host {
+  font-size: 13px;
+  color: #1b1b1b;
+  word-break: break-all;
+  min-width: 0;
+}
+.lnp-block.is-target .lnp-row.is-target { background: #f3faf5; border-radius: 4px; }
+.lnp-block.is-target .lnp-row.is-target .lnp-host { font-weight: 700; }
+.lnp-dots {
+  margin-left: auto;
+  flex-shrink: 0;
+  border: 1px solid #e4e7eb;
+  border-radius: 4px;
+  padding: 2px 8px 4px;
+  color: #5b5b5b;
+  line-height: 1;
+  font-size: 13px;
+}
+
+/* Caption. Says plainly that this is drawn, so nobody reports it as a
+   screenshot that does not match their screen pixel for pixel. */
+.lnp-caption {
+  max-width: 900px;
+  font-size: 12.5px;
+  color: #6b7280;
+  line-height: 1.55;
+  margin: 10px 0 20px;
+}
+.lnp-caption strong { color: #1f2d4a; }
+
+/* The nav is scene-setting, not instruction. Drop it when there is no room
+   for it rather than letting the page scroll sideways. */
+@media (max-width: 720px) {
+  .lnp { grid-template-columns: 1fr; }
+  .lnp-nav { display: none; }
+}
+
+@media print {
+  .lnp { box-shadow: none; page-break-inside: avoid; }
+  .lnp-nav { display: none; }
+  .lnp { grid-template-columns: 1fr; }
+}

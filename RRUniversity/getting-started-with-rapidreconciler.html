@@ -770,6 +770,11 @@
   }
 </style>
 <link rel="stylesheet" href="../Tools/doc-header.css">
+<!-- Drawn local-network settings panel used in the Local Network Access
+     section. Shared with the no-data scenario and the Agent Upgrade guide so
+     one label correction reaches all three, which a screenshot could never do. -->
+<link rel="stylesheet" href="../Tools/local-network-panel.css">
+<script defer src="../Tools/local-network-panel.js"></script>
 <script defer src="../Tools/doc-chrome.js"></script>
 </head>
 <body data-doc-type="howto">
@@ -1023,30 +1028,47 @@
         <ul>
           <li><strong>Network Connection</strong> &mdash; You must be connected to your office network. If working remotely, connect via VPN or another approved method before accessing the application.</li>
           <li><strong>Reload the Browser</strong> &mdash; Use <code class="kbd">Shift</code> + <code class="kbd">F5</code> to perform a hard reload of the browser.</li>
-          <li><strong>Browser Local Network Access</strong> &mdash; Recent browser updates have introduced a permission that controls whether a site can connect to devices on your local network. RapidReconciler must be allowed. See <a href="javascript:void(0)" onclick="document.getElementById('local-network-detail').scrollIntoView({behavior:'smooth'});">how to verify this in Microsoft Edge</a> below; Chrome has an equivalent setting.</li>
+          <li><strong>Browser Local Network Access</strong> &mdash; Recent browser updates have introduced a permission that controls whether a site can connect to devices on your local network. RapidReconciler must be allowed. See <a href="javascript:void(0)" onclick="document.getElementById('local-network-detail').scrollIntoView({behavior:'smooth'});">how to verify it in Edge and Chrome</a> below.</li>
           <li><strong>Firewall or IP Filter Changes</strong> &mdash; If your IT team has recently updated the corporate firewall or rolled out IP filtering software, RapidReconciler traffic may now be blocked. Ask IT to confirm that <code class="kbd">rapidreconciler-prod.getgsi.com</code> is permitted through any firewall rules or filter lists that apply to your workstation.</li>
           <li><strong>Clear Browser Data</strong> &mdash; This procedure varies by browser. Contact your IT department for specific instructions.</li>
         </ul>
 
-        <h3 id="local-network-detail" style="font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:18px;color:var(--navy);margin-top:32px;margin-bottom:12px;scroll-margin-top:24px;">Verifying Local Network Access (Microsoft Edge)</h3>
-        <p>To check or update the setting in Microsoft Edge:</p>
+        <h3 id="local-network-detail" style="font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:18px;color:var(--navy);margin-top:32px;margin-bottom:12px;scroll-margin-top:24px;">Verifying Local Network Access</h3>
+        <p>Both browsers call the permission <strong>Local network</strong>. Only the route to reach it differs.</p>
+
+        <h4 style="font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:15px;color:var(--navy);margin-top:22px;margin-bottom:8px;">Microsoft Edge</h4>
         <ol>
           <li>Open Edge <strong>Settings</strong>.</li>
-          <li>Go to <strong>Privacy, search, and services</strong> &rarr; <strong>Site permissions</strong> &rarr; <strong>All permissions</strong> &rarr; <strong>Local network access</strong>.</li>
-          <li>Under <strong>Customized behaviors</strong>, look at the <em>Allowed to connect to any device on your local network</em> list. <code class="kbd">rapidreconciler-prod.getgsi.com</code> should appear there.</li>
-          <li>If it is missing, click <strong>Add site</strong> next to that list and add <code class="kbd">rapidreconciler-prod.getgsi.com</code>.</li>
+          <li>Go to <strong>Privacy, search, and services</strong> &rarr; <strong>Site permissions</strong> &rarr; <strong>All permissions</strong> &rarr; <strong>Local network</strong>.</li>
+          <li>Leave <strong>Default behavior</strong> on <em>Ask before accessing (recommended)</em>.</li>
+          <li>Under <strong>Customized behaviors</strong>, look at the <em>Allowed to access other devices on your local network</em> block &mdash; the <strong>lower</strong> of the two. <code class="kbd">rapidreconciler-prod.getgsi.com</code> should appear there.</li>
+          <li>If it is missing, click <strong>Add site</strong> beside that block and add <code class="kbd">rapidreconciler-prod.getgsi.com</code>.</li>
+          <li>If the address is in the <em>Not allowed</em> block above instead, remove it there first. A block entry wins.</li>
         </ol>
 
-        <figure>
-<!-- UI-160, 2026-08-27: this screenshot still shows the OLD host
-     (rapidreconciler.getgsi.com) in the Edge allow-list panel. The surrounding
-     instructions now name rapidreconciler-prod.getgsi.com. Re-shoot the PNG and
-     restore the hostname to the alt text when you do. -->
-          <img src="Images/edge-local-network-access.png" alt="Microsoft Edge Settings page showing Privacy, search, and services / Site permissions / All permissions / Local network access. The Customized behaviors section is highlighted with an orange rectangle around the 'Allowed to connect to any device on your local network' panel. Inside that panel, the RapidReconciler entry is highlighted with a green rectangle." />
-          <figcaption><strong>Edge: Local network access settings</strong>The orange box marks the panel to check. The green box marks the entry that must be present for RapidReconciler to load data.</figcaption>
-        </figure>
+        <h4 style="font-family:'Source Sans 3',sans-serif;font-weight:700;font-size:15px;color:var(--navy);margin-top:22px;margin-bottom:8px;">Google Chrome</h4>
+        <ol>
+          <li>Open Chrome <strong>Settings</strong> from the three-dot menu.</li>
+          <li>Type <code class="kbd">local network</code> into the <strong>Search settings</strong> box and open <strong>Local network</strong>. The full path is <strong>Privacy and security</strong> &rarr; <strong>Site settings</strong> &rarr; <strong>Permissions</strong> &rarr; <strong>Additional permissions</strong> &rarr; <strong>Local network</strong>.</li>
+          <li>Under <strong>Customized behaviors</strong>, check the same <em>Allowed to access other devices on your local network</em> list, and use <strong>Add site</strong> if the address is missing.</li>
+        </ol>
 
-        <p>Chrome offers an equivalent setting under its site-permissions area; the wording differs slightly but the idea is the same. If you cannot find or change this setting on your machine, your IT department should be able to assist.</p>
+        <p><strong>One thing to watch in Chrome:</strong> <code class="kbd">Apps on device</code> sits directly beside <code class="kbd">Local network</code> in the permission list. It is a different permission &mdash; it governs access to other apps on the same machine, not to other devices on your network. Granting it will not help RapidReconciler.</p>
+
+<!-- UI-160 follow-up, 2026-09-09: this was an <img> of
+     Images/edge-local-network-access.png. THREE things were wrong with it at
+     once: the src had no "../", so from RRUniversity/ it pointed at
+     RRUniversity/Images/ and had never loaded on the live site; the capture
+     showed the old rapidreconciler.getgsi.com host; and its panel label
+     ("Allowed to connect to any device on your local network") returns zero
+     hits in Edge 152's en-US.pak because Microsoft reworded it. Replaced with a
+     drawn panel whose every string was read out of the installed browser.
+     See Tools/local-network-panel.css. -->
+        <div data-lnp-panel
+             data-host="rapidreconciler-prod.getgsi.com"
+             data-caption="The entry that has to be present."></div>
+
+        <p>If you cannot find or change this setting on your machine, your IT department should be able to assist.</p>
 
         <div class="callout important">
           <div class="callout-icon">!</div>

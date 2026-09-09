@@ -329,6 +329,11 @@
   }
 </style>
 <link rel="stylesheet" href="../Tools/doc-header.css">
+<!-- Drawn local-network settings panel used in Step 3. Shared with the Getting
+     Started doc and the Agent Upgrade guide so one label correction reaches all
+     three, which a screenshot could never do. -->
+<link rel="stylesheet" href="../Tools/local-network-panel.css">
+<script defer src="../Tools/local-network-panel.js"></script>
 <script defer src="../Tools/doc-chrome.js"></script>
 </head>
 <body data-doc-type="runbook">
@@ -448,20 +453,37 @@
       </div>
       <div class="step-body">
         <p>Edge and Chrome have a permission gate that controls whether sites can connect to local-network devices. If RapidReconciler isn&rsquo;t on the allowed list, all data calls silently fail.</p>
+        <p>Both browsers call it <code>Local network</code>. Only the route to reach it differs.</p>
+
+        <p><strong>Microsoft Edge:</strong></p>
         <ul>
-          <li>In Edge: open <code>Settings</code> &rarr; <code>Privacy, search, and services</code> &rarr; <code>Site permissions</code> &rarr; <code>All permissions</code> &rarr; <code>Local network access</code>.</li>
-          <li>Under &ldquo;Allowed to connect to any device on your local network,&rdquo; verify <code>rapidreconciler-prod.getgsi.com</code> is present.</li>
-          <li>If it&rsquo;s missing, click <code>Add site</code> and add it.</li>
-          <li>Hard-reload the page and check whether data appears. (Chrome has the equivalent setting under its site-permissions area.)</li>
+          <li>Open <code>Settings</code> &rarr; <code>Privacy, search, and services</code> &rarr; <code>Site permissions</code> &rarr; <code>All permissions</code> &rarr; <code>Local network</code>.</li>
+          <li>Leave <strong>Default behavior</strong> on <em>Ask before accessing (recommended)</em>.</li>
+          <li>Under <strong>Customized behaviors</strong>, verify <code>rapidreconciler-prod.getgsi.com</code> is in the <em>Allowed to access other devices on your local network</em> block &mdash; the <strong>lower</strong> of the two.</li>
+          <li>If it&rsquo;s missing, click <code>Add site</code> beside that block and add it.</li>
+          <li>If it&rsquo;s in the <em>Not allowed</em> block above instead, remove it from there first &mdash; a block entry wins, and the prompt won&rsquo;t come back on its own.</li>
         </ul>
-        <figure style="margin: 14px 0;">
-<!-- UI-160, 2026-08-27: this screenshot still shows the OLD host
-     (rapidreconciler.getgsi.com) in the Edge allow-list panel. The surrounding
-     instructions now name rapidreconciler-prod.getgsi.com. Re-shoot the PNG and
-     restore the hostname to the alt text when you do. -->
-          <img src="../Images/edge-local-network-access.png" alt="Edge Settings page showing Local network access with the RapidReconciler site listed as an allowed site." style="max-width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 4px;">
-          <figcaption style="font-size: 12.5px; color: var(--text-muted); margin-top: 6px; font-style: italic;">Edge &rarr; Settings &rarr; Privacy, search, and services &rarr; Site permissions &rarr; All permissions &rarr; Local network access. <code>rapidreconciler-prod.getgsi.com</code> should appear under &ldquo;Allowed to connect to any device on your local network.&rdquo;</figcaption>
-        </figure>
+
+        <p><strong>Google Chrome:</strong></p>
+        <ul>
+          <li>Open <code>Settings</code>, type <code>local network</code> into the search box, and open <strong>Local network</strong>. The full path is <code>Privacy and security</code> &rarr; <code>Site settings</code> &rarr; <code>Permissions</code> &rarr; <code>Additional permissions</code> &rarr; <code>Local network</code>.</li>
+          <li>Same two blocks, same wording, same <code>Add site</code> button as Edge.</li>
+          <li><strong>Don&rsquo;t pick <code>Apps on device</code>.</strong> It sits directly beside <code>Local network</code> in Chrome&rsquo;s list and governs something else entirely &mdash; access to other apps on the same machine. Granting it changes nothing here.</li>
+        </ul>
+
+        <p>Then hard-reload the page and check whether data appears.</p>
+
+<!-- UI-160 follow-up, 2026-09-09: this was an <img> of
+     Images/edge-local-network-access.png, captured 2026-05-01. It showed the
+     old rapidreconciler.getgsi.com host AND a panel label ("Allowed to connect
+     to any device on your local network") that returns zero hits in Edge 152's
+     en-US.pak -- Microsoft reworded it. A screenshot cannot be grepped, so the
+     label rot was invisible. Replaced with a drawn panel whose every string was
+     read out of the installed browser. See Tools/local-network-panel.css. -->
+        <div data-lnp-panel
+             data-host="rapidreconciler-prod.getgsi.com"
+             data-caption="What to look for."></div>
+
         <p>If you can&rsquo;t find or change the setting on your machine, ask your IT department to adjust it.</p>
       </div>
       <div class="step-result"><strong>Resolved?</strong> Stop here. Otherwise, continue to Step 4.</div>

@@ -1,0 +1,179 @@
+@charset "UTF-8";
+/* ============================================================
+   task-manager-panel.css -- the Windows Task Manager Processes
+   tab showing the RapidReconciler Java processes, drawn rather
+   than screenshotted.
+
+   Rendered by task-manager-panel.js into any element carrying
+   data-tm-panel. Row contents live in that one script.
+
+   WHY DRAWN AND NOT CAPTURED
+   --------------------------
+   Same reason as local-network-panel.css: a screenshot cannot be
+   grepped, so when a value in it goes stale nothing catches it.
+   The values most likely to move here are the deployed bundle
+   version in the child process's command line (files/371 today)
+   and the install path. Both are one edit in the renderer, and
+   both are greppable from now on.
+
+   A real capture also carries a customer's own memory figures and
+   process counts, which read as targets rather than as examples.
+   Drawn, the caption can say plainly that the numbers vary.
+
+   PROVENANCE
+   ----------
+   Layout, process display name, CPU/memory columns, the amber
+   column tint and both command lines come from a screenshot of a
+   live customer install supplied by the owner on 2026-09-09:
+
+     parent : "C:\Program Files\Rapid Reconciler\jre\bin\java.exe"
+              -jar "C:\Program Files\Rapid Reconciler\rr-valc-agent.jar"
+     child  : "C:\Program Files\Rapid Reconciler\jre\bin\java.exe"
+              -Xrs -Xmx2g -jar ./files/371
+              --spring.profiles.active=production-https --sprin...
+
+   The child's command line is shown TRUNCATED exactly as Task
+   Manager truncates it. The tail was not visible in the source
+   screenshot and is not invented here.
+
+   The parent/child model behind it -- one parent agent plus one
+   child per RapidReconciler database -- is documented in
+   GSIRRTech/rr-agent-reference.html under "Processes & startup".
+
+   Colours are literal hex. The consuming documents carry
+   different :root token sets, so a var() reference would render
+   differently depending on which one loaded this file.
+   ============================================================ */
+
+.tmp {
+  max-width: 900px;
+  margin: 18px 0 0;
+  border: 1px solid #c9d0d8;
+  border-radius: 7px;
+  background: #ffffff;
+  font-family: 'Segoe UI', 'Open Sans', system-ui, sans-serif;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: #1b1b1b;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(31, 45, 74, 0.09);
+}
+
+/* ---------- window chrome ---------- */
+.tmp-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px 8px 12px;
+  border-bottom: 1px solid #eceff3;
+}
+/* No app icon and no per-row Java icon: a bordered square standing in for
+   either one renders as an unchecked checkbox. */
+.tmp-titlebar .tmp-apptitle { font-size: 12.5px; color: #1b1b1b; font-weight: 600; }
+.tmp-winbtns { margin-left: auto; display: flex; gap: 16px; color: #5b5b5b; flex-shrink: 0; }
+.tmp-winbtns span { font-size: 11px; line-height: 1; }
+
+.tmp-menu {
+  display: flex;
+  gap: 18px;
+  padding: 5px 12px 7px;
+  font-size: 12px;
+  color: #1b1b1b;
+}
+
+.tmp-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 8px;
+  border-bottom: 1px solid #dfe4ea;
+  flex-wrap: wrap;
+}
+.tmp-tab {
+  padding: 5px 10px;
+  font-size: 12px;
+  color: #1b1b1b;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  position: relative;
+  top: 1px;
+}
+.tmp-tab.is-active {
+  background: #ffffff;
+  border-color: #dfe4ea;
+  color: #0f6cbd;
+}
+
+/* ---------- the grid ---------- */
+.tmp-grid { width: 100%; overflow-x: auto; }
+.tmp-table { width: 100%; border-collapse: collapse; min-width: 520px; }
+.tmp-table th,
+.tmp-table td {
+  text-align: left;
+  padding: 9px 10px;
+  border: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+/* The real Task Manager clips this column at the window edge. Here it WRAPS,
+   deliberately: the "the agent" / "one database" tag sits at the end of the
+   line, and clipping put it off-screen where it told the reader nothing. A
+   panel that hides the one label distinguishing the two rows is worse than one
+   that is a few pixels less faithful. */
+.tmp-table td:last-child { white-space: normal; }
+.tmp-table thead th {
+  font-weight: 400;
+  font-size: 12px;
+  color: #1b1b1b;
+  border-bottom: 1px solid #e8ecf2;
+  background: #ffffff;
+  text-transform: none;
+  letter-spacing: 0;
+}
+/* CPU and Memory carry Task Manager's heat tint, and the header shows the
+   machine-wide total above the column. */
+.tmp-table .tmp-num { text-align: right; }
+.tmp-table thead .tmp-heat { background: #fdf6d8; }
+.tmp-table tbody .tmp-heat { background: #fdf6d8; }
+.tmp-total { display: block; font-size: 13px; color: #1b1b1b; }
+.tmp-colname { display: block; font-size: 11.5px; color: #5b5b5b; }
+.tmp-sortcaret { color: #8a93a6; font-size: 10px; }
+
+.tmp-table tbody td { border-bottom: 1px solid #f4f6f8; font-size: 12.5px; }
+.tmp-table tbody tr:last-child td { border-bottom: none; }
+
+.tmp-proc { display: block; padding-left: 14px; }
+.tmp-cmd {
+  font-family: 'Source Code Pro', ui-monospace, 'Consolas', monospace;
+  font-size: 11.5px;
+  color: #2f2f2f;
+  word-break: break-all;
+}
+.tmp-role {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 3px;
+  background: #eef3f9;
+  border: 1px solid #d6e2f0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 10.5px;
+  color: #2b5fb0;
+  white-space: nowrap;
+}
+
+.tmp-caption {
+  max-width: 900px;
+  font-size: 12.5px;
+  color: #6b7280;
+  line-height: 1.55;
+  margin: 10px 0 20px;
+}
+.tmp-caption strong { color: #1f2d4a; }
+
+@media print {
+  .tmp { box-shadow: none; page-break-inside: avoid; }
+  .tmp-grid { overflow-x: visible; }
+  .tmp-table { min-width: 0; }
+  .tmp-cmd { white-space: normal; word-break: break-all; }
+}
