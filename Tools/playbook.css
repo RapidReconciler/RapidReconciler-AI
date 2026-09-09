@@ -1,0 +1,1322 @@
+﻿@charset "UTF-8";
+/* ============================================================
+   playbook.css -- the GSI playbook-style doc layout.
+
+   Extracted verbatim on 2026-09-09 from the <style> block of
+   GSIRRSales/rr-installation-prep.html (lines 11-1311 of that
+   file at the time), so a second playbook doc can carry the same
+   chrome without a hand-copied stylesheet.
+
+   Provides: playbook header + accent strip, 220px sidebar + view
+   switcher shell, .content-card typography, .doc-table, .callout
+   (warning|tip|info|important), .cmd-block, .spec-list, checklist
+   rows, .step-complete-*, .topic-footer-nav buttons, print rules.
+
+   Four glyph content: values were rewritten as CSS escapes
+   (\26A0 \2713 \25B8 \2191) so this file survives any encoding.
+
+   NOTE: rr-installation-prep.html still holds its own inline copy.
+   Repointing it at this file is a separate change that wants its
+   own before/after look, since it is live and customer-facing.
+   ============================================================ */
+  :root {
+    /* GSI brand palette */
+    --navy:        #1f2d4a;
+    --navy-deep:   #142037;
+    --navy-soft:   #2c3e63;
+    --blue:        #2b5fb0;
+    --blue-bright: #3d8fd6;
+    --blue-pale:   #d6e6f5;
+    --blue-dark:   #1f4a8f;
+    --orange:      #f08a24;
+    --orange-deep: #d97316;
+    --yellow:      #f5cb35;        /* retained only for the SVG topology accent */
+    --yellow-dark: #e0b820;
+
+    --paper:       #ffffff;
+    --bg-page:     #f6f8fb;
+    --bg-soft:     #f6f8fb;
+    --bg-panel:    #eef3f9;
+
+    --ink:         #1f2d4a;
+    --ink-soft:    #5a6479;
+    --muted:       #8a93a6;
+
+    --rule:        #e1e7ef;
+    --rule-strong: #c9d3e0;
+    --table-border: #e1e7ef;
+
+    --link:        #2b5fb0;
+
+    --warning-bg: #fdf3e6;
+    --warning-border: #d97316;
+    --tip-bg:     #eef6ea;
+    --tip-border: #4a8a3a;
+    --code-bg:    #f6f8fb;
+    --important-bg: #fbe9e3;
+    --important-border: #c75a3a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: var(--bg-page);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ==================== HEADER ==================== */
+  .doc-header {
+    background: #ffffff;
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px;
+  }
+  .doc-header-inner {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    justify-content: space-between;
+  }
+  .doc-header-logo img {
+    display: block;
+    height: 64px;
+    width: auto;
+  }
+  .doc-header-titleblock {
+    text-align: right;
+    flex: 1;
+    min-width: 0;
+  }
+  .doc-header-eyebrow {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 4px;
+  }
+  .doc-header-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: clamp(22px, 2.6vw, 28px);
+    line-height: 1.15;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .doc-header-subtitle {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  /* Thin accent strip below the header */
+  .doc-accent {
+    height: 4px;
+    background: linear-gradient(to right, var(--navy) 0%, var(--blue) 50%, var(--orange) 100%);
+  }
+
+  /* ==================== LAYOUT ==================== */
+  .page-wrap {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 30px 20px 80px;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 30px;
+    align-items: start;
+  }
+
+  /* ==================== SIDEBAR ==================== */
+  .sidebar {
+    padding: 8px 0;
+    position: sticky;
+    top: 20px;
+  }
+
+  .sidebar-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--navy);
+    text-align: right;
+    padding: 6px 14px 10px 0;
+    line-height: 1.3;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 8px;
+  }
+
+  .sidebar-nav { list-style: none; margin-top: 4px; }
+
+  .sidebar-nav li button {
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    border-right: 2px solid transparent;
+    text-align: right;
+    padding: 7px 14px 7px 0;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--link);
+    cursor: pointer;
+    line-height: 1.4;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .sidebar-nav li button:hover { text-decoration: underline; }
+
+  .sidebar-nav li.active button {
+    color: var(--navy);
+    font-weight: 600;
+    border-right-color: var(--orange);
+    text-decoration: none;
+  }
+
+  /* ==================== CONTENT CARD ==================== */
+  .content-card {
+    background: var(--paper);
+    padding: 36px 44px 48px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border-radius: 2px;
+    min-height: 600px;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ==================== TYPOGRAPHY ==================== */
+  .content-card h1 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 30px;
+    color: var(--navy);
+    margin-bottom: 18px;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  .content-card h2 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--navy);
+    margin-top: 36px;
+    margin-bottom: 14px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .content-card h3 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--navy);
+    margin-top: 24px;
+    margin-bottom: 10px;
+  }
+
+  .content-card h4 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--navy);
+    margin-top: 18px;
+    margin-bottom: 8px;
+  }
+
+  .content-card p {
+    margin-bottom: 14px;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .content-card p strong { font-weight: 600; }
+
+  .content-card ul,
+  .content-card ol {
+    margin: 12px 0 18px 28px;
+  }
+
+  .content-card li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .content-card code {
+    font-family: 'Source Code Pro', monospace;
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    color: var(--navy);
+    border: 1px solid var(--rule);
+  }
+
+  /* ==================== DIAMOND DIVIDER ==================== */
+  .diamond-divider {
+    display: flex;
+    align-items: center;
+    margin: 28px 0;
+    gap: 12px;
+  }
+  .diamond-divider::before,
+  .diamond-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+  .diamond-divider .diamond {
+    width: 8px;
+    height: 8px;
+    background: var(--orange);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ==================== TABLES ==================== */
+  .content-card table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    border: 1px solid var(--table-border);
+    background: #ffffff;
+  }
+
+  .content-card thead th {
+    background: var(--bg-soft);
+    font-weight: 700;
+    color: var(--navy);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 13px;
+    border-bottom: 2px solid var(--orange);
+    letter-spacing: 0.01em;
+  }
+
+  .content-card td {
+    padding: 10px 14px;
+    border-top: 1px solid var(--table-border);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .content-card tbody tr:hover { background: var(--bg-soft); }
+
+  .content-card td:first-child {
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .doc-table td:first-child a { font-weight: 600; color: var(--link); }
+  .doc-table td:first-child { font-weight: 400; }
+
+  /* Plain-first table — first column not styled as a link */
+  .plain-first td:first-child { color: var(--ink); font-weight: 600; }
+
+  /* ==================== CALLOUTS ==================== */
+  .callout {
+    margin: 22px 0;
+    padding: 14px 18px;
+    border-left: 4px solid var(--blue);
+    background: var(--bg-panel);
+    border-radius: 2px;
+  }
+
+  .callout-label {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+
+  .callout p { margin-bottom: 0; font-size: 14.5px; }
+
+  .callout.warning {
+    border-left-color: var(--orange);
+    background: var(--warning-bg);
+  }
+  .callout.warning .callout-label { color: var(--orange-deep); }
+
+  .callout.tip {
+    border-left-color: var(--tip-border);
+    background: var(--tip-bg);
+  }
+  .callout.tip .callout-label { color: #4a6b3a; }
+
+  .callout.info {
+    border-left-color: var(--blue);
+    background: var(--bg-panel);
+  }
+  .callout.info .callout-label { color: var(--navy); }
+
+  .callout.important {
+    border-left-color: var(--important-border);
+    background: var(--important-bg);
+  }
+  .callout.important .callout-label { color: #8a3520; }
+
+
+  /* ==================== COMMAND BLOCKS ==================== */
+  .cmd-block {
+    background: var(--code-bg);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--blue);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 10px 0 16px;
+    overflow-x: auto;
+  }
+  .cmd-line {
+    font-family: 'Cascadia Mono', Consolas, 'Courier New', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  /* ==================== TOPIC FOOTER NAV ==================== */
+  .topic-footer-nav {
+    margin-top: 56px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .back-btn {
+    background: var(--paper);
+    border: 1px solid var(--rule-strong);
+    color: var(--navy);
+    font-size: 13px;
+    padding: 9px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: 'Open Sans', sans-serif;
+    transition: all 0.15s ease;
+  }
+  .back-btn:hover {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+  }
+
+  .next-btn {
+    background: var(--orange);
+    border: 1px solid var(--orange);
+    color: white;
+    font-size: 13px;
+    padding: 9px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: 'Open Sans', sans-serif;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .next-btn:hover { background: var(--orange-deep); border-color: var(--orange-deep); }
+  .next-btn:disabled,
+  .next-btn[disabled] {
+    background: #c8ccd5;
+    border-color: #c8ccd5;
+    color: #ffffff;
+    cursor: not-allowed;
+  }
+  .next-btn:disabled:hover,
+  .next-btn[disabled]:hover { background: #c8ccd5; border-color: #c8ccd5; }
+
+  /* Warning message that appears next to a gated Next button. Tells the user
+     exactly what's missing so the disabled state isn't a black box. */
+  .next-gate-warning {
+    flex: 1 1 100%;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: var(--warning-bg);
+    border-left: 3px solid var(--orange);
+    border-radius: 2px;
+    font-size: 13px;
+    color: var(--orange-deep);
+    font-style: italic;
+    line-height: 1.5;
+    display: none;
+  }
+  .next-gate-warning.show { display: block; }
+  .next-gate-warning::before {
+    content: '\26A0  ';
+    font-style: normal;
+    margin-right: 4px;
+  }
+
+  /* ==================== PAGE FOOTER ==================== */
+  .page-footer {
+    max-width: 1040px;
+    margin: 40px auto 0;
+    padding: 30px 28px 40px;
+    border-top: 1px solid var(--rule);
+  }
+  .page-footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .page-footer-inner strong {
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .page-footer-inner a {
+    color: var(--link);
+    text-decoration: none;
+  }
+  .page-footer-inner a:hover {
+    text-decoration: underline;
+  }
+  .page-footer-sep { color: var(--rule-strong); margin: 0 6px; }
+
+  /* ==================== PROCESS OVERVIEW (top of overview page) ==================== */
+  .process-overview {
+    margin: 18px 0 22px;
+    padding: 18px 22px;
+    background: var(--bg-panel);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+  .process-overview h3 {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin: 0 0 10px;
+  }
+  .process-overview ol {
+    margin: 0;
+    padding-left: 22px;
+  }
+  .process-overview ol li {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+  .process-overview ol li strong { color: var(--navy); }
+
+  /* ==================== SPEC LIST (key/value pairs) ==================== */
+  .spec-list {
+    list-style: none;
+    margin: 14px 0 18px;
+    border: 1px solid var(--table-border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+  .spec-row {
+    display: flex;
+    border-bottom: 1px solid var(--table-border);
+    font-size: 14px;
+  }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row:hover { background: var(--bg-soft); }
+  .spec-key {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    color: var(--navy);
+    background: var(--bg-soft);
+    padding: 10px 14px;
+    width: 220px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid var(--table-border);
+    overflow-wrap: break-word;
+    min-width: 0;
+  }
+  .spec-val {
+    padding: 10px 14px;
+    color: var(--ink);
+    flex: 1;
+    line-height: 1.55;
+  }
+
+  /* ==================== TOPOLOGY DIAGRAM ==================== */
+  .topology-figure {
+    margin: 18px 0 22px;
+    padding: 14px;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+  .topology-figure svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+  }
+  .topology-caption {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .topology-caption strong {
+    font-style: normal;
+    color: var(--navy);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 11px;
+    display: inline-block;
+    margin-right: 6px;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+
+  /* ==================== TOPOLOGY PICKER ==================== */
+  .topo-picker { margin: 22px 0; }
+  .topo-picker-prompt {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .topo-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  .topo-option {
+    position: relative;
+    display: block;
+    cursor: pointer;
+  }
+  .topo-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .topo-option-card {
+    border: 1.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 14px 16px;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+    background: var(--paper);
+    height: 100%;
+    box-sizing: border-box;
+  }
+  .topo-option:hover .topo-option-card {
+    border-color: var(--blue);
+  }
+  .topo-option input[type="radio"]:checked + .topo-option-card {
+    border-color: var(--orange);
+    background: var(--warning-bg);
+    box-shadow: inset 0 0 0 1px var(--orange);
+  }
+  .topo-option input[type="radio"]:focus-visible + .topo-option-card {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+  .topo-option-name {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 4px;
+  }
+  .topo-option-title {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+    letter-spacing: -0.005em;
+  }
+  .topo-option-desc {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  @media (max-width:720px) {
+    .topo-options { grid-template-columns: 1fr; }
+  }
+
+  /* Topology-reactive elements: hidden by default, shown via JS once topology chosen */
+  .topo-conditional { display: none; }
+  .topo-conditional.show { display: block; }
+
+  /* Server-name placeholder — text content gets filled by JS based on chosen
+     topology, so the JDE driver checklist rows name the correct server. */
+  .server-name {
+    border-bottom: 1px dashed var(--orange);
+    padding-bottom: 1px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  /* ==================== SERVER NAME CAPTURE (topology page) ==================== */
+  .server-name-list {
+    list-style: none;
+    margin: 14px 0 18px;
+    padding: 0;
+    border: 1px solid var(--table-border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+  .server-name-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    grid-template-areas:
+      "label input ip"
+      "hint  hint  hint";
+    gap: 4px 14px;
+    align-items: center;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--table-border);
+    margin: 0;
+  }
+  .server-name-row:last-child { border-bottom: none; }
+  .server-name-row:hover { background: var(--bg-soft); }
+  .server-name-label {
+    grid-area: label;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 14px;
+  }
+  .server-name-input {
+    grid-area: input;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 3px;
+    background: var(--paper);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .server-name-input::placeholder {
+    color: var(--muted);
+    font-style: italic;
+  }
+  .server-name-input:hover { border-color: var(--blue); }
+  .server-name-input:focus {
+    border-color: var(--orange);
+    background: var(--warning-bg);
+  }
+  /* IP input — same look as the name input but in its own grid cell */
+  .server-ip-input {
+    grid-area: ip;
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 3px;
+    background: var(--paper);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .server-ip-input::placeholder {
+    color: var(--muted);
+    font-style: italic;
+  }
+  .server-ip-input:hover { border-color: var(--blue); }
+  .server-ip-input:focus {
+    border-color: var(--orange);
+    background: var(--warning-bg);
+  }
+  /* Invalid state — applied by JS when the IP is non-empty but not a valid
+     IPv4 address. Also used by the name input if we ever flag it. */
+  .server-ip-input.invalid,
+  .server-name-input.invalid {
+    border-color: #c14545;
+    background: #fdecea;
+  }
+  .server-ip-input.invalid:focus,
+  .server-name-input.invalid:focus {
+    border-color: #c14545;
+    background: #fdecea;
+  }
+  .server-name-hint {
+    grid-area: hint;
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    padding-left: 0;
+  }
+  @media (max-width: 720px) {
+    .server-name-row {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "label"
+        "input"
+        "ip"
+        "hint";
+    }
+  }
+  @media print {
+    .server-name-input,
+    .server-ip-input {
+      border: none;
+      border-bottom: 1px solid var(--ink);
+      background: transparent !important;
+      border-radius: 0;
+    }
+  }
+
+  /* ==================== STEP COMPLETION TOGGLE ==================== */
+  .step-complete-block {
+    margin: 32px 0 0;
+    padding: 14px 18px;
+    background: var(--bg-panel);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--orange);
+    border-radius: 4px;
+  }
+  .step-complete-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .step-complete-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--orange);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0;
+  }
+  .step-complete-label {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--navy);
+    letter-spacing: 0.01em;
+  }
+  .step-complete-checkbox:checked ~ .step-complete-label {
+    color: var(--navy);
+  }
+  .step-complete-checkbox:checked ~ .step-complete-label::after {
+    content: ' \2713 ';
+    color: var(--tip-border);
+    font-weight: 700;
+  }
+  @media print {
+    .step-complete-checkbox {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid var(--ink);
+      border-radius: 2px;
+      background: transparent;
+    }
+  }
+
+  /* Source-platform-reactive elements — same pattern as topo-conditional but for the source platform */
+  .source-conditional { display: none; }
+  .source-conditional.show { display: block; }
+  /* Special: a flex/checklist row variant. We need both an explicit hide rule
+     (more specific than the base `.checklist-row { display: flex }`) AND a
+     show rule that re-enables flex when the row matches the selection. Without
+     the explicit hide rule, the later-defined .checklist-row rule wins on
+     specificity ties and the rows stay visible. */
+  .checklist-row.source-conditional { display: none; }
+  .checklist-row.source-conditional.show { display: flex; }
+  /* Inverse: a placeholder checklist row shown only when no source is selected */
+  .source-pending-row { display: flex; }
+  .source-pending-row.hide { display: none; }
+
+  /* Highlight the selected source-platform row inside reference tables */
+  .source-row-highlight { background: var(--warning-bg); }
+  .source-row-highlight td:first-child::before {
+    content: '\25B8  ';
+    color: var(--orange);
+    font-weight: 700;
+  }
+
+  /* Inline notice when source platform not yet chosen */
+  .source-pending {
+    margin: 14px 0;
+    padding: 12px 16px;
+    background: var(--warning-bg);
+    border: 1px dashed var(--orange);
+    border-radius: 4px;
+    font-size: 13.5px;
+    color: var(--orange-deep);
+    font-style: italic;
+  }
+  .source-pending::before { content: '\2191  '; font-style: normal; }
+
+  /* Inline notice when topology not yet chosen */
+  .topo-pending {
+    margin: 14px 0;
+    padding: 12px 16px;
+    background: var(--warning-bg);
+    border: 1px dashed var(--orange);
+    border-radius: 4px;
+    font-size: 13.5px;
+    color: var(--orange-deep);
+    font-style: italic;
+  }
+  .topo-pending::before { content: '\2191  '; font-style: normal; }
+
+  /* ==================== STORAGE CARD ==================== */
+  .storage-card {
+    background: var(--navy);
+    color: white;
+    border-radius: 4px;
+    padding: 18px 22px;
+    margin: 14px 0;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .storage-stat {
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .storage-num {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 44px;
+    color: var(--orange);
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .storage-unit {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-top: 6px;
+  }
+  .storage-divider {
+    width: 1px;
+    background: rgba(255,255,255,0.18);
+    align-self: stretch;
+    flex-shrink: 0;
+  }
+  .storage-detail {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.65;
+  }
+  .storage-detail strong { color: white; font-weight: 700; }
+
+  /* ==================== NETWORK ACCESS PANELS ==================== */
+  .net-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 14px 0;
+  }
+  .net-panel {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+  .net-head {
+    background: var(--navy);
+    padding: 9px 14px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: white;
+  }
+  .net-body {
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .net-item { font-size: 13px; }
+  .net-mini-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .net-url {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 12.5px;
+    color: var(--blue);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .net-ip {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+  }
+  .net-note {
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    display: block;
+    margin-top: 2px;
+  }
+  .net-range {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 14px;
+    color: var(--navy);
+    font-weight: 600;
+  }
+  @media (max-width: 720px) {
+    .net-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ==================== TAGS (Baseline / Config) ==================== */
+  .scope-tag {
+    display: inline-block;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--orange);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .scope-tag.config {
+    background: var(--navy);
+    color: white;
+  }
+
+  /* ==================== CHECKLIST ==================== */
+  .checklist-group {
+    margin: 16px 0 18px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+  .checklist-head {
+    background: var(--bg-soft);
+    padding: 10px 14px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--navy);
+    border-bottom: 2px solid var(--orange);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .checklist-head .scope-tag {
+    margin-left: 0;
+  }
+  .checklist-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--table-border);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .checklist-row:last-child { border-bottom: none; }
+  .checklist-row:hover { background: var(--bg-soft); }
+  .checklist-row input[type="checkbox"] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    accent-color: var(--orange);
+    cursor: pointer;
+  }
+  .checklist-row label {
+    flex: 1;
+    cursor: pointer;
+  }
+  .checklist-row label .ref {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 6px;
+    font-style: italic;
+  }
+  .checklist-row label .ref a {
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .checklist-row label .ref a:hover { text-decoration: underline; }
+  @media print {
+    .checklist-row input[type="checkbox"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 13px;
+      height: 13px;
+      border: 1.5px solid var(--ink);
+      border-radius: 2px;
+      background: transparent;
+    }
+  }
+
+  /* ==================== JDE SUBMISSION ==================== */
+  .fill-input {
+    font-family: 'Source Code Pro', monospace;
+    font-size: 13px;
+    color: var(--ink);
+    width: 100%;
+    padding: 5px 8px;
+    border: none;
+    border-bottom: 1px dashed var(--rule-strong);
+    background: transparent;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .fill-input:hover { border-bottom-color: var(--blue); }
+  .fill-input:focus {
+    border-bottom-color: var(--orange);
+    background: var(--warning-bg);
+  }
+  .fill-cell { background: var(--bg-soft); }
+  @media print {
+    .fill-input { border-bottom: 1px solid var(--ink); background: transparent !important; }
+    .fill-cell { background: transparent !important; }
+  }
+
+  /* ==================== SUBMIT PANEL ==================== */
+  .submit-panel {
+    margin: 22px 0 6px;
+    padding: 20px 22px;
+    background: var(--navy);
+    border-radius: 4px;
+  }
+  .submit-panel-head {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 6px;
+  }
+  .submit-panel-text {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.6;
+    margin: 0 0 14px;
+  }
+  .submit-panel-text strong { color: white; }
+  .submit-panel-text code {
+    background: rgba(0,0,0,0.25);
+    color: var(--orange);
+    padding: 1px 5px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .submit-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .submit-btn {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 9px 18px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.05s;
+    letter-spacing: 0.02em;
+  }
+  .submit-btn:active:not(:disabled) { transform: translateY(1px); }
+  .submit-btn-primary {
+    background: var(--orange);
+    color: white;
+    border-color: var(--orange);
+  }
+  .submit-btn-primary:hover:not(:disabled) { background: var(--orange-deep); border-color: var(--orange-deep); }
+  .submit-btn-primary:disabled {
+    background: rgba(240,138,36,0.35);
+    cursor: not-allowed;
+    color: rgba(255,255,255,0.55);
+    border-color: transparent;
+  }
+  .submit-btn-secondary {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border-color: rgba(255,255,255,0.22);
+  }
+  .submit-btn-secondary:hover { background: rgba(255,255,255,0.22); }
+  .submit-status {
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    font-style: italic;
+    margin-left: 6px;
+    min-width: 1px;
+  }
+  .submit-status.ok { color: #c4e89c; }
+  .submit-status.warn { color: var(--orange); }
+  @media print { .submit-panel { display: none; } }
+
+  /* ==================== RESPONSIVE ==================== */
+  @media (max-width: 800px) {
+    .page-wrap {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .doc-header-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      text-align: left;
+    }
+    .doc-header-titleblock { text-align: left; }
+    .doc-header-logo img { height: 52px; }
+    .sidebar {
+      position: static;
+      padding: 12px;
+      background: var(--paper);
+      border-radius: 4px;
+      border: 1px solid var(--rule);
+    }
+    .sidebar-title, .sidebar-nav li button {
+      text-align: left;
+      border-right: none;
+      padding: 6px 0 6px 12px;
+      border-left: 2px solid transparent;
+    }
+    .sidebar-title { padding-left: 0; }
+    .sidebar-nav li.active button {
+      border-left-color: var(--orange);
+      border-right-color: transparent;
+    }
+    .content-card { padding: 24px 22px 36px; }
+    .content-card h1 { font-size: 24px; }
+    .content-card table { font-size: 12.5px; }
+    .content-card th, .content-card td { padding: 8px 10px; }
+    .spec-key { width: 140px; padding: 8px 10px; }
+    .spec-val { padding: 8px 10px; }
+    .page-footer-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
+
+  /* ==================== PRINT BUTTON ==================== */
+  .print-btn-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    background: var(--orange);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .print-btn:hover { background: var(--orange-deep); }
+  .print-btn:focus-visible { outline: 2px solid var(--blue-bright); outline-offset: 2px; }
+  .print-btn svg { width: 14px; height: 14px; }
+  .print-hint {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.35;
+    text-align: right;
+    max-width: 220px;
+  }
+  .print-hint strong { color: var(--ink-soft); font-weight: 600; }
+  @media (max-width: 720px) {
+    .print-btn-wrap {
+      align-items: flex-start;
+      margin-top: 12px;
+    }
+    .print-hint { text-align: left; }
+  }
+
+  @media print {
+    body { background: white; }
+    .sidebar, .topic-footer-nav, .print-btn-wrap { display: none; }
+    .page-wrap { display: block; padding: 0; }
+    .content-card { box-shadow: none; padding: 24px 0; border: none; }
+    .doc-accent { display: none; }
+    .view { display: block !important; }
+    .view + .view { page-break-before: always; }
+    .topo-compare-card,
+    .topology-figure,
+    .callout,
+    .storage-card,
+    .net-panel,
+    .spec-list,
+    figure {
+      page-break-inside: avoid;
+    }
+    table { page-break-inside: avoid; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; }
+    h1, h2, h3, h4 { page-break-after: avoid; }
+    h2, h3 { page-break-inside: avoid; }
+    .doc-header { border-bottom: 2px solid var(--navy); }
+  }

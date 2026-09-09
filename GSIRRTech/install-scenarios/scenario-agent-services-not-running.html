@@ -56,9 +56,54 @@
   .footer-line { max-width: 1080px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
   .footer-line strong { color: #fff; }
   .footer-sep { color: rgba(255,255,255,0.25); margin: 0 6px; }
+  /* Callouts. Added 2026-09-09 because this page ALREADY USED .callout and
+     nothing styled it -- not this page, not doc-header.css -- so the "Only one
+     service to look for" note had been rendering as ordinary paragraphs with
+     no prominence at all. Confirmed against git HEAD: the previous version
+     used class="callout" once and defined neither .callout nor .callout-label.
+     Teal rather than the orange used on the start-here pages, to match this
+     page's own accent.
+
+     ⚠ RETRACTION, same day. An earlier version of this comment said
+     scenario-post-deploy-rruser-login-error.html "has the same gap". It does
+     not. That page uses ONE callout, class `key-callout`, and styles it at its
+     own line 41. The false claim came from reading a substring count -- a grep
+     for "callout" returned 3 hits there, which were two `.key-callout` rules
+     plus one usage of it -- instead of reading the file.
+
+     A repo-wide check now exists for the real defect class (a callout class
+     used but defined nowhere, counting the page's own <style> plus every
+     stylesheet it links): 60 pages use one, all defined. Note the two pages in
+     this folder use different conventions on purpose -- `.callout` +
+     `.callout-label` here, `.key-callout` there. Neither is wrong; they are
+     just not the same, so do not assume a fix to one applies to the other. */
+  .callout {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--teal);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin: 18px 0 22px;
+  }
+  .callout-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal-deep);
+    margin-bottom: 4px;
+  }
+  .callout p { font-size: 14px; margin-bottom: 6px; }
+  .callout p:last-child { margin-bottom: 0; }
+
   @media (max-width: 760px) { .container-narrow { padding: 0 22px; } .topnav-inner { padding: 14px 22px; } nav.section-nav { display: none; } .hero-title { font-size: 26px; } .footer-line { padding: 0 22px; } }
 </style>
 <link rel="stylesheet" href="../../Tools/doc-header.css">
+<!-- Drawn Task Manager panel used in Check 1, showing the Java processes a
+     settled install runs. Shared with RRUniversity/agent-upgrade.html so the
+     deployed bundle version in the child's command line has one home. -->
+<link rel="stylesheet" href="../../Tools/task-manager-panel.css">
+<script defer src="../../Tools/task-manager-panel.js"></script>
 <script defer src="../../Tools/doc-chrome.js"></script>
 </head>
 <body data-doc-type="runbook">
@@ -108,16 +153,33 @@
 
     <article class="step-card">
       <span class="step-num">Check 1</span>
-      <div class="step-title">Restart the service</div>
+      <div class="step-title">Restart the service &mdash; then give it several minutes</div>
       <div class="step-body">
         <ol>
           <li>On the application server, open Services console (<code>services.msc</code>).</li>
           <li>Find <strong>Rapid Reconciler 7 Agent</strong> (service name <code>rr-valc-agent</code>).</li>
           <li>Right-click &rarr; Start (or Restart if it&rsquo;s in a stuck state).</li>
-          <li>Confirm the status reaches <strong>Running</strong>. Task Manager &rarr; Details should show one <code>java.exe</code> for the agent plus one per RR database within ~30 seconds.</li>
+          <li>Confirm the status reaches <strong>Running</strong>.</li>
+          <li>Now wait. The agent and its data-services children take <strong>several minutes</strong> to finish coming up, and they appear one at a time. Count them in Task Manager rather than judging the restart on the first look.</li>
         </ol>
+
+<!-- Timing corrected 2026-09-09. This step said the processes should appear
+     "within ~30 seconds", which sent a tech back to Check 2 while the restart
+     was still working normally. Owner's guidance the same day: startup takes
+     several minutes. ~30 seconds is the HEARTBEAT cadence (rr-agent-reference,
+     "What a healthy log looks like") and looks like it was mistaken for the
+     startup time. -->
+        <div class="callout">
+          <div class="callout-label">How many processes to expect</div>
+          <p>One for the agent itself, plus <strong>one for each RR database</strong>. A single-database customer settles at <strong>two</strong>; a four-database customer runs five. A count below the expected total means it is still starting, not that the restart failed &mdash; wait and count again before moving to Check 2.</p>
+        </div>
+
+        <div data-tm-panel
+             data-caption="A settled single-database install: the agent, plus one data-services process."></div>
+
+        <p>If the count has not reached the expected total after ten minutes, or it reaches it and the service then drops back to <code>Stopped</code>, continue to Check 2 &mdash; whatever stopped it will have said so in the log.</p>
       </div>
-      <div class="step-result"><strong>Running?</strong> Stop here. Otherwise, continue.</div>
+      <div class="step-result"><strong>Running, with the expected process count?</strong> Stop here. Otherwise, continue.</div>
     </article>
 
     <article class="step-card">

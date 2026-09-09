@@ -968,7 +968,12 @@
         <ol>
           <li><strong>Connect to VPN</strong> if you&rsquo;re working remotely. RapidReconciler is only reachable from your corporate network or via your organization&rsquo;s VPN.</li>
           <li><strong>Hard-reload the browser</strong> with <code>Shift</code>+<code>F5</code> on Windows or <code>Cmd</code>+<code>Shift</code>+<code>R</code> on Mac. If that doesn&rsquo;t help, fully close all browser windows and reopen.</li>
-          <li><strong>Allow local-network access in your browser.</strong> Edge and Chrome have a permission gate; if <code>rapidreconciler-prod.getgsi.com</code> isn&rsquo;t allowed, all data calls silently fail. Edge: Settings &rarr; Privacy, search, and services &rarr; Site permissions &rarr; All permissions &rarr; Local network access &rarr; ensure the URL is in &ldquo;Allowed.&rdquo; Chrome has the equivalent under its site-permissions area.</li>
+          <li><strong>Allow local-network access in your browser.</strong> Edge and Chrome have a permission gate; if <code>rapidreconciler-prod.getgsi.com</code> isn&rsquo;t allowed, all data calls silently fail. Both browsers call it <strong>Local network</strong>; only the route differs.
+            <ul>
+              <li><strong>Edge</strong> &mdash; Settings &rarr; Privacy, search, and services &rarr; Site permissions &rarr; All permissions &rarr; <strong>Local network</strong>. Under <em>Customized behaviors</em>, the address must be in the <em>Allowed to access other devices on your local network</em> block, the lower of the two.</li>
+              <li><strong>Chrome</strong> &mdash; Settings, then type <code>local network</code> in the search box and open <strong>Local network</strong>. Same two blocks, same <code>Add site</code> button. Don&rsquo;t pick <code>Apps on device</code>, which sits beside it and does something else.</li>
+            </ul>
+            Full walk-through with a picture of the panel: <a href="getting-started-with-rapidreconciler.html#local-network-detail">Verifying Local Network Access</a>.</li>
           <li><strong>Clear cookies and cached files</strong> for <code>rapidreconciler-prod.getgsi.com</code> only (your IT can help). Close the browser fully, reopen, log in fresh.</li>
           <li><strong>Check with your IT for recent network or security changes</strong> &mdash; new web filter, DNS filter, secure web gateway, endpoint security policy, Windows update, VPN config change. If multiple users at your site are affected at once, this is the most likely cause.</li>
         </ol>

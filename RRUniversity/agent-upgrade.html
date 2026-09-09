@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RapidReconciler &mdash; Agent Upgrade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700;800&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<!-- Shared playbook chrome, the same stylesheet the Installation Prep guide's
+     layout came from. Page-specific rules only in the <style> block below. -->
+<link rel="stylesheet" href="../Tools/playbook.css">
+<!-- The drawn local-network settings panel used in step 5. Shared with the
+     Getting Started doc and the no-data scenario so one label correction
+     reaches all three -- which is the whole reason it is not a screenshot. -->
+<link rel="stylesheet" href="../Tools/local-network-panel.css">
+<script defer src="../Tools/local-network-panel.js"></script>
+<!-- The drawn Task Manager panel used in step 6, showing the Java processes a
+     settled install runs. Same reasoning as the panel above: the deployed
+     bundle version in the child's command line will move, and a drawn panel
+     makes that a grep rather than a re-shoot. -->
+<link rel="stylesheet" href="../Tools/task-manager-panel.css">
+<script defer src="../Tools/task-manager-panel.js"></script>
+<style>
+  /* Sidebar completion marker. The shared sheet styles the step toggle but has
+     no sidebar "done" state, so it lives here with the script that sets it. */
+  .sidebar-nav li.done button::before {
+    content: '\2713';
+    color: var(--tip-border);
+    font-weight: 700;
+    margin-right: 6px;
+    font-size: 12px;
+  }
+
+  /* Mockup of the in-application Agent download prompt. Drawn in HTML rather
+     than screenshotted so it stays legible at any zoom, prints cleanly, and
+     needs no image asset to keep in step with the screen. */
+  .dl-mock {
+    width: 330px;
+    max-width: 100%;
+    margin: 18px 0 8px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--paper);
+    box-shadow: 0 2px 10px rgba(31, 45, 74, 0.08);
+  }
+  .dl-mock-bar {
+    background: #1d6fb0;
+    color: #fff;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .dl-mock-brand {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 800;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+  }
+  .dl-mock-brand span { color: #a9c4dc; font-weight: 700; }
+  .dl-mock-help {
+    position: absolute;
+    right: 14px;
+    width: 20px;
+    height: 20px;
+    border: 1.6px solid #fff;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 17px;
+    text-align: center;
+  }
+  .dl-mock-body { padding: 22px 18px 18px; text-align: center; }
+  .dl-mock-hi {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 800;
+    font-size: 25px;
+    color: #22a745;
+    margin: 0 0 10px !important;
+  }
+  .dl-mock-sub {
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 15px !important;
+    color: #4b5563;
+    margin: 0 0 18px !important;
+    line-height: 1.4;
+  }
+  .dl-mock-btn {
+    display: block;
+    border: 1px solid var(--rule-strong);
+    border-radius: 3px;
+    padding: 12px 10px;
+    margin: 0 0 12px;
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: #374151;
+    background: var(--paper);
+  }
+  .dl-mock-btn em {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 11.5px;
+    color: #7b8794;
+    letter-spacing: 0;
+  }
+  .dl-mock-btn.pick {
+    border-color: #22a745;
+    box-shadow: 0 0 0 2px rgba(34, 167, 69, 0.18);
+  }
+  .dl-mock-btn.alt { background: var(--bg-soft); }
+  .dl-mock-note {
+    font-size: 11.5px !important;
+    color: var(--muted);
+    line-height: 1.55;
+    margin: 14px 0 0 !important;
+  }
+  .dl-mock-foot {
+    border-top: 1px solid var(--rule);
+    padding: 12px;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+  }
+  .mock-caption {
+    font-size: 13px !important;
+    color: var(--ink-soft);
+    max-width: 560px;
+    margin-top: 0 !important;
+  }
+
+  /* Paste-ready change-ticket text: a bordered block that reads as a quotation
+     of what the customer will file, distinct from the page's own prose. */
+  .paste-block {
+    background: var(--paper);
+    border: 1px solid var(--rule-strong);
+    border-left: 4px solid var(--blue);
+    border-radius: 4px;
+    padding: 18px 22px;
+    margin: 18px 0;
+  }
+  .paste-block p { font-size: 14.5px; }
+  .paste-block p:last-child { margin-bottom: 0; }
+
+  /* Wrapper for the GHA-stamped date. The styling lives here and not on the
+     span itself -- see the comment at that markup. */
+  .doc-updated-band {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+    text-align: right;
+  }
+  .doc-updated-band .doc-last-updated { font-size: 12px; color: var(--muted); }
+  @media print { .doc-updated-band { display: none; } }
+</style>
+<link rel="stylesheet" href="../Tools/doc-header.css">
+</head>
+<body data-doc-type="runbook">
+
+<!-- ==================== DOCUMENT HEADER ==================== -->
+<header class="doc-header">
+  <div class="doc-header-inner">
+    <div class="doc-header-logo">
+      <img src="../Images/rr-logo.png" alt="RapidReconciler" />
+    </div>
+    <div class="doc-header-titleblock">
+      <div class="doc-header-eyebrow">Customer IT &middot; Agent Upgrade</div>
+      <div class="doc-header-title">RapidReconciler &mdash; Agent Upgrade Guide</div>
+      <div class="doc-header-subtitle">Prepare. Replace. Verify.</div>
+    </div>
+    <div class="print-btn-wrap">
+      <button class="print-btn" onclick="printDoc()" aria-label="Print or save as PDF">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        Print / Save as PDF
+      </button>
+      <div class="print-hint">For best results, choose <strong>Save as PDF</strong> as the destination &mdash; not Microsoft Print to PDF.</div>
+    </div>
+  </div>
+</header>
+<div class="doc-accent"></div>
+
+<!-- ==================== MAIN PAGE ==================== -->
+<div class="page-wrap">
+
+  <aside class="sidebar">
+    <div class="sidebar-title">Agent<br>Upgrade</div>
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li data-target="home"><button onclick="showView('home')">Index</button></li>
+      <li data-target="overview"><button onclick="showView('topic-overview')">Overview</button></li>
+      <li data-target="ticket"><button onclick="showView('topic-ticket')">Change Ticket Text</button></li>
+      <li data-target="firewall"><button onclick="showView('topic-firewall')">1. Firewall &amp; DNS</button></li>
+      <li data-target="download"><button onclick="showView('topic-download')">2. Download the Agent</button></li>
+      <li data-target="uninstall"><button onclick="showView('topic-uninstall')">3. Uninstall the Old Agent</button></li>
+      <li data-target="install"><button onclick="showView('topic-install')">4. Install the New Agent</button></li>
+      <li data-target="browser"><button onclick="showView('topic-browser')">5. Browser Permission</button></li>
+      <li data-target="verify"><button onclick="showView('topic-verify')">6. Confirm Data</button></li>
+      <li data-target="backout"><button onclick="showView('topic-backout')">Backout &amp; Support</button></li>
+      <li data-target="checklist"><button onclick="showView('topic-checklist')">Checklist</button></li>
+    </ul>
+  </aside>
+
+  <main class="content-card">
+
+    <!-- ============ HOME / INDEX ============ -->
+    <section id="home" class="view active">
+      <h1>Agent Upgrade Guide</h1>
+      <p>GSI is moving the RapidReconciler administration console onto GSI&rsquo;s own managed Azure gateway, and the RapidReconciler Agent on your application server is replaced as part of that move. This guide walks your IT team through it: the firewall and DNS rules to put in place first, how to download and swap the Agent, the browser permission your users need, and how to confirm data is flowing again afterward.</p>
+      <p>This document is the <strong>customer IT</strong> companion guide for the upgrade. Your team runs the steps; GSI is available on the call for any of them.</p>
+
+      <div class="callout tip">
+        <div class="callout-label">Assistance with any step</div>
+        <p>If you would like GSI on the call while you work through steps 1 to 6, or you hit anything this guide does not cover, email <a href="mailto:rrsupport@getgsi.com?subject=RapidReconciler%20Agent%20Upgrade%20%E2%80%94%20assistance">rrsupport@getgsi.com</a> and we will arrange a time.</p>
+      </div>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Topics</h2>
+      <p>Select a section below to view its content. Steps 1 to 6 are designed to be worked through in order, and each is self-contained and can be revisited from the sidebar at any time.</p>
+
+      <table class="doc-table">
+        <thead>
+          <tr><th>Section</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-overview')">Overview</a></td>
+            <td>What is changing, what is not affected, and who does what.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-ticket')">Change Ticket Text</a></td>
+            <td>Wording for the network half of the change, ready to paste into your change record.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-firewall')">1. Firewall &amp; DNS</a></td>
+            <td>The outbound endpoints and ports to permit, and the PowerShell tests that prove them. Complete this before the Agent is replaced.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-download')">2. Download the Agent</a></td>
+            <td>Sign in on the application server and take the 64-bit package.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-uninstall')">3. Uninstall the Old Agent</a></td>
+            <td>Stop the Windows service and run the uninstaller. RapidReconciler is offline from here until step 4 finishes.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-install')">4. Install the New Agent</a></td>
+            <td>Run the installer, confirm the service, and check the Agent is reaching GSI.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-browser')">5. Browser Permission</a></td>
+            <td>The local-network-access permission Edge and Chrome now require. Without it, users sign in and see empty screens.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-verify')">6. Confirm Data</a></td>
+            <td>What to check from a user workstation, and what to do if nothing appears.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-backout')">Backout &amp; Support</a></td>
+            <td>How each half backs out, and what to send GSI.</td>
+          </tr>
+          <tr>
+            <td><a href="javascript:void(0)" onclick="showView('topic-checklist')">Checklist</a></td>
+            <td>Every item on one page, for sign-off.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============ TOPIC: OVERVIEW ============ -->
+    <section id="topic-overview" class="view">
+      <h1>Overview</h1>
+      <p>The RapidReconciler administration console moves off a legacy Microsoft-owned Azure address and onto GSI&rsquo;s own managed Azure gateway. The new host presents a CA-issued certificate for a GSI-controlled domain rather than one under a shared Microsoft namespace.</p>
+
+      <h2>What is changing</h2>
+      <table>
+        <thead>
+          <tr><th>&nbsp;</th><th>Before</th><th>After</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Console URL</td>
+            <td><code>https://rr-valc-spa.cloudapp.net/</code></td>
+            <td><code>https://rrvalcadmin-prod.getgsi.com/</code></td>
+          </tr>
+          <tr>
+            <td>Resolves to</td>
+            <td><code>168.62.49.184</code></td>
+            <td><code>20.81.98.127</code></td>
+          </tr>
+          <tr>
+            <td>Direction and port</td>
+            <td>Outbound HTTPS, TCP 443</td>
+            <td>Outbound HTTPS, TCP 443</td>
+          </tr>
+          <tr>
+            <td>Certificate</td>
+            <td>Shared Microsoft namespace</td>
+            <td>CA-issued for a GSI-controlled domain</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Traffic stays outbound HTTPS on TCP 443 in both cases, so no inbound rule is created and no new service is exposed on your network. Outbound TCP <strong>8002</strong> also has to be open &mdash; see <a href="javascript:void(0)" onclick="showView('topic-firewall')">1. Firewall &amp; DNS</a>, which lists every endpoint the application server needs.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Who does what</h2>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Your team</span><span class="spec-val">The firewall change, the Agent download, the uninstall and install on the application server, the browser permission, and the verification.</span></li>
+        <li class="spec-row"><span class="spec-key">GSI</span><span class="spec-val">Available on the call for any step. The installer comes from the RapidReconciler site itself, so there is no file to wait on from us.</span></li>
+        <li class="spec-row"><span class="spec-key">Access needed</span><span class="spec-val">Local administrator on the application server, and whoever can change outbound firewall and proxy rules.</span></li>
+      </ul>
+
+      <h2>What is not affected</h2>
+      <ul>
+        <li>The RapidReconciler application itself, and the address your users type to reach it.</li>
+        <li>The <code>RapidReconciler_Prod</code> database, the SSIS package, and the nightly SQL Agent job. No work is required on the database server.</li>
+        <li>Your users&rsquo; accounts and passwords.</li>
+        <li>Inbound access. GSI does not initiate a connection into your network, before or after this change.</li>
+      </ul>
+
+      <h2>Expected downtime</h2>
+      <p>RapidReconciler is unavailable to users between the start of step 3 and the end of step 4. On a server with the installer already downloaded, that is typically well under an hour. Steps 1, 2, 5 and 6 are all non-disruptive.</p>
+
+      <div class="callout info">
+        <div class="callout-label">Order matters in one place</div>
+        <p>Finish step 1 and step 2 before starting step 3. Removing the working Agent before the firewall is open, or before the new installer is on the server, leaves reporting offline for as long as it takes to sort either one out.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+        <button class="next-btn" onclick="showView('topic-ticket')">Next: Change Ticket Text &rarr;</button>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: CHANGE TICKET TEXT ============ -->
+    <section id="topic-ticket" class="view">
+      <h1>Text for your change ticket</h1>
+      <p>Most IT groups raise a change record for a firewall modification. The wording below covers the network half of this change and can be pasted straight in.</p>
+
+      <div class="paste-block">
+        <p>GSI is moving the RapidReconciler administration console off a legacy Microsoft-owned Azure address and onto GSI&rsquo;s own managed Azure gateway. The console URL changes from <code>https://rr-valc-spa.cloudapp.net/</code> to <code>https://rrvalcadmin-prod.getgsi.com/</code>, and the address it resolves to changes from <code>168.62.49.184</code> to <code>20.81.98.127</code>. Traffic stays outbound HTTPS on TCP 443 in both cases, so no inbound rule is created and no new service is exposed. Port 8002 outbound also needs to be opened. The new host presents a CA-issued certificate for a GSI-controlled domain rather than one under a shared Microsoft namespace.</p>
+        <p>Our work is to allow outbound access to the new hostname on TCP 443 at the firewall and proxy, and to update the console address in internal documentation and bookmarks. The RapidReconciler application, its database, and the on-premises services are unaffected. Backout is to revert the documented URL, since the legacy address stays reachable until GSI decommissions it.</p>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-label">If your change board wants the full endpoint list</div>
+        <p>The table on <a href="javascript:void(0)" onclick="showView('topic-firewall')">1. Firewall &amp; DNS</a> names every hostname and port, and the PowerShell block on the same page produces a result table you can attach as evidence.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+        <div>
+          <button class="prev-btn" onclick="showView('topic-overview')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-firewall')">Next: Firewall &amp; DNS &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC 1: FIREWALL & DNS ============ -->
+    <section id="topic-firewall" class="view">
+      <h1>1. Outbound Firewall &amp; DNS</h1>
+      <p>Apply these rules on the server that hosts the RapidReconciler application services, and complete this step before the Agent is replaced. Every connection listed here is <strong>outbound only</strong> &mdash; GSI does not initiate a connection into your network.</p>
+
+      <div class="callout important">
+        <div class="callout-label">Port change &mdash; TCP 8000 is no longer used</div>
+        <p>The RapidReconciler JMS service previously used <strong>TCP port 8000</strong>. It now uses <strong>TCP port 8002</strong>. If you already have an outbound rule naming <code>rrjms-prod.getgsi.com:8000</code>, update it &mdash; a rule that still names 8000 will not carry this traffic. Verified 2026-08-30: <code>rrjms-prod.getgsi.com</code> accepts a TCP connection on 8002 and refuses one on 8000.</p>
+      </div>
+
+      <h2>Required outbound access</h2>
+      <table class="doc-table">
+        <thead>
+          <tr><th>Endpoint</th><th>Port</th><th>Protocol</th><th>Applies to</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>rrvalc-prod.getgsi.com</code></td>
+            <td>443</td>
+            <td>HTTPS / TCP</td>
+            <td>All customers</td>
+          </tr>
+          <tr>
+            <td><code>rrvalcadmin-prod.getgsi.com</code></td>
+            <td>443</td>
+            <td>HTTPS / TCP</td>
+            <td>All customers. This is the console host named in the change record.</td>
+          </tr>
+          <tr>
+            <td><code>rrjms-prod.getgsi.com</code></td>
+            <td><strong>8002</strong></td>
+            <td>TCP</td>
+            <td>All customers &mdash; replaces the former port 8000</td>
+          </tr>
+          <tr>
+            <td><code>rrsso-prod.getgsi.com</code></td>
+            <td>443</td>
+            <td>HTTPS / TCP</td>
+            <td>Single sign-on customers only. Skip it if you do not use GSI SSO.</td>
+          </tr>
+          <tr>
+            <td><code>rapidreconciler-prod.getgsi.com</code></td>
+            <td>443</td>
+            <td>HTTPS / TCP</td>
+            <td>Application sign-in and services. Also where the Agent installer is downloaded in step 2.</td>
+          </tr>
+          <tr>
+            <td><code>rapidreconciler.getgsi.com</code></td>
+            <td>443</td>
+            <td>HTTPS / TCP</td>
+            <td>Application sign-in and services. Both application hosts are required; which one serves your site depends on its GSI configuration.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Write the rules against hostnames, not IP addresses</h2>
+      <p>Where your firewall platform supports FQDN-based rules, use the hostnames above. GSI&rsquo;s endpoints sit behind Azure front ends whose addresses are not guaranteed to stay fixed, and a rule pinned to an address that later moves stops matching. That failure surfaces as a connectivity problem inside RapidReconciler rather than as a firewall denial, which makes it slow to diagnose.</p>
+      <p>If your firewall cannot do FQDN rules, ask GSI for the current address set during the change window, and treat it as a value to re-confirm rather than a permanent one. Do not copy addresses out of an older document.</p>
+
+      <h2>DNS only &mdash; your RapidReconciler URL</h2>
+      <p>Your site is assigned a hostname in the form <code>rrprod-[companyname].getgsi.com</code>. GSI creates and maintains that DNS record.</p>
+      <p>This one needs <strong>DNS resolution only</strong>. It does not need an outbound firewall rule, because the record points at the internal IP address of your own application server &mdash; the traffic never leaves your network.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Testing from the server</h2>
+      <p>Run these from the server hosting the RapidReconciler components. PowerShell is the shortest route; <code>nslookup</code> works just as well for the DNS half.</p>
+
+      <h3>1. DNS resolution</h3>
+      <div class="cmd-block">
+        <div class="cmd-line">Resolve-DnsName rrvalc-prod.getgsi.com</div>
+        <div class="cmd-line">Resolve-DnsName rrvalcadmin-prod.getgsi.com</div>
+        <div class="cmd-line">Resolve-DnsName rrjms-prod.getgsi.com</div>
+        <div class="cmd-line">Resolve-DnsName rrsso-prod.getgsi.com</div>
+        <div class="cmd-line">Resolve-DnsName rrprod-[companyname].getgsi.com</div>
+      </div>
+      <p>A successful result returns one or more IP addresses for each hostname. Substitute your own company name in the last line.</p>
+
+      <h3>2. TCP port connectivity</h3>
+      <div class="cmd-block">
+        <div class="cmd-line">Test-NetConnection -ComputerName rrvalc-prod.getgsi.com -Port 443</div>
+        <div class="cmd-line">Test-NetConnection -ComputerName rrvalcadmin-prod.getgsi.com -Port 443</div>
+        <div class="cmd-line">Test-NetConnection -ComputerName rrjms-prod.getgsi.com -Port 8002</div>
+        <div class="cmd-line">Test-NetConnection -ComputerName rrsso-prod.getgsi.com -Port 443</div>
+        <div class="cmd-line">Test-NetConnection -ComputerName rapidreconciler-prod.getgsi.com -Port 443</div>
+        <div class="cmd-line">Test-NetConnection -ComputerName rapidreconciler.getgsi.com -Port 443</div>
+      </div>
+      <p>Omit the <code>rrsso-prod</code> test if you do not use the GSI SSO endpoint. There is no port test for <code>rrprod-[companyname].getgsi.com</code> &mdash; DNS resolution is all that is checked there.</p>
+
+      <h3>3. All of them at once</h3>
+      <p>This produces a single table you can paste straight into your reply to GSI, or attach to the change record.</p>
+      <div class="cmd-block">
+        <div class="cmd-line">$targets = @(</div>
+        <div class="cmd-line">&nbsp;&nbsp;@{ Name = 'rrvalc-prod.getgsi.com';          Port = 443  },</div>
+        <div class="cmd-line">&nbsp;&nbsp;@{ Name = 'rrvalcadmin-prod.getgsi.com';     Port = 443  },</div>
+        <div class="cmd-line">&nbsp;&nbsp;@{ Name = 'rrjms-prod.getgsi.com';           Port = 8002 },</div>
+        <div class="cmd-line">&nbsp;&nbsp;@{ Name = 'rrsso-prod.getgsi.com';           Port = 443  },</div>
+        <div class="cmd-line">&nbsp;&nbsp;@{ Name = 'rapidreconciler-prod.getgsi.com'; Port = 443  },</div>
+        <div class="cmd-line">&nbsp;&nbsp;@{ Name = 'rapidreconciler.getgsi.com';      Port = 443  }</div>
+        <div class="cmd-line">)</div>
+        <div class="cmd-line">$results = foreach ($t in $targets) {</div>
+        <div class="cmd-line">&nbsp;&nbsp;$r = Test-NetConnection -ComputerName $t.Name -Port $t.Port -WarningAction SilentlyContinue</div>
+        <div class="cmd-line">&nbsp;&nbsp;[pscustomobject]@{</div>
+        <div class="cmd-line">&nbsp;&nbsp;&nbsp;&nbsp;Endpoint = $t.Name</div>
+        <div class="cmd-line">&nbsp;&nbsp;&nbsp;&nbsp;Port     = $t.Port</div>
+        <div class="cmd-line">&nbsp;&nbsp;&nbsp;&nbsp;Resolved = $r.RemoteAddress</div>
+        <div class="cmd-line">&nbsp;&nbsp;&nbsp;&nbsp;TcpOpen  = $r.TcpTestSucceeded</div>
+        <div class="cmd-line">&nbsp;&nbsp;}</div>
+        <div class="cmd-line">}</div>
+        <div class="cmd-line">$results | Format-Table -AutoSize</div>
+      </div>
+
+      <h2>Reading the result</h2>
+      <p>The value that matters is <code>TcpTestSucceeded</code>, shown as <code>TcpOpen</code> in the combined table.</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">True</span><span class="spec-val">Outbound traffic to that endpoint and port is permitted from this server. Nothing further is needed.</span></li>
+        <li class="spec-row"><span class="spec-key">False</span><span class="spec-val">The connection is blocked, is not routable, or the destination cannot be reached from this machine. <code>Test-NetConnection</code> prints a WARNING line alongside the failure that separates a name which would not resolve from a port that would not open.</span></li>
+      </ul>
+
+      <div class="callout info">
+        <div class="callout-label">If outbound traffic goes through a proxy</div>
+        <p><code>Test-NetConnection</code> opens a direct TCP socket and does not use a configured HTTP proxy. In an environment that forces outbound web traffic through one, a <code>False</code> does not by itself mean RapidReconciler will fail, and a <code>True</code> does not prove it will succeed. Tell GSI if a proxy sits in the path, including its address and whether it performs TLS inspection &mdash; the configuration differs.</p>
+      </div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="firewall">
+          <span class="step-complete-label">Mark step 1 (Firewall &amp; DNS) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+        <div>
+          <button class="prev-btn" onclick="showView('topic-ticket')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-download')">Next: Download the Agent &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC 2: DOWNLOAD ============ -->
+    <section id="topic-download" class="view">
+      <h1>2. Download the new Agent</h1>
+
+      <div class="callout tip">
+        <div class="callout-label">Assistance with the steps that follow</div>
+        <p>Steps 2 through 6 are the hands-on work on your application server and on a user workstation. If you would like GSI on the call while you run them, or you hit anything this guide does not cover, email <a href="mailto:rrsupport@getgsi.com?subject=RapidReconciler%20Agent%20Upgrade%20%E2%80%94%20assistance">rrsupport@getgsi.com</a> and we will arrange a time.</p>
+      </div>
+
+      <p>The installer comes from the RapidReconciler site itself. Do this <strong>from the application server</strong>, so the file lands on the machine where it has to run.</p>
+
+      <ol>
+        <li>Open a browser on the application server and go to <code>https://rapidreconciler-prod.getgsi.com</code>.</li>
+        <li>Sign in.</li>
+        <li>The <strong>Welcome!</strong> panel appears with two download buttons. Choose <strong>DOWNLOAD AGENT 64-bit</strong>.</li>
+        <li>Save the file somewhere you can find it again, such as the desktop or <code>C:\Temp</code>.</li>
+      </ol>
+
+      <div class="dl-mock" role="img" aria-label="Mockup of the RapidReconciler download prompt. A blue header bar reads RapidReconciler with a question-mark help icon. Below it, a green Welcome! heading, the line Please install Rapid Reconciler Agent on your system to begin, then two buttons: DOWNLOAD AGENT 64-bit and DOWNLOAD AGENT 32-bit. The 64-bit button is highlighted as the one to choose.">
+        <div class="dl-mock-bar">
+          <span class="dl-mock-brand">Rapid<span>Reconciler</span></span>
+          <span class="dl-mock-help" aria-hidden="true">?</span>
+        </div>
+        <div class="dl-mock-body">
+          <p class="dl-mock-hi">Welcome!</p>
+          <p class="dl-mock-sub">Please install Rapid Reconciler Agent on your system to begin</p>
+          <div class="dl-mock-btn pick">DOWNLOAD AGENT <em>64-bit</em></div>
+          <div class="dl-mock-btn alt">DOWNLOAD AGENT <em>32-bit</em></div>
+          <p class="dl-mock-note">Download the appropriate package and install it in your system. Once installation is complete, start the service to continue the setup.</p>
+        </div>
+        <div class="dl-mock-foot">&copy; 2026 &middot; Rapid Reconciler &middot; GSI Inc.</div>
+      </div>
+      <p class="mock-caption"><strong>What you should see after signing in.</strong> Take the <strong>64-bit</strong> package. The 32-bit package is there for older servers. If you are not sure which your server is, check <strong>Settings &rarr; System &rarr; About</strong> and read <em>System type</em>.</p>
+
+      <div class="callout warning">
+        <div class="callout-label">If the Welcome panel does not appear</div>
+        <p>The download prompt is enabled per site by GSI. A hard reload (<strong>Shift</strong> + <strong>F5</strong>) is worth trying first in case the browser is showing a cached page. If you sign in and land on the application instead of the panel above, email <a href="mailto:rrsupport@getgsi.com?subject=RapidReconciler%20Agent%20Upgrade%20%E2%80%94%20enable%20Agent%20download">rrsupport@getgsi.com</a> with your company name and ask for the Agent download to be enabled.</p>
+      </div>
+
+      <div class="callout warning">
+        <div class="callout-label">The installer is not code-signed</div>
+        <p>Windows SmartScreen warns on first launch, and strict Group Policy or endpoint-protection products may block it outright. Choose <strong>More info &rarr; Run anyway</strong>, or have the binary allowed by whoever administers your endpoint policy. Ask GSI for the file&rsquo;s SHA-256 hash if your process requires an out-of-band integrity check.</p>
+      </div>
+
+      <p>Do not start step 3 until the installer is downloaded and sitting on the application server.</p>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="download">
+          <span class="step-complete-label">Mark step 2 (Download the Agent) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+        <div>
+          <button class="prev-btn" onclick="showView('topic-firewall')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-uninstall')">Next: Uninstall the Old Agent &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC 3: UNINSTALL ============ -->
+    <section id="topic-uninstall" class="view">
+      <h1>3. Stop and uninstall the current Agent</h1>
+      <p>Run these steps on the application server, signed in as a local administrator. RapidReconciler is unavailable to users from here until step 4 finishes.</p>
+
+      <h2>3.1 &mdash; Keep a copy of the current logs</h2>
+      <p>Optional, and worth the two minutes if you have an open support thread. Copy <code>C:\Program Files\Rapid Reconciler\logs\</code> somewhere outside the install folder. The uninstall removes it.</p>
+
+      <h2>3.2 &mdash; Stop the Windows service</h2>
+      <ol>
+        <li>Open <code>services.msc</code>.</li>
+        <li>Find <strong>Rapid Reconciler 7 Agent</strong> (service name <code>rr-valc-agent</code>) and stop it.</li>
+        <li>Open Task Manager and confirm no <code>java.exe</code> processes remain. The Agent owns one child process per RapidReconciler database, and stopping the service ends all of them.</li>
+      </ol>
+
+      <div class="callout warning">
+        <div class="callout-label">Use the service, not Task Manager</div>
+        <p>Stop the service and let it shut its children down. Ending <code>java.exe</code> processes by hand can leave the Agent&rsquo;s local state mid-write, which turns a clean uninstall into a support call.</p>
+      </div>
+
+      <h2>3.3 &mdash; Run the uninstaller</h2>
+      <ol>
+        <li>Run <code>C:\Program Files\Rapid Reconciler\unins000.exe</code> as administrator. The same entry appears in <strong>Apps &amp; features</strong> if you prefer to start it from there.</li>
+        <li>Follow the prompts through to completion.</li>
+        <li>Confirm the <code>rr-valc-agent</code> service no longer appears in <code>services.msc</code>. You may need to refresh the list.</li>
+        <li>Confirm <code>C:\Program Files\Rapid Reconciler\</code> is gone. If a few files remain because something held them open, delete the folder by hand.</li>
+      </ol>
+
+      <div class="callout tip">
+        <div class="callout-label">Nothing reportable is lost</div>
+        <p>The Agent keeps only its own local working state on disk &mdash; deployment history and queue identifiers. All of your RapidReconciler data lives in SQL Server, which the uninstall does not touch, and the new Agent rebuilds its local state on first start.</p>
+      </div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="uninstall">
+          <span class="step-complete-label">Mark step 3 (Uninstall the Old Agent) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+        <div>
+          <button class="prev-btn" onclick="showView('topic-download')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-install')">Next: Install the New Agent &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC 4: INSTALL ============ -->
+    <section id="topic-install" class="view">
+      <h1>4. Install the new Agent</h1>
+      <ol>
+        <li>Run the installer as a local administrator on the application server.</li>
+        <li>Accept the default install path, <code>C:\Program Files\Rapid Reconciler\</code>, unless GSI has told you otherwise. That path is referenced in support procedures.</li>
+        <li>Let the installer finish and register the service.</li>
+        <li>Open <code>services.msc</code> and confirm <strong>Rapid Reconciler 7 Agent</strong> shows <strong>Running</strong> with startup type <strong>Automatic</strong>.</li>
+        <li>Open Task Manager. You are looking for one process for the agent plus one for each RapidReconciler database, but they take <strong>several minutes</strong> to all appear &mdash; <a href="javascript:void(0)" onclick="showView('topic-verify')">step 6</a> shows the finished state and how to count them. Do not read a low count at this moment as a failure.</li>
+      </ol>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Confirm the Agent has reached GSI</h2>
+      <p>Open the newest dated log in <code>C:\Program Files\Rapid Reconciler\logs\</code> &mdash; the file named <code>rr-valc-agent_YYYYMMDD.out.log</code> &mdash; and look for a repeating pair of lines roughly every 30 seconds:</p>
+
+      <div class="cmd-block">
+        <div class="cmd-line">INFO  c.r.agent.jms.ValcOutbound  : Sending heartbeat. States: [ ... ]</div>
+        <div class="cmd-line">INFO  c.r.agent.jms.ValcOutbound  : Sending company sync</div>
+      </div>
+
+      <p>Each heartbeat carries one entry per database, and each entry should read <code>up=true</code>. A heartbeat every 30 seconds with <code>up=true</code> throughout is a healthy Agent.</p>
+
+      <div class="callout info">
+        <div class="callout-label">Connection errors during the first minute are expected</div>
+        <p>Health-check failures appear for a few seconds per database while each child process starts its listener. They matter only if they continue with no heartbeat following them.</p>
+      </div>
+
+      <div class="callout important">
+        <div class="callout-label">If there is no heartbeat at all</div>
+        <p>The usual cause is step 1. A reconnect loop, or a failure to connect at all, points at outbound access to <code>rrvalc-prod.getgsi.com:443</code> or <code>rrjms-prod.getgsi.com:8002</code> &mdash; port 8002 in particular, if a rule still names 8000. Re-run the port test from <a href="javascript:void(0)" onclick="showView('topic-firewall')">step 1</a> on this server and send GSI the result along with the newest <code>.out.log</code>.</p>
+      </div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="install">
+          <span class="step-complete-label">Mark step 4 (Install the New Agent) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+        <div>
+          <button class="prev-btn" onclick="showView('topic-uninstall')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-browser')">Next: Browser Permission &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC 5: BROWSER PERMISSION ============ -->
+    <section id="topic-browser" class="view">
+      <h1>5. Allow local network access in the browser</h1>
+      <p>RapidReconciler runs in the browser and reads its data from the Agent on your own network. Recent Edge and Chrome versions gate that with a permission. Where the site is not allowed, users sign in successfully and then see empty screens with no error.</p>
+      <p>Do this on one workstation before you tell users the change is complete, then include it in whatever you send them.</p>
+
+      <div class="callout info">
+        <div class="callout-label">Which address to add &mdash; the same answer in both browsers</div>
+        <p>Add the address your users actually type. For most sites that is <code>rapidreconciler-prod.getgsi.com</code>; some sites are served by <code>rapidreconciler.getgsi.com</code>, and some reach the application through their own <code>rrprod-[companyname].getgsi.com</code> hostname. Adding more than one entry does no harm, so if your users reach RapidReconciler by more than one address, add each of them.</p>
+      </div>
+
+      <h2>Microsoft Edge</h2>
+      <ol>
+        <li>Open Edge <strong>Settings</strong>.</li>
+        <li>Go to <strong>Privacy, search, and services</strong> &rarr; <strong>Site permissions</strong> &rarr; <strong>All permissions</strong> &rarr; <strong>Local network</strong>.</li>
+        <li>Leave <strong>Default behavior</strong> on <em>Ask before accessing (recommended)</em>. There is no need to change it.</li>
+        <li>Under <strong>Customized behaviors</strong> there are two blocks. Look at the lower one, <em>Allowed to access other devices on your local network</em>.</li>
+        <li>The address your users type to reach RapidReconciler should appear there. If it is missing, click <strong>Add site</strong> beside that block and add it.</li>
+        <li>Check the upper block too, <em>Not allowed to access other devices on your local network</em>. If the address is sitting in that one, remove it there first &mdash; a block entry wins, and the prompt will not come back on its own.</li>
+      </ol>
+
+      <div data-lnp-panel
+           data-host="rapidreconciler-prod.getgsi.com"
+           data-caption="The state you are aiming for."></div>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Google Chrome</h2>
+      <p>Chrome calls the permission <strong>Local network</strong> as well, and its page carries the same <strong>Default behavior</strong> and <strong>Customized behaviors</strong> sections. Only the route to reach it differs.</p>
+
+      <div class="callout important">
+        <div class="callout-label">Do not pick &ldquo;Apps on device&rdquo;</div>
+        <p>Chrome&rsquo;s permission list holds <strong>Local network</strong> and <strong>Apps on device</strong> next to each other, and they are two different things. <em>Apps on device</em> governs access to other apps and services running on the same machine. RapidReconciler needs <strong>Local network</strong> &mdash; access to <em>other devices</em> on your network, which is what your application server is from the user&rsquo;s workstation. Granting the wrong one changes nothing and looks like the permission did not help.</p>
+      </div>
+
+      <h3>Setting it for RapidReconciler</h3>
+      <ol>
+        <li>Open the Chrome menu (the three dots at the top right) and choose <strong>Settings</strong>.</li>
+        <li>Type <code>local network</code> into the <strong>Search settings</strong> box at the top. This is the quickest route, and it is version-proof &mdash; Chrome has reorganized where this permission sits more than once.</li>
+        <li>Open <strong>Local network</strong> from the results. The full path, if you prefer to navigate to it, is <strong>Privacy and security</strong> &rarr; <strong>Site settings</strong> &rarr; <strong>Permissions</strong> &rarr; <strong>Additional permissions</strong> &rarr; <strong>Local network</strong>.</li>
+        <li>Leave <strong>Default behavior</strong> on <em>Sites can ask to access other devices on your local network</em>. There is no need to loosen the default for every site.</li>
+        <li>Under <strong>Customized behaviors</strong>, find the <em>Allowed to access other devices on your local network</em> list.</li>
+        <li>Click <strong>Add site</strong> beside that list, enter the address your users type to reach RapidReconciler, and save.</li>
+        <li>Confirm the address now appears under <em>Allowed to access other devices on your local network</em>, and not under <em>Not allowed</em>.</li>
+      </ol>
+
+      <h3>The prompt users may see instead</h3>
+      <p>If you leave the default in place rather than pre-adding the site, the first user to open RapidReconciler on that workstation gets a prompt reading <strong>Access other devices on your local network</strong>, with three buttons:</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Allow this time</span><span class="spec-val">Grants access for this visit only. The prompt returns on the next visit, so this is the option that generates support calls. Tell users not to choose it.</span></li>
+        <li class="spec-row"><span class="spec-key">Allow while visiting the site</span><span class="spec-val">The one to choose. Access persists for RapidReconciler, and the site lands in the allowed list on its own.</span></li>
+        <li class="spec-row"><span class="spec-key">Never allow</span><span class="spec-val">Blocks it. A user who clicks this, or dismisses the prompt repeatedly, will see empty screens from then on with no further prompt.</span></li>
+      </ul>
+
+      <div class="callout warning">
+        <div class="callout-label">If a user has already blocked it</div>
+        <p>The prompt does not come back on its own. Open the same <strong>Local network</strong> page, look under <strong>Customized behaviors</strong> for the address in the <em>Not allowed to access other devices on your local network</em> list, remove it from there, and add it to the allowed list instead. Then reload RapidReconciler with <strong>Shift</strong> + <strong>F5</strong>.</p>
+      </div>
+
+      <h3>Checking it from the site itself</h3>
+      <p>You do not have to go through Settings to see the current state. With RapidReconciler open, click the icon to the left of the address in the address bar, then <strong>Site settings</strong>. The permission appears in that list as <strong>Local network</strong>, and can be set to <em>Allow</em> there directly. That is the fastest check when a single user reports empty screens.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>Rolling it out by policy</h2>
+      <p>Where your organization manages browser settings centrally, this permission can be pushed by policy rather than set on each workstation. That is the better route for a site with more than a handful of RapidReconciler users, and it removes the permission from the list of things a new starter has to be told about.</p>
+      <p>Chrome exposes two policies for it, both taking a list of URL patterns:</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">LocalNetworkAccessAllowedForUrls</span><span class="spec-val">Sites listed here get local network access without prompting. This is where the address your users type to reach RapidReconciler goes.</span></li>
+        <li class="spec-row"><span class="spec-key">LocalNetworkAccessBlockedForUrls</span><span class="spec-val">Sites listed here are refused. Check that no existing broad pattern in this policy already covers RapidReconciler, since a block entry wins.</span></li>
+      </ul>
+      <p>Edge is built on the same engine and carries equivalent policies. Whoever manages your browser policy will recognize both from the standard administrative templates.</p>
+
+      <div class="callout tip">
+        <div class="callout-label">Why this permission exists at all</div>
+        <p>Browsers added it so that an arbitrary website cannot quietly probe the devices on your network. RapidReconciler is caught by it because it does something a public website normally should not: the page in the browser reads its data from a server inside your own network. Granting the permission for one address you control does not loosen anything for any other site.</p>
+      </div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="browser">
+          <span class="step-complete-label">Mark step 5 (Browser Permission) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+        <div>
+          <button class="prev-btn" onclick="showView('topic-install')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-verify')">Next: Confirm Data &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC 6: VERIFY ============ -->
+    <section id="topic-verify" class="view">
+      <h1>6. Confirm you can see data</h1>
+
+      <div class="callout important">
+        <div class="callout-label">Give it several minutes before you check anything</div>
+        <p>The agent and its data-services processes take <strong>several minutes</strong> to finish starting. Until they have, RapidReconciler signs in normally and shows nothing. That is the install still coming up, not a fault, and it is the single most common reason this step gets reported as failed.</p>
+      </div>
+
+      <h2>Watching the processes start</h2>
+      <p>Task Manager is the progress indicator. On the application server, open <strong>Task Manager</strong> and count the entries named <strong>Java(TM) Platform SE binary</strong>:</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">At least 2</span><span class="spec-val">One for the agent itself, plus one for each RapidReconciler database. A single-database install settles at two.</span></li>
+        <li class="spec-row"><span class="spec-key">More databases</span><span class="spec-val">Add one process per database. Four databases means five processes &mdash; the agent plus four.</span></li>
+        <li class="spec-row"><span class="spec-key">Still climbing</span><span class="spec-val">They appear one at a time as each database comes up. A count below your expected total means it is still working, so wait and count again.</span></li>
+      </ul>
+
+      <div data-tm-panel
+           data-caption="A settled single-database install: the agent, plus one data-services process."></div>
+
+      <p>Once the count is right, carry on with the checks below. If it has not reached your expected total after ten minutes, go back to the heartbeat check in <a href="javascript:void(0)" onclick="showView('topic-install')">step 4</a> before doing anything else &mdash; a process that never appears will have said why in the log.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>The checks</h2>
+      <p>Work through this from a normal user&rsquo;s workstation, not from the application server, so the browser permission from step 5 is exercised the way a user will exercise it.</p>
+
+      <ol>
+        <li>Open RapidReconciler and sign in.</li>
+        <li>Confirm your company list is populated. An empty company selector is a data-path failure, not a permissions one.</li>
+        <li>Open a page that reads real volume &mdash; the Reconciliation page for a loaded period is the fastest check &mdash; and confirm rows appear with amounts on them.</li>
+        <li>Check the <strong>System Status</strong> light in the page header. Click it if it is red; RapidReconciler downloads a <code>SystemStatus_....xlsx</code> report showing the status of last night&rsquo;s data load.</li>
+        <li>Export something to Excel. That exercises a different path from the on-screen grid and is worth confirming before your users find it for you.</li>
+      </ol>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>If you sign in but see no data</h2>
+      <p>Work these in order, quickest first.</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Startup time</span><span class="spec-val">Check this first. Count the Java processes on the application server again. If they have not all appeared, nothing else on this list is the cause and the wait is the answer.</span></li>
+        <li class="spec-row"><span class="spec-key">Network</span><span class="spec-val">Confirm the workstation is on the office network, or connected by VPN.</span></li>
+        <li class="spec-row"><span class="spec-key">Hard reload</span><span class="spec-val">Press <strong>Shift</strong> + <strong>F5</strong> to reload past any cached copy of the page.</span></li>
+        <li class="spec-row"><span class="spec-key">Browser permission</span><span class="spec-val">Re-check <a href="javascript:void(0)" onclick="showView('topic-browser')">step 5</a> on this specific workstation. The permission is per browser profile, so it is set for the person who set it and not for the machine.</span></li>
+        <li class="spec-row"><span class="spec-key">Agent</span><span class="spec-val">On the application server, confirm the <code>rr-valc-agent</code> service is running and the newest <code>.out.log</code> is still writing heartbeats.</span></li>
+        <li class="spec-row"><span class="spec-key">Firewall and proxy</span><span class="spec-val">Re-run the port test from <a href="javascript:void(0)" onclick="showView('topic-firewall')">step 1</a> on the application server. A rule applied to the wrong host or the wrong port shows up here.</span></li>
+      </ul>
+
+      <div class="callout important">
+        <div class="callout-label">Still no data</div>
+        <p>Email <a href="mailto:rrsupport@getgsi.com?subject=RapidReconciler%20Agent%20Upgrade%20%E2%80%94%20no%20data%20after%20upgrade">rrsupport@getgsi.com</a> with the port-test table, the newest <code>rr-valc-agent_YYYYMMDD.out.log</code>, and which of the checks above you have already run. Sending those three together removes a round trip.</p>
+      </div>
+
+      <div class="step-complete-block">
+        <label class="step-complete-toggle">
+          <input type="checkbox" class="step-complete-checkbox" data-step="verify">
+          <span class="step-complete-label">Mark step 6 (Confirm Data) as complete</span>
+        </label>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+        <div>
+          <button class="prev-btn" onclick="showView('topic-browser')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-backout')">Next: Backout &amp; Support &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: BACKOUT & SUPPORT ============ -->
+    <section id="topic-backout" class="view">
+      <h1>Backout &amp; support</h1>
+
+      <h2>Backout</h2>
+      <p>The two halves back out separately.</p>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Console address</span><span class="spec-val">Revert the documented URL and bookmarks. The legacy address stays reachable until GSI decommissions it.</span></li>
+        <li class="spec-row"><span class="spec-key">The Agent</span><span class="spec-val">Reinstalling the previous Agent version is a GSI-assisted step, not a local one, because the previous version has to be supplied and its registration re-established. Open a thread with <a href="mailto:rrsupport@getgsi.com?subject=RapidReconciler%20Agent%20Upgrade%20%E2%80%94%20backout%20assistance">rrsupport@getgsi.com</a> rather than reinstalling from an older copy you happen to still have.</span></li>
+      </ul>
+      <p>The outbound firewall rules can be left in place either way. They permit outbound HTTPS to GSI-controlled hosts and expose nothing on your network.</p>
+
+      <div class="diamond-divider"><span class="diamond"></span></div>
+
+      <h2>What to send GSI</h2>
+      <ul class="spec-list">
+        <li class="spec-row"><span class="spec-key">Test output</span><span class="spec-val">The port-test table from step 1, run on the application server.</span></li>
+        <li class="spec-row"><span class="spec-key">Your RR hostname</span><span class="spec-val">Confirmation that <code>rrprod-[companyname].getgsi.com</code> resolves, and the address it returned.</span></li>
+        <li class="spec-row"><span class="spec-key">Proxy</span><span class="spec-val">Whether outbound traffic from the application server passes through a proxy, and whether that proxy inspects TLS.</span></li>
+        <li class="spec-row"><span class="spec-key">SSO</span><span class="spec-val">Whether you use the GSI SSO endpoint, which decides whether <code>rrsso-prod.getgsi.com</code> applies to you.</span></li>
+        <li class="spec-row"><span class="spec-key">Agent state</span><span class="spec-val">Confirmation that the Agent is running and sending heartbeats after step 4.</span></li>
+      </ul>
+
+      <div class="callout tip">
+        <div class="callout-label">Re-test after any later firewall change</div>
+        <p>These rules are checked once and then assumed. If your team changes firewall policy, replaces an appliance, or moves the application server to a different network segment after this upgrade, run the combined script from step 1 again. It takes seconds, and it rules the network out first.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+        <div>
+          <button class="prev-btn" onclick="showView('topic-verify')">&larr; Previous</button>
+          <button class="next-btn" onclick="showView('topic-checklist')">Next: Checklist &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TOPIC: CHECKLIST ============ -->
+    <section id="topic-checklist" class="view">
+      <h1>Checklist</h1>
+      <p>Every item from the guide on one page. Ticks are remembered in this browser, so you can close the page and come back to it. Use <strong>Print / Save as PDF</strong> in the header if you need a signed copy for the change record.</p>
+
+      <div class="checklist-group">
+        <div class="checklist-head">Before the change window <span class="scope-tag">Steps 1 &ndash; 2</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-1" class="checklist-item">
+          <label for="c-1">Change record raised, using the wording on <a href="javascript:void(0)" onclick="showView('topic-ticket')">Change Ticket Text</a></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-2" class="checklist-item">
+          <label for="c-2">Outbound TCP 443 permitted to <code>rrvalc-prod.getgsi.com</code> and <code>rrvalcadmin-prod.getgsi.com</code></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-3" class="checklist-item">
+          <label for="c-3">Outbound TCP <strong>8002</strong> permitted to <code>rrjms-prod.getgsi.com</code>, and any existing rule naming port 8000 updated</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-4" class="checklist-item">
+          <label for="c-4">Outbound TCP 443 permitted to <code>rapidreconciler-prod.getgsi.com</code> and <code>rapidreconciler.getgsi.com</code></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-5" class="checklist-item">
+          <label for="c-5">SSO decided: if you use the GSI SSO endpoint, outbound TCP 443 permitted to <code>rrsso-prod.getgsi.com</code></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-6" class="checklist-item">
+          <label for="c-6">Proxy in the outbound path identified, or confirmed absent, including whether it inspects TLS</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-7" class="checklist-item">
+          <label for="c-7">Port test run from the application server and the results recorded for GSI <span class="ref">&mdash; see <a href="javascript:void(0)" onclick="showView('topic-firewall')">1. Firewall &amp; DNS</a></span></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-8" class="checklist-item">
+          <label for="c-8"><strong>64-bit</strong> Agent installer downloaded to the application server from <code>rapidreconciler-prod.getgsi.com</code>, and sitting there before the uninstall starts</label>
+        </div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="checklist-head">The change window <span class="scope-tag">Steps 3 &ndash; 4</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-9" class="checklist-item">
+          <label for="c-9">Current logs copied off the application server</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-10" class="checklist-item">
+          <label for="c-10"><code>rr-valc-agent</code> service stopped and no <code>java.exe</code> processes remaining</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-11" class="checklist-item">
+          <label for="c-11">Previous Agent uninstalled: service gone from <code>services.msc</code> and the install folder removed</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-12" class="checklist-item">
+          <label for="c-12">New Agent installed, service <strong>Running</strong> with startup type <strong>Automatic</strong></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-13" class="checklist-item">
+          <label for="c-13">Heartbeats confirmed in the newest <code>.out.log</code>, roughly every 30 seconds, all entries <code>up=true</code></label>
+        </div>
+      </div>
+
+      <div class="checklist-group">
+        <div class="checklist-head">After the change window <span class="scope-tag">Steps 5 &ndash; 6</span></div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-13b" class="checklist-item">
+          <label for="c-13b">Java processes all up in Task Manager &mdash; one for the agent plus one per RapidReconciler database. Allow several minutes <span class="ref">&mdash; see <a href="javascript:void(0)" onclick="showView('topic-verify')">6. Confirm Data</a></span></label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-14" class="checklist-item">
+          <label for="c-14">The <strong>Local network</strong> browser permission allows the address your users type, on both Edge and Chrome</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-15" class="checklist-item">
+          <label for="c-15">Data confirmed on screen from a user workstation, and one Excel export confirmed</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-16" class="checklist-item">
+          <label for="c-16">Console URL updated in internal documentation and bookmarks</label>
+        </div>
+        <div class="checklist-row">
+          <input type="checkbox" id="c-17" class="checklist-item">
+          <label for="c-17">Confirmation sent to <a href="mailto:rrsupport@getgsi.com?subject=RapidReconciler%20Agent%20Upgrade%20%E2%80%94%20complete">rrsupport@getgsi.com</a> that the upgrade is complete</label>
+        </div>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-label">Questions during the change window</div>
+        <p>Email <a href="mailto:rrsupport@getgsi.com?subject=RapidReconciler%20Agent%20Upgrade%20%E2%80%94%20question">rrsupport@getgsi.com</a>. Include your company name and the step you are on.</p>
+      </div>
+
+      <div class="topic-footer-nav">
+        <button class="back-btn" onclick="goHome()">&larr; Back to Index</button>
+        <button class="prev-btn" onclick="showView('topic-backout')">&larr; Previous</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- The GHA-managed last-updated stamp. update_doc_dates.py matches the whole
+     span with a regex that expects `class="doc-last-updated"` and NOTHING else
+     on the tag, so styling goes on the wrapper. An inline style attribute here
+     makes the pattern miss and the stamp silently stops updating. -->
+<div class="doc-updated-band">
+  <span class="doc-last-updated">Last updated
+    <time datetime="2026-09-09">September 9, 2026</time>
+  </span>
+</div>
+
+<script>
+  // ============================================================
+  // Sidebar / view switching. Same behaviour as the Installation
+  // Prep guide: one .view visible at a time, sidebar tracks it,
+  // and the hash makes any section a shareable link.
+  // ============================================================
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+    var target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      var slug = id === 'home' ? 'home' : id.replace('topic-', '');
+      document.querySelectorAll('#sidebar-nav li').forEach(function(li) {
+        li.classList.toggle('active', li.dataset.target === slug);
+      });
+
+      // Try to update hash for shareable links -- fails silently in sandboxed iframes
+      try {
+        if (window.location.protocol !== 'about:') {
+          history.replaceState(null, '', slug === 'home' ? ' ' : '#' + slug);
+        }
+      } catch (e) { /* sandboxed context -- navigation still works fine without URL hash */ }
+    }
+  }
+
+  function goHome() { showView('home'); }
+
+  document.querySelectorAll('#sidebar-nav li[data-target="home"]').forEach(function(li) {
+    li.classList.add('active');
+  });
+
+  window.addEventListener('DOMContentLoaded', function() {
+    try {
+      var hash = window.location.hash.replace('#', '');
+      if (hash && hash !== 'home') showView('topic-' + hash);
+    } catch (e) { /* ignore */ }
+  });
+
+  window.addEventListener('popstate', function() {
+    try {
+      var hash = window.location.hash.replace('#', '');
+      showView(hash && hash !== 'home' ? 'topic-' + hash : 'home');
+    } catch (e) { /* ignore */ }
+  });
+</script>
+
+<script>
+(function () {
+  'use strict';
+  // ============================================================
+  // Progress persistence.
+  //
+  // An upgrade runs across a change window and often across two
+  // people, so a tick that vanishes on reload is worse than no
+  // tick at all. Step toggles and checklist rows are stored under
+  // one key in this browser's localStorage. It is per browser and
+  // per machine -- deliberately, since there is no account here to
+  // hang it on -- so the checklist page says so rather than
+  // implying the state is shared.
+  //
+  // Every read and write is wrapped: private windows and
+  // locked-down policies can make localStorage throw on access,
+  // and a storage failure must not stop the page working.
+  // ============================================================
+  var KEY = 'rr-agent-upgrade-progress-v1';
+
+  function load() {
+    try {
+      var raw = window.localStorage.getItem(KEY);
+      var obj = raw ? JSON.parse(raw) : null;
+      return (obj && typeof obj === 'object') ? obj : {};
+    } catch (e) { return {}; }
+  }
+
+  function save(state) {
+    try { window.localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch (e) { /* storage unavailable -- ticks still work for this visit */ }
+  }
+
+  function markSidebar(step, done) {
+    document.querySelectorAll('#sidebar-nav li[data-target="' + step + '"]')
+      .forEach(function (li) { li.classList.toggle('done', done); });
+  }
+
+  window.addEventListener('DOMContentLoaded', function () {
+    var state = load();
+
+    // Step-completion toggles: keyed by data-step, mirrored into the sidebar.
+    document.querySelectorAll('.step-complete-checkbox').forEach(function (box) {
+      var step = box.getAttribute('data-step');
+      if (!step) return;
+      if (state['step:' + step]) { box.checked = true; }
+      markSidebar(step, box.checked);
+      box.addEventListener('change', function () {
+        var s = load();
+        s['step:' + step] = box.checked;
+        save(s);
+        markSidebar(step, box.checked);
+      });
+    });
+
+    // Checklist rows: keyed by element id.
+    document.querySelectorAll('.checklist-item').forEach(function (box) {
+      if (!box.id) return;
+      if (state['item:' + box.id]) { box.checked = true; }
+      box.addEventListener('change', function () {
+        var s = load();
+        s['item:' + box.id] = box.checked;
+        save(s);
+      });
+    });
+  });
+})();
+</script>
+
+<script>
+/* Pre-fill filename for Save as PDF / Microsoft Print to PDF dialogs.
+   Browsers use document.title as the default filename; we swap to a
+   clean, hyphenated version just for the print, then restore. */
+function printDoc() {
+  var original = document.title;
+  document.title = 'RapidReconciler-Agent-Upgrade';
+  window.print();
+  setTimeout(function () { document.title = original; }, 1000);
+}
+</script>
+
+</body>
+</html>
