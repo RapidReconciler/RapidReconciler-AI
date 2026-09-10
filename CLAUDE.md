@@ -609,13 +609,40 @@ versed analyst, not a layperson. Keep that voice:
   the failing check, and let the owner decide. Merging past it is
   never Claude's call.
 
-- **⚠ Exit 1 means two different things and you have to read the
-  output.** A PR that triggers no workflow at all also returns 1, with
-  the one line `no checks reported on the '<branch>' branch` — measured
-  on UI PR #514, a CLAUDE.md-only change that matches no workflow's
-  paths. That case is fine to merge; say so in the report. Exit 1 with
-  a check table containing `fail` is the stop. Treating every 1 as a
-  stop would block every docs-only PR in this repo forever.
+- **⚠⚠ `no checks reported` NO LONGER MEANS "merge". Corrected
+  2026-09-10, and the change that broke the old rule was ours.** This
+  bullet used to say that exit 1 with the one line `no checks reported
+  on the '<branch>' branch` meant no workflow applied and was fine to
+  merge — measured on UI PR #514, a CLAUDE.md-only change. **Two gates
+  have since dropped their `paths:` filters and now match EVERY pull
+  request in this repo:** `check-v8-callsites.yml` (UI #536, because a
+  filter suppresses the report and a filtered workflow can never be a
+  required check) and `check-js-syntax.yml` (2026-09-10, same reason).
+  So on a UI PR that message almost always means **the checks have not
+  registered yet**, and merging on it is merging ungated. That is
+  exactly how three bots shipped reading it as a verdict (HK-15); the
+  real check landed 19 seconds later.
+
+- **⚠ `--watch` does not wait for checks to APPEAR.** It returns
+  immediately when zero checks exist; it waits for checks that already
+  exist to finish. **And exit 0 can be a stale read** — on UI #539 it
+  returned 0 quoting the PREVIOUS head's run while the new sha was
+  still `in_progress` (#262 was the first instance). **Resolve the head
+  sha and query it directly** rather than asking about the branch:
+  `gh pr view <num> --json headRefOid -q .headRefOid`, then
+  `gh api repos/<owner>/<repo>/commits/<sha>/check-runs`. Exit 1 with a
+  check table containing `fail` is still the stop. If you believe a PR
+  genuinely triggers no workflow, **prove it** by listing the workflows
+  and showing none of their triggers match — do not infer it from the
+  one-line message.
+
+- **⚠ Don't pass `--delete-branch` to `gh pr merge`.** Measured
+  2026-09-10: it does a **local checkout** after merging. On the first
+  PR of that day it switched the worktree to `Dev` and reverted a
+  working-tree file. Harmless then; with pending work in the tree it
+  would not be. Merge without the flag, then
+  `git push origin --delete <branch>`. The local branch cleanup already
+  happens in the stale-branch-state bullet below.
 
 - **Before running the commit flow, sweep the docs.** When the
   owner says "commit," check the working-tree diff and ask:
@@ -692,8 +719,10 @@ versed analyst, not a layperson. Keep that voice:
        branch is single-use (Claude-named like
        `claude/<adjective>-<sha>`) and we're done with it. Skip if the
        worktree is staying on the same branch for another round of
-       work. The `gh pr merge --delete-branch` flag already cleans the
-       remote; this cleans the local side too.
+       work. The explicit `git push origin --delete <branch>` after the
+       merge cleans the remote; this cleans the local side too. (It
+       used to say the `--delete-branch` flag did the remote half —
+       that flag is no longer used, see the warning above.)
   Skip any of these steps that would destroy uncommitted work, and
   surface the situation so the owner can clean up manually.
 

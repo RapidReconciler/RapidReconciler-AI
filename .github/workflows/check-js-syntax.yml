@@ -21,23 +21,48 @@ name: Check JS syntax and behaviour
 # blind engine, so the step also asserts the engine line says v8.
 #
 # Baseline at wire-up: 322 files (282 .html + 40 .js), all OK.
+#
+# THE `paths:` FILTERS WERE REMOVED 2026-09-10, for the two reasons already
+# written out at length in check-v8-callsites.yml. Both apply here verbatim.
+#
+# 1. A FILTER SUPPRESSES THE REPORT, NOT JUST THE RUN. If this gate is ever
+#    made a required check on main, a PR matching no path produces no check
+#    at all, and GitHub parks a required check with no report at "Expected --
+#    waiting for status to be reported". The merge button never lights up.
+#    That is the prerequisite this change exists to satisfy: parsecheck is
+#    the more valuable gate to require, because a syntax error inside an
+#    inline <script> is silent -- the block stops executing, the page still
+#    renders, and the feature quietly does nothing.
+#
+# 2. THE FILTER WAS THE WRONG SHAPE ANYWAY, and this one is even clearer
+#    than the callsites case. The step below builds its file list from
+#    `git ls-files '*.html' '*.js'` -- the whole TRACKED set, not the diff.
+#    So the job already asserts the state of the entire tree and takes
+#    nothing from the change. Path-filtering a whole-tree assertion makes
+#    the check's answer depend on which files the author happened to edit,
+#    which is not what the check means.
+#
+# Measured before removing them, 2026-09-10, on this box against the real
+# V8 host (engine line: `v8 9.1.269.39-electron.0`): the same whole-tree
+# command the step runs reports **187 files, 187 OK, exit 0**. So running
+# unconditionally cannot turn a PR red on pre-existing content.
+#
+# ⚠ THE MEASUREMENT WAS WRONG ON ITS FIRST PASS AND THE TOOL SAID SO. Run
+# with `PARSECHECK_V8=node` on a box where node is not on PATH, the override
+# defeats host discovery, the tool drops to esprima 4 (ES2017, cannot parse
+# `?.` or `??`) and reports 11 failures -- every one marked `FAIL?` under a
+# warning header saying they may not be real. Read the engine line before
+# believing a count from this tool.
+#
+# ⚠ Do not "optimise" this back to a paths filter. If the noise ever matters,
+# the correct shape is a job that ALWAYS runs and decides internally whether
+# there is work to do -- so the check still reports -- never a trigger filter
+# that suppresses the report itself.
 
 on:
   push:
     branches: [main]
-    paths:
-      - '**.html'
-      - '**.js'
-      - 'Tools/parsecheck.py'
-      - 'Tools/parsecheck-v8.js'
-      - '.github/workflows/check-js-syntax.yml'
   pull_request:
-    paths:
-      - '**.html'
-      - '**.js'
-      - 'Tools/parsecheck.py'
-      - 'Tools/parsecheck-v8.js'
-      - '.github/workflows/check-js-syntax.yml'
   workflow_dispatch:
 
 permissions:
