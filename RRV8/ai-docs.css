@@ -1,6 +1,6 @@
 /*
  * ai-docs.css — the "Learn more" doc-link strip appended beneath an AI answer.
- * Paired with ai-docs.js the way period-bars.css is paired with period-bars.js.
+ * Paired with ai-docs.js the way sidebar.css is paired with sidebar.js.
  *
  * Links are built ONLY from the client-side allowlist in ai-docs.js; the model
  * just names slugs. CALM AND SECONDARY so it never competes with the answer it
