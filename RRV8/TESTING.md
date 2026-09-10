@@ -52,8 +52,8 @@ load&rdquo; bugs before anyone hits F5.
 |---|---|---|
 | **HTML parse** | Every `RRV8/*.html` parses as well-formed HTML5 (no unclosed tags, balanced quoting). | `inventory-asof.html: unclosed <div> at line 1240` |
 | **Inline JS parse** | Every `<script>` block inside an `RRV8/*.html` file parses as valid ES2017 (acorn or equivalent). | `inventory-asof.html: SyntaxError: Unexpected token ')' at line 2873` |
-| **External JS parse** | `RRV8/sidebar.js`, `RRV8/period-bars.js`, `RRV8/config.js` parse as ES2017. | `sidebar.js: Unexpected token` |
-| **CSS parse** | `RRV8/sidebar.css`, `RRV8/period-bars.css`, etc. parse without errors (postcss or csstree). | `sidebar.css: Unexpected '}' at line 232` |
+| **External JS parse** | `RRV8/sidebar.js`, `RRV8/config.js`, `RRV8/ai-docs.js` parse as ES2017. | `sidebar.js: Unexpected token` |
+| **CSS parse** | `RRV8/sidebar.css`, `RRV8/ai-docs.css`, etc. parse without errors (postcss or csstree). | `sidebar.css: Unexpected '}' at line 232` |
 | **JSON parse** | Every file under `RRV8/data/*.json` is valid JSON. | `reconciliation.json: invalid JSON near offset 12420` |
 
 **Source of truth**: parsers themselves &mdash; if they choke, the
