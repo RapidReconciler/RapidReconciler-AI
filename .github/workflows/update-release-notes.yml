@@ -1,13 +1,45 @@
 name: Update release notes
 
 # Appends a new entry to release-notes.html for each non-skip commit pushed to
-# main, then commits the regenerated page back to the repo. Skips its own
-# commits and the refresh-indices workflow's commits in two ways:
+# main, then lands the regenerated page through a PULL REQUEST rather than a
+# direct push.
+#
+# WHY A PR AND NOT A PUSH (changed 2026-09-10, HK-14)
+# ---------------------------------------------------
+# `main` now carries ruleset 22760277, which requires the `callsites` status
+# check. Required status checks are evaluated on ANY ref update, including a
+# direct push, and a freshly created bot commit has no checks on it. The repo
+# is owned by a USER account, not an organisation, so the Integration bypass
+# that would have exempted github-actions[bot] is refused outright:
+# "Actor GitHub Actions integration must be part of the ruleset source or
+# owner organization". There is no owner organisation. `enforcement: evaluate`
+# is Enterprise-only on this plan, so there was no dry-run either.
+#
+# So the bot goes through the front door: branch, PR, wait for the checks it
+# is subject to, merge on green.
+#
+# ⚠ AND THAT REQUIRES A TOKEN THAT IS NOT `GITHUB_TOKEN`. GitHub's documented
+# contract: "events triggered by the GITHUB_TOKEN will not create a new
+# workflow run", with only workflow_dispatch / repository_dispatch and
+# approval-gated pull_request events excepted. A PR opened with GITHUB_TOKEN
+# therefore never triggers `callsites`, and a required check that never
+# reports leaves the PR at "Expected -- waiting for status to be reported"
+# forever. `allow_auto_merge` is also false on this repo, so there is no
+# merge-on-green fallback. BOT_PR_TOKEN is the credential; the preflight step
+# below refuses loudly rather than opening a PR that cannot ever merge.
+#
+# LOOP PREVENTION DOES NOT DEPEND ON `[skip ci]`, WHICH IS WHY IT COULD BE
+# DROPPED. It had to be: a branch commit carrying [skip ci] gets no checks, so
+# the required check never reports and the bot's own PR blocks. Two guards
+# remain, both independent of it:
 #   1. paths-ignore on the trigger filters pushes that only touch the index
-#      JSON files or release-notes.html itself
+#      JSON files or release-notes.html itself -- and the merge of this bot's
+#      PR touches nothing else.
 #   2. The job-level if: refuses to run on commits whose subject starts with
 #      "chore: append release notes" or "chore: refresh search indices", or
-#      whose message contains [skip release notes] / [skip-release-notes]
+#      whose message contains [skip release notes] / [skip-release-notes].
+#      The PR title below is what a squash merge writes onto main, so it is
+#      deliberately kept in that shape.
 
 on:
   push:
@@ -25,9 +57,11 @@ on:
         required: false
         default: ''
 
-# The default GITHUB_TOKEN needs write access to commit the updated page
+# GITHUB_TOKEN needs nothing here any more: the branch push, the PR and the
+# merge all authenticate as BOT_PR_TOKEN. Left read-only so an accidental
+# reintroduction of a direct push fails instead of half-working.
 permissions:
-  contents: write
+  contents: read
 
 # Queue concurrent runs so one push can't overwrite another's appended entry
 concurrency:
@@ -37,6 +71,9 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    # The PR waits on real check runs. Bounded so a stuck check cannot hold a
+    # runner for six hours.
+    timeout-minutes: 20
     if: >-
       !contains(github.event.head_commit.message, '[skip release notes]') &&
       !contains(github.event.head_commit.message, '[skip-release-notes]') &&
@@ -44,12 +81,35 @@ jobs:
       !startsWith(github.event.head_commit.message, 'chore: refresh search indices')
 
     steps:
+      # BEFORE checkout, so a missing secret fails with a cause rather than as
+      # a confusing auth error inside actions/checkout.
+      - name: Require BOT_PR_TOKEN
+        env:
+          BOT_PR_TOKEN: ${{ secrets.BOT_PR_TOKEN }}
+        run: |
+          if [ -z "$BOT_PR_TOKEN" ]; then
+            echo "::error::BOT_PR_TOKEN is not set, so this workflow cannot land its change."
+            echo "::error::It cannot fall back to a direct push: main's ruleset 22760277 requires"
+            echo "::error::the 'callsites' check, and a bot commit pushed straight to main has no"
+            echo "::error::checks on it. It cannot use GITHUB_TOKEN for the PR either, because a"
+            echo "::error::PR opened with GITHUB_TOKEN never triggers the required check."
+            echo "::error::Create a fine-grained token scoped to this repository with Contents"
+            echo "::error::read/write and Pull requests read/write, save it as the Actions secret"
+            echo "::error::BOT_PR_TOKEN, and re-run. Failing loudly on purpose: silently skipping"
+            echo "::error::would let release notes drift with nothing on screen to say so."
+            exit 1
+          fi
+          echo "BOT_PR_TOKEN present."
+
       - name: Check out repository
         uses: actions/checkout@v4
         with:
           # Full history so the script can resolve BEFORE..AFTER ranges and
           # not just the shallow tip
           fetch-depth: 0
+          # Configures the origin remote with the PAT, so the branch push below
+          # is authenticated as a real user and DOES trigger the PR's checks.
+          token: ${{ secrets.BOT_PR_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -65,28 +125,67 @@ jobs:
         run: |
           python .github/scripts/update_release_notes.py "$BEFORE" "$AFTER"
 
-      - name: Commit and push if changed
-        # Push uses a pull-rebase-retry loop because a sibling bot workflow
-        # (refresh-indices) can land its own commit on main between this
-        # workflow's checkout and push. Without the retry, whichever workflow
-        # pushes second gets rejected.
+      - name: Open a PR and merge it once the checks pass
+        env:
+          GH_TOKEN: ${{ secrets.BOT_PR_TOKEN }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add release-notes.html
           if git diff --staged --quiet; then
-            echo "No release-notes changes — nothing to commit."
-          else
-            git commit -m "chore: append release notes [skip release notes][skip ci]"
-            for attempt in 1 2 3 4 5; do
-              if git push; then
-                echo "Push succeeded on attempt $attempt."
-                exit 0
-              fi
-              echo "Push rejected on attempt $attempt — rebasing on origin/main and retrying."
-              git pull --rebase origin main
-              sleep 2
-            done
-            echo "Push still failing after 5 attempts; giving up."
+            echo "No release-notes changes -- nothing to do."
+            exit 0
+          fi
+
+          branch="bot/release-notes-${GITHUB_RUN_ID}"
+          git checkout -b "$branch"
+          # NO [skip ci] on this commit, deliberately. See the header: a
+          # skipped run reports no checks, and a required check that never
+          # reports blocks this PR permanently.
+          git commit -m "chore: append release notes [skip release notes]"
+          git push -u origin "$branch"
+
+          # The TITLE is what a squash merge writes onto main, so it must keep
+          # the shape the job-level if: above refuses to re-run on.
+          pr_url="$(gh pr create \
+            --base main --head "$branch" \
+            --title "chore: append release notes [skip release notes]" \
+            --body "Opened by the release-notes workflow. Lands one appended entry in \`release-notes.html\`. Goes through a PR rather than a direct push because main's ruleset requires the \`callsites\` check and a direct bot push carries none. Merged automatically once the checks pass.")"
+          echo "Opened $pr_url"
+          pr_num="${pr_url##*/}"
+
+          # ⚠ GATED ON THE EXIT CODE, AND NEVER PIPED. `gh pr checks | tee` returns
+          # tee's status, and the default shell here is `bash -e` with no
+          # pipefail, so a red gate would be discarded and this would merge past
+          # it. That is HK-8, which merged Valc #224 past a failing scan.
+          out="${RUNNER_TEMP:-/tmp}/checks.txt"
+          rc=0
+          gh pr checks "$pr_num" --watch --fail-fast > "$out" 2>&1 || rc=$?
+          cat "$out"
+
+          # ⚠ AND EXIT 0 CAN BE A STALE READ. Measured 2026-09-10 on UI #539:
+          # --watch returned 0 quoting the PREVIOUS head's run while the new
+          # sha's checks were still in_progress. Re-read the verdict against
+          # the sha actually being merged before trusting it.
+          head_sha="$(gh pr view "$pr_num" --json headRefOid --jq '.headRefOid')"
+          state="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${head_sha}/check-runs" \
+                    --jq '[.check_runs[] | .conclusion] | join(",")')"
+          echo "check-run conclusions for ${head_sha}: ${state:-<none>}"
+
+          if [ "$rc" -ne 0 ] || echo ",$state," | grep -q ',failure,\|,cancelled,\|,timed_out,'; then
+            echo "::error::checks did not pass on $pr_url (gh exit $rc, conclusions: ${state:-none})."
+            echo "::error::Leaving the PR OPEN rather than merging or deleting it, so the entry is"
+            echo "::error::recoverable and the failure is visible. Merging past a red check is not"
+            echo "::error::this workflow's call."
             exit 1
           fi
+          if [ -z "$state" ]; then
+            echo "::error::no check runs reported for ${head_sha}. With a required check that is"
+            echo "::error::indistinguishable from a permanent block, so the PR is left open."
+            echo "::error::Most likely cause: BOT_PR_TOKEN is a GITHUB_TOKEN-equivalent and did"
+            echo "::error::not trigger the checks."
+            exit 1
+          fi
+
+          gh pr merge "$pr_num" --squash --delete-branch
+          echo "Merged $pr_url"
