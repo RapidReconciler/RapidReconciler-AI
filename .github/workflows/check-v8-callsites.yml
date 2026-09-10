@@ -31,22 +31,44 @@ name: Check V8 call sites (authorization)
 #     hand. Assertion A3 fails if any api/v1 literal in the source is not
 #     attributed to a call site the tool found.
 
+# ⚠ NO `paths:` FILTERS, AND THAT IS THE POINT. THEY WERE REMOVED 2026-09-10
+# (HK-14) FOR TWO INDEPENDENT REASONS, EITHER OF WHICH IS SUFFICIENT.
+#
+# 1. A REQUIRED CHECK THAT NEVER RUNS BLOCKS THE MERGE FOREVER. This gate is
+#    meant to become a required status check on `main`. A `paths:`-filtered
+#    workflow does not report a neutral or skipped result on a PR that matches
+#    no path -- it produces no check at all, and GitHub leaves a required check
+#    with no report at "Expected -- waiting for status to be reported". The
+#    merge button never lights up.
+#
+#    Measured against real history 2026-09-10: of the last 20 merged PRs,
+#    11 touched one of the old filter paths and **9 did not** -- #535, #534,
+#    #524, #522, #521, #519, #518, #517, #516. Every one of those nine would
+#    have stalled unmergeable. Nearly half.
+#
+# 2. THE FILTER WAS THE WRONG SHAPE ANYWAY, because this gate is not a diff
+#    check. `Tools/v8-callsites.py` enumerates every file in `RRV8/` by
+#    `os.listdir` (:184) and takes no file arguments: it asserts the state of
+#    the whole tree, not the state of the change. So a PR touching nothing
+#    under `RRV8/` can still produce a merged tree that violates A1 -- a
+#    revert, a stale branch, a merge resolution -- and the filtered workflow
+#    would have said nothing about it. Path-filtering a whole-tree assertion
+#    makes the check's answer depend on which files the author happened to
+#    edit, which is not what the check means.
+#
+# The cost of running it unconditionally is one job of about 15 seconds
+# (measured on UI #529: `callsites` pass, 15s). That buys a check whose green
+# is a statement about the tree, on every PR, which is the only kind of green
+# a required check should be made of.
+#
+# ⚠ Do not "optimise" this back to a paths filter. If the noise ever matters,
+# the correct shape is a job that ALWAYS runs and decides internally whether
+# there is work to do -- so the check still reports -- never a trigger filter
+# that suppresses the report itself.
 on:
   push:
     branches: [main]
-    paths:
-      - 'RRV8/**.html'
-      - 'RRV8/**.js'
-      - 'Tools/v8-callsites.py'
-      - 'Tools/v8-callsite-overrides.json'
-      - '.github/workflows/check-v8-callsites.yml'
   pull_request:
-    paths:
-      - 'RRV8/**.html'
-      - 'RRV8/**.js'
-      - 'Tools/v8-callsites.py'
-      - 'Tools/v8-callsite-overrides.json'
-      - '.github/workflows/check-v8-callsites.yml'
   workflow_dispatch:
 
 permissions:
