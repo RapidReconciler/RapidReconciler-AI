@@ -1302,7 +1302,7 @@
     const btn = document.getElementById('js-edit-save');
     btn.disabled = true;
     btn.textContent = 'Saving…';
-    rrFetch('api/v1/tenant/users/' + encodeURIComponent(id), {
+    rrFetch('api/v1/admin/users/' + encodeURIComponent(id), {
       method: 'PUT',
       body:   body
     })
