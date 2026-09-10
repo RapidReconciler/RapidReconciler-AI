@@ -286,11 +286,10 @@
   'use strict';
   function $(id) { return document.getElementById(id); }
 
-  var RR_CONFIG = window.RR_CONFIG || { mode: 'demo', dataPath: 'data/' };
-  var MODE = (function () {
-    try { var m = new URL(location.href).searchParams.get('mode'); if (m === 'demo' || m === 'staging' || m === 'prod') return m; } catch (_) {}
-    return RR_CONFIG.mode || 'demo';
-  })();
+  var RR_CONFIG = window.RR_CONFIG || { mode: 'staging', dataPath: 'data/' };
+  // MODE resolves through RRENV (config.js:376) — see the note on
+  // admin-claude-assistant.html. Never 'demo'; `?mode=` is not honoured.
+  var MODE = (window.RRENV && RRENV.mode()) || 'staging';
   var IS_DEMO = MODE === 'demo';
 
   // Scope passed from the prior page (both optional): the company the user was
@@ -609,9 +608,13 @@
     if (window.RRV8 && window.RRV8.readSessionScope) return window.RRV8.readSessionScope();
     var db = activeDb() || {};
     var allowed = Array.isArray(db.i) ? db.i.slice() : [];
-    // Key shape must match sidebar.js _sessionScopeKey(): rrv8.scope.v1.<mode>.<db>.scope,
-    // built from RR_CONFIG.mode (not the ?mode= override) and the active database name.
-    var key = 'rrv8.scope.v1.' + ((window.RR_CONFIG && RR_CONFIG.mode) || 'demo') + '.' + (db.n || '_') + '.scope';
+    // Key shape must match sidebar.js _sessionScopeKey(): rrv8.scope.v1.<mode>.<db>.scope.
+    // Both sides now resolve the mode through RRENV (config.js:376), which is
+    // the only way they can be relied on to agree — this line and sidebar.js's
+    // five key builders each carried their own `|| 'demo'` copy until
+    // 2026-09-10. The "(not the ?mode= override)" caveat that used to be here
+    // is gone because nothing in V8 reads ?mode= any more.
+    var key = 'rrv8.scope.v1.' + MODE + '.' + (db.n || '_') + '.scope';
     var stored = null;
     try { var raw = sessionStorage.getItem(key); stored = raw ? (JSON.parse(raw).payload || null) : null; } catch (_) { stored = null; }
     var active = (stored && Array.isArray(stored.activeCompanies) && stored.activeCompanies.length)

@@ -166,8 +166,9 @@
 (function () {
   'use strict';
   const RR_CONFIG = window.RR_CONFIG || {};
-  const URL_MODE  = new URLSearchParams(window.location.search).get('mode');
-  const MODE      = URL_MODE || RR_CONFIG.mode || 'demo';
+  // MODE resolves through RRENV (config.js:376) — see the note on
+  // admin-claude-assistant.html. Never 'demo'; `?mode=` is not honoured.
+  const MODE      = (window.RRENV && RRENV.mode()) || 'staging';
   const IS_DEMO   = (MODE === 'demo');
   const _testAgentAreas    = new Set(window.RR_TEST_AGENT_AREAS || []);
   const _testAgentPrefixes = window.RR_TEST_AGENT_PREFIXES || [];

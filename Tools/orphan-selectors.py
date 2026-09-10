@@ -65,13 +65,43 @@ def selectors_in_styles(html):
                 close = len(body)
             # An at-rule head (@media, @supports) carries no selectors of
             # its own, and its body is walked by the same loop afterwards.
-            if not AT_RULE_HEAD.match(head.strip()):
+            # ⚠ `head` is body[pos:brace] and therefore EXCLUDES the brace,
+            # while AT_RULE_HEAD requires a trailing `{` or `;`. So that
+            # regex could never match here and the at-rule branch was dead
+            # code -- harmless while the loop advanced by `brace + 1`
+            # regardless, fatal the moment the advance became conditional.
+            # Found 2026-09-10 by the self-test's @media case going red.
+            is_at_rule = head.strip().startswith("@")
+            if not is_at_rule:
                 line = base_line + body.count("\n", 0, pos)
                 for tok in SELECTOR_TOKEN.finditer(head):
                     kind, name = tok.group(1), tok.group(2)
                     key = ("id" if kind == "#" else "class", name)
                     found.setdefault(key, line + head[:tok.start()].count("\n"))
-            pos = brace + 1
+            # ⚠ THIS USED TO BE `pos = brace + 1` UNCONDITIONALLY, AND THAT
+            # SCANNED EVERY DECLARATION BODY AS SELECTOR TEXT. Fixed
+            # 2026-09-10. Advancing past the OPENING brace made the next
+            # iteration's `head` run from inside the current rule's
+            # declarations up to the next rule's brace -- so a value like
+            # `--blue-pale: #e6efff;` was read as an id selector `#e6efff`.
+            # `close` was already being computed and simply never used.
+            #
+            # It only ever showed up for hex colours BEGINNING WITH A LETTER,
+            # because SELECTOR_TOKEN requires `[A-Za-z_]` after the `#`: on
+            # inventory-transactions.html it flagged #e6efff, #f08a24,
+            # #d97316, #fbe7ce, #def4e6, #c0392b, #fce5e1, #fafbfd, #f3f5f9,
+            # #e6eaf0, #cfd6e0, #fff -- and silently skipped #142037,
+            # #2b5fb0, #3d8fd6, #2e8a55. A false-positive rate that depends
+            # on which colours a designer picked is the worst kind: it looks
+            # like signal. Every orphan count this tool produced before today
+            # was inflated by an unpredictable amount.
+            #
+            # An AT-RULE still advances by one, on purpose: its body holds
+            # real nested rules and the comment above promises they are
+            # walked. Skipping to its `}` would find the first INNER close
+            # brace and under-report every selector inside a @media block,
+            # which is the more expensive direction.
+            pos = (brace + 1) if is_at_rule else (close + 1)
     return found
 
 

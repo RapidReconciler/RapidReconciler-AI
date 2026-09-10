@@ -187,7 +187,9 @@
   function clearFetchError() { $('js-fetch-error').classList.remove('is-visible'); }
 
   var RR_CONFIG = window.RR_CONFIG || {};
-  var MODE = (new URLSearchParams(window.location.search).get('mode')) || RR_CONFIG.mode || 'demo';
+  // MODE resolves through RRENV (config.js:376) — see the note on
+  // admin-claude-assistant.html. Never 'demo'; `?mode=` is not honoured.
+  var MODE = (window.RRENV && RRENV.mode()) || 'staging';
   var IS_DEMO = (MODE === 'demo');
 
   // ---------- agent API (mirrors the recalc caller in inventory-account-rollforward.html) ----------

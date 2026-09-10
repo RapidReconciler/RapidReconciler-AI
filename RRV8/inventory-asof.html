@@ -1375,15 +1375,10 @@
   // ============================================================
   //  MODE + SESSION (same conventions as the other V8 pages)
   // ============================================================
-  const RR_CONFIG = window.RR_CONFIG || { mode: 'demo', dataPath: 'data/' };
-  const MODE = (function () {
-    try {
-      const u = new URL(window.location.href);
-      const q = (u.searchParams.get('mode') || '').toLowerCase();
-      if (q === 'demo' || q === 'staging' || q === 'prod') return q;
-    } catch (_) {}
-    return RR_CONFIG.mode || 'demo';
-  })();
+  const RR_CONFIG = window.RR_CONFIG || { mode: 'staging', dataPath: 'data/' };
+  // MODE resolves through RRENV (config.js:376) — see the note on
+  // admin-claude-assistant.html. Never 'demo'; `?mode=` is not honoured.
+  const MODE = (window.RRENV && RRENV.mode()) || 'staging';
   const IS_DEMO = MODE === 'demo';
 
   // ============================================================
@@ -4598,30 +4593,13 @@ function updateLotDetailPill() {
 })();
 </script>
 
-<script>
-/* Footer wiring (copied from Home): signed-in name, version, sign out. */
-(function () {
-  var name = '—';
-  try {
-    var u = (window.RR_SESSION && window.RR_SESSION.user) || null;
-    if (u) name = u.name || u.email || name;
-    else { var le = localStorage.getItem('rrv8.lastEmail'); if (le) name = le; }
-  } catch (_) {}
-  var el = document.getElementById('footName'); if (el) el.textContent = name;
-  try {
-    var ver = document.getElementById('footVersion');
-    if (ver && window.RR_CONFIG && window.RR_CONFIG.release) ver.textContent = 'RapidReconciler ' + window.RR_CONFIG.release;
-  } catch (_) {}
-  var out = document.getElementById('footSignOut');
-  if (out) out.addEventListener('click', function (e) {
-    e.preventDefault();
-    try { localStorage.removeItem('rrv8.token'); } catch (_) {}
-    try { localStorage.removeItem('rrv8.viewMode'); } catch (_) {}
-    try { localStorage.removeItem('rrv8.lastEmail'); } catch (_) {}
-    location.href = '../login.html';
-  });
-})();
-</script>
+<!-- The footer wiring that used to sit here was RETIRED 2026-09-10 (UI-184),
+     identically to the copy on inventory-transactions.html. It set a name, a
+     version and a sign-out handler on #footName / #footVersion / #footSignOut.
+     The only file in the repository producing those ids is
+     docs/plans/home-command-center-mockup.html, a planning mockup, so all
+     three lookups returned null and the IIFE was inert. Sign-out remains live
+     via the injected chrome (sidebar.js:1748). -->
 
 </body>
 </html>

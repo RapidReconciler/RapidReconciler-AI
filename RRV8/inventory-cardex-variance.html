@@ -658,7 +658,7 @@
       var b64=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'); var pad=b64.length%4; if(pad) b64+='='.repeat(4-pad);
       var p=JSON.parse(decodeURIComponent(atob(b64).split('').map(function(c){return '%'+('00'+c.charCodeAt(0).toString(16)).slice(-2);}).join('')));
       var dbs=p.dbs||[]; var idx=_activeDbIdx(dbs); var dbObj=dbs[idx]||dbs[0]||{};
-      var mode=(window.RR_CONFIG&&RR_CONFIG.mode)||'demo';
+      var mode=(window.RRENV&&RRENV.mode())||'staging';   // never 'demo' (2026-09-10)
       return { key:'rrv8.scope.v1.'+mode+'.'+((dbObj.n)||'_')+'.scope', allowed:(Array.isArray(dbObj.i)?dbObj.i.map(String):[]) };
     }catch(_){ return null; }
   }
@@ -1687,7 +1687,9 @@
   // Cross-page session cache, same key Home warms (rrv8.scope.v1.<mode>.<db>.cardexworklist).
   var RR_CONFIG = window.RR_CONFIG || {};
   var Q = new URLSearchParams(window.location.search);
-  var MODE = Q.get('mode') || RR_CONFIG.mode || 'demo';
+  // MODE resolves through RRENV (config.js:376) — see the note on
+  // admin-claude-assistant.html. Never 'demo'; `?mode=` is not honoured.
+  var MODE = (window.RRENV && RRENV.mode()) || 'staging';
   function activeDbName(){ return (window.RRDB && window.RRDB.name()) || '_'; }
   function cardexCacheKey(){ return 'rrv8.scope.v1.'+MODE+'.'+activeDbName()+'.cardexworklist'; }
   function readCardexCache(){ try{ var o=JSON.parse(sessionStorage.getItem(cardexCacheKey())||'null'); return o&&Array.isArray(o.payload)?o.payload:null; }catch(_){ return null; } }

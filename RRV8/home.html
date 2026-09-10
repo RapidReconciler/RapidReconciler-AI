@@ -3739,7 +3739,9 @@
   'use strict';
 
   var RR_CONFIG = window.RR_CONFIG || {};
-  var MODE = (new URLSearchParams(window.location.search).get('mode')) || RR_CONFIG.mode || 'demo';
+  // MODE resolves through RRENV (config.js:376) — see the note on
+  // admin-claude-assistant.html. Never 'demo'; `?mode=` is not honoured.
+  var MODE = (window.RRENV && RRENV.mode()) || 'staging';
   var IS_DEMO = MODE === 'demo';
 
   // ---- rrFetch + routing (copied verbatim from the V8 pages; inline,
@@ -6152,12 +6154,44 @@
       // this chip exists to offer.
       el.textContent = AI_PLAN_LABEL[lvl] || '—';
     }
-    if (IS_DEMO || !isAdmin()) { mark('full'); return; }   // demo: show the top tier as assigned
+    // ⚠ THIS LINE USED TO BE `if (IS_DEMO || !isAdmin()) { mark('full'); return; }`
+    // and BOTH halves of it were defects. Removed 2026-09-10 (VLC-63, and the
+    // demo half by the 2026-09-10 demo-mode ruling).
+    //
+    // `!isAdmin()` meant EVERY NON-ADMIN'S TIER WAS GUESSED AS THE TOP ONE and
+    // ai/health was never called for them. A customer whose client is on `docs`
+    // read "Full" — a figure on screen that nothing produced
+    // (feedback_one_producer_per_figure). Configuring the API key did not touch
+    // this: it made the guess right by luck on this box and left it wrong for
+    // every customer below the top tier.
+    //
+    // Calling it for every role is safe, established by reading the chain rather
+    // than by hoping: /api/v1/ai/** is matched by neither the /api/v1/tenant/**
+    // nor the /api/v1/admin/** rule in SecurityConfig, so it falls to
+    // `.anyRequest().authenticated()` (SecurityConfig.java:208), which a V8
+    // token's ROLE_USER satisfies. And AiController.maxLevelForDb(:149) is a
+    // pure lookup by database name with no caller identity in it, so it returns
+    // the same answer whoever asks.
+    //
     // Resolve the plan by the ACTIVE DATABASE's client (a platform admin isn't a
     // client-scoped user, so a user-based lookup would wrongly read 'off').
     var dbn = (activeDb() && activeDb().n) || '';
     rrFetch('api/v1/ai/health', dbn ? { query: { db: dbn } } : undefined)
-      .then(function (r) { mark((r && r.maxLevel) || 'off'); })
+      .then(function (r) {
+        // `configured` is the THIRD field AiController.health(:164) returns
+        // beside model and maxLevel, and until now nothing in this file read
+        // it (measured 2026-09-08: the only two hits for the word in home.html
+        // were unrelated analyzer prose). So the chip could read a confident
+        // "Full" on a server where the assistant is not switched on at all.
+        //
+        // The entitlement and the availability are DIFFERENT FACTS and the
+        // chip has room for one. Availability wins: a tier the customer
+        // cannot use is not the useful half. `configured:false` is a GSI-side
+        // setting, not something the customer can act on, so the label says
+        // what is true and the Manage link still goes where it explains.
+        if (r && r.configured === false) { el.textContent = 'Not enabled'; return; }
+        mark((r && r.maxLevel) || 'off');
+      })
       .catch(function () { mark(''); });   // unreachable — leave the em-dash rather than guess
   }
   // Activity Log row dot — client-side review reminder (rrv8.activityReview.<db> +
@@ -7534,33 +7568,24 @@
       return (l === 'off' || l === 'grounded' || l === 'scrubbed' || l === 'full') ? l : 'full';
     } catch (_) { return 'full'; }
   }
-  // AI plan-tier switcher (demo) — renders the Off/Basic/Enhanced/Full segmented
-  // control from the global RRAI state, reflects the active tier, and re-runs the
-  // briefing (the SAME question) when the presenter flips it. RRAI drives
-  // _recsummaryLevel(), so every AI affordance on the page follows this one control.
-  function _renderAiTierSwitch() {
-    var seg = document.getElementById('haiTierSeg'); if (!seg || !window.RRAI) return;
-    var cur = window.RRAI.get();
-    if (!seg.children.length) {
-      window.RRAI.TIERS.forEach(function (t) {
-        var b = document.createElement('button');
-        b.type = 'button'; b.className = 'hai-tier-opt'; b.setAttribute('data-tier', t);
-        b.textContent = window.RRAI.LABELS[t];
-        b.addEventListener('click', function () {
-          if (window.RRAI.get() === t) return;
-          window.RRAI.set(t);   // persists + fires rrv8:aitierchange (handled below)
-        });
-        seg.appendChild(b);
-      });
-    }
-    Array.prototype.forEach.call(seg.children, function (b) {
-      b.classList.toggle('is-active', b.getAttribute('data-tier') === cur);
-    });
-    var blurb = document.getElementById('haiTierBlurb'); if (blurb) blurb.textContent = (window.RRAI.BLURB && window.RRAI.BLURB[cur]) || '';
-    var rail = document.getElementById('homeAi'); if (rail) rail.classList.toggle('tier-off', cur === 'off');
-  }
+  // ⚠ `_renderAiTierSwitch()` WAS RETIRED HERE 2026-09-10 (UI-186). It built an
+  // Off/Basic/Enhanced/Full segmented control into #haiTierSeg and painted
+  // #haiTierBlurb and #homeAi — three ids that exist in NO file in this
+  // repository, so it returned on its first line every time it was called, and
+  // it was called from three places.
+  //
+  // It is a SUPERSEDED DUPLICATE, not a lost control, and that was checked
+  // rather than assumed: the CSS note at :1781 records that the AI rail
+  // (`.home-ai` / `.hai-id` / `.hai-spark` / `.hai-tier*`) was retired, and
+  // sidebar.js:764 CREATES `#rrai-dock-seg` and renders the live tier switch
+  // into it from the same `RRAI.TIERS`, wired to the same `RRAI.set()`, on
+  // every V8 page. Retiring the markup left the painter behind.
+  //
+  // The listener below is UNTOUCHED apart from dropping that one dead call:
+  // its other three effects (_setAiAsstTier, renderAiBriefing, and the
+  // role-surface re-render) are all live and are what actually makes a tier
+  // flip take effect.
   window.addEventListener('rrv8:aitierchange', function () {
-    _renderAiTierSwitch();
     try { if (typeof _setAiAsstTier === 'function') _setAiAsstTier(); } catch (_) {}   // orb status label + greeting follow the tier
     try { renderAiBriefing(); } catch (_) {}   // re-run the same question at the new tier
     // Re-render the ACTIVE role surface so its embedded, tier-aware AI re-runs at
@@ -7595,8 +7620,9 @@
       }
     } catch (_) {}
   });
-  if (document.readyState !== 'loading') _renderAiTierSwitch();
-  else document.addEventListener('DOMContentLoaded', _renderAiTierSwitch);
+  // The two boot calls to _renderAiTierSwitch() went with it (UI-186,
+  // 2026-09-10) — a readyState branch that ran a function whose first line
+  // returned, on every page load.
   function renderAiBriefing() {
     renderAccountantPanels();   // accountant working panels ride the same triggers (self-gates by view)
     // Accountant view carries its AI in the triage strip + inline Ask.

@@ -393,87 +393,17 @@
   }
   .tx-scope-note[hidden] { display: none; }
 
-  .breakdown-card {
-    background: var(--bg-card);
-    border: 1px solid var(--rule);
-    border-radius: 14px;
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
-    margin-bottom: 24px;
-  }
-  .breakdown-head {
-    padding: 16px 22px 14px;
-    border-bottom: 1px solid var(--rule);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .breakdown-head-left { min-width: 0; }
-  /* Collapsible variance-breakdown — click the heading to fold the cards away. */
-  .breakdown-toggle { display: inline-flex; align-items: center; gap: 8px; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; font: inherit; color: inherit; }
-  .breakdown-caret { width: 14px; height: 14px; color: var(--text-muted); transition: transform .15s ease; flex-shrink: 0; }
-  .breakdown-card.is-collapsed .breakdown-caret { transform: rotate(-90deg); }
-  .breakdown-card.is-collapsed .start-here-cards { display: none; }
-  .breakdown-card.is-collapsed .breakdown-helper { display: none; }
-  .breakdown-card.is-collapsed .breakdown-head { border-bottom: 0; }
-  .breakdown-title {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 15px;
-    font-weight: 800;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--navy);
-  }
-  .breakdown-helper {
-    font-size: 12.5px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
-  .breakdown-helper kbd {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    background: var(--bg-soft);
-    border: 1px solid var(--rule);
-    border-radius: 4px;
-    padding: 1px 6px;
-    color: var(--text-soft);
-  }
-  /* Scope stats on the right side of the breakdown-head &mdash;
-     row count + signed total variance for the currently-filtered
-     scope. Mirrors the KPI strip up top but tied to the card-grid
-     scope so a card narrow updates these numbers immediately. */
-  .breakdown-head-stats {
-    display: flex;
-    align-items: center;
-    gap: 22px;
-    margin-left: auto;
-  }
-  .breakdown-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    line-height: 1.1;
-  }
-  .breakdown-stat-label {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 9.5px;
-    font-weight: 800;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    color: var(--text-soft);
-  }
-  .breakdown-stat-value {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-weight: 700;
-    font-size: 17px;
-    color: var(--navy);
-    margin-top: 3px;
-    font-variant-numeric: tabular-nums;
-  }
-  .breakdown-stat-value.is-neg { color: var(--red); }
+  /* The 17 `.breakdown-*` rules that were here were RETIRED 2026-09-10
+     (UI-184), together with the #breakdown-toggle handler they existed for.
+     UI-183 left them deliberately because that handler still referenced
+     `.breakdown-card`; with the handler gone the whole cluster is orphaned.
+     Measured before deleting, repo-wide across every tracked .html and .js:
+     ZERO `class="...breakdown-..."` in any markup or template string, and
+     ZERO classList add/remove/toggle naming one. The descendants were read
+     rather than assumed (the VLC-66 trap: an orphaned parent can still be
+     styling live children) -- the only outside name any of them reached was
+     `.start-here-cards`, and that rule applied solely inside a collapsed
+     breakdown card, a state nothing could produce. */
 
   /* --- Start Here: horizontal action-card grid + full-width trend --- */
   .start-here-cards {
@@ -2966,15 +2896,10 @@
   //  are duplicated here for now — a future RRV8/lib.js extraction
   //  will dedupe across pages.
   // ============================================================
-  const RR_CONFIG = window.RR_CONFIG || { mode: 'demo', dataPath: 'data/' };
-  const MODE = (function () {
-    try {
-      const u = new URL(window.location.href);
-      const q = (u.searchParams.get('mode') || '').toLowerCase();
-      if (q === 'demo' || q === 'staging' || q === 'prod') return q;
-    } catch (_) {}
-    return RR_CONFIG.mode || 'demo';
-  })();
+  const RR_CONFIG = window.RR_CONFIG || { mode: 'staging', dataPath: 'data/' };
+  // MODE resolves through RRENV (config.js:376) — see the note on
+  // admin-claude-assistant.html. Never 'demo'; `?mode=` is not honoured.
+  const MODE = (window.RRENV && RRENV.mode()) || 'staging';
   const IS_DEMO = MODE === 'demo';
 
   // RR_SESSION mirrors what bootSession on reconciliation sets up.
@@ -8139,14 +8064,15 @@
     });
   });
 
-  // Active-filter-bar Clear button — wipes every card-driven filter
-  // (activeType, all exclusion sets, workedFilter) and re-renders.
-  const clearBtn = document.getElementById('clear-active-filter');
-  if (clearBtn) clearBtn.addEventListener('click', () => {
-    clearCardFilters();
-    if (typeof updateWorkedFilterPill === 'function') updateWorkedFilterPill();
-    renderAll();
-  });
+  // The Active-filter-bar Clear button was RETIRED here 2026-09-10 (UI-184).
+  // It looked up #clear-active-filter, which no markup in this repository
+  // produces, so the listener never attached. It is a leftover from the
+  // retarget noted at wireGridFilterPill() below: the clear affordance moved
+  // onto #grid-filter-pill (real markup at :2827, "Clear the active card
+  // filter"), which calls the same clearCardFilters() + updateWorkedFilterPill()
+  // + renderAll() sequence. Checked before cutting rather than assumed --
+  // clearCardFilters keeps three live callers (:5069, :5544, :8490), so the
+  // capability survives and only the dead duplicate went.
 
   // ============================================================
   //  PER-ROW EXPORT
@@ -9452,13 +9378,12 @@
     }
   }
 
-  // Collapsible Variance breakdown — click the heading to fold the cards.
-  const bdToggle = document.getElementById('breakdown-toggle');
-  if (bdToggle) bdToggle.addEventListener('click', () => {
-    const card = bdToggle.closest('.breakdown-card'); if (!card) return;
-    card.classList.toggle('is-collapsed');
-    bdToggle.setAttribute('aria-expanded', card.classList.contains('is-collapsed') ? 'false' : 'true');
-  });
+  // The Collapsible Variance breakdown toggle was RETIRED here 2026-09-10
+  // (UI-184). It looked up #breakdown-toggle, which no markup in this
+  // repository produces, so the listener never attached and the fold never
+  // existed. UI-183 deliberately left the .breakdown-* CSS in place because
+  // this handler still referenced it; the pair goes together, so that CSS
+  // goes with it.
 
   editApplyBtn.addEventListener('click', async () => {
     const workedChoice = (document.querySelector('input[name="edit-worked"]:checked') || {}).value;
@@ -9633,30 +9558,13 @@
 })();
 </script>
 
-<script>
-/* Footer wiring (copied from Home): signed-in name, version, sign out. */
-(function () {
-  var name = '—';
-  try {
-    var u = (window.RR_SESSION && window.RR_SESSION.user) || null;
-    if (u) name = u.name || u.email || name;
-    else { var le = localStorage.getItem('rrv8.lastEmail'); if (le) name = le; }
-  } catch (_) {}
-  var el = document.getElementById('footName'); if (el) el.textContent = name;
-  try {
-    var ver = document.getElementById('footVersion');
-    if (ver && window.RR_CONFIG && window.RR_CONFIG.release) ver.textContent = 'RapidReconciler ' + window.RR_CONFIG.release;
-  } catch (_) {}
-  var out = document.getElementById('footSignOut');
-  if (out) out.addEventListener('click', function (e) {
-    e.preventDefault();
-    try { localStorage.removeItem('rrv8.token'); } catch (_) {}
-    try { localStorage.removeItem('rrv8.viewMode'); } catch (_) {}
-    try { localStorage.removeItem('rrv8.lastEmail'); } catch (_) {}
-    location.href = '../login.html';
-  });
-})();
-</script>
+<!-- The footer wiring that used to sit here was RETIRED 2026-09-10 (UI-184).
+     It set a signed-in name, a version string and a sign-out handler on
+     #footName / #footVersion / #footSignOut. All three ids are produced by
+     exactly one file in the repository -- docs/plans/home-command-center-mockup.html,
+     a planning mockup -- so every lookup returned null and the whole IIFE was
+     inert. Sign-out is live and reachable: sidebar.js:1748 renders it into the
+     injected chrome on every V8 page. Nothing a user can reach was removed. -->
 
 <!-- Status toast target. role="status" + aria-live="polite" so an export
      failure reaches a screen reader too, not only the sighted analyst. -->
