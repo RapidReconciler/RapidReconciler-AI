@@ -89,6 +89,15 @@ esac
 exit 0
 """
 
+# The step polls for a check run to REGISTER, sleeping 10s up to 30 times. A
+# real sleep would make this suite take 5 minutes per case, so it is stubbed to
+# return instantly. The stub still records the call, so a case can assert on
+# how many times the poll went round.
+SLEEP_STUB = r"""#!/usr/bin/env bash
+echo "sleep $*" >> "$CALLS"
+exit 0
+"""
+
 GH_STUB = r"""#!/usr/bin/env bash
 echo "gh $*" >> "$CALLS"
 if [ "$1" = "pr" ] && [ "$2" = "create" ]; then
@@ -102,6 +111,13 @@ if [ "$1" = "pr" ] && [ "$2" = "view" ]; then
   echo "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"; exit 0
 fi
 if [ "$1" = "api" ]; then
+  # Two different calls hit this endpoint and they must not be conflated:
+  # the registration poll asks for .total_count (a number), the verdict asks
+  # for the joined conclusions (a string). Returning the string to the poll
+  # would make `[ "$n" -gt 0 ]` an integer-expression error under bash -e.
+  case "$*" in
+    *total_count*) printf '%s\n' "${COUNT-2}"; exit 0 ;;
+  esac
   printf '%s\n' "${CONCLUSIONS-success,success}"; exit 0
 fi
 if [ "$1" = "pr" ] && [ "$2" = "merge" ]; then exit 0; fi
@@ -113,7 +129,7 @@ def run_case(name, env, expect_rc, expect_merge):
     d = tempfile.mkdtemp()
     bin_dir = os.path.join(d, "bin")
     os.makedirs(bin_dir)
-    for fname, body in (("git", GIT_STUB), ("gh", GH_STUB)):
+    for fname, body in (("git", GIT_STUB), ("gh", GH_STUB), ("sleep", SLEEP_STUB)):
         p = os.path.join(bin_dir, fname)
         with open(p, "w", newline="\n", encoding="utf-8") as fh:
             fh.write(body)
@@ -171,6 +187,17 @@ results.append(run_case("gh exit 0 but sha says failure: refuses",
 # 5. no check runs at all -- the GITHUB_TOKEN-equivalent symptom
 results.append(run_case("no check runs reported: refuses",
                         {"CHECKS_RC": "0", "CONCLUSIONS": ""}, 1, False)[0])
+
+# 5b. THE DEFECT THE FIRST LIVE RUN EXPOSED. A check that has not REGISTERED
+#     yet is not a verdict. Before the fix the step read `gh pr checks`'s
+#     instant "no checks reported" and refused, while callsites was created 19
+#     seconds later and passed. COUNT=0 makes the registration poll never
+#     succeed, which must end in a refusal that names registration rather than
+#     a merge.
+ok, _created = run_case("check never registers: refuses, does not merge",
+                        {"COUNT": "0", "CHECKS_RC": "0",
+                         "CONCLUSIONS": "success"}, 1, False)
+results.append(ok)
 
 # 6. a cancelled check must not read as a pass
 results.append(run_case("cancelled check: refuses",

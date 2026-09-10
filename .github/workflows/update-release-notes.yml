@@ -154,6 +154,32 @@ jobs:
           echo "Opened $pr_url"
           pr_num="${pr_url##*/}"
 
+          # ⚠ WAIT FOR A CHECK TO REGISTER BEFORE WATCHING ONE.
+          # `gh pr checks --watch` returns IMMEDIATELY when zero checks exist:
+          # it waits for EXISTING checks to finish, not for checks to appear.
+          # Measured on this workflow's first real run -- it opened a PR, read
+          # "no checks reported", and refused, while `callsites` was created 19
+          # seconds later and passed. The refusal was correct for what it saw,
+          # and leaving the PR open meant nothing was lost, but it could never
+          # have merged. HANDOFF already carried the rule this violates: if a
+          # workflow's triggers match, a missing check means WAIT, not a verdict.
+          head_sha="$(gh pr view "$pr_num" --json headRefOid --jq '.headRefOid')"
+          echo "head sha: $head_sha"
+          registered=0
+          for _ in $(seq 1 30); do
+            n="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${head_sha}/check-runs" \
+                  --jq '.total_count' 2>/dev/null || echo 0)"
+            if [ "${n:-0}" -gt 0 ]; then registered=1; echo "$n check(s) registered."; break; fi
+            sleep 10
+          done
+          if [ "$registered" -ne 1 ]; then
+            echo "::error::no check run registered for ${head_sha} within 5 minutes."
+            echo "::error::With a required check that is indistinguishable from a permanent"
+            echo "::error::block, so the PR is left open. Most likely cause: BOT_PR_TOKEN is a"
+            echo "::error::GITHUB_TOKEN-equivalent and did not trigger the checks."
+            exit 1
+          fi
+
           # ⚠ GATED ON THE EXIT CODE, AND NEVER PIPED. `gh pr checks | tee` returns
           # tee's status, and the default shell here is `bash -e` with no
           # pipefail, so a red gate would be discarded and this would merge past
@@ -167,7 +193,6 @@ jobs:
           # --watch returned 0 quoting the PREVIOUS head's run while the new
           # sha's checks were still in_progress. Re-read the verdict against
           # the sha actually being merged before trusting it.
-          head_sha="$(gh pr view "$pr_num" --json headRefOid --jq '.headRefOid')"
           state="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${head_sha}/check-runs" \
                     --jq '[.check_runs[] | .conclusion] | join(",")')"
           echo "check-run conclusions for ${head_sha}: ${state:-<none>}"
