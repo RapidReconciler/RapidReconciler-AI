@@ -26,11 +26,9 @@
 <title>Inventory As Of &mdash; RapidReconciler</title>
 <link href="fonts/fonts.css" rel="stylesheet">
 <link href="sidebar.css" rel="stylesheet">
-<link href="period-bars.css" rel="stylesheet">
 <script src="config.js"></script>
 <script src="export-guard.js"></script>
 <script src="sidebar.js"></script>
-<script src="period-bars.js"></script>
 <script src="vendor/xlsx.full.min.js" defer></script>
 <style>
   :root {
@@ -643,190 +641,6 @@
     padding: 4px 0;
   }
 
-  /* ============================================================
-     HERO STATS STRIP — 4 KPI tiles, filter-aware.
-     ============================================================ */
-  /* Top strip — V8 standard: Perpetual Amount card (~25%) on the
-     left, the period chart (~75%) on the right, stretched to equal
-     height. */
-  .page-topstrip {
-    display: flex;
-    align-items: stretch;
-    gap: 18px;
-    margin-bottom: 24px;
-  }
-  .page-topstrip > .stats-strip {
-    flex: 0 0 26%;
-    min-width: 240px;
-  }
-  .stats-strip {
-    display: flex;
-    margin-bottom: 0;
-  }
-  .stats-strip > .stat-tile { flex: 1 1 auto; }
-  @media (max-width: 900px) {
-    .page-topstrip { flex-direction: column; }
-    .page-topstrip > .stats-strip { flex: none; }
-  }
-  .stat-tile {
-    background: var(--bg-card);
-    border: 1px solid var(--rule);
-    border-radius: 12px;
-    padding: 16px 18px 18px;
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  /* Linkable hero card — same look as .stat-tile but with hover
-     affordance + an external-link arrow next to the label. Used by
-     the Cardex Variance card that hops to inventory-cardex-variance. */
-  a.stat-tile {
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-    transition: border-color 0.15s, box-shadow 0.15s, transform 0.08s;
-  }
-  a.stat-tile:hover {
-    border-color: var(--blue);
-    box-shadow: 0 2px 8px rgba(43, 95, 176, 0.15);
-  }
-  a.stat-tile:active { transform: translateY(1px); }
-  a.stat-tile .stat-tile-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-  }
-  a.stat-tile .stat-tile-link-icon {
-    width: 11px;
-    height: 11px;
-    opacity: 0.55;
-    transition: opacity 0.15s;
-  }
-  a.stat-tile:hover .stat-tile-link-icon { opacity: 1; color: var(--blue); }
-  .stat-tile-label {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  .stat-tile-value {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--navy);
-    font-variant-numeric: tabular-nums;
-    line-height: 1.15;
-  }
-  /* No colour for a negative figure (UI-88): sign is not severity. curMoney()
-     already wraps a negative in accounting parentheses. */
-  .stat-tile-sub {
-    font-size: 11.5px;
-    color: var(--text-muted);
-  }
-
-
-  /* ============================================================
-     PERPETUAL CONTRIBUTORS — collapsible tabbed card (Business unit /
-     Object / Subsidiary / Branch plant). Same pattern as the
-     Reconciliation / Transactions contributors. Click a row to narrow
-     the grid to that value.
-     ============================================================ */
-  .perp-contrib-card {
-    background: var(--bg-card);
-    border: 1px solid var(--rule);
-    border-radius: 14px;
-    padding: 18px 22px 16px;
-    box-shadow: var(--shadow-sm);
-    margin-bottom: 24px;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-  .perp-contrib-card.is-collapsed { padding-bottom: 12px; }
-  .perp-contrib-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    cursor: pointer;
-    user-select: none;
-    margin-bottom: 14px;
-  }
-  .perp-contrib-card.is-collapsed .perp-contrib-head { margin-bottom: 0; }
-  .perp-contrib-title {
-    font-family: 'Source Sans 3', sans-serif;
-    font-weight: 800;
-    font-size: 14px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--navy);
-    transition: color 0.12s;
-  }
-  .perp-contrib-head:hover .perp-contrib-title { color: var(--blue); }
-  .perp-contrib-head-right { display: flex; align-items: center; gap: 12px; }
-  .perp-contrib-help {
-    font-size: 12px; color: var(--text-muted); text-decoration: none;
-    display: inline-flex; align-items: center;
-  }
-  .perp-contrib-help:hover { color: var(--blue); }
-  .perp-contrib-help svg { width: 13px; height: 13px; }
-  .perp-contrib-chevron {
-    width: 16px; height: 16px; color: var(--text-muted);
-    transition: transform 0.18s, color 0.12s; flex-shrink: 0;
-  }
-  .perp-contrib-head:hover .perp-contrib-chevron { color: var(--blue); }
-  .perp-contrib-card.is-collapsed .perp-contrib-chevron { transform: rotate(-90deg); }
-  .perp-contrib-card.is-collapsed .perp-contrib-body { display: none; }
-  .perp-contrib-tabs {
-    display: inline-flex; gap: 2px; margin: 0 0 10px; padding: 3px;
-    background: var(--bg-soft); border-radius: 8px; width: max-content;
-    max-width: 100%; flex-wrap: wrap;
-  }
-  .perp-contrib-tab {
-    appearance: none; background: transparent; border: 0; padding: 6px 14px;
-    border-radius: 6px; font-family: 'Source Sans 3', sans-serif;
-    font-weight: 700; font-size: 12px; color: var(--text-muted);
-    cursor: pointer; transition: color 0.12s, background 0.12s;
-  }
-  .perp-contrib-tab:hover { color: var(--navy); }
-  .perp-contrib-tab.is-active {
-    background: var(--bg-card); color: var(--navy);
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.10);
-  }
-  .perp-contrib-list { display: flex; flex-direction: column; gap: 2px; padding-top: 2px; }
-  .perp-contrib-row {
-    display: grid; grid-template-columns: 1fr auto; align-items: center;
-    gap: 4px 12px; padding: 9px 10px; background: transparent; border: none;
-    border-radius: 7px; cursor: pointer; text-align: left; width: 100%;
-    transition: background 0.15s;
-  }
-  .perp-contrib-row:hover { background: var(--bg-soft); }
-  .perp-contrib-row.is-active { background: rgba(43, 95, 176, 0.10); box-shadow: inset 3px 0 0 var(--blue); }
-  .perp-contrib-row-label {
-    font-family: 'Source Sans 3', sans-serif; font-size: 12.5px; font-weight: 700;
-    color: var(--navy); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    display: flex; align-items: baseline; gap: 8px;
-  }
-  .perp-contrib-row-label .row-count {
-    font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; font-weight: 600;
-    color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;
-  }
-  .perp-contrib-row-amount {
-    font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12.5px;
-    font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; white-space: nowrap;
-  }
-  .perp-contrib-row-bar-wrap {
-    grid-column: 1 / -1; position: relative; height: 5px;
-    background: var(--bg-soft); border-radius: 3px; overflow: hidden;
-  }
-  .perp-contrib-row-bar {
-    position: absolute; top: 0; bottom: 0; left: 0; background: var(--blue);
-    border-radius: 3px; transition: width 0.25s ease;
-  }
-  .perp-contrib-row-bar[data-sign="neg"] { background: var(--blue-pale); box-shadow: inset 0 0 0 1px var(--blue); }
   /* Scope strip — the parameters this page was opened with, as light labeled
      stat-pairs (the sibling-page pattern), NOT a heavy banner. Filled by
      renderAsOfHero(). One calm white panel; the AI card carries the only accent. */
@@ -906,99 +720,6 @@
   .fp-opt-note .fp-opt-showall { margin-left: auto; flex-shrink: 0; background: none; border: 0; color: var(--blue); font: inherit; font-weight: 700; cursor: pointer; white-space: nowrap; }
   .fp-opt-note .fp-opt-showall:hover { text-decoration: underline; }
   @media (max-width: 900px) { .fp-row { grid-template-columns: 1fr; } }
-  .perp-contrib-empty {
-    padding: 26px 12px; text-align: center; color: var(--text-muted);
-    font-size: 12.5px; font-style: italic;
-  }
-
-  /* ============================================================
-     RESIDUAL FILTER CARD
-     ============================================================ */
-  .residual-card {
-    display: flex;
-    align-items: center;
-    gap: 14px 22px;
-    flex-wrap: wrap;
-    padding: 12px 18px;
-    margin-bottom: 22px;
-    background: var(--bg-card);
-    border: 1px solid var(--rule-strong);
-    border-radius: 14px;
-    box-shadow: var(--shadow-sm);
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .residual-card.is-active {
-    background: var(--orange-pale);
-    border-color: var(--orange);
-  }
-  .residual-threshold {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--text-muted);
-  }
-  .residual-threshold-label {
-    font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  .residual-threshold input {
-    width: 82px;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 4px 8px;
-    border: 1px solid var(--rule-strong);
-    border-radius: 6px;
-    background: var(--bg-card);
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
-  }
-  .residual-threshold input:focus {
-    outline: none;
-    border-color: var(--blue);
-    box-shadow: 0 0 0 2px var(--blue-pale);
-  }
-  .residual-threshold input:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-    background: transparent;
-  }
-  .residual-stats {
-    margin-left: auto;
-    display: inline-flex;
-    gap: 28px;
-    align-items: center;
-  }
-  .residual-stat {
-    display: inline-flex;
-    flex-direction: column;
-    gap: 2px;
-    text-align: right;
-  }
-  .residual-stat-label {
-    font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-  .residual-card.is-active .residual-stat-label {
-    color: var(--orange-deep);
-  }
-  .residual-stat-value {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--navy);
-    font-variant-numeric: tabular-nums;
-  }
-  .residual-stat-value.is-zero { color: var(--text-muted); }
 
   /* ============================================================
      DETAILS CARD + V8 GRID
@@ -1423,27 +1144,6 @@
     pointer-events: none;
   }
   .toast.is-visible { opacity: 1; }
-
-  /* ============================================================
-     PERIOD CHART — fills the remaining top-strip width, framed as a
-     card to match the Perpetual Amount card on its left.
-     ============================================================ */
-  #js-period-bars.period-bars {
-    flex: 1 1 auto;
-    min-width: 0;
-    max-width: none;
-    margin: 0;
-    height: auto;
-    min-height: 168px;
-    border: 1px solid var(--rule);
-    border-radius: 14px;
-    box-shadow: var(--shadow-md);
-    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-soft) 100%);
-    padding: 18px 22px 16px;
-  }
-  @media (max-width: 900px) {
-    #js-period-bars.period-bars { min-height: 150px; }
-  }
 
   /* Footer — copied from the Home page. */
   .foot {
@@ -2300,7 +2000,6 @@
     columnFilters: loadColumnFilters(),
     // Active narrow from the Perpetual contributors card: { dim, value }
     // or null. dim ∈ businessUnits | objects | subsidiaries | branches.
-    perpContribFilter: null,
     hideResiduals: loadHideResiduals(),
     residualTarget: loadResidualTarget(),
     // Columns the agent has actually shipped to us so far. Starts
@@ -2505,12 +2204,6 @@
     // off, so the card shows "how much residual noise is in scope"
     // before the analyst hides it.
     rows = applyResidualFilter(rows);
-    // Perpetual contributors narrow — isolate one BU / Object /
-    // Subsidiary / Branch-plant value when a contributor row is clicked.
-    if (_state.perpContribFilter) {
-      const f = _state.perpContribFilter;
-      rows = rows.filter(r => perpContribValueOf(r, f.dim) === f.value);
-    }
     return rows;
   }
   function applyResidualFilter(rows) {
@@ -2716,90 +2409,6 @@
     el.textContent = txt || '0';
   }
 
-  // ============================================================
-  //  Perpetual contributors (tabbed card)
-  //  Top contributors to the perpetual Amount by Business unit /
-  //  Object / Subsidiary (parsed from LongAccount "BU.Object.Sub") /
-  //  Branch plant (r.Branch). Click a row to narrow the grid to that
-  //  value; click the active row again to restore. Same pattern as the
-  //  Reconciliation / Transactions contributors cards.
-  // ============================================================
-  const PERP_CONTRIB_TOP_N = 8;
-  const PERP_CONTRIB_LS_KEY = 'rrv8-asof-contrib-dim-v1';
-  const PERP_CONTRIB_COLLAPSE_LS_KEY = 'rrv8-asof-contrib-collapsed-v1';
-  // Hoisted (function declaration) so filteredRows can use it too.
-  function perpContribValueOf(r, dim) {
-    if (dim === 'branches') return String(r && r.Branch == null ? '' : r.Branch).trim();
-    if (dim === 'glClasses') return String(r && r.GLClass == null ? '' : r.GLClass).trim();
-    const i = (dim === 'businessUnits') ? 0 : (dim === 'objects') ? 1 : 2;
-    const parts = String(r && r.LongAccount == null ? '' : r.LongAccount).split('.');
-    return (parts[i] || '').trim();
-  }
-  const PERP_CONTRIB_DIMS = {
-    businessUnits: { label: 'Business unit' },
-    objects:       { label: 'Object' },
-    subsidiaries:  { label: 'Subsidiary' },
-    branches:      { label: 'Branch plant' },
-    glClasses:     { label: 'GL class' }
-  };
-  function loadPerpContribDim() {
-    try { const raw = localStorage.getItem(PERP_CONTRIB_LS_KEY); if (raw && PERP_CONTRIB_DIMS[raw]) return raw; } catch (_) {}
-    return 'businessUnits';
-  }
-  let _perpContribDim = loadPerpContribDim();
-
-  function renderPerpetualContributors(rows) {
-    const list = document.getElementById('perp-contrib-list');
-    if (!list) return;
-    document.querySelectorAll('.perp-contrib-tab').forEach(btn => {
-      const on = btn.dataset.perpContribDim === _perpContribDim;
-      btn.classList.toggle('is-active', on);
-      btn.setAttribute('aria-selected', on ? 'true' : 'false');
-    });
-    // Mixed-currency scope: contributor amounts would sum unlike currencies.
-    if (_curCtx.mixed) {
-      list.innerHTML = '<div class="perp-contrib-empty">Scope spans multiple currencies (' +
-        (_curCtx.codes || []).join(', ') + '). Narrow to a single currency to see contributors.</div>';
-      return;
-    }
-    const active = _state.perpContribFilter;
-    const activeKey = (active && active.dim === _perpContribDim) ? active.value : null;
-
-    // Group by dimension value, sum the perpetual Amount + count.
-    const groups = new Map();
-    (rows || []).forEach(r => {
-      const key = perpContribValueOf(r, _perpContribDim);
-      if (!key) return;
-      const g = groups.get(key) || { key, count: 0, amount: 0 };
-      g.count  += 1;
-      g.amount += Number(r.Amount) || 0;
-      groups.set(key, g);
-    });
-    // Alphanumeric order (consistent with the other contributors cards).
-    const ranked = [...groups.values()]
-      .sort((a, b) => String(a.key).localeCompare(String(b.key), undefined, { numeric: true, sensitivity: 'base' }));
-    if (!ranked.length) {
-      list.innerHTML = '<div class="perp-contrib-empty">No rows in scope &mdash; adjust filters.</div>';
-      return;
-    }
-    const top      = ranked.slice(0, PERP_CONTRIB_TOP_N);
-    const overflow = ranked.length - top.length;
-    const maxAbs   = Math.max.apply(null, top.map(g => Math.abs(g.amount)).concat([1]));
-    list.innerHTML = top.map(g => {
-      const pct      = Math.min(100, (Math.abs(g.amount) / maxAbs) * 100);
-      const isNeg    = g.amount < 0;
-      const isActive = g.key === activeKey;
-      return '<button class="perp-contrib-row' + (isActive ? ' is-active' : '') + '" type="button" aria-pressed="' + (isActive ? 'true' : 'false') + '" data-perp-contrib-value="' + escapeHtml(g.key) + '">'
-        +   '<span class="perp-contrib-row-label">' + escapeHtml(g.key)
-        +     '<span class="row-count">' + g.count.toLocaleString('en-US') + ' rows</span>'
-        +   '</span>'
-        +   '<span class="perp-contrib-row-amount">' + curMoney(g.amount) + '</span>'
-        +   '<span class="perp-contrib-row-bar-wrap"><span class="perp-contrib-row-bar" data-sign="' + (isNeg ? 'neg' : 'pos') + '" style="width:' + pct.toFixed(1) + '%"></span></span>'
-        + '</button>';
-    }).join('') + (overflow > 0
-      ? '<div class="perp-contrib-empty" style="padding:8px 12px;text-align:left;">+ ' + overflow + ' more &mdash; top ' + PERP_CONTRIB_TOP_N + ' shown</div>'
-      : '');
-  }
 
   // ---- AI inventory insight -----------------------------------------------
   // Grounded in the loaded scope's aggregates (value by branch / GL class / BU
@@ -3032,51 +2641,6 @@
     if (_asofLastAsk && ans && !ans.hidden) asofAsk(_asofLastAsk.kind, _asofLastAsk.freeText);
   });
 
-  // Tab switch → re-render against the current filtered scope.
-  document.addEventListener('click', (e) => {
-    const tab = e.target.closest && e.target.closest('.perp-contrib-tab');
-    if (!tab) return;
-    const dim = tab.dataset.perpContribDim;
-    if (!PERP_CONTRIB_DIMS[dim] || dim === _perpContribDim) return;
-    _perpContribDim = dim;
-    try { localStorage.setItem(PERP_CONTRIB_LS_KEY, dim); } catch (_) {}
-    renderPerpetualContributors(_viewRows || filteredRows());
-  });
-  // Row click → toggle-narrow the grid to that value. No scroll — the
-  // view stays on the contributors card. Clicking the active row clears.
-  document.addEventListener('click', (e) => {
-    const row = e.target.closest && e.target.closest('.perp-contrib-row');
-    if (!row) return;
-    const value = row.dataset.perpContribValue;
-    if (value == null) return;
-    const cur = _state.perpContribFilter;
-    if (cur && cur.dim === _perpContribDim && cur.value === value) {
-      _state.perpContribFilter = null;
-    } else {
-      _state.perpContribFilter = { dim: _perpContribDim, value: value };
-    }
-    renderAll();
-  });
-  // Collapsible head (default-closed, persisted). Help icon exempt.
-  (function wirePerpContribCollapse() {
-    const card = document.getElementById('perp-contrib-card');
-    const head = document.getElementById('perp-contrib-toggle');
-    if (!card || !head) return;
-    let collapsed = true;
-    try { if (localStorage.getItem(PERP_CONTRIB_COLLAPSE_LS_KEY) === '0') collapsed = false; } catch (_) {}
-    function setCollapsed(c) {
-      card.classList.toggle('is-collapsed', c);
-      head.setAttribute('aria-expanded', c ? 'false' : 'true');
-      try { localStorage.setItem(PERP_CONTRIB_COLLAPSE_LS_KEY, c ? '1' : '0'); } catch (_) {}
-    }
-    setCollapsed(collapsed);
-    const toggle = (e) => {
-      if (e.target && e.target.closest && e.target.closest('[data-action="perp-contrib-help"]')) return;
-      setCollapsed(!card.classList.contains('is-collapsed'));
-    };
-    head.addEventListener('click', toggle);
-    head.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(e); } });
-  })();
 
 
 
@@ -3132,43 +2696,6 @@ function updateLotDetailPill() {
     // one company currently shown.
     const label = document.getElementById('company-picker-label');
     if (label) label.textContent = _soloCompany ? ('Co ' + _soloCompany) : 'All companies';
-  }
-  function updateResidualCard() {
-    _fpSyncControls();   // keep the Residual Optimizer card (view switch / dial / label) in sync each render
-    const card     = document.getElementById('residual-card');
-    const toggle   = document.getElementById('residual-toggle');
-    const input    = document.getElementById('residual-threshold-input');
-    const countLbl = document.getElementById('residual-count-label');
-    const countEl  = document.getElementById('residual-count');
-    const totalEl  = document.getElementById('residual-total');
-    if (!card || !toggle || !input || !countEl || !totalEl) return;
-    const active = !!_state.hideResiduals;
-    card.classList.toggle('is-active', active);
-    toggle.classList.toggle('is-active', active);
-    toggle.setAttribute('aria-pressed', active ? 'true' : 'false');
-    if (document.activeElement !== input) {
-      input.value = String(_state.residualTarget);
-    }
-    input.disabled = !active;
-    if (countLbl) countLbl.textContent = active ? 'Rows hidden' : 'Rows within budget';
-    const n   = _residualStats.count     || 0;
-    const a   = _residualStats.amount    || 0;
-    const abs = _residualStats.amountAbs || 0;
-    const tgt = _residualStats.target    || 0;
-    countEl.textContent = n.toLocaleString('en-US');
-    countEl.classList.toggle('is-zero', n === 0);
-    // Headline value = the running SIGNED sum of hidden rows — that's
-    // "residual amount total" in the same sense the books would
-    // record it, and the number being capped at ±target. With
-    // mixed-sign tiny tails it stays near zero while thousands of
-    // rows fit under a modest budget. Cumulative |Amount| lives in
-    // the hover hint so an analyst can still see absolute exposure
-    // when they want it.
-    totalEl.textContent = fmtMoney(a);
-    totalEl.classList.toggle('is-zero', n === 0);
-    totalEl.title = 'Net signed sum of hidden rows (within ±' +
-      fmtMoney(tgt) + ' target). Cumulative |Amount|: ' +
-      fmtMoney(abs) + '.';
   }
   // ============================================================
   //  Residual Optimizer — AI picks the dust cutoff; deterministic
@@ -3360,7 +2887,6 @@ function updateLotDetailPill() {
       ? RRV8.currencyOf(_viewRows, function(r){ return r.Currency; })
       : { code: '', mixed: false, codes: [] };
     renderStats();
-    renderPerpetualContributors(_viewRows);
     asofAiSync();
     renderAsOfTotals();
     const rows = searchFilter(sortRows(_viewRows, _state.sortKey, _state.sortDir), _state.gridSearch);
@@ -3505,8 +3031,6 @@ function updateLotDetailPill() {
                            : '',
         residualView:   _state.residualView === 'filtered' ? 'residual rows ONLY' : '',
         columnFilters:  cfBits,
-        contributor:    _state.perpContribFilter
-                          ? (_state.perpContribFilter.dim + '=' + _state.perpContribFilter.value) : '',
         excludedAccountRows: (_data && _data._meta && _data._meta._excludedAccountRows) || '',
         scopeRefused:   _scopeError ? 'yes' : ''
       },
@@ -3606,17 +3130,13 @@ function updateLotDetailPill() {
     updateLotDetailPill();
     updateCompanyPill();
     renderDetails();
-    updateResidualCard();
+    _fpSyncControls();
     // Publish current period + repaint sidebar so the Period row reflects
     // this page's period (and the next page sees it via the same cache).
     const period = _data && _data._meta && _data._meta.period;
     if (period && window.RRV8 && typeof window.RRV8.publishCurrentPeriod === 'function') {
       window.RRV8.publishCurrentPeriod(period);
     }
-    // Keep the period line-chart's highlighted point in sync with the
-    // period actually loaded — covers the boot race where the chart
-    // mounts before the data fetch resolves.
-    if (_periodBars && period) _periodBars.setCurrentPeriod(period);
     if (window.RRV8 && typeof window.RRV8.paintSidebarFromCache === 'function') {
       window.RRV8.paintSidebarFromCache();
     }
@@ -3754,43 +3274,6 @@ function updateLotDetailPill() {
     });
   }
 
-  // ----- Residual filter (toggle + threshold) -----
-  const residualToggle = document.getElementById('residual-toggle');
-  if (residualToggle) {
-    residualToggle.addEventListener('click', () => {
-      _state.hideResiduals = !_state.hideResiduals;
-      // First enable resets a missing/invalid target to the default
-      // so the analyst always sees a sensible starting budget.
-      if (_state.hideResiduals) {
-        const t = Number(_state.residualTarget);
-        if (!Number.isFinite(t) || t < 0) {
-          _state.residualTarget = RES_DEFAULT_TARGET;
-          saveResidualTarget();
-        }
-      }
-      saveHideResiduals();
-      renderAll();
-    });
-  }
-  const residualInput = document.getElementById('residual-threshold-input');
-  if (residualInput) {
-    const applyTarget = () => {
-      const raw = residualInput.value;
-      const n = Number(raw);
-      if (raw === '' || !Number.isFinite(n) || n < 0) {
-        _state.residualTarget = RES_DEFAULT_TARGET;
-      } else {
-        _state.residualTarget = n;
-      }
-      saveResidualTarget();
-      renderAll();
-    };
-    residualInput.addEventListener('input', applyTarget);
-    residualInput.addEventListener('change', applyTarget);
-    residualInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); residualInput.blur(); }
-    });
-  }
 
   // ----- Row-expand (delegated) -----
   document.addEventListener('click', (e) => {
@@ -4532,7 +4015,6 @@ function updateLotDetailPill() {
     if (_bCcy) _bParts.push('Currency ' + _bCcy);
     if (_state.summarize) _bParts.push('rolled up by item');
     if (_state.gridSearch) _bParts.push('search "' + _state.gridSearch + '"');
-    if (_state.perpContribFilter) _bParts.push(_state.perpContribFilter.dim + ' = ' + _state.perpContribFilter.value);
     const _bCf = Object.keys(_state.columnFilters || {}).filter(k => _state.columnFilters[k] && _state.columnFilters[k].size);
     if (_bCf.length) _bParts.push('column filters on ' + _bCf.join(', '));
     _bParts.push('Generated ' + stamp);
@@ -5001,22 +4483,31 @@ function updateLotDetailPill() {
   // ============================================================
 
   // ============================================================
-  //  Period bars (shared module)
-  //  Cross-period Perpetual valuation history. Hits the agent's
-  //  /inventory/reconciliation/history endpoint and reads
-  //  `perpetualBalance` per period. Period click flips the active
-  //  period.
+  //  Cross-period Perpetual valuation history.
+  //
+  //  Hits the agent's /inventory/reconciliation/history endpoint and reads
+  //  `perpetualBalance` per period. ITS ONLY CONSUMER IS THE AI TREND READ
+  //  (asofAiExplain, kind === 'trend'), which is why this loader survived
+  //  the retirement below.
+  //
+  //  ⚠ THE PERIOD BAR CHART THIS WAS WRITTEN FOR IS GONE -- REMOVED
+  //  2026-09-09 (UI-183). Its host element `#js-period-bars` was deleted
+  //  from this page's markup by #308 (d67c1e8, 2026-07-02) and the CSS and
+  //  the mount were left behind, so `mountPeriodBarsForAsOf` bailed at
+  //  `if (!host) return` on every load for two months without erroring.
+  //  Owner ruled retire rather than rebuild: the markup went in a
+  //  deliberate redesign, so restoring it re-adds a surface that was
+  //  removed on purpose. Do not reintroduce a chart here without that
+  //  ruling being revisited.
   //
   //  ⚠ A demo branch here read `data/reconciliation.json` and its own
   //  comment called that "the committed reconciliation.json snapshot".
   //  It is not committed -- `.gitignore:35` excludes `RRV8/data/*.json`,
-  //  the file exists on one dev box and nowhere else, so on a fresh
-  //  clone or the deployed site the fetch 404'd and the chart silently
-  //  rendered empty. Removed 2026-09-06 (UI-179). There is no demo:
-  //  feedback_no_demo and feedback_v8_agent_first are both HARD rules.
-  //  The agent path below is the only path.
+  //  the file exists on one dev box and nowhere else, so on a fresh clone
+  //  or the deployed site the fetch 404'd. Removed 2026-09-06 (UI-179).
+  //  There is no demo: feedback_no_demo and feedback_v8_agent_first are
+  //  both HARD rules. The agent path below is the only path.
   // ============================================================
-  let _periodBars = null;
   async function loadAsOfPeriodHistory() {
     try {
       // The /inventory/reconciliation/* endpoints take Item-WRAPPED
@@ -5049,57 +4540,15 @@ function updateLotDetailPill() {
         else if (p && p.period) skipped.push(p.period);
       });
       if (skipped.length) {
-        console.warn('[period-bars] no perpetual balance returned for ' + skipped.join(', ') +
-          ' — those periods are omitted rather than drawn as zero.');
+        console.warn('[period-history] no perpetual balance returned for ' + skipped.join(', ') +
+          ' — those periods are omitted from the series.');
       }
       return usable;
     } catch (err) {
-      console.warn('[period-bars] history endpoint failed:', err && err.message);
+      console.warn('[period-history] history endpoint failed:', err && err.message);
       return [];
     }
   }
-  async function mountPeriodBarsForAsOf() {
-    if (!window.RRV8 || !window.RRV8.mountPeriodBars) return;
-    const host = document.getElementById('js-period-bars');
-    if (!host) return;
-    const history = await loadAsOfPeriodHistory();
-    // Seed the highlighted period from the scope hub (the same source
-    // loadData uses), NOT from _data (which is still null during the
-    // boot race) or history[last] (the latest period, not the scope's).
-    // renderAll re-syncs setCurrentPeriod once the load resolves, so the
-    // highlight self-corrects regardless of which fetch wins the race.
-    const cur = readCurrentPeriodFromCache() ||
-                (_data && _data._meta && _data._meta.period) ||
-                (history.length ? history[history.length - 1].period : null);
-    _periodBars = window.RRV8.mountPeriodBars({
-      host,
-      data: history,
-      currentPeriod: cur,
-      labelFor: (p) => formatPeriod(p),
-      fmtValue: (v) => fmtMoney(v),
-      labelText: 'Perpetual by Period',
-      onSwitch: async (p) => {
-        if (!p) return;
-        const cur = _data && _data._meta && _data._meta.period;
-        if (p === cur) return;
-        // Optimistically spotlight the clicked bar; the load below
-        // will snap it back if the response carries a different
-        // period (the demo snapshot is single-period, so any
-        // off-period click in demo mode returns the captured set
-        // and we surface the mismatch).
-        if (_periodBars) _periodBars.setCurrentPeriod(p);
-        toast('Loading ' + formatPeriod(p) + '…');
-        await loadData(p);
-        const loaded = _data && _data._meta && _data._meta.period;
-        if (loaded && loaded !== p) {
-          if (_periodBars) _periodBars.setCurrentPeriod(loaded);
-          toast('Period ' + formatPeriod(p) + ' not in the captured snapshot — showing ' +
-                formatPeriod(loaded) + ' (demo mode)');
-        }
-      }
-    });
-  }
-  setTimeout(mountPeriodBarsForAsOf, 0);
 
   // ============================================================
   //  Sidebar nav — carry URL query forward, suppress '#' clicks
@@ -5129,7 +4578,7 @@ function updateLotDetailPill() {
   updateColPill();
   updateCompanyPill();
   updateLotDetailPill();
-  updateResidualCard();
+  _fpSyncControls();
   renderAsOfHero();   // seed the params banner from session scope; asofAiSync refreshes it after load
   wireColumnDrag();
   wireColumnSort();

@@ -15,7 +15,9 @@
  * the page head, before the page's own inline script, attaching to window.RRV8.
  * No module system, no build step — that is the existing convention here and this
  * follows it rather than inventing a second one. The matching CSS is ai-docs.css,
- * paired the way period-bars.js / period-bars.css already are.
+ * paired the way sidebar.js / sidebar.css are. (This cited period-bars.js /
+ * period-bars.css until 2026-09-09; that pair was deleted under UI-183 once
+ * its host element had been gone from both consumer pages for two months.)
  *
  * HREFS ARE RELATIVE FROM RRV8/ (../RRUniversity/…) so they resolve identically on
  * the :8765 dev server and on GitHub Pages. Tools/test-ai-doc-coverage.js asserts
