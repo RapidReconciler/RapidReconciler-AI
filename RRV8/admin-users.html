@@ -250,6 +250,34 @@
   }
   .signin-pill.is-sso { background: var(--blue-pale, #e6efff); color: var(--blue, #2b5fb0); }
   .signin-pill.is-pw  { background: var(--rule, #eef1f6); color: var(--text-soft, #5b6677); }
+  /* Grid marker for a member whose single sign-on is switched off (VLC-68).
+     Amber, not red: a deliberate supported state, not a fault. Without it the
+     cell reads a bare "Password" for someone taken out of the identity
+     provider on purpose, exactly like the majority who never had SSO. */
+  .signin-bypass {
+    display: inline-block; margin-left: 6px; padding: 2px 8px;
+    border-radius: 100px;
+    font-family: 'Source Sans 3', sans-serif; font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.04em; vertical-align: middle; white-space: nowrap;
+    background: var(--amber-pale, #fdf4e3); color: #8a5a12;
+  }
+  /* The SSO-bypass control inside both modals. Inert-but-present when the
+     domain is not federated, so it reads as "nothing to bypass here" rather
+     than a setting that disappeared. */
+  .signin-current {
+    font-family: 'Source Sans 3', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--navy); padding: 2px 0;
+  }
+  .signin-bypass-toggle {
+    display: flex; align-items: flex-start; gap: 8px; margin-top: 4px;
+    font-size: 13.5px; font-weight: 600; color: var(--navy); cursor: pointer;
+  }
+  .signin-bypass-toggle input { margin: 3px 0 0; flex: 0 0 auto; width: auto; }
+  .signin-bypass-toggle.is-inert { cursor: default; font-weight: 500; color: var(--text-muted, #7c8798); }
+  .signin-bypass-note {
+    margin: 4px 0 0; font-size: 12.5px; line-height: 1.45;
+    color: var(--text-soft, #5b6677);
+  }
   .grid-table td.is-empty {
     text-align: center;
     color: var(--text-muted);
@@ -649,7 +677,23 @@
             <label class="form-field-label" for="js-edit-email">Email</label>
             <input type="email" id="js-edit-email" maxlength="320" autocomplete="off">
           </div>
-          <div class="form-field full">
+          <!-- App sign-in (VLC-68). Two facts: what this member's email DOMAIN
+               maps to, and whether this one person bypasses it. Both are
+               printed, because "Password" has two different causes and an
+               administrator cannot tell a bypass they can revoke from a domain
+               that was never federated unless the screen says which.
+               ⚠ NOT a preference. Ticking this turns single sign-on OFF for one
+               identity, and the wording has to say so (owner, 2026-09-09). -->
+          <div class="form-field full" id="js-edit-signin-block">
+            <span class="form-field-label">App sign-in</span>
+            <div class="signin-current" id="js-edit-signin-current">&mdash;</div>
+            <label class="signin-bypass-toggle" id="js-edit-bypass-wrap" for="js-edit-bypass">
+              <input type="checkbox" id="js-edit-bypass">
+              <span id="js-edit-bypass-label">Sign in with an RR password instead of single sign-on</span>
+            </label>
+            <p class="signin-bypass-note" id="js-edit-bypass-note"></p>
+          </div>
+          <div class="form-field full" id="js-edit-password-field">
             <label class="form-field-label" for="js-edit-password">
               Password<span class="form-field-hint">(Minimum 8 characters &middot; leave blank to keep)</span>
             </label>
@@ -694,6 +738,21 @@
           <div class="form-field full">
             <label class="form-field-label" for="js-nu-email">Email</label>
             <input type="email" id="js-nu-email" maxlength="320" autocomplete="off" placeholder="name@yourcompany.com">
+          </div>
+          <!-- Same block as the edit modal, resolved from the address as it is
+               typed against /api/v1/tenant/users/sign-in-method. It has to be
+               here and not only on the edit form: the invite BRANCHES on it.
+               On a federated domain with no bypass the account is created with
+               no password and no set-password email at all, so an administrator
+               who is not told would watch for an invite that was never sent. -->
+          <div class="form-field full" id="js-nu-signin-block">
+            <span class="form-field-label">App sign-in</span>
+            <div class="signin-current" id="js-nu-signin-current">&mdash;</div>
+            <label class="signin-bypass-toggle" id="js-nu-bypass-wrap" for="js-nu-bypass">
+              <input type="checkbox" id="js-nu-bypass">
+              <span id="js-nu-bypass-label">Sign in with an RR password instead of single sign-on</span>
+            </label>
+            <p class="signin-bypass-note" id="js-nu-bypass-note"></p>
           </div>
         </div>
 
@@ -935,8 +994,9 @@
   // mini-VALC (admin/users) lives at :8080. Routing decision is by
   // URL prefix.
   const RR_CONFIG = window.RR_CONFIG || {};
-  const URL_MODE  = new URLSearchParams(window.location.search).get('mode');
-  const MODE      = URL_MODE || RR_CONFIG.mode || 'demo';
+  // MODE resolves through RRENV (config.js:376) — see the note on
+  // admin-claude-assistant.html. Never 'demo'; `?mode=` is not honoured.
+  const MODE      = (window.RRENV && RRENV.mode()) || 'staging';
   const IS_DEMO   = (MODE === 'demo');
 
   // ---------- session + client admin gate ----------
@@ -1184,8 +1244,133 @@
     // person has actually completed an SSO sign-in, which is worth showing as
     // history beside the configured method.
     const seen = r.ssoProvider ? ' · has signed in via ' + fmt(r.ssoProvider) : '';
-    return '<span class="signin-pill ' + cls + '" title="Set by this member’s '
-         + 'email domain, not per person' + seen + '">' + fmt(method) + '</span>';
+    // ⚠ SINCE VLC-68 IT IS NO LONGER "not per person", AND THE CELL HAS TO SAY
+    // SO. A member with the bypass renders a bare "Password" otherwise —
+    // indistinguishable from the majority who never had single sign-on at all,
+    // for the one person deliberately taken out of the identity provider. The
+    // marker is a SECOND fact from domainSsoMapped + domainSignIn, appended
+    // beside appSignIn rather than re-wording it.
+    const bypassed = !!(r.ssoBypassPasswordSignin && r.domainSsoMapped);
+    const mark = bypassed
+      ? ' <span class="signin-bypass" title="Single sign-on is switched off for this '
+        + 'person: they use an RR password instead of ' + fmt(r.domainSignIn) + '.">bypasses '
+        + fmt(r.domainSignIn) + '</span>'
+      : '';
+    const why = bypassed
+      ? 'Single sign-on switched off for this person' + seen
+      : 'Set by this member’s email domain' + seen;
+    return '<span class="signin-pill ' + cls + '" title="' + why + '">'
+         + fmt(method) + '</span>' + mark;
+  }
+
+  // ---------- app sign-in + the SSO bypass, shared by both modals ----------
+  //
+  // ⚠ ONE RENDERER FOR BOTH FORMS, ON PURPOSE. "Edit team member" and "New
+  // team member" ask the identical question — does this address federate, and
+  // is this person exempt — and two copies of the answer is the shape that has
+  // bitten this codebase repeatedly (VLC-52's two domain matchers, UI-177's
+  // seven readers of `protocol`). The two forms differ only in which element
+  // ids they paint.
+  //
+  // ⚠ EVERY LABEL COMES FROM THE SERVER. `domainSignIn` ("Entra") and
+  // `domainSignInProse` ("Microsoft Entra ID") are both produced by
+  // SsoProtocol, and mapping one to the other here would be a second
+  // vocabulary. The operator console shows the same words for the same person.
+  const SIGNIN_UI = {
+    edit: { current: 'js-edit-signin-current', wrap: 'js-edit-bypass-wrap',
+            box: 'js-edit-bypass', label: 'js-edit-bypass-label',
+            note: 'js-edit-bypass-note', pwField: 'js-edit-password-field' },
+    nu:   { current: 'js-nu-signin-current', wrap: 'js-nu-bypass-wrap',
+            box: 'js-nu-bypass', label: 'js-nu-bypass-label',
+            note: 'js-nu-bypass-note', pwField: null }
+  };
+  const _signin = {
+    edit: { mapped: false, prose: 'single sign-on', label: null, bypass: false, seq: 0 },
+    nu:   { mapped: false, prose: 'single sign-on', label: null, bypass: false, seq: 0 }
+  };
+
+  function renderSigninBlock(which) {
+    const ui = SIGNIN_UI[which];
+    const st = _signin[which];
+    const el = (id) => (id ? document.getElementById(id) : null);
+
+    // The effective method, and the domain's own beside it when they differ.
+    // "Password" has two causes; a screen that prints only the result cannot
+    // tell a revocable bypass from a domain nobody ever federated.
+    const cur = el(ui.current);
+    if (cur) {
+      cur.textContent = !st.label ? '—'
+        : (st.mapped && st.bypass) ? ('Password (bypasses ' + st.label + ')')
+        : st.label;
+    }
+
+    const box = el(ui.box);
+    if (box) { box.checked = st.bypass; box.disabled = !st.mapped; }
+    const wrap = el(ui.wrap);
+    if (wrap) wrap.classList.toggle('is-inert', !st.mapped);
+    const lbl = el(ui.label);
+    if (lbl) lbl.textContent = 'Sign in with an RR password instead of ' + st.prose;
+
+    const note = el(ui.note);
+    if (note) {
+      note.textContent = !st.mapped
+        ? 'This domain is not on single sign-on, so there is nothing to bypass — '
+          + 'this person already signs in with an RR password.'
+        : st.bypass
+          ? 'Single sign-on is OFF for this one person. They sign in with an RR '
+            + 'password, outside your identity provider and its policies. Use it '
+            + 'for a service account, someone not yet in your provider, or '
+            + 'break-glass during an outage.'
+          : 'This person signs in with ' + st.prose
+            + '. A password would be refused at sign-in.';
+    }
+
+    // Edit form only: hide the password box for an account that cannot have
+    // one, because the API refuses a password there and would say so only at
+    // submit.
+    const pw = el(ui.pwField);
+    if (pw) {
+      const ssoManaged = st.mapped && !st.bypass;
+      pw.hidden = ssoManaged;
+      const input = document.getElementById('js-edit-password');
+      if (input && ssoManaged) input.value = '';
+    }
+  }
+
+  /**
+   * Resolve a typed address against client_sso and repaint.
+   *
+   * ⚠ A sequence guard, not just a debounce. Typing an address types many
+   * addresses on the way, and a slow early answer landing after a fast later
+   * one would leave the form describing a domain the admin has moved past —
+   * and, because it drives the bypass control, offering an exemption from an
+   * identity provider that is not the one in front of them.
+   */
+  function lookupSignin(which, email) {
+    const st = _signin[which];
+    const seq = ++st.seq;
+    if (!email || email.indexOf('@') < 0) {
+      st.mapped = false; st.prose = 'single sign-on'; st.label = null;
+      renderSigninBlock(which);
+      return;
+    }
+    rrFetch('api/v1/tenant/users/sign-in-method', { query: { email: email } })
+      .then(j => {
+        if (seq !== st.seq || !j) return;
+        st.mapped = (j.domainSsoMapped === 'true');
+        st.prose  = j.domainSignInProse || 'single sign-on';
+        st.label  = j.appSignIn || null;
+        if (!st.mapped) st.bypass = false;   // nothing to bypass, so not bypassed
+        renderSigninBlock(which);
+      })
+      .catch(() => {
+        if (seq !== st.seq) return;
+        // Fail toward "not federated": the server is still the gate, so the
+        // cost is a refusal at submit rather than an account created with a
+        // credential nobody meant it to have.
+        st.mapped = false; st.label = null;
+        renderSigninBlock(which);
+      });
   }
 
   // One row's <tr> markup. Extracted so patchRow/removeRow can
@@ -1263,6 +1448,17 @@
     document.getElementById('js-edit-active').value   = row.active ? 'true' : 'false';
     document.getElementById('js-edit-error').classList.remove('is-visible');
     document.getElementById('js-edit-error').textContent = '';
+    // ⚠ Seeded from the ROW, not defaulted. An unticked box for somebody who
+    // HAS the bypass would mean saving the form unchanged silently revokes it,
+    // locking that person out of an account they use every day. The row
+    // already carries the domain facts, so no round trip is needed to paint;
+    // a round trip happens only if the admin edits the address.
+    _signin.edit.bypass = !!row.ssoBypassPasswordSignin;
+    _signin.edit.mapped = !!row.domainSsoMapped;
+    _signin.edit.prose  = row.domainSignInProse || 'single sign-on';
+    _signin.edit.label  = row.domainSignIn || null;
+    _signin.edit.seq++;                       // cancel any in-flight lookup
+    renderSigninBlock('edit');
     document.getElementById('js-edit-modal').classList.add('is-visible');
     setTimeout(() => document.getElementById('js-edit-name').focus(), 0);
   }
@@ -1298,6 +1494,11 @@
     const id = _editingId;
     const body = { fullName, email, active };
     if (password) body.password = password;
+    // ⚠ ALWAYS SENT, never omitted when false. The server reads a missing
+    // field as "no change" — correct for a form that might not carry it, wrong
+    // for this one, where omitting false would make un-ticking the box a no-op
+    // that still reports success.
+    body.ssoBypassPasswordSignin = _signin.edit.bypass;
 
     const btn = document.getElementById('js-edit-save');
     btn.disabled = true;
@@ -1615,6 +1816,14 @@
     document.getElementById('js-nu-role-desc').textContent = '';
     document.getElementById('js-nu-dbs').innerHTML =
       '<div class="perms-companies-loading">Loading databases&hellip;</div>';
+    // Blank the sign-in block: this state is module-scoped and would otherwise
+    // carry the previous invite's domain answer into a fresh form.
+    _signin.nu.bypass = false;
+    _signin.nu.mapped = false;
+    _signin.nu.prose  = 'single sign-on';
+    _signin.nu.label  = null;
+    _signin.nu.seq++;
+    renderSigninBlock('nu');
     document.getElementById('js-nu-modal').classList.add('is-visible');
     setTimeout(() => document.getElementById('js-nu-name').focus(), 0);
 
@@ -1673,13 +1882,24 @@
           roleId: roleId ? Number(roleId) : null,
           assignments: assignments,
           appUrl: window.location.origin,
-          invitedByName: invitedByName
+          invitedByName: invitedByName,
+          ssoBypassPasswordSignin: _signin.nu.bypass
         })
       });
       const body = await r.json().catch(() => ({}));
       if (!r.ok) { showErr((body && body.message) || ('Could not add team member (HTTP ' + r.status + ')')); saveBtn.disabled = false; saveBtn.textContent = orig; return; }
+      // ⚠ THREE OUTCOMES NOW, AND SAYING "invite sent" FOR THE THIRD WOULD BE
+      // A LIE THE ADMIN ACTS ON — they would wait for an email that was never
+      // sent, then chase it. On a federated domain with no bypass the server
+      // creates the account with no password at all and sends nothing, because
+      // a "set your password" link teaches a sign-in route that is closed.
       const stub = body.inviteMode === 'STUBBED';
-      toast(stub ? 'Team member added — invite recorded (email not configured)' : 'Team member added — invite sent', stub ? 'warn' : 'ok');
+      const ssoNoPw = body.inviteMode === 'SSO_NO_PASSWORD';
+      toast(
+        ssoNoPw ? 'Team member added — they sign in with single sign-on, so no invite was needed'
+        : stub   ? 'Team member added — invite recorded (email not configured)'
+                 : 'Team member added — invite sent',
+        stub ? 'warn' : 'ok');
       closeNewUserModal();
       reloadUsers();
     } catch (e) {
@@ -1715,6 +1935,33 @@
     document.getElementById('js-nu-role').addEventListener('change', updateNuRoleDesc);
     document.getElementById('js-nu-save').addEventListener('click', saveNewUser);
     nuBd.addEventListener('click', (e) => { if (e.target === nuBd) closeNewUserModal(); });
+
+    // ---- the SSO-bypass control on both forms (VLC-68) ----
+    // The address drives whether there is anything to bypass, so both forms
+    // re-resolve it as it is typed. Debounced at 250ms with the sequence guard
+    // inside lookupSignin doing the real work.
+    const wireSigninEmail = (inputId, which) => {
+      const el = document.getElementById(inputId);
+      if (!el) return;
+      let t = null;
+      el.addEventListener('input', () => {
+        clearTimeout(t);
+        t = setTimeout(() => lookupSignin(which, el.value.trim()), 250);
+      });
+    };
+    wireSigninEmail('js-edit-email', 'edit');
+    wireSigninEmail('js-nu-email', 'nu');
+
+    const wireSigninBox = (boxId, which) => {
+      const el = document.getElementById(boxId);
+      if (!el) return;
+      el.addEventListener('change', () => {
+        _signin[which].bypass = !!el.checked;
+        renderSigninBlock(which);
+      });
+    };
+    wireSigninBox('js-edit-bypass', 'edit');
+    wireSigninBox('js-nu-bypass', 'nu');
 
     document.addEventListener('keydown', (e) => {
       if (e.key !== 'Escape') return;
@@ -1814,11 +2061,11 @@
   })();
 
   // ---------- boot ----------
-  // Footer version stamp (matches the standalone admin tool pages).
-  (function () {
-    const ver = document.getElementById('js-app-ver');
-    if (ver) ver.textContent = (RR_CONFIG.release || 'v8') + (RR_CONFIG.buildStamp ? ' · ' + RR_CONFIG.buildStamp : '');
-  })();
+  // ⚠ The "Footer version stamp" IIFE that sat here was RETIRED 2026-09-10
+  // (UI-186), identically to the copy on admin-companies.html. It wrote
+  // #js-app-ver, an id that exists nowhere in this repository, and it
+  // contradicted the comment directly below saying this page has no footer
+  // chrome.
 
   // No topbar/footer chrome — admin pages are reached from Home and return via
   // the floating Home button (.corner-chrome). The help "?" is injected beside it
@@ -1834,12 +2081,9 @@
     if (window.RRV8 && typeof window.RRV8.ensureInventoryStatus === 'function') {
       try { window.RRV8.ensureInventoryStatus(rrFetch); } catch (_) {}
     }
-    try {
-      const s = window.RR_SESSION || {};
-      const db = (s.dbs || [])[s.activeDbIndex || 0];
-      const dbEl = document.getElementById('js-topbar-db');
-      if (dbEl && db && db.n) dbEl.textContent = db.n;
-    } catch (_) {}
+    // The #js-topbar-db paint that sat here went 2026-09-10 (UI-186) — same
+    // retirement as the topbar named in the comment above; the id exists in
+    // no file, so the guard took every call.
     reloadUsers();
     loadContacts();
     loadAccessReview();
@@ -1952,7 +2196,18 @@
           // is refreshed on every visit, but this workbook is downloaded and
           // kept, so a wrong value here outlives the page that produced it.
           // Same "make no claim" fallback rather than assuming Password.
-          u.appSignIn || '—',
+          //
+          // ⚠ AND THE BYPASS RIDES ALONG (VLC-68), for the same "outlives the
+          // page" reason. Whoever opens this workbook to answer "who is
+          // outside our identity provider" would otherwise read a bare
+          // "Password" for the one person deliberately taken out of it.
+          // Appended only when the server sent both facts, so an older VALC
+          // makes no claim rather than a wrong one.
+          (u.appSignIn
+            ? (u.ssoBypassPasswordSignin && u.domainSsoMapped && u.domainSignIn
+                ? u.appSignIn + ' (bypasses ' + u.domainSignIn + ')'
+                : u.appSignIn)
+            : '—'),
           u.roleName || '—',
           u.active ? 'Active' : 'Inactive',
           fmtIsoForExport(u.lastLoginAt)       || '—',

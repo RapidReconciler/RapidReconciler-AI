@@ -1066,7 +1066,7 @@
         </thead>
         <tbody>
           <tr><td>Lock</td><td>Change the team member's <strong>role</strong> and their <strong>database &amp; company access</strong>.</td></tr>
-          <tr><td>Pencil</td><td>Edit the team member's name, email, and <strong>Active</strong> state. Turning Active off blocks sign-in without deleting the account &mdash; use this when someone is on leave or has changed jobs.</td></tr>
+          <tr><td>Pencil</td><td>Edit the team member's name, email, <strong>App sign-in</strong>, and <strong>Active</strong> state. Turning Active off blocks sign-in without deleting the account &mdash; use this when someone is on leave or has changed jobs.</td></tr>
           <tr><td>Trash</td><td>Remove the team member entirely. Confirm the prompt to complete.</td></tr>
         </tbody>
       </table>
@@ -1090,6 +1090,21 @@
 
       <h2 id="passwords">Passwords</h2>
       <p>Administrators never set, see, or distribute passwords. Each team member sets their own from the secure link RapidReconciler emails them. If a team member can't sign in or their link has expired, edit the team member and re-send the set-password link to issue a fresh one &mdash; there is no admin-assigned temporary password. Password length and complexity rules are covered in <a href="administrator-complex-password.html">Complex Passwords</a>.</p>
+
+      <h2 id="app-sign-in">App sign-in, and switching single sign-on off for one person</h2>
+      <p>The <strong>Sign-in</strong> column on the RR Team page says how each person gets in: <strong>Password</strong>, or the name of your identity provider (for example <strong>Entra</strong>) when your company uses single sign-on. It is decided by the person's <em>email domain</em>, so everyone on a domain your company has federated signs in through the provider &mdash; a password from those accounts is refused.</p>
+      <p>Sometimes one identity needs a password anyway:</p>
+      <ul>
+        <li>a <strong>service account</strong> that no person signs in as;</li>
+        <li>an <strong>employee not yet in your identity provider</strong>, so they can start work before IT adds them;</li>
+        <li><strong>break-glass access</strong> while your provider is unavailable.</li>
+      </ul>
+      <p>Open the team member with the <strong>pencil</strong> icon and tick <strong>Sign in with an RR password instead of &hellip;</strong> under <em>App sign-in</em>. The same choice is on the <strong>New team member</strong> form. Their row then reads <strong>Password</strong> with a <em>bypasses</em> marker beside it, so you can see at a glance who is outside your provider.</p>
+      <div class="callout warning">
+        <div class="callout-label">This turns single sign-on off for that person</div>
+        <p>It is not a preference. That account no longer passes through your identity provider, so it is outside whatever your provider enforces &mdash; MFA, conditional access, device rules, and central deactivation when someone leaves. It is governed by RapidReconciler's own password rules instead, including the 90-day expiry. Grant it deliberately, and untick it when the reason has passed.</p>
+      </div>
+      <p>The tick box is greyed out for a member whose domain is not federated: there is no single sign-on there to bypass, and that account already signs in with a password.</p>
 
       <h2 id="pitfalls">Common pitfalls</h2>
       <div class="callout tip">

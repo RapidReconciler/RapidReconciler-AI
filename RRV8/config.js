@@ -17,8 +17,11 @@
  *   3. 'demo' fallback
  *
  * Field reference:
- *   mode          — 'demo' | 'staging' | 'prod'. Drives every IS_DEMO
- *                   branch in the page.
+ *   mode          — 'staging' | 'prod'. ⚠ 'demo' IS NOT VALID and is
+ *                   coerced to 'staging' by RRENV.mode(); V8 is
+ *                   production-only. Namespaces the rrv8.scope.v1.* storage
+ *                   keys, so changing it on a live deploy resets saved
+ *                   scope and worklist state.
  *   authBase      — VALC login endpoint root. Resolved through
  *                   RRENV.get('authBase'): this value wins when set,
  *                   else RR_ENVIRONMENTS[mode].authBase, else NOTHING.
@@ -373,8 +376,31 @@ window.RR_ENVIRONMENTS = {
  * below is set in RR_CONFIG, so RRENV returns exactly what it returned before.
  */
 window.RRENV = {
+  /* The ONE producer of "which environment is this". Every V8 page and
+   * sidebar.js resolve through here; nothing derives it locally any more.
+   *
+   * ⚠ 'demo' IS NOT A MODE THIS FUNCTION CAN RETURN, and that is the point
+   * (2026-09-10). Two HARD rules say V8 is production-only with no demo mode,
+   * and until today the code disagreed three ways: `?mode=demo` was honoured
+   * in production, a config.js omitting `mode` fell into demo silently, and
+   * this field reference still advertised 'demo' as a legal value.
+   *
+   * Coercing here rather than only removing the fallbacks is what makes the
+   * ~94 `IS_DEMO` branches across the pages provably unreachable instead of
+   * merely unreached. Without this line, a config.js that literally set
+   * mode:'demo' would switch every one of them back on -- including
+   * sidebar.js hiding sign-out and skipping enforceSessionGuard().
+   *
+   * The coercion is deliberately SILENT, and that is a known gap rather than
+   * an oversight: reporting a bad deploy value needs a visible surface on a
+   * V8 page, and missing()'s two sinks are both outside V8 (login.html and
+   * HelpDesk/connection-check.html). That surface is one design decision
+   * covering several deploy-config problems; see UI-187. Nothing ships
+   * mode:'demo' today -- measured, zero occurrences in any tracked file.
+   */
   mode: function () {
-    return (window.RR_CONFIG && RR_CONFIG.mode) || 'staging';
+    var m = (window.RR_CONFIG && RR_CONFIG.mode) || 'staging';
+    return m === 'demo' ? 'staging' : m;
   },
   get: function (key) {
     var cfg = window.RR_CONFIG || {};

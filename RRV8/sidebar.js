@@ -701,10 +701,26 @@ ${adminSection}
   // GLOBAL tier via RRAI.set() (fires rrv8:aitierchange → every AI surface re-runs
   // at the new exposure), and reflects the active tier. Pages with no AI just don't
   // react — the control still shows.
-  function _aiDockMode() {
-    try { return (new URLSearchParams(global.location.search).get('mode')) || (global.RR_CONFIG && global.RR_CONFIG.mode) || 'demo'; }
-    catch (_) { return 'demo'; }
+  // ⚠ ONE PRODUCER FOR THE MODE IN THIS FILE. Added 2026-09-10 with the
+  // demo-mode ruling, replacing FIVE separate copies of
+  // `?mode=` || RR_CONFIG.mode || 'demo'` at what were lines 705, 1595, 1682,
+  // 1884 and 2268. Five copies of one rule is how VLC-52 happened.
+  //
+  // Two defects went with those copies, and the second is the serious one:
+  //   1. `?mode=demo` was honoured in production by anyone with the URL.
+  //   2. A deploy whose config.js omits `mode` fell into demo SILENTLY — and
+  //      in this file demo means `showSignOut = false` and an early return out
+  //      of enforceSessionGuard(). So a misconfigured production deploy had no
+  //      sign-out control and NO SESSION EXPIRY ENFORCEMENT at all.
+  //
+  // RRENV.mode() (config.js:376) reads RR_CONFIG.mode and bottoms out at
+  // 'staging'. On a correctly configured deploy this resolves to the identical
+  // value it did before, so nothing changes for anyone set up properly.
+  function _rrMode() {
+    try { return (global.RRENV && global.RRENV.mode()) || 'staging'; }
+    catch (_) { return 'staging'; }
   }
+  function _aiDockMode() { return _rrMode(); }
   function syncAiTierDock() {
     var seg = document.getElementById('rrai-dock-seg'); if (!seg || !global.RRAI) return;
     var cur = global.RRAI.get();
@@ -1289,7 +1305,7 @@ ${adminSection}
     const dbs    = Array.isArray(session.dbs) ? session.dbs : [];
     const dbIdx  = session.activeDbIndex || 0;
     const dbName = (dbs[dbIdx] && dbs[dbIdx].n) || '_';
-    const mode   = (global.RR_CONFIG && global.RR_CONFIG.mode) || 'demo';
+    const mode   = _rrMode();
     const key    = 'rrv8.scope.v1.' + mode + '.' + dbName + '.status';
     if (!opts.force) {
       try {
@@ -1337,7 +1353,7 @@ ${adminSection}
       const session = global.RR_SESSION || {};
       const dbs = Array.isArray(session.dbs) ? session.dbs : [];
       const db = (dbs[session.activeDbIndex || 0] && dbs[session.activeDbIndex || 0].n) || '_';
-      const mode = (global.RR_CONFIG && global.RR_CONFIG.mode) || 'demo';
+      const mode = _rrMode();
       const stored = sessionStorage.getItem('rrv8.scope.v1.' + mode + '.' + db + '.currentPeriod');
       if (stored) { const obj = JSON.parse(stored); raw = obj && obj.payload; }
     } catch (_) {}
@@ -1361,7 +1377,7 @@ ${adminSection}
       const dbs = Array.isArray(session.dbs) ? session.dbs : [];
       const dbIdx = session.activeDbIndex || 0;
       const db = (dbs[dbIdx] && dbs[dbIdx].n) || '_';
-      const mode = (global.RR_CONFIG && global.RR_CONFIG.mode) || 'demo';
+      const mode = _rrMode();
       const key = 'rrv8.scope.v1.' + mode + '.' + db + '.currentPeriod';
       sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), payload: period }));
     } catch (_) {}
@@ -1377,7 +1393,7 @@ ${adminSection}
     const session = (global.RR_SESSION || {});
     const dbs = Array.isArray(session.dbs) ? session.dbs : [];
     const db = (dbs[session.activeDbIndex || 0] && dbs[session.activeDbIndex || 0].n) || '_';
-    const mode = (global.RR_CONFIG && global.RR_CONFIG.mode) || 'demo';
+    const mode = _rrMode();
     return 'rrv8.scope.v1.' + mode + '.' + db + '.openPeriod';
   }
   function cacheAvailablePeriods(list, serverDefault) {
@@ -1416,7 +1432,7 @@ ${adminSection}
     const dbs = Array.isArray(session.dbs) ? session.dbs : [];
     const dbIdx = session.activeDbIndex || 0;
     const db = (dbs[dbIdx] && dbs[dbIdx].n) || '_';
-    const mode = (global.RR_CONFIG && global.RR_CONFIG.mode) || 'demo';
+    const mode = _rrMode();
     return 'rrv8.scope.v1.' + mode + '.' + db + '.scope';
   }
 
@@ -1592,8 +1608,7 @@ ${adminSection}
   // activeDbIndex honors the sticky rrv8.activeDb selection (falls to 0).
   function hydrateSession() {
     const cfg = global.RR_CONFIG || {};
-    const mode = (new URLSearchParams(global.location.search).get('mode'))
-                 || cfg.mode || 'demo';
+    const mode = _rrMode();
     global.RR_SESSION = global.RR_SESSION || {};
 
     if (mode === 'demo') {
@@ -1679,8 +1694,7 @@ ${adminSection}
     const u = getCurrentUser();
     const dbs = getCurrentDatabases();
     const cfg = global.RR_CONFIG || {};
-    const isDemo = ((new URLSearchParams(global.location.search).get('mode'))
-                    || cfg.mode || 'demo') === 'demo';
+    const isDemo = _rrMode() === 'demo';
     const showSignOut = !isDemo;
 
     // Per-Prompt #4: hide admin actions the user lacks the permission
@@ -1881,8 +1895,7 @@ ${adminSection}
   // out; the dev token (no sessionStart, far-future exp) is never caught.
   (function enforceSessionGuard() {
     try {
-      const mode = (new URLSearchParams(global.location.search).get('mode'))
-                   || (global.RR_CONFIG || {}).mode || 'demo';
+      const mode = _rrMode();
       if (mode === 'demo') return;
       if (sessionExpired()) { endSession(); return; }
       watchSession();
@@ -2265,8 +2278,7 @@ ${adminSection}
   // token). Demo mode stays lazy — it fetches a payload async, and the demo
   // pages call hydrateSession() explicitly — so we don't kick a fetch here.
   try {
-    var _eagerMode = (new URLSearchParams(global.location.search).get('mode'))
-                     || (global.RR_CONFIG && global.RR_CONFIG.mode) || 'demo';
+    var _eagerMode = _rrMode();
     if (_eagerMode !== 'demo') { hydrateSession(); }
   } catch (_) { /* leave RR_SESSION empty; pages still call hydrateSession() */ }
 

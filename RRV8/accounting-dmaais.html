@@ -1885,14 +1885,10 @@
   // ============================================================
   //  MODE + SESSION + rrFetch (same conventions as the rest of V8)
   // ============================================================
-  const RR_CONFIG = window.RR_CONFIG || { mode: 'demo', dataPath: 'data/' };
-  const MODE = (function () {
-    try {
-      const m = new URL(location.href).searchParams.get('mode');
-      if (m === 'demo' || m === 'staging' || m === 'prod') return m;
-    } catch (_) {}
-    return RR_CONFIG.mode || 'demo';
-  })();
+  const RR_CONFIG = window.RR_CONFIG || { mode: 'staging', dataPath: 'data/' };
+  // MODE resolves through RRENV (config.js:376) — see the note on
+  // admin-claude-assistant.html. Never 'demo'; `?mode=` is not honoured.
+  const MODE = (window.RRENV && RRENV.mode()) || 'staging';
   const IS_DEMO = MODE === 'demo';
 
   let RR_SESSION = window.RR_SESSION || null;
@@ -3602,7 +3598,12 @@
   // column, now 16ch to match every other export.
   function _dmaaiDbName() {
     const db = (typeof activeDb === 'function') ? activeDb() : null;
-    return (db && db.n) || (document.getElementById('js-topbar-db') || {}).textContent || 'RapidReconciler';
+    // The #js-topbar-db middle term was dropped 2026-09-10 (UI-186): the
+    // topbar is retired and that id exists nowhere, so it could only ever
+    // contribute undefined. activeDb() was already the real source, which is
+    // why this page's exports were never mis-titled the way
+    // inventory-variance-source.html's were.
+    return (db && db.n) || 'RapidReconciler';
   }
 
   // Every export is scoped — by the working companies, and on the module tabs by
@@ -4360,15 +4361,11 @@
     window.RRV8.ensureInventoryStatus(rrFetch);
   }
 
-  // Topbar DB identifier — pulled from the active session in
-  // prod/staging; demo defaults to the snapshot DB name.
-  (function paintTopbarDb() {
-    const el = document.getElementById('js-topbar-db');
-    if (!el) return;
-    const db = activeDb();
-    if (db && db.n) el.textContent = db.n;
-    else el.textContent = 'RapidReconciler_Dev';
-  })();
+  // paintTopbarDb() was RETIRED here 2026-09-10 (UI-186). It wrote
+  // #js-topbar-db, an id that exists in no file in this repository, so the
+  // `if (!el) return;` on its second line took every call and the whole IIFE
+  // was inert. The topbar itself was retired earlier as a product-page
+  // standard; this was its leftover painter.
 })();
 </script>
 </body>

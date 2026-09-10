@@ -415,7 +415,7 @@
       var b64=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'); var pad=b64.length%4; if(pad) b64+='='.repeat(4-pad);
       var p=JSON.parse(decodeURIComponent(atob(b64).split('').map(function(c){return '%'+('00'+c.charCodeAt(0).toString(16)).slice(-2);}).join('')));
       var dbs=p.dbs||[]; var idx=_activeDbIdx(dbs); var dbObj=dbs[idx]||dbs[0]||{};
-      var mode=(window.RR_CONFIG&&RR_CONFIG.mode)||'demo';
+      var mode=(window.RRENV&&RRENV.mode())||'staging';   // never 'demo' (2026-09-10)
       return { key:'rrv8.scope.v1.'+mode+'.'+((dbObj.n)||'_')+'.scope', allowed:(Array.isArray(dbObj.i)?dbObj.i.map(String):[]) };
     }catch(_){ return null; }
   }
@@ -771,7 +771,13 @@
     var NUM_FMT='#,##0.00;(#,##0.00)';
     var ncol=COLS.length;
     // ----- title band (what · db/company · generated + row count) -----
-    var db=(window.RRDB&&RRDB.name&&RRDB.name())||(document.getElementById('topbarDb')||{}).textContent||'RapidReconciler';
+    // The #topbarDb middle term was dropped 2026-09-10 (UI-186): the topbar is
+    // retired and that id exists nowhere, so it could only contribute
+    // undefined. RRDB.name() was already the real source — which is why this
+    // page's audit workbook was correctly titled while the SAME title band on
+    // inventory-variance-source.html, which read the dead node FIRST, went out
+    // saying "Database RapidReconciler" on every export.
+    var db=(window.RRDB&&RRDB.name&&RRDB.name())||'RapidReconciler';
     var coText='Company '+state.company;   // single-company page — always exactly one
     var acctText=state.account?('  ·  Account '+state.account):'';
     var titleLines=[
@@ -1218,8 +1224,9 @@
         throw new Error('the data service returned a response this page could not read');
       });
   }
-  // topbar db name
-  (function(){ var ctx=_scopeCtx(); var nm=(ctx&&ctx.key)?ctx.key.split('.').slice(-2,-1)[0]:null; var dbEl=document.getElementById('topbarDb'); if(nm&&nm!=='_'&&dbEl) dbEl.textContent=nm; })();
+  // The "topbar db name" painter that sat here was RETIRED 2026-09-10
+  // (UI-186). It wrote #topbarDb, an id that exists nowhere in this
+  // repository, so the guard took every call and the IIFE was inert.
   // AI plan tier from the client's purchased level — then (re)render the brief
   // now the real tier is known.
   aiHealth().then(function(lvl){ _aiMaxLevel=lvl||'off'; renderBrief(); });

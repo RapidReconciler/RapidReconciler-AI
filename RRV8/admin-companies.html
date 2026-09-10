@@ -592,8 +592,9 @@
 
   // ---------- mode + rrFetch (mirrors the convention on every V8 page) ----------
   const RR_CONFIG = window.RR_CONFIG || {};
-  const URL_MODE  = new URLSearchParams(window.location.search).get('mode');
-  const MODE      = URL_MODE || RR_CONFIG.mode || 'demo';
+  // MODE resolves through RRENV (config.js:376) — see the note on
+  // admin-claude-assistant.html. Never 'demo'; `?mode=` is not honoured.
+  const MODE      = (window.RRENV && RRENV.mode()) || 'staging';
   const IS_DEMO   = (MODE === 'demo');
 
   // ---------- session + client admin gate ----------
@@ -961,11 +962,11 @@
   })();
 
   // ---------- boot ----------
-  // Footer version stamp (matches the standalone admin tool pages).
-  (function () {
-    const ver = document.getElementById('js-app-ver');
-    if (ver) ver.textContent = (RR_CONFIG.release || 'v8') + (RR_CONFIG.buildStamp ? ' · ' + RR_CONFIG.buildStamp : '');
-  })();
+  // ⚠ The "Footer version stamp" IIFE that sat here was RETIRED 2026-09-10
+  // (UI-186). It wrote #js-app-ver, an id that exists nowhere in this
+  // repository, so it was inert — and it contradicted the comment directly
+  // below it, which already said this page has no footer chrome. The stamp
+  // went with the footer; only its painter survived.
 
   // No topbar/footer chrome — admin pages are reached from Home and return via
   // the floating Home button (.corner-chrome). The help "?" is injected beside it
@@ -983,12 +984,9 @@
     if (window.RRV8 && typeof window.RRV8.ensureInventoryStatus === 'function') {
       try { window.RRV8.ensureInventoryStatus(rrFetch); } catch (_) {}
     }
-    try {
-      const s = window.RR_SESSION || {};
-      const db = (s.dbs || [])[s.activeDbIndex || 0];
-      const dbEl = document.getElementById('js-topbar-db');
-      if (dbEl && db && db.n) dbEl.textContent = db.n;
-    } catch (_) {}
+    // The #js-topbar-db paint that sat here went 2026-09-10 (UI-186) — same
+    // retirement as the topbar named in the comment above; the id exists in
+    // no file, so the guard took every call.
     loadCompaniesInitial();
   }
   if (window.RRV8 && typeof window.RRV8.hydrateSession === 'function') {

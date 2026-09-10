@@ -125,7 +125,9 @@
 (function () {
   'use strict';
   var RR_CONFIG = window.RR_CONFIG || {};
-  var MODE = new URLSearchParams(location.search).get('mode') || RR_CONFIG.mode || 'demo';
+  // MODE resolves through RRENV (config.js:376) — see the note on
+  // admin-claude-assistant.html. Never 'demo'; `?mode=` is not honoured.
+  var MODE = (window.RRENV && RRENV.mode()) || 'staging';
   var IS_DEMO = (MODE === 'demo');
   var SOURCES = window.RR_VARIANCE_SOURCES || {};
 
@@ -225,10 +227,22 @@
     var per = '—';
     try{ if(window.RRV8&&window.RRV8.readCurrentPeriod){ var p=window.RRV8.readCurrentPeriod(); if(p){ var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(p); per = m ? (['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m[2]-1]+' '+ +m[3]+', '+m[1]) : p; } } }catch(_){}
     document.getElementById('js-period').textContent = cfg.requirePeriod===false ? 'Current' : per;
-    var db = (window.RRDB && window.RRDB.name && window.RRDB.name()) || '';
-    // Topbar retired (product-page standard); guard the removed node.
-    var dbEl = document.getElementById('js-topbar-db');
-    if (dbEl) dbEl.textContent = db || 'RapidReconciler';
+    // The topbar was retired (product-page standard) and the write that used
+    // to guard #js-topbar-db went with it 2026-09-10 (UI-186): that id exists
+    // in no file in the repository, so the lookup returned null forever and
+    // read as live to anyone grepping.
+    //
+    // ⚠ The guard here was the trap rather than the fix. It protected the
+    // WRITE and left the READ in the export builder below untouched, so the
+    // real database name was computed here, discarded, and every Variance
+    // Source Detail workbook went out titled "Database RapidReconciler".
+    // Guarding a dead node hides the fact that its readers are now wrong.
+    //
+    // ⚠ THIS PAGE'S SCOPE BAND SHOWS PERIOD AND COMPANIES BUT NOT DATABASE,
+    // while home.html (:3204), inventory-transactions.html (:2711) and
+    // accounting-model-review.html (:221) all carry one. Flagged on UI-186
+    // rather than added here: which pages need the indicator is a standards
+    // question, not a side effect of deleting dead wiring.
   }
 
   // ---- normalize PascalCase view columns -> camelCase keys (mirrors recon) ----
@@ -544,7 +558,24 @@
       if (i===0) return totalLbl;
       return '';
     });
-    var db  = (document.getElementById('js-topbar-db')||{}).textContent || 'RapidReconciler';
+    // ⚠ `db` USED TO READ #js-topbar-db AND ALWAYS GOT THE LITERAL FALLBACK.
+    // Fixed 2026-09-10 (UI-186). The topbar was retired deliberately — see the
+    // comment in setScopeFacts() — and the WRITE there was guarded for the
+    // removed node. The READ here was not, so getElementById returned null,
+    // `.textContent` was undefined, and every Variance Source Detail workbook
+    // went out titled "Database RapidReconciler" instead of naming the
+    // database it was extracted from. In an audit workbook that is not a
+    // cosmetic default; it is a header that cannot be tied back to a source.
+    //
+    // The correct value was already being computed 300 lines up and thrown
+    // away. Both places now read RRDB.name(), which is the canonical
+    // active-database resolver (config.js) — one producer, so the scope band
+    // and the workbook header cannot disagree.
+    //
+    // js-companies and js-period are NOT the same case: both are real markup
+    // in this page, written by setScopeFacts() at :226 and :229, so they were
+    // resolving correctly and are left reading the DOM.
+    var db  = (window.RRDB && window.RRDB.name && window.RRDB.name()) || 'RapidReconciler';
     var cos = (document.getElementById('js-companies')||{}).textContent || 'All';
     var per = (document.getElementById('js-period')||{}).textContent || '—';
     buildAuditWorkbook({
