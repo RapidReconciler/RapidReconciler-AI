@@ -405,7 +405,20 @@
     text-transform: none;
     letter-spacing: 0;
   }
-  .form-field input,
+  /* ⚠ `:not([type="checkbox"])` added 2026-09-10. This rule is written for
+     text inputs -- width:100%, 14px, an 8px/10px padding and a border -- and
+     it was also hitting the SSO-bypass checkbox inside #js-edit-signin-block
+     and #js-nu-signin-block, which are `.form-field` divs. The checkbox
+     stretched across the whole row, pushed its own <span> label off the right
+     edge, and gave both modals a horizontal scrollbar.
+     ⚠ `.signin-bypass-toggle input` at :275 ALREADY set `width: auto` to
+     prevent exactly this, and it did nothing: both selectors are specificity
+     (0,1,1), so the LATER one wins and this rule is 130 lines further down.
+     A defence that is written, looks correct, and is silently overridden by
+     source order is worse than no defence, because it stops anyone looking.
+     Scoped here rather than by out-specifying it, so a future checkbox in any
+     .form-field is correct by default instead of by remembering. */
+  .form-field input:not([type="checkbox"]),
   .form-field select {
     font-family: inherit;
     font-size: 14px;

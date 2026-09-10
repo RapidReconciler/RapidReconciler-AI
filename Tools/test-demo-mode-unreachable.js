@@ -74,14 +74,32 @@ function rrv8Files() {
     });
 }
 
-/** Strip // and /* *\/ comments so a source assertion cannot be satisfied or
- *  broken by prose. The demo-removal commit left explanatory comments that
- *  QUOTE the old expression, and counting those as violations would make this
- *  gate permanently red for the right reason stated wrongly. */
+/** Strip LINE comments only, and only ones that OPEN a line.
+ *
+ *  A source assertion must not be satisfied or broken by prose: the
+ *  demo-removal commit left explanatory comments that QUOTE the old
+ *  expressions, and counting those as violations would keep this gate
+ *  permanently red for the right reason stated wrongly.
+ *
+ *  ⚠ THIS DELIBERATELY DOES NOT STRIP BLOCK COMMENTS, and the first version
+ *  of this file did, with the obvious regex. Tools/test-comment-stripper-
+ *  safety.js (UI-170) caught it in CI. That expression pairs a `/*` or `*` + `/`
+ *  inside a STRING or REGEX LITERAL with the wrong delimiter: measured on
+ *  sidebar.js it removed 48% of the file. A stripper that silently deletes
+ *  half its subject makes every later assertion meaningless in both
+ *  directions, and the dangerous direction is the quiet one — a false FAIL
+ *  gets investigated, a false PASS does not. In THIS file that would have
+ *  meant A3/A4 passing because the offending code had been deleted before
+ *  they looked.
+ *
+ *  The form below is one of the two the repo sanctions: it matches only a
+ *  comment that opens a line, so a `//` inside a URL in a string survives.
+ *  It is sufficient here because every comment this gate must ignore is a
+ *  line comment. If a future assertion genuinely needs block comments gone,
+ *  port the quote-tracking scanner from Tools/check_txv_cards.py, which
+ *  raises on an unterminated block rather than guessing. */
 function stripComments(text) {
-  return text
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/(^|[^:"'`\\])\/\/[^\n]*/g, '$1');
+  return text.replace(/^[ \t]*\/\/.*$/gm, '');
 }
 
 console.log('demo mode cannot be entered in V8\n');
